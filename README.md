@@ -54,7 +54,7 @@
 - v0.4.0 (25-03-2021 - Added HyperOpt for Weight Tables) **62.88% profit** (HyperOpt Result..)
 - v0.4.1 (25-03-2021 - HyperOpt Params Real -> Integer, SortinoHyperOptLossDaily) **1322.78% profit** :sunglasses: :chart_with_upwards_trend:  (2 month HyperOpt Result, Mid Januari - Mid March)
 - v0.4.2 (27-03-2021 - Main/Sub Plot Configurations for all indicators used)
-- v0.5.0 (27-03-2021 - Rewrote Weight tables for Upward/Downward trends, Upward/Downward/Sideways trend detection & Auto table allocation or wait if sideways, Scrapped 0 weight = No Weighted Signal DataFrame entry, Scrapped the configurable Up/Down signals) **2,568.61% profit!** :money_mouth: 
+- v0.5.0 (27-03-2021 - Rewrote Weight tables for Upward/Downward trends, Upward/Downward/Sideways trend detection & Auto table allocation or wait if sideways, Scrapped 0 weight = No Weighted Signal DataFrame entry, Scrapped the configurable Up/Down signals) **2,568.61% profit!** :partying_face: 
 
 ### **Planned**:   
 - Weighted Tables for SideWays movement
