@@ -1,0 +1,78 @@
+INFO - Loading data from 2021-01-01 00:00:00 up to 2021-03-16 00:00:00 (74 days)..
+WARNING - Moving start-date by 400 candles to account for startup time.
+INFO - Hyperopting with data from 2021-01-17 16:00:00 up to 2021-03-16 00:00:00 (57 days)..
+INFO - Found 12 CPU cores. Let's make them scream!
+INFO - Number of parallel jobs set as: -1
+INFO - Min roi table: {0: 0.06883, 120: 0.04589, 240: 0.02294, 360: 0}
+INFO - Max roi table: {0: 0.71124, 480: 0.25238, 1200: 0.09177, 2640: 0}
+INFO - Effective number of parallel workers used: 12
++--------+-----------+----------+------------------+--------------+------------------------------+----------------+-------------+
+|   Best |     Epoch |   Trades |    Win Draw Loss |   Avg profit |                       Profit |   Avg duration |   Objective |
+|--------+-----------+----------+------------------+--------------+------------------------------+----------------+-------------|
+| * Best |    1/1000 |      344 |    142   41  161 |        2.36% |    0.00811488 BTC  (810.67%) |      3,203.7 m |    -14.0503 |
+| * Best |    6/1000 |     1117 |    739    0  378 |        1.11% |   0.01236211 BTC (1,234.98%) |        257.2 m |    -25.2964 |                                                  
+|   Best |   64/1000 |     1962 |   1253    1  708 |        0.67% |   0.01319836 BTC (1,318.51%) |        200.9 m |    -25.8037 |                                                  
+|   Best |  404/1000 |      486 |    181    0  305 |        1.94% |    0.00943094 BTC  (942.15%) |        384.0 m |    -27.4244 |                                                  
+|   Best |  539/1000 |     1000 |    442    0  558 |        1.04% |   0.01039977 BTC (1,038.94%) |        203.8 m |    -28.8434 |                                                  
+|   Best |  578/1000 |     2447 |   1369    0 1078 |        0.54% |   0.01324119 BTC (1,322.78%) |        121.4 m |    -29.5512 |                                                  
+
+INFO - 1000 epochs saved to 
+'/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade-Git/user_data/hyperopt_results/strategy_MoniGoMani_hyperopt_results_2021-03-25_21-07-56.pickle'.
+
+Best result:
+
+   578/1000:   
+    2447 trades. 1369/0/1078 Wins/Draws/Losses. 
+    Avg profit   0.54%. 
+    Median profit   0.79%. 
+    Total profit  0.01324119 BTC ( 1322.78Σ%). 
+    Avg duration 121.4 min. 
+    Objective: -29.55123
+
+
+    # Buy hyperspace params:
+    buy_params = {
+        '_total_buy_signal_needed': 33,
+        'adx_buy_weight': 22,
+        'bollinger_bands_buy_weight': 48,
+        'ema_long_golden_cross_buy_weight': 43,
+        'ema_short_golden_cross_buy_weight': 100,
+        'macd_buy_weight': 43,
+        'plus_minus_direction_buy_weight': 17,
+        'rsi_buy_weight': 82,
+        'sma_long_golden_cross_buy_weight': 72,
+        'sma_short_golden_cross_buy_weight': 75,
+        'vwap_cross_buy_weight': 22
+    }
+
+    # Sell hyperspace params:
+    sell_params = {
+        '_total_sell_signal_needed': 23,
+        'adx_sell_weight': 72,
+        'bollinger_bands_sell_weight': 46,
+        'ema_long_death_cross_sell_weight': 67,
+        'ema_short_death_cross_sell_weight': 24,
+        'macd_sell_weight': 81,
+        'plus_minus_direction_sell_weight': 49,
+        'rsi_sell_weight': 61,
+        'sma_long_death_cross_sell_weight': 72,
+        'sma_short_death_cross_sell_weight': 28,
+        'vwap_cross_sell_weight': 83
+    }
+
+    # ROI table:
+    minimal_roi = {
+        "0": 0.33739,
+        "353": 0.16553,
+        "641": 0.03089,
+        "1082": 0
+    }
+
+    # Stoploss:
+    stoploss = -0.0344
+
+    # Trailing stop:
+    trailing_stop = True
+    trailing_stop_positive = 0.01056
+    trailing_stop_positive_offset = 0.0172
+    trailing_only_offset_is_reached = False
