@@ -1,7 +1,7 @@
 ```
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.5.0 by Rikj000                         ###
+    ###                         MoniGoMani v0.6.2 by Rikj000                         ###
     ##                          ----------------------------                          ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -24,11 +24,12 @@
     ####################################################################################
 ```
 
-# **Current `MoniGoMani` status @ `v0.5.0`** with:
-- Configurable & HyperOptable Buy/Sell Signal Weight Influence Tables for Upward/Downward trends
-- Configurable & HyperOptable Total Buy/Sell Signal Percentages for Upward/Downward trends
+# **Current `MoniGoMani` status @ `v0.6.2`** with:
+- Configurable & HyperOptable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends
+- Configurable & HyperOptable Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends
 - Turn On/Off Weighted Signals for easy debugging/better speed
-- Each table has 9 Buy & 9 Sell signals implemented each Configurable & HyperOptable:
+- Turn On/Off Trading on Sideways trends
+- Each Table has 9 Buy & 9 Sell signals implemented each Configurable & HyperOptable:
   - ADX + Strong Up/Strong Down
   - RSI
   - MACD
@@ -55,7 +56,11 @@
 - v0.4.1 (25-03-2021 - HyperOpt Params Real -> Integer, SortinoHyperOptLossDaily) **1322.78% profit** :sunglasses: :chart_with_upwards_trend:  (2 month HyperOpt Result, Mid Januari - Mid March)
 - v0.4.2 (27-03-2021 - Main/Sub Plot Configurations for all indicators used)
 - v0.5.0 (27-03-2021 - Rewrote Weight tables for Upward/Downward trends, Upward/Downward/Sideways trend detection & Auto table allocation or wait if sideways, Scrapped 0 weight = No Weighted Signal DataFrame entry, Scrapped the configurable Up/Down signals) **2,568.61% profit!** :partying_face: 
+- v0.6.0 (28-03-2021 - Added Sideways Trend Detecting Buy/Sell Signal Weight Influence Tables & Checks - Updated HyperOpt file - Changed Test results from .txt to .log for better color code in VSCodium - Added .ignore file)
+- v0.6.1 (28-03-2021 - Improved speed by reformatting a lot of & checks so more lazy evaluations will occur - Fixed .gitignore file)
+- v0.6.2 (28-03-2021 - Added setting to Enable/Disable trading when trend goes sideways)
 
 ### **Planned**:   
-- Weighted Tables for SideWays movement
+- Let HyperOpt Decide if Sideways trading should be enabled for Buys/Sells
 - Other/Better indicators?
+- Refactor to be compliant for Auto-HyperOptable Strategies: https://github.com/freqtrade/freqtrade/pull/4596

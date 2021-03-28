@@ -19,7 +19,7 @@ class MoniGoManiHyperOpted(IStrategy):
     """
     ####################################################################################
     ####                                                                            ####
-    ###            MoniGoMani v0.5.0 HyperOpted by Rikj000 (27-03-2021)              ###
+    ###            MoniGoMani v0.6.2 HyperOpted by Rikj000 (28-03-2021)              ###
     ##             ----------------------------------------------------               ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -54,70 +54,103 @@ class MoniGoManiHyperOpted(IStrategy):
     """
 
     # If enabled all Weighted Signal results will be added to the dataframe for easy debugging
-    debuggable_weighted_signal_dataframe = True
+    debuggable_weighted_signal_dataframe = False
 
-    # Buy/Sell Signal Weight Influence Tables
-    # ---------------------------------------
+    # Trade when Sideways trends are detected (Risky, but doing nothing isn't good either)
+    trade_when_sideways = True
+
+    # Trend Detecting Buy/Sell Signal Weight Influence Tables
+    # -------------------------------------------------------
     # The idea is to fill in here how heavily you/hyperopt thinks an indicator
     # signals a buy/sell signal compared to the other indicators (Signals can be turned off by allocating 0 or
     # turned into an override by setting them equal to or higher then total_buy_signal_needed)
+    # These Signal Weight Influence Tables will be allocated to signals when their respective trend is detected
 
-    # These Signal Weight Influence Tables will be allocated to signals when a downward trend is detected
-    downward_trend = {
-        # Total Buy/Sell Signal Percentage needed for a signal to be positive
-        'total_buy_signal_needed': 95,
-        'total_sell_signal_needed': 38,
+    trend = {
+        'downwards': {
+            # Total Buy/Sell Signal Percentage needed for a signal to be positive
+            'total_buy_signal_needed': 16,
+            'total_sell_signal_needed': 87,
 
-        # Buy Signal Weight Influence Table
-        'adx_strong_up_buy_weight': 37,  # triggers moderately
-        'bollinger_bands_buy_weight': 54,  # triggers moderately
-        'ema_long_golden_cross_buy_weight': 85,  # triggers very infrequently
-        'ema_short_golden_cross_buy_weight': 84,  # triggers infrequently
-        'macd_buy_weight': 23,  # triggers frequently
-        'rsi_buy_weight': 80,  # triggers infrequently
-        'sma_long_golden_cross_buy_weight': 83,  # triggers very infrequently
-        'sma_short_golden_cross_buy_weight': 81,  # triggers infrequently
-        'vwap_cross_buy_weight': 94,  # triggers infrequently
+            # Buy Signal Weight Influence Table
+            'adx_strong_up_buy_weight': 62,  # triggers moderately
+            'bollinger_bands_buy_weight': 11,  # triggers moderately
+            'ema_long_golden_cross_buy_weight': 19,  # triggers very infrequently
+            'ema_short_golden_cross_buy_weight': 91,  # triggers infrequently
+            'macd_buy_weight': 13,  # triggers frequently
+            'rsi_buy_weight': 60,  # triggers infrequently
+            'sma_long_golden_cross_buy_weight': 57,  # triggers very infrequently
+            'sma_short_golden_cross_buy_weight': 57,  # triggers infrequently
+            'vwap_cross_buy_weight': 42,  # triggers infrequently
 
-        # Sell Signal Weight Influence Table
-        'adx_strong_down_sell_weight': 72,  # triggers moderately
-        'bollinger_bands_sell_weight': 3,  # triggers moderately
-        'ema_long_death_cross_sell_weight': 92,  # triggers very infrequently
-        'ema_short_death_cross_sell_weight': 13,  # triggers very infrequently
-        'macd_sell_weight': 36,  # triggers frequently
-        'rsi_sell_weight': 53,  # triggers infrequently
-        'sma_long_death_cross_sell_weight': 87,  # triggers very infrequently
-        'sma_short_death_cross_sell_weight': 33,  # triggers very infrequently
-        'vwap_cross_sell_weight': 66  # triggers infrequently
-    }
+            # Sell Signal Weight Influence Table
+            'adx_strong_down_sell_weight': 55,  # triggers moderately
+            'bollinger_bands_sell_weight': 59,  # triggers moderately
+            'ema_long_death_cross_sell_weight': 44,  # triggers very infrequently
+            'ema_short_death_cross_sell_weight': 13,  # triggers very infrequently
+            'macd_sell_weight': 6,  # triggers frequently
+            'rsi_sell_weight': 42,  # triggers infrequently
+            'sma_long_death_cross_sell_weight': 72,  # triggers very infrequently
+            'sma_short_death_cross_sell_weight': 84,  # triggers very infrequently
+            'vwap_cross_sell_weight': 62  # triggers infrequently
+        },
 
-    # These Signal Weight Influence Tables will be allocated to signals when an upward trend is detected
-    upward_trend = {
-        # Total Buy/Sell Signal Percentage needed for a signal to be positive
-        'total_buy_signal_needed': 47,
-        'total_sell_signal_needed': 79,
+        'sideways': {
+            # Total Buy/Sell Signal Percentage needed for a signal to be positive
+            'total_buy_signal_needed': 63,
+            'total_sell_signal_needed': 33,
 
-        # Buy Signal Weight Influence Table
-        'adx_strong_up_buy_weight': 20,  # triggers moderately
-        'bollinger_bands_buy_weight': 20,  # triggers moderately
-        'ema_long_golden_cross_buy_weight': 37,  # triggers very infrequently
-        'ema_short_golden_cross_buy_weight': 94,  # triggers infrequently
-        'macd_buy_weight': 98,  # triggers frequently
-        'rsi_buy_weight': 17,  # triggers infrequently
-        'sma_long_golden_cross_buy_weight': 29,  # triggers very infrequently
-        'sma_short_golden_cross_buy_weight': 10,  # triggers infrequently
-        'vwap_cross_buy_weight': 51,  # triggers infrequently
+            # Buy Signal Weight Influence Table
+            'adx_strong_up_buy_weight': 55,  # triggers moderately
+            'bollinger_bands_buy_weight': 97,  # triggers moderately
+            'ema_long_golden_cross_buy_weight': 65,  # triggers very infrequently
+            'ema_short_golden_cross_buy_weight': 39,  # triggers infrequently
+            'macd_buy_weight': 99,  # triggers frequently
+            'rsi_buy_weight': 8,  # triggers infrequently
+            'sma_long_golden_cross_buy_weight': 31,  # triggers very infrequently
+            'sma_short_golden_cross_buy_weight': 55,  # triggers infrequently
+            'vwap_cross_buy_weight': 39,  # triggers infrequently
 
-        # Sell Signal Weight Influence Table
-        'adx_strong_down_sell_weight': 4,  # triggers moderately
-        'bollinger_bands_sell_weight': 19,  # triggers moderately
-        'ema_long_death_cross_sell_weight': 34,  # triggers very infrequently
-        'ema_short_death_cross_sell_weight': 59,  # triggers very infrequently
-        'macd_sell_weight': 50,  # triggers frequently
-        'rsi_sell_weight': 5,  # triggers infrequently
-        'sma_long_death_cross_sell_weight': 62,  # triggers very infrequently
-        'sma_short_death_cross_sell_weight': 84,  # triggers very infrequently
-        'vwap_cross_sell_weight': 67  # triggers infrequently
+            # Sell Signal Weight Influence Table
+            'adx_strong_down_sell_weight': 2,  # triggers moderately
+            'bollinger_bands_sell_weight': 20,  # triggers moderately
+            'ema_long_death_cross_sell_weight': 54,  # triggers very infrequently
+            'ema_short_death_cross_sell_weight': 23,  # triggers very infrequently
+            'macd_sell_weight': 47,  # triggers frequently
+            'rsi_sell_weight': 23,  # triggers infrequently
+            'sma_long_death_cross_sell_weight': 79,  # triggers very infrequently
+            'sma_short_death_cross_sell_weight': 83,  # triggers very infrequently
+            'vwap_cross_sell_weight': 55  # triggers infrequently
+        },
+
+        # These Signal Weight Influence Tables will be allocated to signals when an upward trend is detected
+        'upwards': {
+            # Total Buy/Sell Signal Percentage needed for a signal to be positive
+            'total_buy_signal_needed': 64,
+            'total_sell_signal_needed': 80,
+
+            # Buy Signal Weight Influence Table
+            'adx_strong_up_buy_weight': 98,  # triggers moderately
+            'bollinger_bands_buy_weight': 6,  # triggers moderately
+            'ema_long_golden_cross_buy_weight': 73,  # triggers very infrequently
+            'ema_short_golden_cross_buy_weight': 76,  # triggers infrequently
+            'macd_buy_weight': 78,  # triggers frequently
+            'rsi_buy_weight': 69,  # triggers infrequently
+            'sma_long_golden_cross_buy_weight': 83,  # triggers very infrequently
+            'sma_short_golden_cross_buy_weight': 83,  # triggers infrequently
+            'vwap_cross_buy_weight': 7,  # triggers infrequently
+
+            # Sell Signal Weight Influence Table
+            'adx_strong_down_sell_weight': 43,  # triggers moderately
+            'bollinger_bands_sell_weight': 30,  # triggers moderately
+            'ema_long_death_cross_sell_weight': 11,  # triggers very infrequently
+            'ema_short_death_cross_sell_weight': 86,  # triggers very infrequently
+            'macd_sell_weight': 43,  # triggers frequently
+            'rsi_sell_weight': 68,  # triggers infrequently
+            'sma_long_death_cross_sell_weight': 36,  # triggers very infrequently
+            'sma_short_death_cross_sell_weight': 28,  # triggers very infrequently
+            'vwap_cross_sell_weight': 18  # triggers infrequently
+        }
     }
 
     # Strategy interface version - allow new iterations of the strategy interface.
@@ -127,21 +160,21 @@ class MoniGoManiHyperOpted(IStrategy):
     # Minimal ROI designed for the strategy.
     # This attribute will be overridden if the config file contains "minimal_roi".
     minimal_roi = {
-        "0": 0.49718,
-        "351": 0.17781,
-        "828": 0.06013,
-        "1604": 0
+        "0": 0.4918,
+        "290": 0.16377,
+        "810": 0.02349,
+        "1632": 0
     }
 
     # Optimal stoploss designed for the strategy.
     # This attribute will be overridden if the config file contains "stoploss".
-    stoploss = -0.02655
+    stoploss = -0.13639
 
-    # Trailing stop:
+    # Trailing stoploss
     trailing_stop = True
-    trailing_stop_positive = 0.01011
-    trailing_stop_positive_offset = 0.01131
-    trailing_only_offset_is_reached = True
+    trailing_stop_positive = 0.01025
+    trailing_stop_positive_offset = 0.01248
+    trailing_only_offset_is_reached = False
 
     # Optimal timeframe for the strategy.
     timeframe = '1h'
@@ -305,167 +338,215 @@ class MoniGoManiHyperOpted(IStrategy):
         :return: DataFrame with buy column
         """
 
-        # Detect if current trend going Upwards / Downwards / Sideways, strategy will respond accordingly
+        # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
+        dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
         dataframe.loc[dataframe['adx'] < 20, 'trend'] = 'sideways'
         dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
-        dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
 
         # If a Weighted Buy Signal goes off => Bullish Indication, Set to true (=1) and multiply by weight percentage
 
         if self.debuggable_weighted_signal_dataframe:
             # Weighted Buy Signal: ADX above 25 & +DI above -DI (The trend has strength while moving up)
-            dataframe.loc[(dataframe['adx'] > 25) & (dataframe['trend'] == 'upwards'),
-                          'adx_weighted_buy_signal'] = 1 * self.upward_trend['adx_strong_up_buy_weight']
-            dataframe.loc[(dataframe['adx'] > 25) & (dataframe['trend'] == 'downwards'),
-                          'adx_weighted_buy_signal'] = 1 * self.downward_trend['adx_strong_up_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & (dataframe['adx'] > 25),
+                          'adx_weighted_buy_signal'] = 1 * self.trend['downwards']['adx_strong_up_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & (dataframe['adx'] > 25),
+                          'adx_weighted_buy_signal'] = 1 * self.trend['sideways']['adx_strong_up_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['adx'] > 25),
+                          'adx_weighted_buy_signal'] = 1 * self.trend['upwards']['adx_strong_up_buy_weight']
             dataframe['total_buy_signal_strength'] += dataframe['adx_strong_up_weighted_buy_signal']
 
             # Weighted Buy Signal: RSI crosses above 30 (Under-bought / low-price and rising indication)
-            dataframe.loc[qtpylib.crossed_above(dataframe['rsi'], 30) & (dataframe['trend'] == 'upwards'),
-                          'rsi_weighted_buy_signal'] = 1 * self.upward_trend['rsi_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['rsi'], 30) & (dataframe['trend'] == 'downwards'),
-                          'rsi_weighted_buy_signal'] = 1 * self.downward_trend['rsi_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['rsi'], 30),
+                          'rsi_weighted_buy_signal'] = 1 * self.trend['downwards']['rsi_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['rsi'], 30),
+                          'rsi_weighted_buy_signal'] = 1 * self.trend['sideways']['rsi_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['rsi'], 30),
+                          'rsi_weighted_buy_signal'] = 1 * self.trend['upwards']['rsi_buy_weight']
             dataframe['total_buy_signal_strength'] += dataframe['rsi_weighted_buy_signal']
 
             # Weighted Buy Signal: MACD above Signal
-            dataframe.loc[(dataframe['macd'] > dataframe['macdsignal']) & (dataframe['trend'] == 'upwards'),
-                          'macd_weighted_buy_signal'] = 1 * self.upward_trend['macd_buy_weight']
-            dataframe.loc[(dataframe['macd'] > dataframe['macdsignal']) & (dataframe['trend'] == 'downwards'),
-                          'macd_weighted_buy_signal'] = 1 * self.downward_trend['macd_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & (dataframe['macd'] > dataframe['macdsignal']),
+                          'macd_weighted_buy_signal'] = 1 * self.trend['downwards']['macd_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & (dataframe['macd'] > dataframe['macdsignal']),
+                          'macd_weighted_buy_signal'] = 1 * self.trend['sideways']['macd_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['macd'] > dataframe['macdsignal']),
+                          'macd_weighted_buy_signal'] = 1 * self.trend['upwards']['macd_buy_weight']
             dataframe['total_buy_signal_strength'] += dataframe['macd_weighted_buy_signal']
 
             # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
-            dataframe.loc[qtpylib.crossed_above(dataframe['sma9'], dataframe['sma50']) &
-                          (dataframe['trend'] == 'upwards'), 'sma_short_golden_cross_weighted_buy_signal'] = \
-                1 * self.upward_trend['sma_short_golden_cross_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['sma9'], dataframe['sma50']) &
-                          (dataframe['trend'] == 'downwards'), 'sma_short_golden_cross_weighted_buy_signal'] = \
-                1 * self.downward_trend['sma_short_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['sma9'], dataframe[
+                'sma50']), 'sma_short_golden_cross_weighted_buy_signal'] = 1 * self.trend['downwards'][
+                'sma_short_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['sma9'], dataframe[
+                'sma50']), 'sma_short_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['sideways']['sma_short_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['sma9'], dataframe[
+                'sma50']), 'sma_short_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['upwards']['sma_short_golden_cross_buy_weight']
             dataframe['total_buy_signal_strength'] += dataframe['sma_short_golden_cross_weighted_buy_signal']
 
             # Weighted Buy Signal: EMA short term Golden Cross (Short term EMA crosses above Medium term EMA)
-            dataframe.loc[qtpylib.crossed_above(dataframe['ema9'], dataframe['ema50']) &
-                          (dataframe['trend'] == 'upwards'), 'ema_short_golden_cross_weighted_buy_signal'] = \
-                1 * self.upward_trend['ema_short_golden_cross_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['ema9'], dataframe['ema50']) &
-                          (dataframe['trend'] == 'downwards'), 'ema_short_golden_cross_weighted_buy_signal'] = \
-                1 * self.downward_trend['ema_short_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['ema9'], dataframe[
+                'ema50']), 'ema_short_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['downwards']['ema_short_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['ema9'], dataframe[
+                'ema50']), 'ema_short_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['sideways']['ema_short_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['ema9'], dataframe[
+                'ema50']), 'ema_short_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['upwards']['ema_short_golden_cross_buy_weight']
             dataframe['total_buy_signal_strength'] += dataframe['ema_short_golden_cross_weighted_buy_signal']
 
             # Weighted Buy Signal: SMA long term Golden Cross (Medium term SMA crosses above Long term SMA)
-            dataframe.loc[qtpylib.crossed_above(dataframe['sma50'], dataframe['sma200']) &
-                          (dataframe['trend'] == 'upwards'), 'sma_long_golden_cross_weighted_buy_signal'] = \
-                1 * self.upward_trend['sma_long_golden_cross_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['sma50'], dataframe['sma200']) &
-                          (dataframe['trend'] == 'downwards'), 'sma_long_golden_cross_weighted_buy_signal'] = \
-                1 * self.downward_trend['sma_long_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['sma50'], dataframe[
+                'sma200']), 'sma_long_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['downwards']['sma_long_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['sma50'], dataframe[
+                'sma200']), 'sma_long_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['sideways']['sma_long_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['sma50'], dataframe[
+                'sma200']), 'sma_long_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['upwards']['sma_long_golden_cross_buy_weight']
             dataframe['total_buy_signal_strength'] += dataframe['sma_long_golden_cross_weighted_buy_signal']
 
             # Weighted Buy Signal: EMA long term Golden Cross (Medium term EMA crosses above Long term EMA)
-            dataframe.loc[qtpylib.crossed_above(dataframe['ema50'], dataframe['ema200']) &
-                          (dataframe['trend'] == 'upwards'), 'ema_long_golden_cross_weighted_buy_signal'] = \
-                1 * self.upward_trend['ema_long_golden_cross_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['ema50'], dataframe['ema200']) &
-                          (dataframe['trend'] == 'downwards'), 'ema_long_golden_cross_weighted_buy_signal'] = \
-                1 * self.downward_trend['ema_long_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['ema50'], dataframe[
+                'ema200']), 'ema_long_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['downwards']['ema_long_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['ema50'], dataframe[
+                'ema200']), 'ema_long_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['sideways']['ema_long_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['ema50'], dataframe[
+                'ema200']), 'ema_long_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['upwards']['ema_long_golden_cross_buy_weight']
             dataframe['total_buy_signal_strength'] += dataframe['ema_long_golden_cross_weighted_buy_signal']
 
             # Weighted Buy Signal: Re-Entering Lower Bollinger Band after downward breakout
             # (Candle closes below Upper Bollinger Band)
-            dataframe.loc[qtpylib.crossed_above(dataframe['close'], dataframe['bb_lowerband']) &
-                          (dataframe['trend'] == 'upwards'), 'bollinger_bands_weighted_buy_signal'] = \
-                1 * self.upward_trend['bollinger_bands_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['close'], dataframe['bb_lowerband']) &
-                          (dataframe['trend'] == 'downwards'), 'bollinger_bands_weighted_buy_signal'] = \
-                1 * self.downward_trend['bollinger_bands_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['close'], dataframe[
+                'bb_lowerband']), 'bollinger_bands_weighted_buy_signal'] = \
+                1 * self.trend['downwards']['bollinger_bands_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['close'], dataframe[
+                'bb_lowerband']), 'bollinger_bands_weighted_buy_signal'] = \
+                1 * self.trend['sideways']['bollinger_bands_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['close'], dataframe[
+                'bb_lowerband']), 'bollinger_bands_weighted_buy_signal'] = \
+                1 * self.trend['upwards']['bollinger_bands_buy_weight']
             dataframe['total_buy_signal_strength'] += dataframe['bollinger_bands_weighted_buy_signal']
 
             # Weighted Buy Signal: VWAP crosses above current price (Simultaneous rapid increase in volume and price)
-            dataframe.loc[qtpylib.crossed_above(dataframe['vwap'], dataframe['close']) &
-                          (dataframe['trend'] == 'upwards'), 'vwap_cross_weighted_buy_signal'] = \
-                1 * self.upward_trend['vwap_cross_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['vwap'], dataframe['close']) &
-                          (dataframe['trend'] == 'downwards'), 'vwap_cross_weighted_buy_signal'] = \
-                1 * self.downward_trend['vwap_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['vwap'], dataframe[
+                'close']), 'vwap_cross_weighted_buy_signal'] = 1 * self.trend['downwards']['vwap_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['vwap'], dataframe[
+                'close']), 'vwap_cross_weighted_buy_signal'] = 1 * self.trend['sideways']['vwap_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['vwap'], dataframe[
+                'close']), 'vwap_cross_weighted_buy_signal'] = 1 * self.trend['upwards']['vwap_cross_buy_weight']
             dataframe['total_buy_signal_strength'] += dataframe['vwap_cross_weighted_buy_signal']
 
         else:
             # Weighted Buy Signal: ADX above 25 & +DI above -DI (The trend has strength while moving up)
-            dataframe.loc[(dataframe['adx'] > 25) & (dataframe['trend'] == 'upwards'),
-                          'total_buy_signal_strength'] += 1 * self.upward_trend['adx_strong_up_buy_weight']
-            dataframe.loc[(dataframe['adx'] > 25) & (dataframe['trend'] == 'downwards'),
-                          'total_buy_signal_strength'] += 1 * self.downward_trend['adx_strong_up_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & (dataframe['adx'] > 25),
+                          'total_buy_signal_strength'] += 1 * self.trend['downwards']['adx_strong_up_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & (dataframe['adx'] > 25),
+                          'total_buy_signal_strength'] += 1 * self.trend['sideways']['adx_strong_up_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['adx'] > 25),
+                          'total_buy_signal_strength'] += 1 * self.trend['upwards']['adx_strong_up_buy_weight']
 
             # Weighted Buy Signal: RSI crosses above 30 (Under-bought / low-price and rising indication)
-            dataframe.loc[qtpylib.crossed_above(dataframe['rsi'], 30) & (dataframe['trend'] == 'upwards'),
-                          'total_buy_signal_strength'] += 1 * self.upward_trend['rsi_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['rsi'], 30) & (dataframe['trend'] == 'downwards'),
-                          'total_buy_signal_strength'] += 1 * self.downward_trend['rsi_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['rsi'], 30),
+                          'total_buy_signal_strength'] += 1 * self.trend['downwards']['rsi_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['rsi'], 30),
+                          'total_buy_signal_strength'] += 1 * self.trend['sideways']['rsi_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['rsi'], 30),
+                          'total_buy_signal_strength'] += 1 * self.trend['upwards']['rsi_buy_weight']
 
             # Weighted Buy Signal: MACD above Signal
-            dataframe.loc[(dataframe['macd'] > dataframe['macdsignal']) & (dataframe['trend'] == 'upwards'),
-                          'total_buy_signal_strength'] += 1 * self.upward_trend['macd_buy_weight']
-            dataframe.loc[(dataframe['macd'] > dataframe['macdsignal']) & (dataframe['trend'] == 'downwards'),
-                          'total_buy_signal_strength'] += 1 * self.downward_trend['macd_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & (dataframe['macd'] > dataframe['macdsignal']),
+                          'total_buy_signal_strength'] += 1 * self.trend['downwards']['macd_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & (dataframe['macd'] > dataframe['macdsignal']),
+                          'total_buy_signal_strength'] += 1 * self.trend['sideways']['macd_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['macd'] > dataframe['macdsignal']),
+                          'total_buy_signal_strength'] += 1 * self.trend['upwards']['macd_buy_weight']
 
             # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
-            dataframe.loc[qtpylib.crossed_above(dataframe['sma9'], dataframe['sma50']) &
-                          (dataframe['trend'] == 'upwards'), 'total_buy_signal_strength'] += \
-                1 * self.upward_trend['sma_short_golden_cross_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['sma9'], dataframe['sma50']) &
-                          (dataframe['trend'] == 'downwards'), 'total_buy_signal_strength'] += \
-                1 * self.downward_trend['sma_short_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['sma9'], dataframe[
+                'sma50']), 'total_buy_signal_strength'] += 1 * self.trend['downwards'][
+                'sma_short_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['sma9'], dataframe[
+                'sma50']), 'total_buy_signal_strength'] += 1 * self.trend['sideways'][
+                'sma_short_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['sma9'], dataframe[
+                'sma50']), 'total_buy_signal_strength'] += 1 * self.trend['upwards'][
+                'sma_short_golden_cross_buy_weight']
 
             # Weighted Buy Signal: EMA short term Golden Cross (Short term EMA crosses above Medium term EMA)
-            dataframe.loc[qtpylib.crossed_above(dataframe['ema9'], dataframe['ema50']) &
-                          (dataframe['trend'] == 'upwards'), 'total_buy_signal_strength'] += \
-                1 * self.upward_trend['ema_short_golden_cross_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['ema9'], dataframe['ema50']) &
-                          (dataframe['trend'] == 'downwards'), 'total_buy_signal_strength'] += \
-                1 * self.downward_trend['ema_short_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['ema9'], dataframe[
+                'ema50']), 'total_buy_signal_strength'] += 1 * self.trend['downwards'][
+                'ema_short_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['ema9'], dataframe[
+                'ema50']), 'total_buy_signal_strength'] += 1 * self.trend['sideways'][
+                'ema_short_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['ema9'], dataframe[
+                'ema50']), 'total_buy_signal_strength'] += 1 * self.trend['upwards'][
+                'ema_short_golden_cross_buy_weight']
 
             # Weighted Buy Signal: SMA long term Golden Cross (Medium term SMA crosses above Long term SMA)
-            dataframe.loc[qtpylib.crossed_above(dataframe['sma50'], dataframe['sma200']) &
-                          (dataframe['trend'] == 'upwards'), 'total_buy_signal_strength'] += \
-                1 * self.upward_trend['sma_long_golden_cross_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['sma50'], dataframe['sma200']) &
-                          (dataframe['trend'] == 'downwards'), 'total_buy_signal_strength'] += \
-                1 * self.downward_trend['sma_long_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['sma50'], dataframe[
+                'sma200']), 'total_buy_signal_strength'] += 1 * self.trend['downwards'][
+                'sma_long_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['sma50'], dataframe[
+                'sma200']), 'total_buy_signal_strength'] += 1 * self.trend['sideways'][
+                'sma_long_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['sma50'], dataframe[
+                'sma200']), 'total_buy_signal_strength'] += 1 * self.trend['upwards'][
+                'sma_long_golden_cross_buy_weight']
 
             # Weighted Buy Signal: EMA long term Golden Cross (Medium term EMA crosses above Long term EMA)
-            dataframe.loc[qtpylib.crossed_above(dataframe['ema50'], dataframe['ema200']) &
-                          (dataframe['trend'] == 'upwards'), 'total_buy_signal_strength'] += \
-                1 * self.upward_trend['ema_long_golden_cross_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['ema50'], dataframe['ema200']) &
-                          (dataframe['trend'] == 'downwards'), 'total_buy_signal_strength'] += \
-                1 * self.downward_trend['ema_long_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['ema50'], dataframe[
+                'ema200']), 'total_buy_signal_strength'] += 1 * self.trend['downwards'][
+                'ema_long_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['ema50'], dataframe[
+                'ema200']), 'total_buy_signal_strength'] += 1 * self.trend['sideways'][
+                'ema_long_golden_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['ema50'], dataframe[
+                'ema200']), 'total_buy_signal_strength'] += 1 * self.trend['upwards'][
+                'ema_long_golden_cross_buy_weight']
 
             # Weighted Buy Signal: Re-Entering Lower Bollinger Band after downward breakout
             # (Candle closes below Upper Bollinger Band)
-            dataframe.loc[qtpylib.crossed_above(dataframe['close'], dataframe['bb_lowerband']) &
-                          (dataframe['trend'] == 'upwards'), 'total_buy_signal_strength'] += \
-                1 * self.upward_trend['bollinger_bands_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['close'], dataframe['bb_lowerband']) &
-                          (dataframe['trend'] == 'downwards'), 'total_buy_signal_strength'] += \
-                1 * self.downward_trend['bollinger_bands_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['close'], dataframe[
+                'bb_lowerband']), 'total_buy_signal_strength'] += 1 * self.trend['downwards'][
+                'bollinger_bands_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['close'], dataframe[
+                'bb_lowerband']), 'total_buy_signal_strength'] += 1 * self.trend['sideways'][
+                'bollinger_bands_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['close'], dataframe[
+                'bb_lowerband']), 'total_buy_signal_strength'] += 1 * self.trend['upwards'][
+                'bollinger_bands_buy_weight']
 
             # Weighted Buy Signal: VWAP crosses above current price (Simultaneous rapid increase in volume and price)
-            dataframe.loc[qtpylib.crossed_above(dataframe['vwap'], dataframe['close']) &
-                          (dataframe['trend'] == 'upwards'), 'total_buy_signal_strength'] += \
-                1 * self.upward_trend['vwap_cross_buy_weight']
-            dataframe.loc[qtpylib.crossed_above(dataframe['vwap'], dataframe['close']) &
-                          (dataframe['trend'] == 'downwards'), 'total_buy_signal_strength'] += \
-                1 * self.downward_trend['vwap_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['vwap'], dataframe[
+                'close']), 'total_buy_signal_strength'] += 1 * self.trend['downwards']['vwap_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['vwap'], dataframe[
+                'close']), 'total_buy_signal_strength'] += 1 * self.trend['sideways']['vwap_cross_buy_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_above(dataframe['vwap'], dataframe[
+                'close']), 'total_buy_signal_strength'] += 1 * self.trend['upwards']['vwap_cross_buy_weight']
 
-        # Check if buy signal should be sent
-        dataframe.loc[(dataframe['total_buy_signal_strength'] >= self.upward_trend['total_buy_signal_needed']) &
-                      (dataframe['trend'] == 'upwards'), 'buy'] = 1
-        dataframe.loc[(dataframe['total_buy_signal_strength'] >= self.downward_trend['total_buy_signal_needed']) &
-                      (dataframe['trend'] == 'downwards'), 'buy'] = 1
+        # Check if buy signal should be sent depending on the current trend
+        dataframe.loc[(dataframe['trend'] == 'downwards') &
+                      (dataframe['total_buy_signal_strength'] >= self.trend['downwards']['total_buy_signal_needed']),
+                      'buy'] = 1
+        dataframe.loc[(dataframe['trend'] == 'sideways') &
+                      (dataframe['total_buy_signal_strength'] >= self.trend['sideways']['total_buy_signal_needed']),
+                      'buy'] = 1
+        dataframe.loc[(dataframe['trend'] == 'upwards') &
+                      (dataframe['total_buy_signal_strength'] >= self.trend['upwards']['total_buy_signal_needed']),
+                      'buy'] = 1
 
-        # Override Buy Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see if
-        # sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or down!
-        dataframe.loc[dataframe['trend'] == 'sideways', 'buy'] = 0
+        if not self.trade_when_sideways:
+            # Override Buy Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see if
+            # sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or down!
+            dataframe.loc[dataframe['trend'] == 'sideways', 'buy'] = 0
 
         return dataframe
 
@@ -477,166 +558,214 @@ class MoniGoManiHyperOpted(IStrategy):
         :return: DataFrame with buy column
         """
 
-        # Detect if current trend going Upwards / Downwards / Sideways, strategy will respond accordingly
+        # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
+        dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
         dataframe.loc[dataframe['adx'] < 20, 'trend'] = 'sideways'
         dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
-        dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
 
         # If a Weighted Sell Signal goes off => Bearish Indication, Set to true (=1) and multiply by weight percentage
 
         if self.debuggable_weighted_signal_dataframe:
             # Weighted Sell Signal: ADX above 25 & +DI below -DI (The trend has strength while moving down)
-            dataframe.loc[(dataframe['adx'] > 25) & (dataframe['trend'] == 'upwards'),
-                          'adx_weighted_sell_signal'] = 1 * self.upward_trend['adx_strong_down_sell_weight']
-            dataframe.loc[(dataframe['adx'] > 25) & (dataframe['trend'] == 'downwards'),
-                          'adx_weighted_sell_signal'] = 1 * self.downward_trend['adx_strong_down_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & (dataframe['adx'] > 25),
+                          'adx_weighted_sell_signal'] = 1 * self.trend['downwards']['adx_strong_down_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & (dataframe['adx'] > 25),
+                          'adx_weighted_sell_signal'] = 1 * self.trend['sideways']['adx_strong_down_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['adx'] > 25),
+                          'adx_weighted_sell_signal'] = 1 * self.trend['upwards']['adx_strong_down_sell_weight']
             dataframe['total_sell_signal_strength'] += dataframe['adx_strong_down_weighted_sell_signal']
 
             # Weighted Sell Signal: RSI crosses below 70 (Over-bought / high-price and dropping indication)
-            dataframe.loc[qtpylib.crossed_below(dataframe['rsi'], 70) & (dataframe['trend'] == 'upwards'),
-                          'rsi_weighted_sell_signal'] = 1 * self.upward_trend['rsi_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['rsi'], 70) & (dataframe['trend'] == 'downwards'),
-                          'rsi_weighted_sell_signal'] = 1 * self.downward_trend['rsi_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['rsi'], 70),
+                          'rsi_weighted_sell_signal'] = 1 * self.trend['downwards']['rsi_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['rsi'], 70),
+                          'rsi_weighted_sell_signal'] = 1 * self.trend['sideways']['rsi_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['rsi'], 70),
+                          'rsi_weighted_sell_signal'] = 1 * self.trend['upwards']['rsi_sell_weight']
             dataframe['total_sell_signal_strength'] += dataframe['rsi_weighted_sell_signal']
 
             # Weighted Sell Signal: MACD below Signal
-            dataframe.loc[(dataframe['macd'] < dataframe['macdsignal']) & (dataframe['trend'] == 'upwards'),
-                          'macd_weighted_sell_signal'] = 1 * self.upward_trend['macd_sell_weight']
-            dataframe.loc[(dataframe['macd'] < dataframe['macdsignal']) & (dataframe['trend'] == 'downwards'),
-                          'macd_weighted_sell_signal'] = 1 * self.downward_trend['macd_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & (dataframe['macd'] < dataframe['macdsignal']),
+                          'macd_weighted_sell_signal'] = 1 * self.trend['downwards']['macd_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & (dataframe['macd'] < dataframe['macdsignal']),
+                          'macd_weighted_sell_signal'] = 1 * self.trend['sideways']['macd_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['macd'] < dataframe['macdsignal']),
+                          'macd_weighted_sell_signal'] = 1 * self.trend['upwards']['macd_sell_weight']
             dataframe['total_sell_signal_strength'] += dataframe['macd_weighted_sell_signal']
 
             # Weighted Sell Signal: SMA short term Death Cross (Short term SMA crosses below Medium term SMA)
-            dataframe.loc[qtpylib.crossed_below(dataframe['sma9'], dataframe['sma50']) &
-                          (dataframe['trend'] == 'upwards'), 'sma_short_death_cross_weighted_sell_signal'] = \
-                1 * self.upward_trend['sma_short_death_cross_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['sma9'], dataframe['sma50']) &
-                          (dataframe['trend'] == 'downwards'), 'sma_short_death_cross_weighted_sell_signal'] = \
-                1 * self.downward_trend['sma_short_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['sma9'], dataframe[
+                'sma50']), 'sma_short_death_cross_weighted_sell_signal'] = \
+                1 * self.trend['downwards']['sma_short_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['sma9'], dataframe[
+                'sma50']), 'sma_short_death_cross_weighted_sell_signal'] = \
+                1 * self.trend['sideways']['sma_short_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['sma9'], dataframe[
+                'sma50']), 'sma_short_death_cross_weighted_sell_signal'] = \
+                1 * self.trend['upwards']['sma_short_death_cross_sell_weight']
             dataframe['total_sell_signal_strength'] += dataframe['sma_short_death_cross_weighted_sell_signal']
 
             # Weighted Sell Signal: EMA short term Death Cross (Short term EMA crosses below Medium term EMA)
-            dataframe.loc[qtpylib.crossed_below(dataframe['ema9'], dataframe['ema50']) &
-                          (dataframe['trend'] == 'upwards'), 'ema_short_death_cross_weighted_sell_signal'] = \
-                1 * self.upward_trend['ema_short_death_cross_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['ema9'], dataframe['ema50']) &
-                          (dataframe['trend'] == 'downwards'), 'ema_short_death_cross_weighted_sell_signal'] = \
-                1 * self.downward_trend['ema_short_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['ema9'], dataframe[
+                'ema50']), 'ema_short_death_cross_weighted_sell_signal'] = \
+                1 * self.trend['downwards']['ema_short_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['ema9'], dataframe[
+                'ema50']), 'ema_short_death_cross_weighted_sell_signal'] = \
+                1 * self.trend['sideways']['ema_short_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['ema9'], dataframe[
+                'ema50']), 'ema_short_death_cross_weighted_sell_signal'] = \
+                1 * self.trend['upwards']['ema_short_death_cross_sell_weight']
             dataframe['total_sell_signal_strength'] += dataframe['ema_short_death_cross_weighted_sell_signal']
 
             # Weighted Sell Signal: SMA long term Death Cross (Medium term SMA crosses below Long term SMA)
-            dataframe.loc[qtpylib.crossed_below(dataframe['sma50'], dataframe['sma200']) &
-                          (dataframe['trend'] == 'upwards'), 'sma_long_death_cross_weighted_sell_signal'] = \
-                1 * self.upward_trend['sma_long_death_cross_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['sma50'], dataframe['sma200']) &
-                          (dataframe['trend'] == 'downwards'), 'sma_long_death_cross_weighted_sell_signal'] = \
-                1 * self.downward_trend['sma_long_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['sma50'], dataframe[
+                'sma200']), 'sma_long_death_cross_weighted_sell_signal'] = \
+                1 * self.trend['downwards']['sma_long_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['sma50'], dataframe[
+                'sma200']), 'sma_long_death_cross_weighted_sell_signal'] = \
+                1 * self.trend['sideways']['sma_long_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['sma50'], dataframe[
+                'sma200']), 'sma_long_death_cross_weighted_sell_signal'] = \
+                1 * self.trend['upwards']['sma_long_death_cross_sell_weight']
             dataframe['total_sell_signal_strength'] += dataframe['sma_long_death_cross_weighted_sell_signal']
 
             # Weighted Sell Signal: EMA long term Death Cross (Medium term EMA crosses below Long term EMA)
-            dataframe.loc[qtpylib.crossed_below(dataframe['ema50'], dataframe['ema200']) &
-                          (dataframe['trend'] == 'upwards'), 'ema_long_death_cross_weighted_sell_signal'] = \
-                1 * self.upward_trend['ema_long_death_cross_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['ema50'], dataframe['ema200']) &
-                          (dataframe['trend'] == 'downwards'), 'ema_long_death_cross_weighted_sell_signal'] = \
-                1 * self.downward_trend['ema_long_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['ema50'], dataframe[
+                'ema200']), 'ema_long_death_cross_weighted_sell_signal'] = \
+                1 * self.trend['downwards']['ema_long_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['ema50'], dataframe[
+                'ema200']), 'ema_long_death_cross_weighted_sell_signal'] = \
+                1 * self.trend['sideways']['ema_long_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['ema50'], dataframe[
+                'ema200']), 'ema_long_death_cross_weighted_sell_signal'] = \
+                1 * self.trend['upwards']['ema_long_death_cross_sell_weight']
             dataframe['total_sell_signal_strength'] += dataframe['ema_long_death_cross_weighted_sell_signal']
 
             # Weighted Sell Signal: Re-Entering Upper Bollinger Band after upward breakout
             # (Candle closes below Upper Bollinger Band)
-            dataframe.loc[qtpylib.crossed_below(dataframe['close'], dataframe['bb_upperband']) &
-                          (dataframe['trend'] == 'upwards'), 'bollinger_bands_weighted_sell_signal'] = \
-                1 * self.upward_trend['bollinger_bands_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['close'], dataframe['bb_upperband']) &
-                          (dataframe['trend'] == 'downwards'), 'bollinger_bands_weighted_sell_signal'] = \
-                1 * self.downward_trend['bollinger_bands_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['close'], dataframe[
+                'bb_upperband']), 'bollinger_bands_weighted_sell_signal'] = \
+                1 * self.trend['downwards']['bollinger_bands_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['close'], dataframe[
+                'bb_upperband']), 'bollinger_bands_weighted_sell_signal'] = \
+                1 * self.trend['sideways']['bollinger_bands_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['close'], dataframe[
+                'bb_upperband']), 'bollinger_bands_weighted_sell_signal'] = \
+                1 * self.trend['upwards']['bollinger_bands_sell_weight']
             dataframe['total_sell_signal_strength'] += dataframe['bollinger_bands_weighted_sell_signal']
 
             # Weighted Sell Signal: VWAP crosses below current price
-            dataframe.loc[qtpylib.crossed_below(dataframe['vwap'], dataframe['close']) &
-                          (dataframe['trend'] == 'upwards'), 'vwap_cross_weighted_sell_signal'] = \
-                1 * self.upward_trend['vwap_cross_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['vwap'], dataframe['close']) &
-                          (dataframe['trend'] == 'downwards'), 'vwap_cross_weighted_sell_signal'] = \
-                1 * self.downward_trend['vwap_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['vwap'], dataframe[
+                'close']), 'vwap_cross_weighted_sell_signal'] = 1 * self.trend['downwards']['vwap_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['vwap'], dataframe[
+                'close']), 'vwap_cross_weighted_sell_signal'] = 1 * self.trend['sideways']['vwap_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['vwap'], dataframe[
+                'close']), 'vwap_cross_weighted_sell_signal'] = 1 * self.trend['upwards']['vwap_cross_sell_weight']
             dataframe['total_sell_signal_strength'] += dataframe['vwap_cross_weighted_sell_signal']
 
         else:
             # Weighted Sell Signal: ADX above 25 & +DI below -DI (The trend has strength while moving down)
-            dataframe.loc[(dataframe['adx'] > 25) & (dataframe['trend'] == 'upwards'),
-                          'total_sell_signal_strength'] += 1 * self.upward_trend['adx_strong_down_sell_weight']
-            dataframe.loc[(dataframe['adx'] > 25) & (dataframe['trend'] == 'downwards'),
-                          'total_sell_signal_strength'] += 1 * self.downward_trend['adx_strong_down_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & (dataframe['adx'] > 25),
+                          'total_sell_signal_strength'] += 1 * self.trend['downwards']['adx_strong_down_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & (dataframe['adx'] > 25),
+                          'total_sell_signal_strength'] += 1 * self.trend['sideways']['adx_strong_down_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['adx'] > 25),
+                          'total_sell_signal_strength'] += 1 * self.trend['upwards']['adx_strong_down_sell_weight']
 
             # Weighted Sell Signal: RSI crosses below 70 (Over-bought / high-price and dropping indication)
-            dataframe.loc[qtpylib.crossed_below(dataframe['rsi'], 70) & (dataframe['trend'] == 'upwards'),
-                          'total_sell_signal_strength'] += 1 * self.upward_trend['rsi_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['rsi'], 70) & (dataframe['trend'] == 'downwards'),
-                          'total_sell_signal_strength'] += 1 * self.downward_trend['rsi_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['rsi'], 70),
+                          'total_sell_signal_strength'] += 1 * self.trend['downwards']['rsi_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['rsi'], 70),
+                          'total_sell_signal_strength'] += 1 * self.trend['sideways']['rsi_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['rsi'], 70),
+                          'total_sell_signal_strength'] += 1 * self.trend['upwards']['rsi_sell_weight']
 
             # Weighted Sell Signal: MACD below Signal
-            dataframe.loc[(dataframe['macd'] < dataframe['macdsignal']) & (dataframe['trend'] == 'upwards'),
-                          'total_sell_signal_strength'] += 1 * self.upward_trend['macd_sell_weight']
-            dataframe.loc[(dataframe['macd'] < dataframe['macdsignal']) & (dataframe['trend'] == 'downwards'),
-                          'total_sell_signal_strength'] += 1 * self.downward_trend['macd_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & (dataframe['macd'] < dataframe['macdsignal']),
+                          'total_sell_signal_strength'] += 1 * self.trend['downwards']['macd_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & (dataframe['macd'] < dataframe['macdsignal']),
+                          'total_sell_signal_strength'] += 1 * self.trend['sideways']['macd_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['macd'] < dataframe['macdsignal']),
+                          'total_sell_signal_strength'] += 1 * self.trend['upwards']['macd_sell_weight']
 
             # Weighted Sell Signal: SMA short term Death Cross (Short term SMA crosses below Medium term SMA)
-            dataframe.loc[qtpylib.crossed_below(dataframe['sma9'], dataframe['sma50']) &
-                          (dataframe['trend'] == 'upwards'), 'total_sell_signal_strength'] += \
-                1 * self.upward_trend['sma_short_death_cross_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['sma9'], dataframe['sma50']) &
-                          (dataframe['trend'] == 'downwards'), 'total_sell_signal_strength'] += \
-                1 * self.downward_trend['sma_short_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['sma9'], dataframe[
+                'sma50']), 'total_sell_signal_strength'] += 1 * self.trend['downwards'][
+                'sma_short_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['sma9'], dataframe[
+                'sma50']), 'total_sell_signal_strength'] += 1 * self.trend['sideways'][
+                'sma_short_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['sma9'], dataframe[
+                'sma50']), 'total_sell_signal_strength'] += 1 * self.trend['upwards'][
+                'sma_short_death_cross_sell_weight']
 
             # Weighted Sell Signal: EMA short term Death Cross (Short term EMA crosses below Medium term EMA)
-            dataframe.loc[qtpylib.crossed_below(dataframe['ema9'], dataframe['ema50']) &
-                          (dataframe['trend'] == 'upwards'), 'total_sell_signal_strength'] += \
-                1 * self.upward_trend['ema_short_death_cross_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['ema9'], dataframe['ema50']) &
-                          (dataframe['trend'] == 'downwards'), 'total_sell_signal_strength'] += \
-                1 * self.downward_trend['ema_short_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['ema9'], dataframe[
+                'ema50']), 'total_sell_signal_strength'] += 1 * self.trend['downwards'][
+                'ema_short_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['ema9'], dataframe[
+                'ema50']), 'total_sell_signal_strength'] += 1 * self.trend['sideways'][
+                'ema_short_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['ema9'], dataframe[
+                'ema50']), 'total_sell_signal_strength'] += 1 * self.trend['upwards'][
+                'ema_short_death_cross_sell_weight']
 
             # Weighted Sell Signal: SMA long term Death Cross (Medium term SMA crosses below Long term SMA)
-            dataframe.loc[qtpylib.crossed_below(dataframe['sma50'], dataframe['sma200']) &
-                          (dataframe['trend'] == 'upwards'), 'total_sell_signal_strength'] += \
-                1 * self.upward_trend['sma_long_death_cross_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['sma50'], dataframe['sma200']) &
-                          (dataframe['trend'] == 'downwards'), 'total_sell_signal_strength'] += \
-                1 * self.downward_trend['sma_long_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['sma50'], dataframe[
+                'sma200']), 'total_sell_signal_strength'] += 1 * self.trend['downwards'][
+                'sma_long_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['sma50'], dataframe[
+                'sma200']), 'total_sell_signal_strength'] += 1 * self.trend['sideways'][
+                'sma_long_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['sma50'], dataframe[
+                'sma200']), 'total_sell_signal_strength'] += 1 * self.trend['upwards'][
+                'sma_long_death_cross_sell_weight']
 
             # Weighted Sell Signal: EMA long term Death Cross (Medium term EMA crosses below Long term EMA)
-            dataframe.loc[qtpylib.crossed_below(dataframe['ema50'], dataframe['ema200']) &
-                          (dataframe['trend'] == 'upwards'), 'total_sell_signal_strength'] += \
-                1 * self.upward_trend['ema_long_death_cross_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['ema50'], dataframe['ema200']) &
-                          (dataframe['trend'] == 'downwards'), 'total_sell_signal_strength'] += \
-                1 * self.downward_trend['ema_long_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['ema50'], dataframe[
+                'ema200']), 'total_sell_signal_strength'] += 1 * self.trend['downwards'][
+                'ema_long_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['ema50'], dataframe[
+                'ema200']), 'total_sell_signal_strength'] += 1 * self.trend['sideways'][
+                'ema_long_death_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['ema50'], dataframe[
+                'ema200']), 'total_sell_signal_strength'] += 1 * self.trend['upwards'][
+                'ema_long_death_cross_sell_weight']
 
             # Weighted Sell Signal: Re-Entering Upper Bollinger Band after upward breakout
             # (Candle closes below Upper Bollinger Band)
-            dataframe.loc[qtpylib.crossed_below(dataframe['close'], dataframe['bb_upperband']) &
-                          (dataframe['trend'] == 'upwards'), 'total_sell_signal_strength'] += \
-                1 * self.upward_trend['bollinger_bands_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['close'], dataframe['bb_upperband']) &
-                          (dataframe['trend'] == 'downwards'), 'total_sell_signal_strength'] += \
-                1 * self.downward_trend['bollinger_bands_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['close'], dataframe[
+                'bb_upperband']), 'total_sell_signal_strength'] += \
+                1 * self.trend['downwards']['bollinger_bands_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['close'], dataframe[
+                'bb_upperband']), 'total_sell_signal_strength'] += \
+                1 * self.trend['sideways']['bollinger_bands_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['close'], dataframe[
+                'bb_upperband']), 'total_sell_signal_strength'] += \
+                1 * self.trend['upwards']['bollinger_bands_sell_weight']
 
             # Weighted Sell Signal: VWAP crosses below current price
-            dataframe.loc[qtpylib.crossed_below(dataframe['vwap'], dataframe['close']) &
-                          (dataframe['trend'] == 'upwards'), 'total_sell_signal_strength'] += \
-                1 * self.upward_trend['vwap_cross_sell_weight']
-            dataframe.loc[qtpylib.crossed_below(dataframe['vwap'], dataframe['close']) &
-                          (dataframe['trend'] == 'downwards'), 'total_sell_signal_strength'] += \
-                1 * self.downward_trend['vwap_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_below(dataframe['vwap'], dataframe[
+                'close']), 'total_sell_signal_strength'] += 1 * self.trend['downwards']['vwap_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_below(dataframe['vwap'], dataframe[
+                'close']), 'total_sell_signal_strength'] += 1 * self.trend['sideways']['vwap_cross_sell_weight']
+            dataframe.loc[(dataframe['trend'] == 'upwards') & qtpylib.crossed_below(dataframe['vwap'], dataframe[
+                'close']), 'total_sell_signal_strength'] += 1 * self.trend['upwards']['vwap_cross_sell_weight']
 
-        # Check if sell signal should be sent
-        dataframe.loc[(dataframe['total_sell_signal_strength'] >= self.upward_trend['total_sell_signal_needed']) &
-                      (dataframe['trend'] == 'upwards'), 'sell'] = 1
-        dataframe.loc[(dataframe['total_sell_signal_strength'] >= self.downward_trend['total_sell_signal_needed']) &
-                      (dataframe['trend'] == 'downwards'), 'sell'] = 1
+        # Check if sell signal should be sent depending on the current trend
+        dataframe.loc[(dataframe['trend'] == 'downwards') &
+                      (dataframe['total_sell_signal_strength'] >= self.trend['downwards']['total_sell_signal_needed']),
+                      'sell'] = 1
+        dataframe.loc[(dataframe['trend'] == 'sideways') &
+                      (dataframe['total_sell_signal_strength'] >= self.trend['sideways']['total_sell_signal_needed']),
+                      'sell'] = 1
+        dataframe.loc[(dataframe['trend'] == 'upwards') &
+                      (dataframe['total_sell_signal_strength'] >= self.trend['upwards']['total_sell_signal_needed']),
+                      'sell'] = 1
 
-        # Override Sell Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see if
-        # sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or down!
-        dataframe.loc[dataframe['trend'] == 'sideways', 'sell'] = 0
+        if not self.trade_when_sideways:
+            # Override Sell Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see if
+            # sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or down!
+            dataframe.loc[dataframe['trend'] == 'sideways', 'sell'] = 0
 
         return dataframe
