@@ -44,6 +44,16 @@
   - VWAP Cross
 - Main/Sub Plot Configurations for all indicators used (Handy for FreqUI but requires Docker `freqtrade:develop_plot` & `technical` dependencies)
 
+### Go-To Commands:
+For HyperOpting:
+```bash
+freqtrade hyperopt --config ./user_data/config.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all --hyperopt MoniGoManiHyperOpt --strategy MoniGoMani -e 1000 --timerange 20210101-20210316
+```
+For BackTesting:
+```bash
+freqtrade backtesting --strategy MoniGoManiHyperOpted --config ./user_data/config.json --timerange 20210101-20210316
+```
+
 ### **Changelog / Backtest Results**:
 *(Testing rough 2 week -4.83% market time period, default coin pairs, 75% Total Buy, 25% Total Sell)*
 - v0.0.1 (20-03-2021 - Weight Table, RSI)  -15% profit...
