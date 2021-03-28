@@ -64,3 +64,8 @@
 - Let HyperOpt Decide if Sideways trading should be enabled for Buys/Sells
 - Other/Better indicators?
 - Refactor to be compliant for Auto-HyperOptable Strategies: https://github.com/freqtrade/freqtrade/pull/4596
+
+### Got Test Results / Ideas / Config Improvements?
+- Feel free to join **CryptoStonksShallRise** on Discord there you can follow/participate in the official channels:
+  - `#moni-go-mani-updates`: https://discord.gg/fXQKCZyp
+  - `#moni-go-mani-testing`: https://discord.gg/bSWngsAM
