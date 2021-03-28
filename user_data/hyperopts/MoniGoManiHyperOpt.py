@@ -14,14 +14,12 @@ from skopt.space import Categorical, Dimension, Integer, Real  # noqa
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 from freqtrade.optimize.hyperopt_interface import IHyperOpt
 
-# Trade when Sideways trends are detected (Risky, but doing nothing isn't good either)
-trade_when_sideways = True
 
 class MoniGoManiHyperOpt(IHyperOpt):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                  MoniGoManiHyperOpt for v0.6.2 by Rikj000                    ###
+    ###                  MoniGoManiHyperOpt for v0.6.3 by Rikj000                    ###
     ####                                                                            ####
     ####################################################################################
 
@@ -47,6 +45,8 @@ class MoniGoManiHyperOpt(IHyperOpt):
         Define your Hyperopt space for searching buy strategy parameters.
         """
         return [
+            # Trade when Sideways trends are detected (Risky, but doing nothing isn't good either)
+            Categorical([True, False], name='_trade_buys_when_sideways'),
             # Downwards Trend
             # ------------
             # Total Buy Signal Percentage needed for a signal to be positive
@@ -207,7 +207,7 @@ class MoniGoManiHyperOpt(IHyperOpt):
             dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['total_buy_signal_strength'] >= params[
                 '_upwards_trend_total_buy_signal_needed']), 'buy'] = 1
 
-            if not trade_when_sideways:
+            if not params['_trade_buys_when_sideways']:
                 # Override Buy Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see
                 # if sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or
                 # down!
@@ -223,6 +223,8 @@ class MoniGoManiHyperOpt(IHyperOpt):
         Define your Hyperopt space for searching sell strategy parameters.
         """
         return [
+            # Trade when Sideways trends are detected (Risky, but doing nothing isn't good either)
+            Categorical([True, False], name='_trade_sells_when_sideways'),
             # Downwards Trend
             # ------------
             # Total Buy Signal Percentage needed for a signal to be positive
@@ -379,7 +381,7 @@ class MoniGoManiHyperOpt(IHyperOpt):
             dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['total_sell_signal_strength'] >= params[
                 '_upwards_trend_total_sell_signal_needed']), 'sell'] = 1
 
-            if not trade_when_sideways:
+            if not params['_trade_sells_when_sideways']:
                 # Override Sell Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see
                 # if sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or
                 # down!

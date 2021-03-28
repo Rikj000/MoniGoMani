@@ -19,7 +19,7 @@ class MoniGoMani(IStrategy):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.6.2 by Rikj000                         ###
+    ###                         MoniGoMani v0.6.3 by Rikj000                         ###
     ##                          ----------------------------                          ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -55,9 +55,6 @@ class MoniGoMani(IStrategy):
 
     # If enabled all Weighted Signal results will be added to the dataframe for easy debugging
     debuggable_weighted_signal_dataframe = True
-
-    # Trade when Sideways trends are detected (Risky, but doing nothing isn't good either)
-    trade_when_sideways = True
 
     # Trend Detecting Buy/Sell Signal Weight Influence Tables
     # -------------------------------------------------------
@@ -96,6 +93,10 @@ class MoniGoMani(IStrategy):
         },
 
         'sideways': {
+            # React to Buy/Sell Signals when Sideways trends are detected (Risky, but doing nothing isn't good either)
+            'trade_buys_when_sideways': False,
+            'trade_sells_when_sideways': False,
+
             # Total Buy/Sell Signal Percentage needed for a signal to be positive
             'total_buy_signal_needed': 60,
             'total_sell_signal_needed': 24,
@@ -544,7 +545,7 @@ class MoniGoMani(IStrategy):
                       (dataframe['total_buy_signal_strength'] >= self.trend['upwards']['total_buy_signal_needed']),
                       'buy'] = 1
 
-        if not self.trade_when_sideways:
+        if not self.trend['sideways']['trade_buys_when_sideways']:
             # Override Buy Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see if
             # sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or down!
             dataframe.loc[dataframe['trend'] == 'sideways', 'buy'] = 0
@@ -764,7 +765,7 @@ class MoniGoMani(IStrategy):
                       (dataframe['total_sell_signal_strength'] >= self.trend['upwards']['total_sell_signal_needed']),
                       'sell'] = 1
 
-        if not self.trade_when_sideways:
+        if not self.trend['sideways']['trade_sells_when_sideways']:
             # Override Sell Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see if
             # sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or down!
             dataframe.loc[dataframe['trend'] == 'sideways', 'sell'] = 0
