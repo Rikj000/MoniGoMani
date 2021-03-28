@@ -54,7 +54,7 @@ class MoniGoMani(IStrategy):
     """
 
     # If enabled all Weighted Signal results will be added to the dataframe for easy debugging
-    debuggable_weighted_signal_dataframe = False
+    debuggable_weighted_signal_dataframe = True
 
     # Trend Detecting Buy/Sell Signal Weight Influence Tables
     # -------------------------------------------------------
