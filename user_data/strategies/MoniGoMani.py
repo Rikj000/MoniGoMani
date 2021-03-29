@@ -19,7 +19,7 @@ class MoniGoMani(IStrategy):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.6.3 by Rikj000                         ###
+    ###                         MoniGoMani v0.6.4 by Rikj000                         ###
     ##                          ----------------------------                          ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -54,7 +54,7 @@ class MoniGoMani(IStrategy):
     """
 
     # If enabled all Weighted Signal results will be added to the dataframe for easy debugging
-    debuggable_weighted_signal_dataframe = True
+    debuggable_weighted_signal_dataframe = False
 
     # Trend Detecting Buy/Sell Signal Weight Influence Tables
     # -------------------------------------------------------
@@ -65,6 +65,9 @@ class MoniGoMani(IStrategy):
 
     trend = {
         'downwards': {
+            # React to Buy/Sell Signals when Downwards trends are detected (False = Disable trading in downwards trends)
+            'trade_buys_when_downwards': True,
+            'trade_sells_when_downwards': True,
             # Total Buy/Sell Signal Percentage needed for a signal to be positive
             'total_buy_signal_needed': 60,
             'total_sell_signal_needed': 23,
@@ -126,6 +129,9 @@ class MoniGoMani(IStrategy):
 
         # These Signal Weight Influence Tables will be allocated to signals when an upward trend is detected
         'upwards': {
+            # React to Buy/Sell Signals when Upwards trends are detected (False = Disable trading in upwards trends)
+            'trade_buys_when_upwards': True,
+            'trade_sells_when_upwards': True,
             # Total Buy/Sell Signal Percentage needed for a signal to be positive
             'total_buy_signal_needed': 60,
             'total_sell_signal_needed': 25,
@@ -350,11 +356,11 @@ class MoniGoMani(IStrategy):
         if self.debuggable_weighted_signal_dataframe:
             # Weighted Buy Signal: ADX above 25 & +DI above -DI (The trend has strength while moving up)
             dataframe.loc[(dataframe['trend'] == 'downwards') & (dataframe['adx'] > 25),
-                          'adx_weighted_buy_signal'] = 1 * self.trend['downwards']['adx_strong_up_buy_weight']
+                          'adx_strong_up_weighted_buy_signal'] = 1 * self.trend['downwards']['adx_strong_up_buy_weight']
             dataframe.loc[(dataframe['trend'] == 'sideways') & (dataframe['adx'] > 25),
-                          'adx_weighted_buy_signal'] = 1 * self.trend['sideways']['adx_strong_up_buy_weight']
+                          'adx_strong_up_weighted_buy_signal'] = 1 * self.trend['sideways']['adx_strong_up_buy_weight']
             dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['adx'] > 25),
-                          'adx_weighted_buy_signal'] = 1 * self.trend['upwards']['adx_strong_up_buy_weight']
+                          'adx_strong_up_weighted_buy_signal'] = 1 * self.trend['upwards']['adx_strong_up_buy_weight']
             dataframe['total_buy_signal_strength'] += dataframe['adx_strong_up_weighted_buy_signal']
 
             # Weighted Buy Signal: RSI crosses above 30 (Under-bought / low-price and rising indication)
@@ -377,8 +383,8 @@ class MoniGoMani(IStrategy):
 
             # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
             dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['sma9'], dataframe[
-                'sma50']), 'sma_short_golden_cross_weighted_buy_signal'] = 1 * self.trend['downwards'][
-                'sma_short_golden_cross_buy_weight']
+                'sma50']), 'sma_short_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['downwards']['sma_short_golden_cross_buy_weight']
             dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['sma9'], dataframe[
                 'sma50']), 'sma_short_golden_cross_weighted_buy_signal'] = \
                 1 * self.trend['sideways']['sma_short_golden_cross_buy_weight']
@@ -545,10 +551,13 @@ class MoniGoMani(IStrategy):
                       (dataframe['total_buy_signal_strength'] >= self.trend['upwards']['total_buy_signal_needed']),
                       'buy'] = 1
 
+        # Override Buy Signal: When configured buy signals can be completely turned off for each kind of trend
+        if not self.trend['downwards']['trade_buys_when_downwards']:
+            dataframe.loc[dataframe['trend'] == 'downwards', 'buy'] = 0
         if not self.trend['sideways']['trade_buys_when_sideways']:
-            # Override Buy Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see if
-            # sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or down!
             dataframe.loc[dataframe['trend'] == 'sideways', 'buy'] = 0
+        if not self.trend['upwards']['trade_buys_when_upwards']:
+            dataframe.loc[dataframe['trend'] == 'upwards', 'buy'] = 0
 
         return dataframe
 
@@ -570,11 +579,14 @@ class MoniGoMani(IStrategy):
         if self.debuggable_weighted_signal_dataframe:
             # Weighted Sell Signal: ADX above 25 & +DI below -DI (The trend has strength while moving down)
             dataframe.loc[(dataframe['trend'] == 'downwards') & (dataframe['adx'] > 25),
-                          'adx_weighted_sell_signal'] = 1 * self.trend['downwards']['adx_strong_down_sell_weight']
+                          'adx_strong_down_weighted_sell_signal'] = \
+                1 * self.trend['downwards']['adx_strong_down_sell_weight']
             dataframe.loc[(dataframe['trend'] == 'sideways') & (dataframe['adx'] > 25),
-                          'adx_weighted_sell_signal'] = 1 * self.trend['sideways']['adx_strong_down_sell_weight']
+                          'adx_strong_down_weighted_sell_signal'] = \
+                1 * self.trend['sideways']['adx_strong_down_sell_weight']
             dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['adx'] > 25),
-                          'adx_weighted_sell_signal'] = 1 * self.trend['upwards']['adx_strong_down_sell_weight']
+                          'adx_strong_down_weighted_sell_signal'] = \
+                1 * self.trend['upwards']['adx_strong_down_sell_weight']
             dataframe['total_sell_signal_strength'] += dataframe['adx_strong_down_weighted_sell_signal']
 
             # Weighted Sell Signal: RSI crosses below 70 (Over-bought / high-price and dropping indication)
@@ -765,9 +777,12 @@ class MoniGoMani(IStrategy):
                       (dataframe['total_sell_signal_strength'] >= self.trend['upwards']['total_sell_signal_needed']),
                       'sell'] = 1
 
+        # Override Sell Signal: When configured sell signals can be completely turned off for each kind of trend
+        if not self.trend['downwards']['trade_sells_when_downwards']:
+            dataframe.loc[dataframe['trend'] == 'downwards', 'sell'] = 0
         if not self.trend['sideways']['trade_sells_when_sideways']:
-            # Override Sell Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see if
-            # sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or down!
             dataframe.loc[dataframe['trend'] == 'sideways', 'sell'] = 0
+        if not self.trend['upwards']['trade_sells_when_upwards']:
+            dataframe.loc[dataframe['trend'] == 'upwards', 'sell'] = 0
 
         return dataframe

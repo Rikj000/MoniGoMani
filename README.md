@@ -82,3 +82,7 @@ freqtrade backtesting --strategy MoniGoManiHyperOpted --config ./user_data/confi
 - Feel free to join **CryptoStonksShallRise** on Discord there you can follow/participate in the official channels:
   - `#moni-go-mani-updates`: https://discord.gg/fXQKCZyp
   - `#moni-go-mani-testing`: https://discord.gg/bSWngsAM
+
+### **Freqtrade**:   
+The Bot that makes this strategy possible: https://github.com/freqtrade/freqtrade   
+Big thank you to xmatthias and everyone who helped on it!

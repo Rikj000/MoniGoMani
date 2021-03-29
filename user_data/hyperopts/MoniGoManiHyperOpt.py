@@ -19,7 +19,7 @@ class MoniGoManiHyperOpt(IHyperOpt):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                  MoniGoManiHyperOpt for v0.6.3 by Rikj000                    ###
+    ###                  MoniGoManiHyperOpt for v0.6.4 by Rikj000                    ###
     ####                                                                            ####
     ####################################################################################
 
@@ -45,8 +45,10 @@ class MoniGoManiHyperOpt(IHyperOpt):
         Define your Hyperopt space for searching buy strategy parameters.
         """
         return [
-            # Trade when Sideways trends are detected (Risky, but doing nothing isn't good either)
-            Categorical([True, False], name='_trade_buys_when_sideways'),
+            # Decide on which kinds of trends the bot should trade or hold
+            Categorical([True, False], name='.trade_buys_when_downwards'),
+            Categorical([True, False], name='.trade_buys_when_sideways'),
+            Categorical([True, False], name='.trade_buys_when_upwards'),
             # Downwards Trend
             # ------------
             # Total Buy Signal Percentage needed for a signal to be positive
@@ -207,11 +209,13 @@ class MoniGoManiHyperOpt(IHyperOpt):
             dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['total_buy_signal_strength'] >= params[
                 '_upwards_trend_total_buy_signal_needed']), 'buy'] = 1
 
-            if not params['_trade_buys_when_sideways']:
-                # Override Buy Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see
-                # if sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or
-                # down!
+            # Override Buy Signal: When configured buy signals can be completely turned off for each kind of trend
+            if not params['.trade_buys_when_downwards']:
+                dataframe.loc[dataframe['trend'] == 'downwards', 'buy'] = 0
+            if not params['.trade_buys_when_sideways']:
                 dataframe.loc[dataframe['trend'] == 'sideways', 'buy'] = 0
+            if not params['.trade_buys_when_upwards']:
+                dataframe.loc[dataframe['trend'] == 'upwards', 'buy'] = 0
 
             return dataframe
 
@@ -223,8 +227,10 @@ class MoniGoManiHyperOpt(IHyperOpt):
         Define your Hyperopt space for searching sell strategy parameters.
         """
         return [
-            # Trade when Sideways trends are detected (Risky, but doing nothing isn't good either)
-            Categorical([True, False], name='_trade_sells_when_sideways'),
+            # Decide on which kinds of trends the bot should trade or hold
+            Categorical([True, False], name='.trade_sells_when_downwards'),
+            Categorical([True, False], name='.trade_sells_when_sideways'),
+            Categorical([True, False], name='.trade_sells_when_upwards'),
             # Downwards Trend
             # ------------
             # Total Buy Signal Percentage needed for a signal to be positive
@@ -381,11 +387,13 @@ class MoniGoManiHyperOpt(IHyperOpt):
             dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['total_sell_signal_strength'] >= params[
                 '_upwards_trend_total_sell_signal_needed']), 'sell'] = 1
 
-            if not params['_trade_sells_when_sideways']:
-                # Override Sell Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see
-                # if sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or
-                # down!
+            # Override Sell Signal: When configured sell signals can be completely turned off for each kind of trend
+            if not params['.trade_sells_when_downwards']:
+                dataframe.loc[dataframe['trend'] == 'downwards', 'sell'] = 0
+            if not params['.trade_sells_when_sideways']:
                 dataframe.loc[dataframe['trend'] == 'sideways', 'sell'] = 0
+            if not params['.trade_sells_when_upwards']:
+                dataframe.loc[dataframe['trend'] == 'upwards', 'sell'] = 0
 
             return dataframe
 
