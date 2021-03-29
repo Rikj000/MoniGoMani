@@ -19,7 +19,7 @@ class MoniGoManiHyperOpted(IStrategy):
     """
     ####################################################################################
     ####                                                                            ####
-    ###            MoniGoMani v0.6.3 HyperOpted by Rikj000 (28-03-2021)              ###
+    ###            MoniGoMani v0.6.4 HyperOpted by Rikj000 (29-03-2021)              ###
     ##             ----------------------------------------------------               ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -65,92 +65,98 @@ class MoniGoManiHyperOpted(IStrategy):
 
     trend = {
         'downwards': {
+            # React to Buy/Sell Signals when Downwards trends are detected (False = Disable trading in downwards trends)
+            'trade_buys_when_downwards': True,
+            'trade_sells_when_downwards': False,
             # Total Buy/Sell Signal Percentage needed for a signal to be positive
-            'total_buy_signal_needed': 80,
-            'total_sell_signal_needed': 57,
+            'total_buy_signal_needed': 5,
+            'total_sell_signal_needed': 93,
 
             # Buy Signal Weight Influence Table
-            'adx_strong_up_buy_weight': 17,  # triggers moderately
-            'bollinger_bands_buy_weight': 8,  # triggers moderately
-            'ema_long_golden_cross_buy_weight': 59,  # triggers very infrequently
-            'ema_short_golden_cross_buy_weight': 79,  # triggers infrequently
-            'macd_buy_weight': 7,  # triggers frequently
-            'rsi_buy_weight': 12,  # triggers infrequently
-            'sma_long_golden_cross_buy_weight': 98,  # triggers very infrequently
-            'sma_short_golden_cross_buy_weight': 40,  # triggers infrequently
-            'vwap_cross_buy_weight': 47,  # triggers infrequently
+            'adx_strong_up_buy_weight': 86,  # triggers moderately
+            'bollinger_bands_buy_weight': 97,  # triggers moderately
+            'ema_long_golden_cross_buy_weight': 35,  # triggers very infrequently
+            'ema_short_golden_cross_buy_weight': 21,  # triggers infrequently
+            'macd_buy_weight': 34,  # triggers frequently
+            'rsi_buy_weight': 72,  # triggers infrequently
+            'sma_long_golden_cross_buy_weight': 7,  # triggers very infrequently
+            'sma_short_golden_cross_buy_weight': 100,  # triggers infrequently
+            'vwap_cross_buy_weight': 83,  # triggers infrequently
 
             # Sell Signal Weight Influence Table
-            'adx_strong_down_sell_weight': 6,  # triggers moderately
-            'bollinger_bands_sell_weight': 81,  # triggers moderately
-            'ema_long_death_cross_sell_weight': 67,  # triggers very infrequently
-            'ema_short_death_cross_sell_weight': 44,  # triggers very infrequently
+            'adx_strong_down_sell_weight': 60,  # triggers moderately
+            'bollinger_bands_sell_weight': 5,  # triggers moderately
+            'ema_long_death_cross_sell_weight': 59,  # triggers very infrequently
+            'ema_short_death_cross_sell_weight': 54,  # triggers very infrequently
             'macd_sell_weight': 35,  # triggers frequently
-            'rsi_sell_weight': 57,  # triggers infrequently
-            'sma_long_death_cross_sell_weight': 88,  # triggers very infrequently
-            'sma_short_death_cross_sell_weight': 63,  # triggers very infrequently
-            'vwap_cross_sell_weight': 17  # triggers infrequently
+            'rsi_sell_weight': 11,  # triggers infrequently
+            'sma_long_death_cross_sell_weight': 69,  # triggers very infrequently
+            'sma_short_death_cross_sell_weight': 93,  # triggers very infrequently
+            'vwap_cross_sell_weight': 77  # triggers infrequently
         },
 
         'sideways': {
             # React to Buy/Sell Signals when Sideways trends are detected (Risky, but doing nothing isn't good either)
-            'trade_buys_when_sideways': False,
-            'trade_sells_when_sideways': False,
+            'trade_buys_when_sideways': True,
+            'trade_sells_when_sideways': True,
 
             # Total Buy/Sell Signal Percentage needed for a signal to be positive
-            'total_buy_signal_needed': 1,
-            'total_sell_signal_needed': 84,
+            'total_buy_signal_needed': 21,
+            'total_sell_signal_needed': 70,
 
             # Buy Signal Weight Influence Table
-            'adx_strong_up_buy_weight': 70,  # triggers moderately
-            'bollinger_bands_buy_weight': 39,  # triggers moderately
-            'ema_long_golden_cross_buy_weight': 6,  # triggers very infrequently
-            'ema_short_golden_cross_buy_weight': 84,  # triggers infrequently
-            'macd_buy_weight': 87,  # triggers frequently
-            'rsi_buy_weight': 29,  # triggers infrequently
-            'sma_long_golden_cross_buy_weight': 52,  # triggers very infrequently
-            'sma_short_golden_cross_buy_weight': 37,  # triggers infrequently
-            'vwap_cross_buy_weight': 87,  # triggers infrequently
+            'adx_strong_up_buy_weight': 84,  # triggers moderately
+            'bollinger_bands_buy_weight': 27,  # triggers moderately
+            'ema_long_golden_cross_buy_weight': 49,  # triggers very infrequently
+            'ema_short_golden_cross_buy_weight': 82,  # triggers infrequently
+            'macd_buy_weight': 0,  # triggers frequently
+            'rsi_buy_weight': 49,  # triggers infrequently
+            'sma_long_golden_cross_buy_weight': 12,  # triggers very infrequently
+            'sma_short_golden_cross_buy_weight': 21,  # triggers infrequently
+            'vwap_cross_buy_weight': 97,  # triggers infrequently
 
             # Sell Signal Weight Influence Table
-            'adx_strong_down_sell_weight': 5,  # triggers moderately
+            'adx_strong_down_sell_weight': 26,  # triggers moderately
             'bollinger_bands_sell_weight': 86,  # triggers moderately
-            'ema_long_death_cross_sell_weight': 96,  # triggers very infrequently
-            'ema_short_death_cross_sell_weight': 46,  # triggers very infrequently
-            'macd_sell_weight': 83,  # triggers frequently
-            'rsi_sell_weight': 5,  # triggers infrequently
-            'sma_long_death_cross_sell_weight': 81,  # triggers very infrequently
-            'sma_short_death_cross_sell_weight': 73,  # triggers very infrequently
-            'vwap_cross_sell_weight': 44  # triggers infrequently
+            'ema_long_death_cross_sell_weight': 0,  # triggers very infrequently
+            'ema_short_death_cross_sell_weight': 49,  # triggers very infrequently
+            'macd_sell_weight': 84,  # triggers frequently
+            'rsi_sell_weight': 3,  # triggers infrequently
+            'sma_long_death_cross_sell_weight': 43,  # triggers very infrequently
+            'sma_short_death_cross_sell_weight': 10,  # triggers very infrequently
+            'vwap_cross_sell_weight': 69  # triggers infrequently
         },
 
         # These Signal Weight Influence Tables will be allocated to signals when an upward trend is detected
         'upwards': {
+            # React to Buy/Sell Signals when Upwards trends are detected (False = Disable trading in upwards trends)
+            'trade_buys_when_upwards': True,
+            'trade_sells_when_upwards': False,
             # Total Buy/Sell Signal Percentage needed for a signal to be positive
-            'total_buy_signal_needed': 94,
-            'total_sell_signal_needed': 47,
+            'total_buy_signal_needed': 60,
+            'total_sell_signal_needed': 25,
 
             # Buy Signal Weight Influence Table
-            'adx_strong_up_buy_weight': 82,  # triggers moderately
-            'bollinger_bands_buy_weight': 96,  # triggers moderately
-            'ema_long_golden_cross_buy_weight': 89,  # triggers very infrequently
-            'ema_short_golden_cross_buy_weight': 16,  # triggers infrequently
-            'macd_buy_weight': 97,  # triggers frequently
-            'rsi_buy_weight': 57,  # triggers infrequently
-            'sma_long_golden_cross_buy_weight': 95,  # triggers very infrequently
-            'sma_short_golden_cross_buy_weight': 75,  # triggers infrequently
-            'vwap_cross_buy_weight': 81,  # triggers infrequently
+            'adx_strong_up_buy_weight': 52,  # triggers moderately
+            'bollinger_bands_buy_weight': 15,  # triggers moderately
+            'ema_long_golden_cross_buy_weight': 11,  # triggers very infrequently
+            'ema_short_golden_cross_buy_weight': 23,  # triggers infrequently
+            'macd_buy_weight': 93,  # triggers frequently
+            'rsi_buy_weight': 21,  # triggers infrequently
+            'sma_long_golden_cross_buy_weight': 27,  # triggers very infrequently
+            'sma_short_golden_cross_buy_weight': 95,  # triggers infrequently
+            'vwap_cross_buy_weight': 50,  # triggers infrequently
 
             # Sell Signal Weight Influence Table
-            'adx_strong_down_sell_weight': 5,  # triggers moderately
-            'bollinger_bands_sell_weight': 41,  # triggers moderately
-            'ema_long_death_cross_sell_weight': 31,  # triggers very infrequently
-            'ema_short_death_cross_sell_weight': 1,  # triggers very infrequently
-            'macd_sell_weight': 80,  # triggers frequently
-            'rsi_sell_weight': 66,  # triggers infrequently
-            'sma_long_death_cross_sell_weight': 83,  # triggers very infrequently
-            'sma_short_death_cross_sell_weight': 14,  # triggers very infrequently
-            'vwap_cross_sell_weight': 11  # triggers infrequently
+            'adx_strong_down_sell_weight': 69,  # triggers moderately
+            'bollinger_bands_sell_weight': 8,  # triggers moderately
+            'ema_long_death_cross_sell_weight': 28,  # triggers very infrequently
+            'ema_short_death_cross_sell_weight': 68,  # triggers very infrequently
+            'macd_sell_weight': 3,  # triggers frequently
+            'rsi_sell_weight': 89,  # triggers infrequently
+            'sma_long_death_cross_sell_weight': 33,  # triggers very infrequently
+            'sma_short_death_cross_sell_weight': 87,  # triggers very infrequently
+            'vwap_cross_sell_weight': 51  # triggers infrequently
         }
     }
 
@@ -161,21 +167,21 @@ class MoniGoManiHyperOpted(IStrategy):
     # Minimal ROI designed for the strategy.
     # This attribute will be overridden if the config file contains "minimal_roi".
     minimal_roi = {
-        "0": 0.24358,
-        "462": 0.14754,
-        "675": 0.08536,
-        "1843": 0
+        "0": 0.29935,
+        "167": 0.10834,
+        "743": 0.047,
+        "1535": 0
     }
 
     # Optimal stoploss designed for the strategy.
     # This attribute will be overridden if the config file contains "stoploss".
-    stoploss = -0.27988
+    stoploss = -0.11009
 
     # Trailing stop:
     trailing_stop = True
-    trailing_stop_positive = 0.01
-    trailing_stop_positive_offset = 0.01126
-    trailing_only_offset_is_reached = False
+    trailing_stop_positive = 0.01063
+    trailing_stop_positive_offset = 0.01839
+    trailing_only_offset_is_reached = True
 
     # Optimal timeframe for the strategy.
     timeframe = '1h'
@@ -349,11 +355,11 @@ class MoniGoManiHyperOpted(IStrategy):
         if self.debuggable_weighted_signal_dataframe:
             # Weighted Buy Signal: ADX above 25 & +DI above -DI (The trend has strength while moving up)
             dataframe.loc[(dataframe['trend'] == 'downwards') & (dataframe['adx'] > 25),
-                          'adx_weighted_buy_signal'] = 1 * self.trend['downwards']['adx_strong_up_buy_weight']
+                          'adx_strong_up_weighted_buy_signal'] = 1 * self.trend['downwards']['adx_strong_up_buy_weight']
             dataframe.loc[(dataframe['trend'] == 'sideways') & (dataframe['adx'] > 25),
-                          'adx_weighted_buy_signal'] = 1 * self.trend['sideways']['adx_strong_up_buy_weight']
+                          'adx_strong_up_weighted_buy_signal'] = 1 * self.trend['sideways']['adx_strong_up_buy_weight']
             dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['adx'] > 25),
-                          'adx_weighted_buy_signal'] = 1 * self.trend['upwards']['adx_strong_up_buy_weight']
+                          'adx_strong_up_weighted_buy_signal'] = 1 * self.trend['upwards']['adx_strong_up_buy_weight']
             dataframe['total_buy_signal_strength'] += dataframe['adx_strong_up_weighted_buy_signal']
 
             # Weighted Buy Signal: RSI crosses above 30 (Under-bought / low-price and rising indication)
@@ -376,8 +382,8 @@ class MoniGoManiHyperOpted(IStrategy):
 
             # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
             dataframe.loc[(dataframe['trend'] == 'downwards') & qtpylib.crossed_above(dataframe['sma9'], dataframe[
-                'sma50']), 'sma_short_golden_cross_weighted_buy_signal'] = 1 * self.trend['downwards'][
-                'sma_short_golden_cross_buy_weight']
+                'sma50']), 'sma_short_golden_cross_weighted_buy_signal'] = \
+                1 * self.trend['downwards']['sma_short_golden_cross_buy_weight']
             dataframe.loc[(dataframe['trend'] == 'sideways') & qtpylib.crossed_above(dataframe['sma9'], dataframe[
                 'sma50']), 'sma_short_golden_cross_weighted_buy_signal'] = \
                 1 * self.trend['sideways']['sma_short_golden_cross_buy_weight']
@@ -544,10 +550,13 @@ class MoniGoManiHyperOpted(IStrategy):
                       (dataframe['total_buy_signal_strength'] >= self.trend['upwards']['total_buy_signal_needed']),
                       'buy'] = 1
 
+        # Override Buy Signal: When configured buy signals can be completely turned off for each kind of trend
+        if not self.trend['downwards']['trade_buys_when_downwards']:
+            dataframe.loc[dataframe['trend'] == 'downwards', 'buy'] = 0
         if not self.trend['sideways']['trade_buys_when_sideways']:
-            # Override Buy Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see if
-            # sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or down!
             dataframe.loc[dataframe['trend'] == 'sideways', 'buy'] = 0
+        if not self.trend['upwards']['trade_buys_when_upwards']:
+            dataframe.loc[dataframe['trend'] == 'upwards', 'buy'] = 0
 
         return dataframe
 
@@ -569,11 +578,14 @@ class MoniGoManiHyperOpted(IStrategy):
         if self.debuggable_weighted_signal_dataframe:
             # Weighted Sell Signal: ADX above 25 & +DI below -DI (The trend has strength while moving down)
             dataframe.loc[(dataframe['trend'] == 'downwards') & (dataframe['adx'] > 25),
-                          'adx_weighted_sell_signal'] = 1 * self.trend['downwards']['adx_strong_down_sell_weight']
+                          'adx_strong_down_weighted_sell_signal'] = \
+                1 * self.trend['downwards']['adx_strong_down_sell_weight']
             dataframe.loc[(dataframe['trend'] == 'sideways') & (dataframe['adx'] > 25),
-                          'adx_weighted_sell_signal'] = 1 * self.trend['sideways']['adx_strong_down_sell_weight']
+                          'adx_strong_down_weighted_sell_signal'] = \
+                1 * self.trend['sideways']['adx_strong_down_sell_weight']
             dataframe.loc[(dataframe['trend'] == 'upwards') & (dataframe['adx'] > 25),
-                          'adx_weighted_sell_signal'] = 1 * self.trend['upwards']['adx_strong_down_sell_weight']
+                          'adx_strong_down_weighted_sell_signal'] = \
+                1 * self.trend['upwards']['adx_strong_down_sell_weight']
             dataframe['total_sell_signal_strength'] += dataframe['adx_strong_down_weighted_sell_signal']
 
             # Weighted Sell Signal: RSI crosses below 70 (Over-bought / high-price and dropping indication)
@@ -764,9 +776,12 @@ class MoniGoManiHyperOpted(IStrategy):
                       (dataframe['total_sell_signal_strength'] >= self.trend['upwards']['total_sell_signal_needed']),
                       'sell'] = 1
 
+        # Override Sell Signal: When configured sell signals can be completely turned off for each kind of trend
+        if not self.trend['downwards']['trade_sells_when_downwards']:
+            dataframe.loc[dataframe['trend'] == 'downwards', 'sell'] = 0
         if not self.trend['sideways']['trade_sells_when_sideways']:
-            # Override Sell Signal: ADX below 20 (The trend is weak or trend-less, price consolidates, wait and see if
-            # sideways trend breakout will be upward/downward) Note: ADX on it's own has no indication of up or down!
             dataframe.loc[dataframe['trend'] == 'sideways', 'sell'] = 0
+        if not self.trend['upwards']['trade_sells_when_upwards']:
+            dataframe.loc[dataframe['trend'] == 'upwards', 'sell'] = 0
 
         return dataframe
