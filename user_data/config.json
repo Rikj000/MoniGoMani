@@ -75,12 +75,23 @@
     "pairlists": [{
         "method": "StaticPairList"
     }],
-    "_pairlists": [{
-        "method": "VolumePairList",
-        "number_assets": 50,
-        "sort_key": "quoteVolume",
-        "refresh_period": 300
-    }],
+    "_pairlists": [
+        {
+            "method": "VolumePairList",
+            "number_assets": 100,
+            "sort_key": "quoteVolume",
+            "refresh_period": 300
+        },
+        { 
+            "method": "PerformanceFilter"
+        },
+        {   
+            "method": "RangeStabilityFilter",
+            "lookback_days": 10, 
+            "min_rate_of_change": 0.01,
+            "refresh_period": 1440
+        }
+    ],
     "edge": {
         "enabled": false,
         "process_throttle_secs": 3600,
