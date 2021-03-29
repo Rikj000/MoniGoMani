@@ -1,7 +1,7 @@
 ```
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.6.3 by Rikj000                         ###
+    ###                         MoniGoMani v0.6.4 by Rikj000                         ###
     ##                          ----------------------------                          ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -27,10 +27,10 @@
 **WARNING: MoniGoMani should always be HyperOpted unless you really know what you are doing when manually allocating weights!**   
 **MoniGoManiHyperOpted already has a decent hyperopt applied to it!**   
 
-# **Current `MoniGoMani` status @ `v0.6.3`** with:
+# **Current `MoniGoMani` status @ `v0.6.4`** with:
 - Configurable & HyperOptable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends
 - Configurable & HyperOptable Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends
-- Turn On/Off Trading on Sideways trends (HyperOptable)
+- Turn On/Off Trading on Downwards/Sideways/Upwards trends for Buys/Sells (HyperOptable)
 - Turn On/Off Individual Weighted Signal DataFrame entries for easy debugging/better speed
 - Each Table has 9 Buy & 9 Sell signals implemented each Configurable & HyperOptable:
   - ADX + Strong Up/Strong Down
@@ -73,16 +73,18 @@ freqtrade backtesting --strategy MoniGoManiHyperOpted --config ./user_data/confi
 - v0.6.1 (28-03-2021 - Improved speed by reformatting a lot of & checks so more lazy evaluations will occur - Fixed .gitignore file)
 - v0.6.2 (28-03-2021 - Added setting to Enable/Disable Trading when trend goes sideways)
 - v0.6.3 (28-03-2021 - Enable/Disable Trading when Sideways made HyperOptable - Spoiler Alert, it should be False, for now...)
+- v0.6.4 (29-03-2021 - BugFixed Debuggable Dataframe + Added (HyperOptable) Settings to Enable/Disable Buys/Sells for Upwards/Downwards trends too)
 
 ### **Planned**:   
+- [Refactor to be compliant for Auto-HyperOptable Strategies](https://github.com/freqtrade/freqtrade/pull/4596)
+- [MultiThreaded Dataframe indicator checking](https://www.machinelearningplus.com/python/parallel-processing-python/)
 - Other/Better indicators?
-- Refactor to be compliant for Auto-HyperOptable Strategies: https://github.com/freqtrade/freqtrade/pull/4596
 
 ### Got Test Results / Ideas / Config Improvements?
-- Feel free to join **CryptoStonksShallRise** on Discord there you can follow/participate in the official channels:
-  - `#moni-go-mani-updates`: https://discord.gg/fXQKCZyp
-  - `#moni-go-mani-testing`: https://discord.gg/bSWngsAM
+- Feel free to join [**CryptoStonksShallRise**](https://discord.gg/qmmzzsxg) on Discord there you can follow/participate in the official channels:
+  - `#moni-go-mani-updates`
+  - `#moni-go-mani-testing`
 
 ### **Freqtrade**:   
 The Bot that makes this strategy possible: https://github.com/freqtrade/freqtrade   
-Big thank you to xmatthias and everyone who helped on it!
+Big thank you to **xmatthias** and everyone who helped on it!
