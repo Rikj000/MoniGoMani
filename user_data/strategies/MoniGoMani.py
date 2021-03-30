@@ -68,6 +68,7 @@ class MoniGoMani(IStrategy):
             # React to Buy/Sell Signals when Downwards trends are detected (False = Disable trading in downwards trends)
             'trade_buys_when_downwards': True,
             'trade_sells_when_downwards': True,
+
             # Total Buy/Sell Signal Percentage needed for a signal to be positive
             'total_buy_signal_needed': 60,
             'total_sell_signal_needed': 23,
@@ -132,6 +133,7 @@ class MoniGoMani(IStrategy):
             # React to Buy/Sell Signals when Upwards trends are detected (False = Disable trading in upwards trends)
             'trade_buys_when_upwards': True,
             'trade_sells_when_upwards': True,
+
             # Total Buy/Sell Signal Percentage needed for a signal to be positive
             'total_buy_signal_needed': 60,
             'total_sell_signal_needed': 25,

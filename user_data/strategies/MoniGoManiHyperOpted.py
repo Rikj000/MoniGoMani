@@ -56,13 +56,15 @@ class MoniGoManiHyperOpted(IStrategy):
     # If enabled all Weighted Signal results will be added to the dataframe for easy debugging
     debuggable_weighted_signal_dataframe = False
     
-    # Copy&Pastable Hyperopt buy/sell results
+    # Copy & Paste-able Hyperopt buy/sell results
     # Buy hyperspace params:
     buy_params = {
-        '_downwards_trend_total_buy_signal_needed': 90,
-        '_sideways_trend_total_buy_signal_needed': 53,
-        '_trade_buys_when_sideways': False,
-        '_upwards_trend_total_buy_signal_needed': 24,
+        '.trade_buys_when_downwards': True,
+        '.trade_buys_when_sideways': True,
+        '.trade_buys_when_upwards': True,
+        '_downwards_trend_total_buy_signal_needed': 5,
+        '_sideways_trend_total_buy_signal_needed': 21,
+        '_upwards_trend_total_buy_signal_needed': 71,
         'downwards_trend_adx_strong_up_buy_weight': 93,
         'downwards_trend_bollinger_bands_buy_weight': 36,
         'downwards_trend_ema_long_golden_cross_buy_weight': 93,
@@ -94,10 +96,12 @@ class MoniGoManiHyperOpted(IStrategy):
 
     # Sell hyperspace params:
     sell_params = {
-        '_downwards_trend_total_sell_signal_needed': 23,
-        '_sideways_trend_total_sell_signal_needed': 93,
-        '_trade_sells_when_sideways': True,
-        '_upwards_trend_total_sell_signal_needed': 47,
+        '.trade_sells_when_downwards': False,
+        '.trade_sells_when_sideways': True,
+        '.trade_sells_when_upwards': False,
+        '_downwards_trend_total_sell_signal_needed': 93,
+        '_sideways_trend_total_sell_signal_needed': 70,
+        '_upwards_trend_total_sell_signal_needed': 87,
         'downwards_trend_adx_strong_down_sell_weight': 58,
         'downwards_trend_bollinger_bands_sell_weight': 18,
         'downwards_trend_ema_long_death_cross_sell_weight': 0,
@@ -136,6 +140,10 @@ class MoniGoManiHyperOpted(IStrategy):
 
     trend = {
         'downwards': {
+            # React to Buy/Sell Signals when Downwards trends are detected (False = Disable trading in downwards trends)
+            'trade_buys_when_downwards': buy_params[".trade_buys_when_downwards"],
+            'trade_sells_when_downwards': sell_params[".trade_sells_when_downwards"],
+
             # Total Buy/Sell Signal Percentage needed for a signal to be positive
             'total_buy_signal_needed': buy_params["_downwards_trend_total_buy_signal_needed"],
             'total_sell_signal_needed': sell_params["_downwards_trend_total_sell_signal_needed"],
@@ -164,12 +172,13 @@ class MoniGoManiHyperOpted(IStrategy):
         },
 
         'sideways': {
+            # React to Buy/Sell Signals when Sideways trends are detected (Risky, but doing nothing isn't good either)
+            'trade_buys_when_sideways': buy_params[".trade_buys_when_sideways"],
+            'trade_sells_when_sideways': sell_params[".trade_sells_when_sideways"],
+
             # Total Buy/Sell Signal Percentage needed for a signal to be positive
             'total_buy_signal_needed': buy_params["_sideways_trend_total_buy_signal_needed"],
             'total_sell_signal_needed': sell_params["_sideways_trend_total_sell_signal_needed"],
-
-            'trade_buys_when_sideways': buy_params["_trade_buys_when_sideways"],
-            'trade_sells_when_sideways': sell_params["_trade_sells_when_sideways"],
 
             # Buy Signal Weight Influence Table
             'adx_strong_up_buy_weight': buy_params["sideways_trend_adx_strong_up_buy_weight"],  # triggers moderately
@@ -196,6 +205,10 @@ class MoniGoManiHyperOpted(IStrategy):
 
         # These Signal Weight Influence Tables will be allocated to signals when an upward trend is detected
         'upwards': {
+            # React to Buy/Sell Signals when Upwards trends are detected (False = Disable trading in upwards trends)
+            'trade_buys_when_upwards': buy_params[".trade_buys_when_upwards"],
+            'trade_sells_when_upwards': sell_params[".trade_sells_when_upwards"],
+
             # Total Buy/Sell Signal Percentage needed for a signal to be positive
             'total_buy_signal_needed': buy_params["_upwards_trend_total_buy_signal_needed"],
             'total_sell_signal_needed': sell_params["_upwards_trend_total_sell_signal_needed"],
