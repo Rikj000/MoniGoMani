@@ -19,7 +19,7 @@ class MoniGoManiHyperOpted(IStrategy):
     """
     ####################################################################################
     ####                                                                            ####
-    ###            MoniGoMani v0.6.4 HyperOpted by Rikj000 (29-03-2021)              ###
+    ###            MoniGoMani v0.7.0 HyperOpted by Rikj000 (30-03-2021)              ###
     ##             ----------------------------------------------------               ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -55,81 +55,6 @@ class MoniGoManiHyperOpted(IStrategy):
 
     # If enabled all Weighted Signal results will be added to the dataframe for easy debugging
     debuggable_weighted_signal_dataframe = False
-    
-    # Copy & Paste-able Hyperopt buy/sell results
-    # Buy hyperspace params:
-    buy_params = {
-        '.trade_buys_when_downwards': True,
-        '.trade_buys_when_sideways': True,
-        '.trade_buys_when_upwards': True,
-        '_downwards_trend_total_buy_signal_needed': 5,
-        '_sideways_trend_total_buy_signal_needed': 21,
-        '_upwards_trend_total_buy_signal_needed': 71,
-        'downwards_trend_adx_strong_up_buy_weight': 93,
-        'downwards_trend_bollinger_bands_buy_weight': 36,
-        'downwards_trend_ema_long_golden_cross_buy_weight': 93,
-        'downwards_trend_ema_short_golden_cross_buy_weight': 63,
-        'downwards_trend_macd_buy_weight': 7,
-        'downwards_trend_rsi_buy_weight': 72,
-        'downwards_trend_sma_long_golden_cross_buy_weight': 4,
-        'downwards_trend_sma_short_golden_cross_buy_weight': 60,
-        'downwards_trend_vwap_cross_buy_weight': 0,
-        'sideways_trend_adx_strong_up_buy_weight': 51,
-        'sideways_trend_bollinger_bands_buy_weight': 96,
-        'sideways_trend_ema_long_golden_cross_buy_weight': 36,
-        'sideways_trend_ema_short_golden_cross_buy_weight': 63,
-        'sideways_trend_macd_buy_weight': 54,
-        'sideways_trend_rsi_buy_weight': 10,
-        'sideways_trend_sma_long_golden_cross_buy_weight': 95,
-        'sideways_trend_sma_short_golden_cross_buy_weight': 97,
-        'sideways_trend_vwap_cross_buy_weight': 29,
-        'upwards_trend_adx_strong_up_buy_weight': 85,
-        'upwards_trend_bollinger_bands_buy_weight': 60,
-        'upwards_trend_ema_long_golden_cross_buy_weight': 73,
-        'upwards_trend_ema_short_golden_cross_buy_weight': 72,
-        'upwards_trend_macd_buy_weight': 41,
-        'upwards_trend_rsi_buy_weight': 99,
-        'upwards_trend_sma_long_golden_cross_buy_weight': 4,
-        'upwards_trend_sma_short_golden_cross_buy_weight': 91,
-        'upwards_trend_vwap_cross_buy_weight': 89
-    }
-
-    # Sell hyperspace params:
-    sell_params = {
-        '.trade_sells_when_downwards': False,
-        '.trade_sells_when_sideways': True,
-        '.trade_sells_when_upwards': False,
-        '_downwards_trend_total_sell_signal_needed': 93,
-        '_sideways_trend_total_sell_signal_needed': 70,
-        '_upwards_trend_total_sell_signal_needed': 87,
-        'downwards_trend_adx_strong_down_sell_weight': 58,
-        'downwards_trend_bollinger_bands_sell_weight': 18,
-        'downwards_trend_ema_long_death_cross_sell_weight': 0,
-        'downwards_trend_ema_short_death_cross_sell_weight': 29,
-        'downwards_trend_macd_sell_weight': 19,
-        'downwards_trend_rsi_sell_weight': 40,
-        'downwards_trend_sma_long_death_cross_sell_weight': 97,
-        'downwards_trend_sma_short_death_cross_sell_weight': 5,
-        'downwards_trend_vwap_cross_sell_weight': 100,
-        'sideways_trend_adx_strong_down_sell_weight': 38,
-        'sideways_trend_bollinger_bands_sell_weight': 36,
-        'sideways_trend_ema_long_death_cross_sell_weight': 63,
-        'sideways_trend_ema_short_death_cross_sell_weight': 46,
-        'sideways_trend_macd_sell_weight': 36,
-        'sideways_trend_rsi_sell_weight': 49,
-        'sideways_trend_sma_long_death_cross_sell_weight': 51,
-        'sideways_trend_sma_short_death_cross_sell_weight': 87,
-        'sideways_trend_vwap_cross_sell_weight': 58,
-        'upwards_trend_adx_strong_down_sell_weight': 32,
-        'upwards_trend_bollinger_bands_sell_weight': 45,
-        'upwards_trend_ema_long_death_cross_sell_weight': 12,
-        'upwards_trend_ema_short_death_cross_sell_weight': 56,
-        'upwards_trend_macd_sell_weight': 50,
-        'upwards_trend_rsi_sell_weight': 28,
-        'upwards_trend_sma_long_death_cross_sell_weight': 84,
-        'upwards_trend_sma_short_death_cross_sell_weight': 61,
-        'upwards_trend_vwap_cross_sell_weight': 16
-    }
 
     # Trend Detecting Buy/Sell Signal Weight Influence Tables
     # -------------------------------------------------------
@@ -138,6 +63,82 @@ class MoniGoManiHyperOpted(IStrategy):
     # turned into an override by setting them equal to or higher then total_buy_signal_needed)
     # These Signal Weight Influence Tables will be allocated to signals when their respective trend is detected
 
+    # Buy hyperspace params:
+    buy_params = {
+        '.trade_buys_when_downwards': False,
+        '.trade_buys_when_sideways': False,
+        '.trade_buys_when_upwards': True,
+        '_downwards_trend_total_buy_signal_needed': 76,
+        '_sideways_trend_total_buy_signal_needed': 8,
+        '_upwards_trend_total_buy_signal_needed': 2,
+        'downwards_trend_adx_strong_up_buy_weight': 81,
+        'downwards_trend_bollinger_bands_buy_weight': 66,
+        'downwards_trend_ema_long_golden_cross_buy_weight': 50,
+        'downwards_trend_ema_short_golden_cross_buy_weight': 51,
+        'downwards_trend_macd_buy_weight': 24,
+        'downwards_trend_rsi_buy_weight': 28,
+        'downwards_trend_sma_long_golden_cross_buy_weight': 1,
+        'downwards_trend_sma_short_golden_cross_buy_weight': 74,
+        'downwards_trend_vwap_cross_buy_weight': 73,
+        'sideways_trend_adx_strong_up_buy_weight': 7,
+        'sideways_trend_bollinger_bands_buy_weight': 68,
+        'sideways_trend_ema_long_golden_cross_buy_weight': 43,
+        'sideways_trend_ema_short_golden_cross_buy_weight': 16,
+        'sideways_trend_macd_buy_weight': 1,
+        'sideways_trend_rsi_buy_weight': 19,
+        'sideways_trend_sma_long_golden_cross_buy_weight': 4,
+        'sideways_trend_sma_short_golden_cross_buy_weight': 8,
+        'sideways_trend_vwap_cross_buy_weight': 28,
+        'upwards_trend_adx_strong_up_buy_weight': 73,
+        'upwards_trend_bollinger_bands_buy_weight': 39,
+        'upwards_trend_ema_long_golden_cross_buy_weight': 75,
+        'upwards_trend_ema_short_golden_cross_buy_weight': 65,
+        'upwards_trend_macd_buy_weight': 33,
+        'upwards_trend_rsi_buy_weight': 9,
+        'upwards_trend_sma_long_golden_cross_buy_weight': 50,
+        'upwards_trend_sma_short_golden_cross_buy_weight': 46,
+        'upwards_trend_vwap_cross_buy_weight': 33
+    }
+
+    # Sell hyperspace params:
+    sell_params = {
+        '.trade_sells_when_downwards': False,
+        '.trade_sells_when_sideways': False,
+        '.trade_sells_when_upwards': True,
+        '_downwards_trend_total_sell_signal_needed': 83,
+        '_sideways_trend_total_sell_signal_needed': 58,
+        '_upwards_trend_total_sell_signal_needed': 88,
+        'downwards_trend_adx_strong_down_sell_weight': 72,
+        'downwards_trend_bollinger_bands_sell_weight': 40,
+        'downwards_trend_ema_long_death_cross_sell_weight': 79,
+        'downwards_trend_ema_short_death_cross_sell_weight': 1,
+        'downwards_trend_macd_sell_weight': 57,
+        'downwards_trend_rsi_sell_weight': 22,
+        'downwards_trend_sma_long_death_cross_sell_weight': 60,
+        'downwards_trend_sma_short_death_cross_sell_weight': 84,
+        'downwards_trend_vwap_cross_sell_weight': 52,
+        'sideways_trend_adx_strong_down_sell_weight': 15,
+        'sideways_trend_bollinger_bands_sell_weight': 26,
+        'sideways_trend_ema_long_death_cross_sell_weight': 61,
+        'sideways_trend_ema_short_death_cross_sell_weight': 72,
+        'sideways_trend_macd_sell_weight': 89,
+        'sideways_trend_rsi_sell_weight': 69,
+        'sideways_trend_sma_long_death_cross_sell_weight': 86,
+        'sideways_trend_sma_short_death_cross_sell_weight': 23,
+        'sideways_trend_vwap_cross_sell_weight': 83,
+        'upwards_trend_adx_strong_down_sell_weight': 74,
+        'upwards_trend_bollinger_bands_sell_weight': 62,
+        'upwards_trend_ema_long_death_cross_sell_weight': 71,
+        'upwards_trend_ema_short_death_cross_sell_weight': 53,
+        'upwards_trend_macd_sell_weight': 54,
+        'upwards_trend_rsi_sell_weight': 72,
+        'upwards_trend_sma_long_death_cross_sell_weight': 81,
+        'upwards_trend_sma_short_death_cross_sell_weight': 61,
+        'upwards_trend_vwap_cross_sell_weight': 99
+    }
+
+    # Legacy parameters, no need to modify these by hand anymore, thanks @s0undt3ch!
+    # Now you can easily copy/paste the results from hyperopt in the 2 arrays above
     trend = {
         'downwards': {
             # React to Buy/Sell Signals when Downwards trends are detected (False = Disable trading in downwards trends)
@@ -149,26 +150,26 @@ class MoniGoManiHyperOpted(IStrategy):
             'total_sell_signal_needed': sell_params["_downwards_trend_total_sell_signal_needed"],
 
             # Buy Signal Weight Influence Table
-            'adx_strong_up_buy_weight': buy_params["downwards_trend_adx_strong_up_buy_weight"],  # triggers moderately
-            'bollinger_bands_buy_weight': buy_params["downwards_trend_bollinger_bands_buy_weight"],  # triggers moderately
-            'ema_long_golden_cross_buy_weight': buy_params["downwards_trend_ema_long_golden_cross_buy_weight"],  # triggers very infrequently
-            'ema_short_golden_cross_buy_weight': buy_params["downwards_trend_ema_short_golden_cross_buy_weight"],  # triggers infrequently
-            'macd_buy_weight': buy_params["downwards_trend_macd_buy_weight"],  # triggers frequently
-            'rsi_buy_weight': buy_params["downwards_trend_rsi_buy_weight"],  # triggers infrequently
-            'sma_long_golden_cross_buy_weight': buy_params["downwards_trend_sma_long_golden_cross_buy_weight"],  # triggers very infrequently
-            'sma_short_golden_cross_buy_weight': buy_params["downwards_trend_sma_short_golden_cross_buy_weight"],  # triggers infrequently
-            'vwap_cross_buy_weight': buy_params["downwards_trend_vwap_cross_buy_weight"],  # triggers infrequently
+            'adx_strong_up_buy_weight': buy_params["downwards_trend_adx_strong_up_buy_weight"],
+            'bollinger_bands_buy_weight': buy_params["downwards_trend_bollinger_bands_buy_weight"],
+            'ema_long_golden_cross_buy_weight': buy_params["downwards_trend_ema_long_golden_cross_buy_weight"],
+            'ema_short_golden_cross_buy_weight': buy_params["downwards_trend_ema_short_golden_cross_buy_weight"],
+            'macd_buy_weight': buy_params["downwards_trend_macd_buy_weight"],
+            'rsi_buy_weight': buy_params["downwards_trend_rsi_buy_weight"],
+            'sma_long_golden_cross_buy_weight': buy_params["downwards_trend_sma_long_golden_cross_buy_weight"],
+            'sma_short_golden_cross_buy_weight': buy_params["downwards_trend_sma_short_golden_cross_buy_weight"],
+            'vwap_cross_buy_weight': buy_params["downwards_trend_vwap_cross_buy_weight"],
 
             # Sell Signal Weight Influence Table
-            'adx_strong_down_sell_weight': sell_params["downwards_trend_adx_strong_down_sell_weight"],  # triggers moderately
-            'bollinger_bands_sell_weight': sell_params["downwards_trend_bollinger_bands_sell_weight"],  # triggers moderately
-            'ema_long_death_cross_sell_weight': sell_params["downwards_trend_ema_long_death_cross_sell_weight"],  # triggers very infrequently
-            'ema_short_death_cross_sell_weight': sell_params["downwards_trend_ema_short_death_cross_sell_weight"],  # triggers very infrequently
-            'macd_sell_weight': sell_params["downwards_trend_macd_sell_weight"],  # triggers frequently
-            'rsi_sell_weight': sell_params["downwards_trend_rsi_sell_weight"],  # triggers infrequently
-            'sma_long_death_cross_sell_weight': sell_params["downwards_trend_sma_long_death_cross_sell_weight"],  # triggers very infrequently
-            'sma_short_death_cross_sell_weight': sell_params["downwards_trend_sma_short_death_cross_sell_weight"],  # triggers very infrequently
-            'vwap_cross_sell_weight': sell_params["downwards_trend_vwap_cross_sell_weight"]  # triggers infrequently
+            'adx_strong_down_sell_weight': sell_params["downwards_trend_adx_strong_down_sell_weight"],
+            'bollinger_bands_sell_weight': sell_params["downwards_trend_bollinger_bands_sell_weight"],
+            'ema_long_death_cross_sell_weight': sell_params["downwards_trend_ema_long_death_cross_sell_weight"],
+            'ema_short_death_cross_sell_weight': sell_params["downwards_trend_ema_short_death_cross_sell_weight"],
+            'macd_sell_weight': sell_params["downwards_trend_macd_sell_weight"],
+            'rsi_sell_weight': sell_params["downwards_trend_rsi_sell_weight"],
+            'sma_long_death_cross_sell_weight': sell_params["downwards_trend_sma_long_death_cross_sell_weight"],
+            'sma_short_death_cross_sell_weight': sell_params["downwards_trend_sma_short_death_cross_sell_weight"],
+            'vwap_cross_sell_weight': sell_params["downwards_trend_vwap_cross_sell_weight"]
         },
 
         'sideways': {
@@ -181,26 +182,26 @@ class MoniGoManiHyperOpted(IStrategy):
             'total_sell_signal_needed': sell_params["_sideways_trend_total_sell_signal_needed"],
 
             # Buy Signal Weight Influence Table
-            'adx_strong_up_buy_weight': buy_params["sideways_trend_adx_strong_up_buy_weight"],  # triggers moderately
-            'bollinger_bands_buy_weight': buy_params["sideways_trend_bollinger_bands_buy_weight"],  # triggers moderately
-            'ema_long_golden_cross_buy_weight': buy_params["sideways_trend_ema_long_golden_cross_buy_weight"],  # triggers very infrequently
-            'ema_short_golden_cross_buy_weight': buy_params["sideways_trend_ema_short_golden_cross_buy_weight"],  # triggers infrequently
-            'macd_buy_weight': buy_params["sideways_trend_macd_buy_weight"],  # triggers frequently
-            'rsi_buy_weight': buy_params["sideways_trend_rsi_buy_weight"],  # triggers infrequently
-            'sma_long_golden_cross_buy_weight': buy_params["sideways_trend_sma_long_golden_cross_buy_weight"],  # triggers very infrequently
-            'sma_short_golden_cross_buy_weight': buy_params["sideways_trend_sma_short_golden_cross_buy_weight"],  # triggers infrequently
-            'vwap_cross_buy_weight': buy_params["sideways_trend_vwap_cross_buy_weight"],  # triggers infrequently
+            'adx_strong_up_buy_weight': buy_params["sideways_trend_adx_strong_up_buy_weight"],
+            'bollinger_bands_buy_weight': buy_params["sideways_trend_bollinger_bands_buy_weight"],
+            'ema_long_golden_cross_buy_weight': buy_params["sideways_trend_ema_long_golden_cross_buy_weight"],
+            'ema_short_golden_cross_buy_weight': buy_params["sideways_trend_ema_short_golden_cross_buy_weight"],
+            'macd_buy_weight': buy_params["sideways_trend_macd_buy_weight"],
+            'rsi_buy_weight': buy_params["sideways_trend_rsi_buy_weight"],
+            'sma_long_golden_cross_buy_weight': buy_params["sideways_trend_sma_long_golden_cross_buy_weight"],
+            'sma_short_golden_cross_buy_weight': buy_params["sideways_trend_sma_short_golden_cross_buy_weight"],
+            'vwap_cross_buy_weight': buy_params["sideways_trend_vwap_cross_buy_weight"],
 
             # Sell Signal Weight Influence Table
-            'adx_strong_down_sell_weight': sell_params["sideways_trend_adx_strong_down_sell_weight"],  # triggers moderately
-            'bollinger_bands_sell_weight': sell_params["sideways_trend_bollinger_bands_sell_weight"],  # triggers moderately
-            'ema_long_death_cross_sell_weight': sell_params["sideways_trend_ema_long_death_cross_sell_weight"],  # triggers very infrequently
-            'ema_short_death_cross_sell_weight': sell_params["sideways_trend_ema_short_death_cross_sell_weight"],  # triggers very infrequently
-            'macd_sell_weight': sell_params["sideways_trend_macd_sell_weight"],  # triggers frequently
-            'rsi_sell_weight': sell_params["sideways_trend_rsi_sell_weight"],  # triggers infrequently
-            'sma_long_death_cross_sell_weight': sell_params["sideways_trend_sma_long_death_cross_sell_weight"],  # triggers very infrequently
-            'sma_short_death_cross_sell_weight': sell_params["sideways_trend_sma_short_death_cross_sell_weight"],  # triggers very infrequently
-            'vwap_cross_sell_weight': sell_params["sideways_trend_vwap_cross_sell_weight"]  # triggers infrequently
+            'adx_strong_down_sell_weight': sell_params["sideways_trend_adx_strong_down_sell_weight"],
+            'bollinger_bands_sell_weight': sell_params["sideways_trend_bollinger_bands_sell_weight"],
+            'ema_long_death_cross_sell_weight': sell_params["sideways_trend_ema_long_death_cross_sell_weight"],
+            'ema_short_death_cross_sell_weight': sell_params["sideways_trend_ema_short_death_cross_sell_weight"],
+            'macd_sell_weight': sell_params["sideways_trend_macd_sell_weight"],
+            'rsi_sell_weight': sell_params["sideways_trend_rsi_sell_weight"],
+            'sma_long_death_cross_sell_weight': sell_params["sideways_trend_sma_long_death_cross_sell_weight"],
+            'sma_short_death_cross_sell_weight': sell_params["sideways_trend_sma_short_death_cross_sell_weight"],
+            'vwap_cross_sell_weight': sell_params["sideways_trend_vwap_cross_sell_weight"]
         },
 
         # These Signal Weight Influence Tables will be allocated to signals when an upward trend is detected
@@ -214,26 +215,26 @@ class MoniGoManiHyperOpted(IStrategy):
             'total_sell_signal_needed': sell_params["_upwards_trend_total_sell_signal_needed"],
 
             # Buy Signal Weight Influence Table
-            'adx_strong_up_buy_weight': buy_params["upwards_trend_adx_strong_up_buy_weight"],  # triggers moderately
-            'bollinger_bands_buy_weight': buy_params["upwards_trend_bollinger_bands_buy_weight"],  # triggers moderately
-            'ema_long_golden_cross_buy_weight': buy_params["upwards_trend_ema_long_golden_cross_buy_weight"],  # triggers very infrequently
-            'ema_short_golden_cross_buy_weight': buy_params["upwards_trend_ema_short_golden_cross_buy_weight"],  # triggers infrequently
-            'macd_buy_weight': buy_params["upwards_trend_macd_buy_weight"],  # triggers frequently
-            'rsi_buy_weight': buy_params["upwards_trend_rsi_buy_weight"],  # triggers infrequently
-            'sma_long_golden_cross_buy_weight': buy_params["upwards_trend_sma_long_golden_cross_buy_weight"],  # triggers very infrequently
-            'sma_short_golden_cross_buy_weight': buy_params["upwards_trend_sma_short_golden_cross_buy_weight"],  # triggers infrequently
-            'vwap_cross_buy_weight': buy_params["upwards_trend_vwap_cross_buy_weight"],  # triggers infrequently
+            'adx_strong_up_buy_weight': buy_params["upwards_trend_adx_strong_up_buy_weight"],
+            'bollinger_bands_buy_weight': buy_params["upwards_trend_bollinger_bands_buy_weight"],
+            'ema_long_golden_cross_buy_weight': buy_params["upwards_trend_ema_long_golden_cross_buy_weight"],
+            'ema_short_golden_cross_buy_weight': buy_params["upwards_trend_ema_short_golden_cross_buy_weight"],
+            'macd_buy_weight': buy_params["upwards_trend_macd_buy_weight"],
+            'rsi_buy_weight': buy_params["upwards_trend_rsi_buy_weight"],
+            'sma_long_golden_cross_buy_weight': buy_params["upwards_trend_sma_long_golden_cross_buy_weight"],
+            'sma_short_golden_cross_buy_weight': buy_params["upwards_trend_sma_short_golden_cross_buy_weight"],
+            'vwap_cross_buy_weight': buy_params["upwards_trend_vwap_cross_buy_weight"],
 
             # Sell Signal Weight Influence Table
-            'adx_strong_down_sell_weight': sell_params["upwards_trend_adx_strong_down_sell_weight"],  # triggers moderately
-            'bollinger_bands_sell_weight': sell_params["upwards_trend_bollinger_bands_sell_weight"],  # triggers moderately
-            'ema_long_death_cross_sell_weight': sell_params["upwards_trend_ema_long_death_cross_sell_weight"],  # triggers very infrequently
-            'ema_short_death_cross_sell_weight': sell_params["upwards_trend_ema_short_death_cross_sell_weight"],  # triggers very infrequently
-            'macd_sell_weight': sell_params["upwards_trend_macd_sell_weight"],  # triggers frequently
-            'rsi_sell_weight': sell_params["upwards_trend_rsi_sell_weight"],  # triggers infrequently
-            'sma_long_death_cross_sell_weight': sell_params["upwards_trend_sma_long_death_cross_sell_weight"],  # triggers very infrequently
-            'sma_short_death_cross_sell_weight': sell_params["upwards_trend_sma_short_death_cross_sell_weight"],  # triggers very infrequently
-            'vwap_cross_sell_weight': sell_params["upwards_trend_vwap_cross_sell_weight"]  # triggers infrequently
+            'adx_strong_down_sell_weight': sell_params["upwards_trend_adx_strong_down_sell_weight"],
+            'bollinger_bands_sell_weight': sell_params["upwards_trend_bollinger_bands_sell_weight"],
+            'ema_long_death_cross_sell_weight': sell_params["upwards_trend_ema_long_death_cross_sell_weight"],
+            'ema_short_death_cross_sell_weight': sell_params["upwards_trend_ema_short_death_cross_sell_weight"],
+            'macd_sell_weight': sell_params["upwards_trend_macd_sell_weight"],
+            'rsi_sell_weight': sell_params["upwards_trend_rsi_sell_weight"],
+            'sma_long_death_cross_sell_weight': sell_params["upwards_trend_sma_long_death_cross_sell_weight"],
+            'sma_short_death_cross_sell_weight': sell_params["upwards_trend_sma_short_death_cross_sell_weight"],
+            'vwap_cross_sell_weight': sell_params["upwards_trend_vwap_cross_sell_weight"]
         }
     }
 
@@ -244,20 +245,20 @@ class MoniGoManiHyperOpted(IStrategy):
     # Minimal ROI designed for the strategy.
     # This attribute will be overridden if the config file contains "minimal_roi".
     minimal_roi = {
-        "0": 0.29935,
-        "167": 0.10834,
-        "743": 0.047,
-        "1535": 0
+        "0": 0.29026,
+        "231": 0.19968,
+        "500": 0.0587,
+        "1246": 0
     }
 
     # Optimal stoploss designed for the strategy.
     # This attribute will be overridden if the config file contains "stoploss".
-    stoploss = -0.11009
+    stoploss = -0.13225
 
     # Trailing stop:
     trailing_stop = True
-    trailing_stop_positive = 0.01063
-    trailing_stop_positive_offset = 0.01839
+    trailing_stop_positive = 0.01083
+    trailing_stop_positive_offset = 0.02839
     trailing_only_offset_is_reached = True
 
     # Optimal timeframe for the strategy.

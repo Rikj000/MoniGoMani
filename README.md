@@ -1,7 +1,7 @@
 ```
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.6.4 by Rikj000                         ###
+    ###                         MoniGoMani v0.7.0 by Rikj000                         ###
     ##                          ----------------------------                          ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -27,7 +27,7 @@
 **WARNING: MoniGoMani should always be HyperOpted unless you really know what you are doing when manually allocating weights!**   
 **MoniGoManiHyperOpted already has a decent hyperopt applied to it!**   
 
-# **Current `MoniGoMani` status @ `v0.6.4`** with:
+# **Current `MoniGoMani` status @ `v0.7.0`** with:
 - Configurable & HyperOptable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends
 - Configurable & HyperOptable Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends
 - Turn On/Off Trading on Downwards/Sideways/Upwards trends for Buys/Sells (HyperOptable)
@@ -74,6 +74,7 @@ freqtrade backtesting --strategy MoniGoManiHyperOpted --config ./user_data/confi
 - v0.6.2 (28-03-2021 - Added setting to Enable/Disable Trading when trend goes sideways)
 - v0.6.3 (28-03-2021 - Enable/Disable Trading when Sideways made HyperOptable - Spoiler Alert, it should be False, for now...)
 - v0.6.4 (29-03-2021 - BugFixed Debuggable Dataframe + Added (HyperOptable) Settings to Enable/Disable Buys/Sells for Upwards/Downwards trends too)
+- v0.7.0 (31-03-2021 - Making Hyperopt Results Copy/Paste-able)
 
 ### **Planned**:   
 - [Refactor to be compliant for Auto-HyperOptable Strategies](https://github.com/freqtrade/freqtrade/pull/4596)
