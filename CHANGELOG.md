@@ -19,3 +19,4 @@
 - v0.6.3 (28-03-2021 - Enable/Disable Trading when Sideways made HyperOptable - Spoiler Alert, it should be False, for now...)
 - v0.6.4 (29-03-2021 - BugFixed Debuggable Dataframe + Added (HyperOptable) Settings to Enable/Disable Buys/Sells for Upwards/Downwards trends too)
 - v0.7.0 (31-03-2021 - Making Hyperopt Results Copy/Paste-able) 
+- v0.7.1 (01-04-2021 - Added Total Overall Signal Importance Calculator)

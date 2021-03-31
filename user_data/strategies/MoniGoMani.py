@@ -19,7 +19,7 @@ class MoniGoMani(IStrategy):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.7.0 by Rikj000                         ###
+    ###                         MoniGoMani v0.7.1 by Rikj000                         ###
     ##                          ----------------------------                          ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #

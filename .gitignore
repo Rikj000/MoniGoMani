@@ -1,3 +1,5 @@
+# Ignore Release Template
+ReleaseTemplate.txt
 # Ignore Python Caches
 user_data/hyperopts/__pycache__/
 user_data/strategies/__pycache__/

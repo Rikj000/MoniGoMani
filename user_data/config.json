@@ -121,7 +121,7 @@
         "username": "",
         "password": ""
     },
-    "bot_name": "Freqtrade - MoniGoMani v0.4.1",
+    "bot_name": "Freqtrade - MoniGoMani v0.7.1",
     "initial_state": "running",
     "forcebuy_enable": false,
     "internals": {

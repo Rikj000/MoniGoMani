@@ -24,13 +24,17 @@ That's it you successfully setup Freqtrade, connected to Telegram, with FreqUI! 
 - The actual Strategy files are under `MoniGoMani/user-data/strategies/` & The HyperOpt file under `MoniGoMani/user-data/hyperopts`   
 
 ## Go-To Commands:
-For HyperOpting:
+For Hyper Opting:
 ```bash
 freqtrade hyperopt --config ./user_data/config.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all --hyperopt MoniGoManiHyperOpt --strategy MoniGoMani -e 1000 --timerange 20210101-20210316
 ```
-For BackTesting:
+For Back Testing:
 ```bash
 freqtrade backtesting --strategy MoniGoManiHyperOpted --config ./user_data/config.json --timerange 20210101-20210316
+```
+For Total Signal Importance Calculator:
+```bash
+python ./user_data/Total-Overall-Signal-Importance-Calculator.py
 ```
 
 **WARNING: MoniGoMani should always be HyperOpted unless you really know what you are doing when manually allocating weights!**   
