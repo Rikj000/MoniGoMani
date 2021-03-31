@@ -55,7 +55,7 @@ freqtrade backtesting --strategy MoniGoManiHyperOpted --config ./user_data/confi
 ```
 
 ### **ChangeLog**:  
-[View the ChangeLog](https://github.com/Rikj000/MoniGoMani#changelog)
+[View the ChangeLog](https://github.com/Rikj000/MoniGoMani/blob/main/CHANGELOG.md)
 
 ### **Planned**:   
 *Ordered by current schedule/priority*
@@ -74,7 +74,7 @@ freqtrade backtesting --strategy MoniGoManiHyperOpted --config ./user_data/confi
   - `#moni-go-mani-testing`
 
 ### Need help getting started?
-[View the VeryQuickStart](https://github.com/Rikj000/MoniGoMani#veryquickstart)
+[View the VeryQuickStart](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md)
 
 ### **Freqtrade**:   
 The Bot that makes this strategy possible: https://github.com/freqtrade/freqtrade   
