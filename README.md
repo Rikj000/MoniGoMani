@@ -54,37 +54,27 @@ For BackTesting:
 freqtrade backtesting --strategy MoniGoManiHyperOpted --config ./user_data/config.json --timerange 20210101-20210316
 ```
 
-### **Changelog / Backtest Results**:
-*(Testing rough 2 week -4.83% market time period, default coin pairs, 75% Total Buy, 25% Total Sell)*
-- v0.0.1 (20-03-2021 - Weight Table, RSI)  -15% profit...
-- v0.1.0 (21-03-2021 - Buy/Sell Weight Table, Total Buy/Sell Signal %, ADX, Up/Down, MACD) -8% profit..
-- v0.2.0 (22-03-2021 - SMA Death/Golden Cross, BugFixed Signals) -0.29% profit!
-- v0.2.1 (23-03-2021 - Refactored to SMA Long Death/Golden Cross + EMA Long Death/Golden Cross) **1.15% profit!** :partying_face:
-- v0.2.2 (23-03-2021 - SMA and EMA Short Death/Golden Cross) 1.15% profit
-- v0.2.3 (24-03-2021 - Bollinger Band Re-Entrance afer upward/downward breakout) 1.16% profit
-- v0.3.0 (24-03-2021 - 0 weight = No Weighted Signal DataFrame entry)
-- v0.3.1 (24-03-2021 - Turn On/Off all Weighted Signal DataFrame entries with a true/false)
-- v0.3.2 (24-03-2021 - VWAP Cross) 1.24% profit
-- v0.4.0 (25-03-2021 - Added HyperOpt for Weight Tables) **62.88% profit** (HyperOpt Result..)
-- v0.4.1 (25-03-2021 - HyperOpt Params Real -> Integer, SortinoHyperOptLossDaily) **1322.78% profit** :sunglasses: :chart_with_upwards_trend:  (2 month HyperOpt Result, Mid Januari - Mid March)
-- v0.4.2 (27-03-2021 - Main/Sub Plot Configurations for all indicators used)
-- v0.5.0 (27-03-2021 - Rewrote Weight tables for Upward/Downward trends, Upward/Downward/Sideways trend detection & Auto table allocation or wait if sideways, Scrapped 0 weight = No Weighted Signal DataFrame entry, Scrapped the configurable Up/Down signals) **2,568.61% profit!** :partying_face: 
-- v0.6.0 (28-03-2021 - Added Sideways Trend Detecting Buy/Sell Signal Weight Influence Tables & Checks - Updated HyperOpt file - Changed Test results from .txt to .log for better color code in VSCodium - Added .ignore file)
-- v0.6.1 (28-03-2021 - Improved speed by reformatting a lot of & checks so more lazy evaluations will occur - Fixed .gitignore file)
-- v0.6.2 (28-03-2021 - Added setting to Enable/Disable Trading when trend goes sideways)
-- v0.6.3 (28-03-2021 - Enable/Disable Trading when Sideways made HyperOptable - Spoiler Alert, it should be False, for now...)
-- v0.6.4 (29-03-2021 - BugFixed Debuggable Dataframe + Added (HyperOptable) Settings to Enable/Disable Buys/Sells for Upwards/Downwards trends too)
-- v0.7.0 (31-03-2021 - Making Hyperopt Results Copy/Paste-able)
+### **ChangeLog**:  
+[View the ChangeLog](https://github.com/Rikj000/MoniGoMani#changelog)
 
 ### **Planned**:   
+*Ordered by current schedule/priority*
+- Add FreqUI to the MGM DockerFile
+- Huge code refactor that will change the original `trend` array to the new `buy_params` & `sell_params` (added in `v0.7.0`) throughout all MGM code
 - [Refactor to be compliant for Auto-HyperOptable Strategies](https://github.com/freqtrade/freqtrade/pull/4596)
-- [MultiThreaded Dataframe indicator checking](https://www.machinelearningplus.com/python/parallel-processing-python/)
-- Other/Better indicators?
+- [MultiThreaded Dataframe indicator checking](https://www.machinelearningplus.com/python/parallel-processing-python/) if possible for speed improvements
+- Settings to enable/disable HyperOpting for individual `buy_params` & `sell_params`
+- **Other & Better indicators!** MoniGoMani has been designed so signals can easily be inserted / swapped out. So try to learn from the HyperOpt Weight Table Results, which signals usually score high and which often score low. That will tell us which signals work really well and which don't
+- **Maybe!** An additional results table that will tell us how good which signals usually score high and which often score low (when a hyperopt has been done), that would save a lot of hassle in finding **Other & Better indicators**.
+- Individual `BTC_config.json` & `USDT_config.json` files, aswell as individual `BTC_MoniGoManiHyperOpted.py` & `USDT_MoniGoManiHyperOpted.py` releases
 
 ### Got Test Results / Ideas / Config Improvements?
 - Feel free to join [**CryptoStonksShallRise**](https://discord.gg/qmmzzsxg) on Discord there you can follow/participate in the official channels:
   - `#moni-go-mani-updates`
   - `#moni-go-mani-testing`
+
+### Need help getting started?
+[View the VeryQuickStart](https://github.com/Rikj000/MoniGoMani#veryquickstart)
 
 ### **Freqtrade**:   
 The Bot that makes this strategy possible: https://github.com/freqtrade/freqtrade   
