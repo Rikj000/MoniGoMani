@@ -1,7 +1,7 @@
 ```
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.7.1 by Rikj000                         ###
+    ###                         MoniGoMani v0.7.2 by Rikj000                         ###
     ##                          ----------------------------                          ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -27,7 +27,7 @@
 **WARNING: MoniGoMani should always be HyperOpted unless you really know what you are doing when manually allocating weights!**   
 **MoniGoManiHyperOpted already has a decent hyperopt applied to it!**   
 
-# **Current `MoniGoMani` status @ `v0.7.1`** with:
+# **Current `MoniGoMani` status @ `v0.7.2`** with:
 - Configurable & HyperOptable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends
 - Configurable & HyperOptable Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends
 - Turn On/Off Trading on Downwards/Sideways/Upwards trends for Buys/Sells (HyperOptable)
@@ -65,7 +65,6 @@ python ./user_data/Total-Overall-Signal-Importance-Calculator.py
 ### **Planned**:   
 *Ordered by current schedule/priority*
 - Add FreqUI to the MGM DockerFile
-- Huge code refactor that will change the original `trend` array to the new `buy_params` & `sell_params` (added in `v0.7.0`) throughout all MGM code
 - [Refactor to be compliant for Auto-HyperOptable Strategies](https://github.com/freqtrade/freqtrade/pull/4596)
 - [MultiThreaded Dataframe indicator checking](https://www.machinelearningplus.com/python/parallel-processing-python/) if possible for speed improvements
 - Settings to enable/disable HyperOpting for individual `buy_params` & `sell_params`

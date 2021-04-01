@@ -20,3 +20,4 @@
 - v0.6.4 (29-03-2021 - BugFixed Debuggable Dataframe + Added (HyperOptable) Settings to Enable/Disable Buys/Sells for Upwards/Downwards trends too)
 - v0.7.0 (31-03-2021 - Making Hyperopt Results Copy/Paste-able) 
 - v0.7.1 (01-04-2021 - Added Total Overall Signal Importance Calculator)
+- v0.7.2 (02-04-2021 - Huge code refactor - Changed original trend array to buy_params & sell_params - Removed unneeded debuggable_weighted_signal_dataframe from MoniGoManiHyperOpted)

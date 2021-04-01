@@ -24,6 +24,6 @@ services:
     command: >
       trade
       --logfile /freqtrade/user_data/logs/freqtrade.log
-      --db-url sqlite:////freqtrade/user_data/tradesv3-MoniGoMani_v0.5.0_HyperOpted.sqlite
+      --db-url sqlite:////freqtrade/user_data/tradesv3-MoniGoMani_v0.7.2_HyperOpted.sqlite
       --config /freqtrade/user_data/config.json
       --strategy MoniGoManiHyperOpted
