@@ -14,6 +14,12 @@ When it's done building type `docker-compose up -d` to run it.~~ (This still ass
 
 That's it you successfully setup Freqtrade, connected to Telegram, with FreqUI! Congratulations :partying_face:   
 
+## Total Overall Signal Importance Calculator
+Paste the `buy_params` & `sell_params` results from your HyperOpt over in the `/user_data/Total-Overall-Signal-Importance-Calculator.py` file.   
+Then execute: `python ./user_data/Total-Overall-Signal-Importance-Calculator.py` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
+The higher the score of a signal the better!   
+Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can improve the signals, please don't forget to mention your `stake_currency`!   
+
 ## Some more good info
 - [Freqtrade's official website](https://www.freqtrade.io/en/latest/) is **THE BEST** place to learn how to work with the bot! Be sure to check it out
 - [Investopedia](https://www.investopedia.com/) is a really good site to learn how to interpret buy/sell signals, just look up the indicator you'd like to understand with the search icon in the top right.
