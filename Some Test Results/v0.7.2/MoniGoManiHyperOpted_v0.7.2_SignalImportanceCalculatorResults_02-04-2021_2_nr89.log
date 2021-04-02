@@ -1,0 +1,35 @@
+Total Overall Signal Importance:
+--------------------------------
+adx_strong_up_down:                95.33%
+bollinger_bands:                  103.83%
+ema_long_golden_death_cross:      116.17%
+ema_short_golden_death_cross:     116.67%
+macd:                             145.67%
+rsi:                                90.5%
+sma_long_golden_death_cross:       94.83%
+sma_short_golden_death_cross:     132.33%
+vwap_cross:                       119.83%
+
+Total Overall Buy Signal Importance:
+------------------------------------
+adx_strong_up:                       152%
+bollinger_bands:                     147%
+ema_long_golden_cross:               198%
+ema_short_golden_cross:              160%
+macd:                                235%
+rsi:                                 135%
+sma_long_golden_cross:               139%
+sma_short_golden_cross:              214%
+vwap_cross:                          194%
+
+Total Overall Sell Signal Importance:
+-------------------------------------
+adx_strong_down:                   38.67%
+bollinger_bands:                   60.67%
+ema_long_death_cross:              34.33%
+ema_short_death_cross:             73.33%
+macd:                              56.33%
+rsi:                                46.0%
+sma_long_death_cross:              50.67%
+sma_short_death_cross:             50.67%
+vwap_cross:                        45.67%
