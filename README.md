@@ -64,11 +64,16 @@ python ./user_data/Total-Overall-Signal-Importance-Calculator.py
 
 ### **Planned**:   
 *Ordered by current schedule/priority*
-- Add FreqUI to the MGM DockerFile
+- Add `FreqUI` to the MoniGoMani Freqtrade DockerFile
 - [Refactor to be compliant for Auto-HyperOptable Strategies](https://github.com/freqtrade/freqtrade/pull/4596)
 - [MultiThreaded Dataframe indicator checking](https://www.machinelearningplus.com/python/parallel-processing-python/) if possible for speed improvements
 - Settings to enable/disable HyperOpting for individual `buy_params` & `sell_params`
-- **Other & Better indicators!** MoniGoMani has been designed so signals can easily be inserted / swapped out.   
+- Update the `Total-Overall-Signal-Importance-Calculator.py`:
+  - So you must fill in your `stake_currency` since it really matters
+  - Calculate & Include `Total Overall Downwards/Sideways/Upwards Signal Importance` results to improve upon trading in certain trends
+  - Calculate & Include `Total Buy/Sell Signal Percentages` for comparison towards the individual buy/sell signals
+  - Auto export results to a `.log` file for easy sharing (Might write up another file that calculates a grand total average of all `.log` files provided in a folder which should create a really stable result)
+- **Other & Better indicators!** MoniGoMani has been designed so signals can easily be inserted / swapped out   
 Please use the `Total-Overall-Signal-Importance-Calculator.py` (added in `v0.7.1`) to find out which signals do best and report your results to the Discord server so we can improve! :rocket:
 - Individual `BTC_config.json` & `USDT_config.json` files, aswell as individual `BTC_MoniGoManiHyperOpted.py` & `USDT_MoniGoManiHyperOpted.py` releases
 
