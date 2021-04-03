@@ -73,11 +73,6 @@ python ./user_data/Total-Overall-Signal-Importance-Calculator.py
 
 ### **Planned**:   
 *Ordered by current schedule/priority*
-- Update the `Total-Overall-Signal-Importance-Calculator.py`:
-  - So you must fill in your `stake_currency` since it really matters
-  - Calculate & Include `Total Overall Downwards/Sideways/Upwards Signal Importance` results to improve upon trading in certain trends
-  - Calculate & Include `Total Buy/Sell Signal Percentages` for comparison towards the individual buy/sell signals
-  - Auto export results to a `.log` file for easy sharing (Might write up another file that calculates a grand total average of all `.log` files provided in a folder which should create a really stable result)
 - Try to get fewer points in the code where the DataFrame gets accessed for speed improvements
 - [MultiThreaded DataFrame indicator checking](https://www.machinelearningplus.com/python/parallel-processing-python/) if possible for speed improvements
 - Settings to enable/disable HyperOpting for individual `buy_params` & `sell_params`

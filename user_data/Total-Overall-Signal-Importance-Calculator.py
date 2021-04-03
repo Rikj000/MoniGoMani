@@ -86,83 +86,77 @@ sell_params = {
 #                                   END OF HYPEROPT BUY/SELL RESULTS COPY-PASTE SECTION                                #
 ########################################################################################################################
 
+trend_amount = 3
+
 total_overall_buy_weights = {
     'adx_strong_up':
-        buy_params["buy_downwards_trend_adx_strong_up_weight"] +
-        buy_params["buy_sideways_trend_adx_strong_up_weight"] +
-        buy_params["buy_upwards_trend_adx_strong_up_weight"],
+        (buy_params["downwards_trend_adx_strong_up_buy_weight"] +
+         buy_params["sideways_trend_adx_strong_up_buy_weight"] +
+         buy_params["upwards_trend_adx_strong_up_buy_weight"]) / trend_amount,
     'bollinger_bands':
-        buy_params["buy_downwards_trend_bollinger_bands_weight"] +
-        buy_params["buy_sideways_trend_bollinger_bands_weight"] +
-        buy_params["buy_upwards_trend_bollinger_bands_weight"],
+        (buy_params["downwards_trend_bollinger_bands_buy_weight"] +
+         buy_params["sideways_trend_bollinger_bands_buy_weight"] +
+         buy_params["upwards_trend_bollinger_bands_buy_weight"]) / trend_amount,
     'ema_long_golden_cross':
-        buy_params["buy_downwards_trend_ema_long_golden_cross_weight"] +
-        buy_params["buy_sideways_trend_ema_long_golden_cross_weight"] +
-        buy_params["buy_upwards_trend_ema_long_golden_cross_weight"],
+        (buy_params["downwards_trend_ema_long_golden_cross_buy_weight"] +
+         buy_params["sideways_trend_ema_long_golden_cross_buy_weight"] +
+         buy_params["upwards_trend_ema_long_golden_cross_buy_weight"]) / trend_amount,
     'ema_short_golden_cross':
-        buy_params["buy_downwards_trend_ema_short_golden_cross_weight"] +
-        buy_params["buy_sideways_trend_ema_short_golden_cross_weight"] +
-        buy_params["buy_upwards_trend_ema_short_golden_cross_weight"],
+        (buy_params["downwards_trend_ema_short_golden_cross_buy_weight"] +
+         buy_params["sideways_trend_ema_short_golden_cross_buy_weight"] +
+         buy_params["upwards_trend_ema_short_golden_cross_buy_weight"]) / trend_amount,
     'macd':
-        buy_params["buy_downwards_trend_macd_weight"] +
-        buy_params["buy_sideways_trend_macd_weight"] +
-        buy_params["buy_upwards_trend_macd_weight"],
+        (buy_params["downwards_trend_macd_buy_weight"] +
+         buy_params["sideways_trend_macd_buy_weight"] +
+         buy_params["upwards_trend_macd_buy_weight"]) / trend_amount,
     'rsi':
-        buy_params["buy_downwards_trend_rsi_weight"] +
-        buy_params["buy_sideways_trend_rsi_weight"] +
-        buy_params["buy_upwards_trend_rsi_weight"],
+        (buy_params["downwards_trend_rsi_buy_weight"] +
+         buy_params["sideways_trend_rsi_buy_weight"] +
+         buy_params["upwards_trend_rsi_buy_weight"]) / trend_amount,
     'sma_long_golden_cross':
-        buy_params["buy_downwards_trend_sma_long_golden_cross_weight"] +
-        buy_params["buy_sideways_trend_sma_long_golden_cross_weight"] +
-        buy_params["buy_upwards_trend_sma_long_golden_cross_weight"],
+        (buy_params["downwards_trend_sma_long_golden_cross_buy_weight"] +
+         buy_params["sideways_trend_sma_long_golden_cross_buy_weight"] +
+         buy_params["upwards_trend_sma_long_golden_cross_buy_weight"]) / trend_amount,
     'sma_short_golden_cross':
-        buy_params["buy_downwards_trend_sma_short_golden_cross_weight"] +
-        buy_params["buy_sideways_trend_sma_short_golden_cross_weight"] +
-        buy_params["buy_upwards_trend_sma_short_golden_cross_weight"],
+        (buy_params["downwards_trend_sma_short_golden_cross_buy_weight"] +
+         buy_params["sideways_trend_sma_short_golden_cross_buy_weight"] +
+         buy_params["upwards_trend_sma_short_golden_cross_buy_weight"]) / trend_amount,
     'vwap_cross':
-        buy_params["buy_downwards_trend_vwap_cross_weight"] +
-        buy_params["buy_sideways_trend_vwap_cross_weight"] +
-        buy_params["buy_upwards_trend_vwap_cross_weight"]
-
+        (buy_params["downwards_trend_vwap_cross_buy_weight"] +
+         buy_params["sideways_trend_vwap_cross_buy_weight"] +
+         buy_params["upwards_trend_vwap_cross_buy_weight"]) / trend_amount
 }
 
 total_overall_sell_weights = {
-    'adx_strong_down':
-        (sell_params["sell_downwards_trend_adx_strong_down_weight"] +
-         sell_params["sell_sideways_trend_adx_strong_down_weight"] +
-         sell_params["sell_upwards_trend_adx_strong_down_weight"]) / 3,
-    'bollinger_bands':
-        (sell_params["sell_downwards_trend_bollinger_bands_weight"] +
-         sell_params["sell_sideways_trend_bollinger_bands_weight"] +
-         sell_params["sell_upwards_trend_bollinger_bands_weight"]) / 3,
+    'adx_strong_down':-sc BTC
     'ema_long_death_cross':
-        (sell_params["sell_downwards_trend_ema_long_death_cross_weight"] +
-         sell_params["sell_sideways_trend_ema_long_death_cross_weight"] +
-         sell_params["sell_upwards_trend_ema_long_death_cross_weight"]) / 3,
+        (sell_params["downwards_trend_ema_long_death_cross_sell_weight"] +
+         sell_params["sideways_trend_ema_long_death_cross_sell_weight"] +
+         sell_params["upwards_trend_ema_long_death_cross_sell_weight"]) / trend_amount,
     'ema_short_death_cross':
-        (sell_params["sell_downwards_trend_ema_short_death_cross_weight"] +
-         sell_params["sell_sideways_trend_ema_short_death_cross_weight"] +
-         sell_params["sell_upwards_trend_ema_short_death_cross_weight"]) / 3,
+        (sell_params["downwards_trend_ema_short_death_cross_sell_weight"] +
+         sell_params["sideways_trend_ema_short_death_cross_sell_weight"] +
+         sell_params["upwards_trend_ema_short_death_cross_sell_weight"]) / trend_amount,
     'macd':
-        (sell_params["sell_downwards_trend_macd_weight"] +
-         sell_params["sell_sideways_trend_macd_weight"] +
-         sell_params["sell_upwards_trend_macd_weight"]) / 3,
+        (sell_params["downwards_trend_macd_sell_weight"] +
+         sell_params["sideways_trend_macd_sell_weight"] +
+         sell_params["upwards_trend_macd_sell_weight"]) / trend_amount,
     'rsi':
-        (sell_params["sell_downwards_trend_rsi_weight"] +
-         sell_params["sell_sideways_trend_rsi_weight"] +
-         sell_params["sell_upwards_trend_rsi_weight"]) / 3,
+        (sell_params["downwards_trend_rsi_sell_weight"] +
+         sell_params["sideways_trend_rsi_sell_weight"] +
+         sell_params["upwards_trend_rsi_sell_weight"]) / trend_amount,
     'sma_long_death_cross':
-        (sell_params["sell_downwards_trend_sma_long_death_cross_weight"] +
-         sell_params["sell_sideways_trend_sma_long_death_cross_weight"] +
-         sell_params["sell_upwards_trend_sma_long_death_cross_weight"]) / 3,
+        (sell_params["downwards_trend_sma_long_death_cross_sell_weight"] +
+         sell_params["sideways_trend_sma_long_death_cross_sell_weight"] +
+         sell_params["upwards_trend_sma_long_death_cross_sell_weight"]) / trend_amount,
     'sma_short_death_cross':
-        (sell_params["sell_downwards_trend_sma_short_death_cross_weight"] +
-         sell_params["sell_sideways_trend_sma_short_death_cross_weight"] +
-         sell_params["sell_upwards_trend_sma_short_death_cross_weight"]) / 3,
+        (sell_params["downwards_trend_sma_short_death_cross_sell_weight"] +
+         sell_params["sideways_trend_sma_short_death_cross_sell_weight"] +
+         sell_params["upwards_trend_sma_short_death_cross_sell_weight"]) / trend_amount,
     'vwap_cross':
-        (sell_params["sell_downwards_trend_vwap_cross_weight"] +
-         sell_params["sell_sideways_trend_vwap_cross_weight"] +
-         sell_params["sell_upwards_trend_vwap_cross_weight"]) / 3
+        (sell_params["downwards_trend_vwap_cross_sell_weight"] +
+         sell_params["sideways_trend_vwap_cross_sell_weight"] +
+         sell_params["upwards_trend_vwap_cross_sell_weight"]) / trend_amount
 }
 
 total_overall_weights = {
