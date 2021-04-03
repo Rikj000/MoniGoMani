@@ -1,3 +1,5 @@
+import argparse
+
 # Total Overall Signal Importance Calculator for MoniGoMani v0.8.0
 # ----------------------------------------------------------------
 # Paste the results from your HyperOpt over below `buy_params` & `sell_params` arrays
@@ -82,82 +84,100 @@ sell_params = {
     'sell_upwards_trend_vwap_cross_weight': 10
 }
 
+
 ########################################################################################################################
 #                                   END OF HYPEROPT BUY/SELL RESULTS COPY-PASTE SECTION                                #
 ########################################################################################################################
+def print_spacer():
+    print("-----------------------------------------")
 
-param_space_names = ['buy', 'sell']
-trend_names = ['downwards', 'sideways', 'upwards']
-buy_indicator_names = [
-    'adx_strong_up',
-    'bollinger_bands',
-    'ema_long_golden_cross',
-    'ema_short_golden_cross',
-    'macd',
-    'rsi',
-    'sma_long_golden_cross',
-    'sma_short_golden_cross',
-    'vwap_cross',
-]
 
-sell_indicator_names = [
-    'adx_strong_down',
-    'bollinger_bands',
-    'ema_long_death_cross',
-    'ema_short_death_cross',
-    'macd',
-    'rsi',
-    'sma_long_death_cross',
-    'sma_short_death_cross',
-    'vwap_cross',
-]
+def print_section_header(header, whitespace=True):
+    if whitespace:
+        print("")
+    print(header)
+    print_spacer()
 
-combined_indicator_names = {
-    'adx_strong_up_down': ['adx_strong_up', 'adx_strong_down'],
-    'bollinger_bands': ['bollinger_bands'],
-    'ema_long_golden_death_cross': ['ema_long_golden_cross', 'ema_long_death_cross'],
-    'ema_short_golden_death_cross': ['ema_short_golden_cross', 'ema_short_death_cross'],
-    'macd': ['macd'],
-    'rsi': ['rsi'],
-    'sma_long_golden_death_cross': ['sma_long_golden_cross', 'sma_long_death_cross'],
-    'sma_short_golden_death_cross': ['sma_short_golden_cross', 'sma_short_death_cross'],
-    'vwap_cross': ['vwap_cross']
-}
 
-total_overall_buy_weights = {}
-total_overall_sell_weights = {}
-total_overall_weights = {}
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--stake_currency', dest='stake_currency', type=str, required=True,
+                        help='Stake currency used when generating these settings')
+    args = parser.parse_args()
 
-for indicator in buy_indicator_names:
-    buy_weight = 0
-    for trend in trend_names:
-        buy_weight += buy_params["buy_" + trend + "_trend_" + indicator + "_weight"]
-    total_overall_buy_weights[indicator] = buy_weight / len(trend_names)
-for indicator in sell_indicator_names:
-    sell_weight = 0
-    for trend in trend_names:
-        sell_weight += sell_params["sell_" + trend + "_trend_" + indicator + "_weight"]
-    total_overall_sell_weights[indicator] = sell_weight / len(trend_names)
-for combined_indicator in combined_indicator_names.keys():
-    indicators = combined_indicator_names[combined_indicator]
-    total_overall_weights[combined_indicator] = (total_overall_buy_weights[indicators[0]] +
-                                                 total_overall_sell_weights[indicators[-1]]) / 2
+    trend_names = ['downwards', 'sideways', 'upwards']
+    buy_indicator_names = [
+        'adx_strong_up',
+        'bollinger_bands',
+        'ema_long_golden_cross',
+        'ema_short_golden_cross',
+        'macd',
+        'rsi',
+        'sma_long_golden_cross',
+        'sma_short_golden_cross',
+        'vwap_cross',
+    ]
 
-initial_offset = 40
-print("Total Overall Signal Importance:")
-print("--------------------------------")
-for signal, importance in total_overall_weights.items():
-    offset = '{:<1s}{:>' + str(initial_offset - len(str(signal))) + 's}'
-    print(offset.format(str(signal) + ":", str(round(importance, 2)) + "%"))
-print("")
-print("Total Overall Buy Signal Importance:")
-print("------------------------------------")
-for signal, importance in total_overall_buy_weights.items():
-    offset = '{:<1s}{:>' + str(initial_offset - len(str(signal))) + 's}'
-    print(offset.format(str(signal) + ":", str(round(importance, 2)) + "%"))
-print("")
-print("Total Overall Sell Signal Importance:")
-print("-------------------------------------")
-for signal, importance in total_overall_sell_weights.items():
-    offset = '{:<1s}{:>' + str(initial_offset - len(str(signal))) + 's}'
-    print(offset.format(str(signal) + ":", str(round(importance, 2)) + "%"))
+    sell_indicator_names = [
+        'adx_strong_down',
+        'bollinger_bands',
+        'ema_long_death_cross',
+        'ema_short_death_cross',
+        'macd',
+        'rsi',
+        'sma_long_death_cross',
+        'sma_short_death_cross',
+        'vwap_cross',
+    ]
+
+    combined_indicator_names = {
+        'adx_strong_up_down': ['adx_strong_up', 'adx_strong_down'],
+        'bollinger_bands': ['bollinger_bands'],
+        'ema_long_golden_death_cross': ['ema_long_golden_cross', 'ema_long_death_cross'],
+        'ema_short_golden_death_cross': ['ema_short_golden_cross', 'ema_short_death_cross'],
+        'macd': ['macd'],
+        'rsi': ['rsi'],
+        'sma_long_golden_death_cross': ['sma_long_golden_cross', 'sma_long_death_cross'],
+        'sma_short_golden_death_cross': ['sma_short_golden_cross', 'sma_short_death_cross'],
+        'vwap_cross': ['vwap_cross']
+    }
+
+    total_overall_buy_weights = {}
+    total_overall_sell_weights = {}
+    total_overall_weights = {}
+
+    for indicator in buy_indicator_names:
+        buy_weight = 0
+        for trend in trend_names:
+            buy_weight += buy_params["buy_" + trend + "_trend_" + indicator + "_weight"]
+        total_overall_buy_weights[indicator] = buy_weight / len(trend_names)
+    for indicator in sell_indicator_names:
+        sell_weight = 0
+        for trend in trend_names:
+            sell_weight += sell_params["sell_" + trend + "_trend_" + indicator + "_weight"]
+        total_overall_sell_weights[indicator] = sell_weight / len(trend_names)
+    for combined_indicator in combined_indicator_names.keys():
+        indicators = combined_indicator_names[combined_indicator]
+        total_overall_weights[combined_indicator] = (total_overall_buy_weights[indicators[0]] +
+                                                     total_overall_sell_weights[indicators[-1]]) / 2
+
+    initial_offset = 40
+    print_section_header("Signal importance report", False)
+    offset = '{:<1s}{:>' + str(initial_offset - len('Stake currency')) + 's}'
+    print(offset.format('Stake currency' + ":", args.stake_currency))
+    print_section_header("Total Overall Signal Importance:")
+    for signal, importance in total_overall_weights.items():
+        offset = '{:<1s}{:>' + str(initial_offset - len(str(signal))) + 's}'
+        print(offset.format(str(signal) + ":", str(round(importance, 2)) + "%"))
+    print_section_header("Total Overall Buy Signal Importance:")
+    for signal, importance in total_overall_buy_weights.items():
+        offset = '{:<1s}{:>' + str(initial_offset - len(str(signal))) + 's}'
+        print(offset.format(str(signal) + ":", str(round(importance, 2)) + "%"))
+    print_section_header("Total Overall Sell Signal Importance:")
+    for signal, importance in total_overall_sell_weights.items():
+        offset = '{:<1s}{:>' + str(initial_offset - len(str(signal))) + 's}'
+        print(offset.format(str(signal) + ":", str(round(importance, 2)) + "%"))
+
+
+if __name__ == "__main__":
+    main()
