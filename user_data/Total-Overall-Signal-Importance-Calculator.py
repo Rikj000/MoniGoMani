@@ -153,7 +153,7 @@ def print_full_avg_signal(signal, importance, avg_weights):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-sc', '--stake_currency', dest='stake_currency', type=str, required=True,
+    parser.add_argument('-sc', '--stake-currency', dest='stake_currency', type=str, required=True,
                         help='Stake currency used when generating these settings')
     parser.add_argument('-f', '--file', dest='file', type=str, default='importance.txt',
                         help='Filename to save result to')
