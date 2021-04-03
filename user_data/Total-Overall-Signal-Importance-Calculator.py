@@ -89,7 +89,7 @@ sell_params = {
 #                                   END OF HYPEROPT BUY/SELL RESULTS COPY-PASTE SECTION                                #
 ########################################################################################################################
 def print_spacer():
-    print("-----------------------------------------")
+    print("--------------------------------------------------------------------")
 
 
 def print_section_header(header, whitespace=True):
@@ -97,6 +97,35 @@ def print_section_header(header, whitespace=True):
         print("")
     print(header)
     print_spacer()
+
+
+initial_offset = 40
+signal_format = '{:<35s}{:>6s}'
+full_signal_format = '{:<35s}{:>6s} | {:>6s} | {:>6s} | {:>6s}'
+
+
+def print_signal(signal, importance):
+    print(signal_format.format(str(signal) + ":", str(round(importance, 2)) + "%"))
+
+
+def print_full_signal_header():
+    print(full_signal_format.format("", "avg", "down", "side", "up"))
+
+
+def print_full_buy_signal(signal, importance):
+    print(full_signal_format.format(str(signal) + ":",
+                                    str(round(importance, 2)) + "%",
+                                    str(round(buy_params["buy_downwards_trend_" + signal + "_weight"], 2)) + "%",
+                                    str(round(buy_params["buy_sideways_trend_" + signal + "_weight"], 2)) + "%",
+                                    str(round(buy_params["buy_upwards_trend_" + signal + "_weight"], 2)) + "%"))
+
+
+def print_full_sell_signal(signal, importance):
+    print(full_signal_format.format(str(signal) + ":",
+                                    str(round(importance, 2)) + "%",
+                                    str(round(sell_params["sell_downwards_trend_" + signal + "_weight"], 2)) + "%",
+                                    str(round(sell_params["sell_sideways_trend_" + signal + "_weight"], 2)) + "%",
+                                    str(round(sell_params["sell_upwards_trend_" + signal + "_weight"], 2)) + "%"))
 
 
 def main():
@@ -161,22 +190,23 @@ def main():
         total_overall_weights[combined_indicator] = (total_overall_buy_weights[indicators[0]] +
                                                      total_overall_sell_weights[indicators[-1]]) / 2
 
-    initial_offset = 40
     print_section_header("Signal importance report", False)
     offset = '{:<1s}{:>' + str(initial_offset - len('Stake currency')) + 's}'
     print(offset.format('Stake currency' + ":", args.stake_currency))
+
     print_section_header("Total Overall Signal Importance:")
     for signal, importance in total_overall_weights.items():
-        offset = '{:<1s}{:>' + str(initial_offset - len(str(signal))) + 's}'
-        print(offset.format(str(signal) + ":", str(round(importance, 2)) + "%"))
+        print_signal(signal, importance)
+
     print_section_header("Total Overall Buy Signal Importance:")
+    print_full_signal_header()
     for signal, importance in total_overall_buy_weights.items():
-        offset = '{:<1s}{:>' + str(initial_offset - len(str(signal))) + 's}'
-        print(offset.format(str(signal) + ":", str(round(importance, 2)) + "%"))
+        print_full_buy_signal(signal, importance)
+
     print_section_header("Total Overall Sell Signal Importance:")
+    print_full_signal_header()
     for signal, importance in total_overall_sell_weights.items():
-        offset = '{:<1s}{:>' + str(initial_offset - len(str(signal))) + 's}'
-        print(offset.format(str(signal) + ":", str(round(importance, 2)) + "%"))
+        print_full_sell_signal(signal, importance)
 
 
 if __name__ == "__main__":
