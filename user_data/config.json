@@ -31,47 +31,6 @@
         "sell_profit_only": false,
         "ignore_roi_if_buy_signal": true
     },
-    "exchange": {
-        "name": "binance",
-        "key": "",
-        "secret": "",
-        "ccxt_config": {"enableRateLimit": true},
-        "ccxt_async_config": {
-            "enableRateLimit": true,
-            "rateLimit": 200
-        },
-        "pair_whitelist": [
-            "ALGO/BTC",
-            "ATOM/BTC",
-            "BAT/BTC",
-            "BCH/BTC",
-            "BRD/BTC",
-            "EOS/BTC",
-            "ETH/BTC",
-            "IOTA/BTC",
-            "LINK/BTC",
-            "LTC/BTC",
-            "NEO/BTC",
-            "NXS/BTC",
-            "XMR/BTC",
-            "XRP/BTC",
-            "XTZ/BTC"
-        ],
-        "pair_blacklist": [
-            "BNB/BTC",
-            "BNB/BUSD",
-            "BNB/ETH",
-            "BNB/EUR",
-            "BNB/NGN",
-            "BNB/PAX",
-            "BNB/RUB",
-            "BNB/TRY",
-            "BNB/TUSD",
-            "BNB/USDC",
-            "BNB/USDS",
-            "BNB/USDT"
-        ]
-    },
     "pairlists": [{
         "method": "StaticPairList"
     }],
@@ -106,22 +65,7 @@
         "max_trade_duration_minute": 1440,
         "remove_pumps": false
     },
-    "telegram": {
-        "enabled": false,
-        "token": "",
-        "chat_id": ""
-    },
-    "api_server": {
-        "enabled": true,
-        "listen_ip_address": "0.0.0.0",
-        "listen_port": 8080,
-        "verbosity": "info",
-        "jwt_secret_key": "",
-        "CORS_origins": ["http://localhost:8081"],
-        "username": "",
-        "password": ""
-    },
-    "bot_name": "Freqtrade - MoniGoMani v0.7.1",
+    "bot_name": "Freqtrade - MoniGoMani v0.8.0",
     "initial_state": "running",
     "forcebuy_enable": false,
     "internals": {

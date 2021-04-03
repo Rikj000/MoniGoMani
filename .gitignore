@@ -1,7 +1,9 @@
 # Ignore Release Template
-ReleaseTemplate.txt
+ReleaseTemplate.md
 # Ignore Python Caches
 user_data/hyperopts/__pycache__/
 user_data/strategies/__pycache__/
 # Ignore VSCodium Workspace
 workspace.code-workspace
+# Ignore JetBrains .idea Folder
+.idea/
