@@ -155,7 +155,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-sc', '--stake-currency', dest='stake_currency', type=str, required=True,
                         help='Stake currency used when generating these settings')
-    parser.add_argument('-f', '--file', dest='file', type=str, default='importance.txt',
+    parser.add_argument('-f', '--file', dest='file', type=str, default='importance.log',
                         help='Filename to save result to')
     parser.add_argument('-nf', '--no-file', dest='output_to_file', const=False, default=True, nargs='?',
                         help='Do not output to a file')
