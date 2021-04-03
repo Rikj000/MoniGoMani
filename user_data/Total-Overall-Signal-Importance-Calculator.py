@@ -89,6 +89,20 @@ sell_params = {
 ########################################################################################################################
 #                                   END OF HYPEROPT BUY/SELL RESULTS COPY-PASTE SECTION                                #
 ########################################################################################################################
+class FileAndConsoleLogger(object):
+    def __init__(self, *files):
+        self.files = files
+
+    def write(self, obj):
+        for f in self.files:
+            f.write(obj)
+            f.flush()  # If you want the output to be visible immediately
+
+    def flush(self):
+        for f in self.files:
+            f.flush()
+
+
 def print_spacer():
     print("--------------------------------------------------------------------")
 
@@ -143,8 +157,8 @@ def main():
                         help='Stake currency used when generating these settings')
     parser.add_argument('-f', '--file', dest='file', type=str, default='importance.txt',
                         help='Filename to save result to')
-    parser.add_argument('-c', '--console', dest='output_to_console', const=True, default=False, nargs='?',
-                        help='Output result to console instead of a file')
+    parser.add_argument('-nf', '--no-file', dest='output_to_file', const=False, default=True, nargs='?',
+                        help='Do not output to a file')
     args = parser.parse_args()
 
     trend_names = ['downwards', 'sideways', 'upwards']
@@ -212,29 +226,32 @@ def main():
 
     # to output our prints to a file redirect the stdout
     original_stdout = sys.stdout
+    f = {}
 
-    with open(args.file, 'w') as f:
-        if not args.output_to_console:
-            sys.stdout = f
+    if args.output_to_file:
+        f = open(args.file, 'w')
+        sys.stdout = FileAndConsoleLogger(sys.stdout, f)
 
-        print_section_header("Signal importance report", False)
-        print(signal_format.format('Stake currency' + ":", args.stake_currency))
+    print_section_header("Signal importance report", False)
+    print(signal_format.format('Stake currency' + ":", args.stake_currency))
 
-        print_section_header("Total Overall Signal Importance:")
-        print_full_signal_header()
-        for signal, importance in total_overall_weights.items():
-            print_full_avg_signal(signal, importance, avg_trend_weights)
+    print_section_header("Total Overall Signal Importance:")
+    print_full_signal_header()
+    for signal, importance in total_overall_weights.items():
+        print_full_avg_signal(signal, importance, avg_trend_weights)
 
-        print_section_header("Total Overall Buy Signal Importance:")
-        print_full_signal_header()
-        for signal, importance in total_overall_buy_weights.items():
-            print_full_buy_signal(signal, importance)
+    print_section_header("Total Overall Buy Signal Importance:")
+    print_full_signal_header()
+    for signal, importance in total_overall_buy_weights.items():
+        print_full_buy_signal(signal, importance)
 
-        print_section_header("Total Overall Sell Signal Importance:")
-        print_full_signal_header()
-        for signal, importance in total_overall_sell_weights.items():
-            print_full_sell_signal(signal, importance)
+    print_section_header("Total Overall Sell Signal Importance:")
+    print_full_signal_header()
+    for signal, importance in total_overall_sell_weights.items():
+        print_full_sell_signal(signal, importance)
 
+    if args.output_to_file:
+        f.close()
         sys.stdout = original_stdout
 
 
