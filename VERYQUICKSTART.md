@@ -33,7 +33,7 @@ Check the [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQ
 ## Total Overall Signal Importance Calculator
 Paste the `buy_params` & `sell_params` results from your HyperOpt over in the `/user_data/Total-Overall-Signal-Importance-Calculator.py` file.   
 Then execute: `python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc BTC` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
-The higher the score of a signal the better! And now it will also export to a `.log` file for easy sharing!  
+The higher the score of a signal the better! And now it will also export to a `importance.log` file in the same folder for easy sharing!  
 Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can improve the signals!   
    
 - Now you must fill in `-sc` or `--staking-currency` with the one you use in `config.json` as `stake_currency` since it really matters
