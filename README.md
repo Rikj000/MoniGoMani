@@ -63,9 +63,9 @@ For Back Testing *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj0
 ```bash
 freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/config.json -c ./user_data/config-private.json --timerange 20210101-20210316
 ```
-For Total Average Signal Importance Calculation (with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/Total-Overall-Signal-Importance-Calculator.py)):
+For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/Total-Overall-Signal-Importance-Calculator.py))*:
 ```bash
-python ./user_data/Total-Overall-Signal-Importance-Calculator.py
+python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc BTC
 ```
 
 ### **ChangeLog**:  

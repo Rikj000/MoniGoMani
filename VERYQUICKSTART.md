@@ -32,10 +32,14 @@ Check the [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQ
 
 ## Total Overall Signal Importance Calculator
 Paste the `buy_params` & `sell_params` results from your HyperOpt over in the `/user_data/Total-Overall-Signal-Importance-Calculator.py` file.   
-Then execute: `python ./user_data/Total-Overall-Signal-Importance-Calculator.py` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
-The higher the score of a signal the better!   
-Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can improve the signals, please don't forget to mention your `stake_currency`!   
-
+Then execute: `python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc BTC` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
+The higher the score of a signal the better! And now it will also export to a `.log` file for easy sharing!  
+Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can improve the signals!   
+   
+- Now you must fill in `-sc` or `--staking-currency` with the one you use in `config.json` as `stake_currency` since it really matters
+- Optional fill in `-f` or `--file` to submit a custom file name for the log file to be exported
+- Optional fill in `-nf` or `--no-file` if you don't want a log file to be exported   
+   
 ## Some more good info
 - [Freqtrade's official website](https://www.freqtrade.io/en/latest/) is **THE BEST** place to learn how to work with the bot! Be sure to check it out
 - [Investopedia](https://www.investopedia.com/) is really a good site to learn how to interpret buy/sell signals, just look up the indicator you'd like to understand with the search icon in the top right.
@@ -58,9 +62,9 @@ For Back Testing *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj0
 ```bash
 freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/config.json -c ./user_data/config-private.json --timerange 20210101-20210316
 ```
-For Total Average Signal Importance Calculation (with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/Total-Overall-Signal-Importance-Calculator.py)):
+For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/Total-Overall-Signal-Importance-Calculator.py))*:
 ```bash
-python ./user_data/Total-Overall-Signal-Importance-Calculator.py
+python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc BTC
 ```
 
 **WARNING: MoniGoMani should always be HyperOpted unless you really know what you are doing when manually allocating weights!**   
