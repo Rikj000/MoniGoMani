@@ -1,3 +1,4 @@
+import sys
 import argparse
 
 # Total Overall Signal Importance Calculator for MoniGoMani v0.8.0
@@ -138,8 +139,12 @@ def print_full_avg_signal(signal, importance, avg_weights):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--stake_currency', dest='stake_currency', type=str, required=True,
+    parser.add_argument('-sc', '--stake_currency', dest='stake_currency', type=str, required=True,
                         help='Stake currency used when generating these settings')
+    parser.add_argument('-f', '--file', dest='file', type=str, default='importance.txt',
+                        help='Filename to save result to')
+    parser.add_argument('-c', '--console', dest='output_to_console', const=True, default=False, nargs='?',
+                        help='Output result to console instead of a file')
     args = parser.parse_args()
 
     trend_names = ['downwards', 'sideways', 'upwards']
@@ -205,6 +210,13 @@ def main():
         total_overall_weights[combined_indicator] = (total_overall_buy_weights[indicators[0]] +
                                                      total_overall_sell_weights[indicators[-1]]) / 2
 
+    # to output our prints to a file redirect the stdout
+    original_stdout = sys.stdout
+
+    with open(args.file, 'w') as f:
+        if not args.output_to_console:
+            sys.stdout = f
+
         print_section_header("Signal importance report", False)
         print(signal_format.format('Stake currency' + ":", args.stake_currency))
 
@@ -213,15 +225,17 @@ def main():
         for signal, importance in total_overall_weights.items():
             print_full_avg_signal(signal, importance, avg_trend_weights)
 
-    print_section_header("Total Overall Buy Signal Importance:")
-    print_full_signal_header()
-    for signal, importance in total_overall_buy_weights.items():
-        print_full_buy_signal(signal, importance)
+        print_section_header("Total Overall Buy Signal Importance:")
+        print_full_signal_header()
+        for signal, importance in total_overall_buy_weights.items():
+            print_full_buy_signal(signal, importance)
 
-    print_section_header("Total Overall Sell Signal Importance:")
-    print_full_signal_header()
-    for signal, importance in total_overall_sell_weights.items():
-        print_full_sell_signal(signal, importance)
+        print_section_header("Total Overall Sell Signal Importance:")
+        print_full_signal_header()
+        for signal, importance in total_overall_sell_weights.items():
+            print_full_sell_signal(signal, importance)
+
+        sys.stdout = original_stdout
 
 
 if __name__ == "__main__":
