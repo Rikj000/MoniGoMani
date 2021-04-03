@@ -128,6 +128,14 @@ def print_full_sell_signal(signal, importance):
                                     str(round(sell_params["sell_upwards_trend_" + signal + "_weight"], 2)) + "%"))
 
 
+def print_full_avg_signal(signal, importance, avg_weights):
+    print(full_signal_format.format(str(signal) + ":",
+                                    str(round(importance, 2)) + "%",
+                                    str(round(avg_weights["avg_downwards_trend_" + signal + "_weight"], 2)) + "%",
+                                    str(round(avg_weights["avg_sideways_trend_" + signal + "_weight"], 2)) + "%",
+                                    str(round(avg_weights["avg_upwards_trend_" + signal + "_weight"], 2)) + "%"))
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--stake_currency', dest='stake_currency', type=str, required=True,
@@ -174,6 +182,7 @@ def main():
     total_overall_buy_weights = {}
     total_overall_sell_weights = {}
     total_overall_weights = {}
+    avg_trend_weights = {}
 
     for indicator in buy_indicator_names:
         buy_weight = 0
@@ -187,16 +196,22 @@ def main():
         total_overall_sell_weights[indicator] = sell_weight / len(trend_names)
     for combined_indicator in combined_indicator_names.keys():
         indicators = combined_indicator_names[combined_indicator]
+
+        for trend in trend_names:
+            avg_weight = (buy_params["buy_" + trend + "_trend_" + indicators[0] + "_weight"] +
+                          sell_params["sell_" + trend + "_trend_" + indicators[-1] + "_weight"]) / 2
+            avg_trend_weights["avg_" + trend + "_trend_" + combined_indicator + "_weight"] = avg_weight
+
         total_overall_weights[combined_indicator] = (total_overall_buy_weights[indicators[0]] +
                                                      total_overall_sell_weights[indicators[-1]]) / 2
 
-    print_section_header("Signal importance report", False)
-    offset = '{:<1s}{:>' + str(initial_offset - len('Stake currency')) + 's}'
-    print(offset.format('Stake currency' + ":", args.stake_currency))
+        print_section_header("Signal importance report", False)
+        print(signal_format.format('Stake currency' + ":", args.stake_currency))
 
-    print_section_header("Total Overall Signal Importance:")
-    for signal, importance in total_overall_weights.items():
-        print_signal(signal, importance)
+        print_section_header("Total Overall Signal Importance:")
+        print_full_signal_header()
+        for signal, importance in total_overall_weights.items():
+            print_full_avg_signal(signal, importance, avg_trend_weights)
 
     print_section_header("Total Overall Buy Signal Importance:")
     print_full_signal_header()
