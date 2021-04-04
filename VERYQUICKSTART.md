@@ -36,7 +36,7 @@ Then execute: `python ./user_data/Total-Overall-Signal-Importance-Calculator.py 
 The higher the score of a signal the better! And now it will also export to a `importance.log` file in the same folder for easy sharing!  
 Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can improve the signals!   
    
-- Now you must fill in `-sc` or `--staking-currency` with the one you use in `config.json` as `stake_currency` since it really matters
+- Now you must fill in `-sc` or `--stake-currency` with the one you use in `config.json` as `stake_currency` since it really matters
 - Optional fill in `-f` or `--file` to submit a custom file name for the log file to be exported
 - Optional fill in `-nf` or `--no-file` if you don't want a log file to be exported   
    

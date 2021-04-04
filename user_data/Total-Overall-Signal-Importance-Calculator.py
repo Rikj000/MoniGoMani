@@ -4,7 +4,7 @@ import argparse
 # Total Overall Signal Importance Calculator for MoniGoMani v0.8.0
 # ----------------------------------------------------------------
 # Paste the results from your HyperOpt over below `buy_params` & `sell_params` arrays
-# Then execute: `python ./user_data/Total-Overall-Signal-Importance-Calculator.py` from your favorite
+# Then execute: `python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc BTC` from your favorite
 # terminal / CLI to calculate the overall importance of the signals being used.
 # The higher the score of a signal the better
 
@@ -14,81 +14,83 @@ import argparse
 
 # Buy hyperspace params:
 buy_params = {
-    'buy___trades_when_downwards': True,
+    'buy___trades_when_downwards': False,
     'buy___trades_when_sideways': False,
     'buy___trades_when_upwards': True,
-    'buy__downwards_trend_total_signal_needed': 2,
-    'buy__sideways_trend_total_signal_needed': 29,
-    'buy__upwards_trend_total_signal_needed': 19,
-    'buy_downwards_trend_adx_strong_up_weight': 76,
-    'buy_downwards_trend_bollinger_bands_weight': 94,
-    'buy_downwards_trend_ema_long_golden_cross_weight': 55,
-    'buy_downwards_trend_ema_short_golden_cross_weight': 32,
-    'buy_downwards_trend_macd_weight': 18,
-    'buy_downwards_trend_rsi_weight': 94,
-    'buy_downwards_trend_sma_long_golden_cross_weight': 69,
-    'buy_downwards_trend_sma_short_golden_cross_weight': 81,
-    'buy_downwards_trend_vwap_cross_weight': 41,
-    'buy_sideways_trend_adx_strong_up_weight': 15,
-    'buy_sideways_trend_bollinger_bands_weight': 53,
-    'buy_sideways_trend_ema_long_golden_cross_weight': 83,
-    'buy_sideways_trend_ema_short_golden_cross_weight': 85,
-    'buy_sideways_trend_macd_weight': 40,
-    'buy_sideways_trend_rsi_weight': 1,
-    'buy_sideways_trend_sma_long_golden_cross_weight': 80,
-    'buy_sideways_trend_sma_short_golden_cross_weight': 63,
-    'buy_sideways_trend_vwap_cross_weight': 65,
-    'buy_upwards_trend_adx_strong_up_weight': 18,
-    'buy_upwards_trend_bollinger_bands_weight': 61,
-    'buy_upwards_trend_ema_long_golden_cross_weight': 18,
-    'buy_upwards_trend_ema_short_golden_cross_weight': 81,
-    'buy_upwards_trend_macd_weight': 48,
-    'buy_upwards_trend_rsi_weight': 94,
-    'buy_upwards_trend_sma_long_golden_cross_weight': 70,
-    'buy_upwards_trend_sma_short_golden_cross_weight': 99,
-    'buy_upwards_trend_vwap_cross_weight': 31
+    'buy__downwards_trend_total_signal_needed': 29,
+    'buy__sideways_trend_total_signal_needed': 61,
+    'buy__upwards_trend_total_signal_needed': 57,
+    'buy_downwards_trend_adx_strong_up_weight': 66,
+    'buy_downwards_trend_bollinger_bands_weight': 0,
+    'buy_downwards_trend_ema_long_golden_cross_weight': 11,
+    'buy_downwards_trend_ema_short_golden_cross_weight': 82,
+    'buy_downwards_trend_macd_weight': 65,
+    'buy_downwards_trend_rsi_weight': 0,
+    'buy_downwards_trend_sma_long_golden_cross_weight': 46,
+    'buy_downwards_trend_sma_short_golden_cross_weight': 5,
+    'buy_downwards_trend_vwap_cross_weight': 87,
+    'buy_sideways_trend_adx_strong_up_weight': 1,
+    'buy_sideways_trend_bollinger_bands_weight': 8,
+    'buy_sideways_trend_ema_long_golden_cross_weight': 94,
+    'buy_sideways_trend_ema_short_golden_cross_weight': 16,
+    'buy_sideways_trend_macd_weight': 42,
+    'buy_sideways_trend_rsi_weight': 52,
+    'buy_sideways_trend_sma_long_golden_cross_weight': 30,
+    'buy_sideways_trend_sma_short_golden_cross_weight': 1,
+    'buy_sideways_trend_vwap_cross_weight': 16,
+    'buy_upwards_trend_adx_strong_up_weight': 32,
+    'buy_upwards_trend_bollinger_bands_weight': 77,
+    'buy_upwards_trend_ema_long_golden_cross_weight': 11,
+    'buy_upwards_trend_ema_short_golden_cross_weight': 2,
+    'buy_upwards_trend_macd_weight': 99,
+    'buy_upwards_trend_rsi_weight': 88,
+    'buy_upwards_trend_sma_long_golden_cross_weight': 1,
+    'buy_upwards_trend_sma_short_golden_cross_weight': 55,
+    'buy_upwards_trend_vwap_cross_weight': 26
 }
+
 # Sell hyperspace params:
 sell_params = {
     'sell___trades_when_downwards': False,
     'sell___trades_when_sideways': True,
-    'sell___trades_when_upwards': True,
-    'sell__downwards_trend_total_signal_needed': 11,
-    'sell__sideways_trend_total_signal_needed': 41,
+    'sell___trades_when_upwards': False,
+    'sell__downwards_trend_total_signal_needed': 96,
+    'sell__sideways_trend_total_signal_needed': 75,
     'sell__upwards_trend_total_signal_needed': 87,
-    'sell_downwards_trend_adx_strong_down_weight': 33,
-    'sell_downwards_trend_bollinger_bands_weight': 21,
-    'sell_downwards_trend_ema_long_death_cross_weight': 92,
-    'sell_downwards_trend_ema_short_death_cross_weight': 96,
-    'sell_downwards_trend_macd_weight': 1,
-    'sell_downwards_trend_rsi_weight': 20,
-    'sell_downwards_trend_sma_long_death_cross_weight': 62,
-    'sell_downwards_trend_sma_short_death_cross_weight': 30,
-    'sell_downwards_trend_vwap_cross_weight': 73,
-    'sell_sideways_trend_adx_strong_down_weight': 43,
-    'sell_sideways_trend_bollinger_bands_weight': 76,
-    'sell_sideways_trend_ema_long_death_cross_weight': 72,
-    'sell_sideways_trend_ema_short_death_cross_weight': 44,
-    'sell_sideways_trend_macd_weight': 21,
-    'sell_sideways_trend_rsi_weight': 24,
-    'sell_sideways_trend_sma_long_death_cross_weight': 27,
-    'sell_sideways_trend_sma_short_death_cross_weight': 86,
-    'sell_sideways_trend_vwap_cross_weight': 60,
-    'sell_upwards_trend_adx_strong_down_weight': 56,
-    'sell_upwards_trend_bollinger_bands_weight': 1,
-    'sell_upwards_trend_ema_long_death_cross_weight': 80,
-    'sell_upwards_trend_ema_short_death_cross_weight': 72,
-    'sell_upwards_trend_macd_weight': 46,
-    'sell_upwards_trend_rsi_weight': 8,
-    'sell_upwards_trend_sma_long_death_cross_weight': 18,
-    'sell_upwards_trend_sma_short_death_cross_weight': 83,
-    'sell_upwards_trend_vwap_cross_weight': 10
+    'sell_downwards_trend_adx_strong_down_weight': 2,
+    'sell_downwards_trend_bollinger_bands_weight': 34,
+    'sell_downwards_trend_ema_long_death_cross_weight': 91,
+    'sell_downwards_trend_ema_short_death_cross_weight': 75,
+    'sell_downwards_trend_macd_weight': 32,
+    'sell_downwards_trend_rsi_weight': 13,
+    'sell_downwards_trend_sma_long_death_cross_weight': 92,
+    'sell_downwards_trend_sma_short_death_cross_weight': 93,
+    'sell_downwards_trend_vwap_cross_weight': 100,
+    'sell_sideways_trend_adx_strong_down_weight': 41,
+    'sell_sideways_trend_bollinger_bands_weight': 22,
+    'sell_sideways_trend_ema_long_death_cross_weight': 25,
+    'sell_sideways_trend_ema_short_death_cross_weight': 42,
+    'sell_sideways_trend_macd_weight': 2,
+    'sell_sideways_trend_rsi_weight': 82,
+    'sell_sideways_trend_sma_long_death_cross_weight': 49,
+    'sell_sideways_trend_sma_short_death_cross_weight': 66,
+    'sell_sideways_trend_vwap_cross_weight': 42,
+    'sell_upwards_trend_adx_strong_down_weight': 8,
+    'sell_upwards_trend_bollinger_bands_weight': 35,
+    'sell_upwards_trend_ema_long_death_cross_weight': 18,
+    'sell_upwards_trend_ema_short_death_cross_weight': 23,
+    'sell_upwards_trend_macd_weight': 93,
+    'sell_upwards_trend_rsi_weight': 15,
+    'sell_upwards_trend_sma_long_death_cross_weight': 5,
+    'sell_upwards_trend_sma_short_death_cross_weight': 2,
+    'sell_upwards_trend_vwap_cross_weight': 82
 }
 
 
 ########################################################################################################################
 #                                   END OF HYPEROPT BUY/SELL RESULTS COPY-PASTE SECTION                                #
 ########################################################################################################################
+
 class FileAndConsoleLogger(object):
     def __init__(self, *files):
         self.files = files
@@ -154,7 +156,8 @@ def print_full_avg_signal(signal, importance, avg_weights):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-sc', '--stake-currency', dest='stake_currency', type=str, required=True,
-                        help='Stake currency used when generating these settings')
+                        help='Stake currency displayed in the report (should match to what is under '
+                             '"stake_currency" in your config.json)')
     parser.add_argument('-f', '--file', dest='file', type=str, default='importance.log',
                         help='Filename to save result to')
     parser.add_argument('-nf', '--no-file', dest='output_to_file', const=False, default=True, nargs='?',
