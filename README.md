@@ -76,6 +76,7 @@ python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc BTC
 - Try to get fewer points in the code where the DataFrame gets accessed for speed improvements
 - [MultiThreaded DataFrame indicator checking](https://www.machinelearningplus.com/python/parallel-processing-python/) if possible for speed improvements
 - Settings to enable/disable HyperOpting for individual `buy_params` & `sell_params`
+- If open trade's trend changed for X candles (hyperoptable), check if trade is making losses & send sell signal if it is (To try to unclog the bot & attempt to continue the profit climb :rocket:)   
 - **Other & Better indicators!** MoniGoMani has been designed so signals can easily be inserted / swapped out   
 Please use the `Total-Overall-Signal-Importance-Calculator.py` (added in `v0.7.1`) to find out which signals do best and report your results to the Discord server, so we can improve! :rocket:
 - Individual `BTC_config.json` & `USDT_config.json` files, as well as individual `BTC_MoniGoManiHyperOpted.py` & `USDT_MoniGoManiHyperOpted.py` releases
