@@ -20,7 +20,7 @@ That's it you successfully set up Freqtrade, connected to Telegram, with FreqUI!
 ## Very Quick Start BackTesting/HyperOpting   
 *(**For new [Auto-HyperOptable-Strategy](https://github.com/freqtrade/freqtrade/pull/4596) added in v0.8.0**, temporary instructions until merged into Freqtrade)*   
 1) Open a terminal window and navigate to where you want to put `Freqtrade rk/hyper-strategy`
-2) Type `git clone https://github.com/rokups/freqtrade/tree/rk/hyper-strategy` to clone the custom repo that contains the feature   
+2) Type `git clone https://github.com/rokups/freqtrade/` to clone the custom Freqtrade repo that contains the feature   
 3) Type `git checkout remotes/origin/rk/hyper-strategy` to switch to the branch that contains the feature   
 4) Type `./setup.sh -i` to install the custom freqtrade from scratch   
 5) Type `source ./.env/bin/activate` to activate your virtual environment (Needs to be done every time you open the terminal)   
