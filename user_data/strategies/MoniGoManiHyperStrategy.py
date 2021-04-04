@@ -42,7 +42,7 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # If enabled all Weighted Signal results will be added to the dataframe for easy debugging with BreakPoints
     # Warning: Disable this for anything else then debugging in an IDE! (Integrated Development Environment)
-    debuggable_weighted_signal_dataframe = True
+    debuggable_weighted_signal_dataframe = False
 
     # Ps: Documentation has been moved to the Buy/Sell HyperOpt Space Parameters sections below this copy-paste section
     ####################################################################################################################
