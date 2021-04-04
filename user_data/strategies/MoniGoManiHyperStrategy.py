@@ -8,7 +8,6 @@ from freqtrade.strategy import IStrategy, CategoricalParameter, IntParameter
 # ta._ta_lib.<function_name> can temporarily be used while writing as a workaround
 # Then change back to ta.<function_name> so IDE won't nag about accessing a protected member of TA-Lib
 from pandas import DataFrame
-import multiprocessing as mp
 
 # ------------------------------------------------------------------------------------------------------
 class_name = 'MoniGoManiHyperStrategy'
