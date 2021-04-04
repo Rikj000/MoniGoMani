@@ -8,7 +8,9 @@ from freqtrade.strategy import IStrategy, CategoricalParameter, IntParameter
 # ta._ta_lib.<function_name> can temporarily be used while writing as a workaround
 # Then change back to ta.<function_name> so IDE won't nag about accessing a protected member of TA-Lib
 from pandas import DataFrame
+
 import multiprocessing as mp
+from pathos.multiprocessing import ProcessingPool as Pool
 
 # ------------------------------------------------------------------------------------------------------
 class_name = 'MoniGoManiHyperStrategy'
@@ -144,6 +146,9 @@ class MoniGoManiHyperStrategy(IStrategy):
     ####################################################################################################################
     #                                     END OF HYPEROPT RESULTS COPY-PASTE SECTION                                   #
     ####################################################################################################################
+
+    # Detect the number of CPU cores on the system.
+    cpu_cores = mp.cpu_count()
 
     # Optimal timeframe for the strategy.
     timeframe = '1h'  # ToDo: Remove unneeded one of the 2
