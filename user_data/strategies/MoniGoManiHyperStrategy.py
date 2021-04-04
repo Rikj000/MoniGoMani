@@ -1,14 +1,15 @@
 # --- Do not remove these libs ------------------------------------------------------------------------
+import freqtrade.vendor.qtpylib.indicators as qtpylib
 import numpy as np  # noqa
 import pandas as pd  # noqa
 import talib.abstract as ta
+from freqtrade.strategy import IStrategy, CategoricalParameter, IntParameter
 # ^ TA-Lib Autofill mostly broken in JetBrains Products,
 # ta._ta_lib.<function_name> can temporarily be used while writing as a workaround
 # Then change back to ta.<function_name> so IDE won't nag about accessing a protected member of TA-Lib
 from pandas import DataFrame
+import multiprocessing as mp
 
-import freqtrade.vendor.qtpylib.indicators as qtpylib
-from freqtrade.strategy import IStrategy, CategoricalParameter, IntParameter
 # ------------------------------------------------------------------------------------------------------
 class_name = 'MoniGoManiHyperStrategy'
 
@@ -316,11 +317,11 @@ class MoniGoManiHyperStrategy(IStrategy):
     # total_buy_signal_needed)
 
     # React to Sell Signals when certain trends are detected (False would disable trading in said trend)
-    sell___trades_when_downwards =\
+    sell___trades_when_downwards = \
         CategoricalParameter([True, False], space='sell', optimize=True, load=True)
-    sell___trades_when_sideways =\
+    sell___trades_when_sideways = \
         CategoricalParameter([True, False], space='sell', optimize=True, load=True)
-    sell___trades_when_upwards =\
+    sell___trades_when_upwards = \
         CategoricalParameter([True, False], space='sell', optimize=True, load=True)
 
     # Downwards Trend Sell
@@ -693,15 +694,17 @@ class MoniGoManiHyperStrategy(IStrategy):
                 'close']), 'total_buy_signal_strength'] += self.buy_upwards_trend_vwap_cross_weight.value
 
         # Check if buy signal should be sent depending on the current trend
-        dataframe.loc[(dataframe['trend'] == 'downwards') &
-                      (dataframe['total_buy_signal_strength'] >=
-                       self.buy__downwards_trend_total_signal_needed.value), 'buy'] = 1
-        dataframe.loc[(dataframe['trend'] == 'sideways') &
-                      (dataframe['total_buy_signal_strength'] >=
-                       self.buy__sideways_trend_total_signal_needed.value), 'buy'] = 1
-        dataframe.loc[(dataframe['trend'] == 'upwards') &
-                      (dataframe['total_buy_signal_strength'] >=
-                       self.buy__upwards_trend_total_signal_needed.value), 'buy'] = 1
+        dataframe.loc[
+            (
+                    (dataframe['trend'] == 'downwards') &
+                    (dataframe['total_buy_signal_strength'] >= self.buy__downwards_trend_total_signal_needed.value)
+            ) | (
+                    (dataframe['trend'] == 'sideways') &
+                    (dataframe['total_buy_signal_strength'] >= self.buy__sideways_trend_total_signal_needed.value)
+            ) | (
+                    (dataframe['trend'] == 'upwards') &
+                    (dataframe['total_buy_signal_strength'] >= self.buy__upwards_trend_total_signal_needed.value)
+            ), 'buy'] = 1
 
         # Override Buy Signal: When configured buy signals can be completely turned off for each kind of trend
         if not self.buy___trades_when_downwards.value:
@@ -907,15 +910,17 @@ class MoniGoManiHyperStrategy(IStrategy):
                 'close']), 'total_sell_signal_strength'] += self.sell_upwards_trend_vwap_cross_weight.value
 
         # Check if sell signal should be sent depending on the current trend
-        dataframe.loc[(dataframe['trend'] == 'downwards') &
-                      (dataframe['total_sell_signal_strength'] >=
-                       self.sell__downwards_trend_total_signal_needed.value), 'sell'] = 1
-        dataframe.loc[(dataframe['trend'] == 'sideways') &
-                      (dataframe['total_sell_signal_strength'] >=
-                       self.sell__sideways_trend_total_signal_needed.value), 'sell'] = 1
-        dataframe.loc[(dataframe['trend'] == 'upwards') &
-                      (dataframe['total_sell_signal_strength'] >=
-                       self.sell__upwards_trend_total_signal_needed.value), 'sell'] = 1
+        dataframe.loc[
+            (
+                    (dataframe['trend'] == 'downwards') &
+                    (dataframe['total_sell_signal_strength'] >= self.sell__downwards_trend_total_signal_needed.value)
+            ) | (
+                    (dataframe['trend'] == 'sideways') &
+                    (dataframe['total_sell_signal_strength'] >= self.sell__sideways_trend_total_signal_needed.value)
+            ) | (
+                    (dataframe['trend'] == 'upwards') &
+                    (dataframe['total_sell_signal_strength'] >= self.sell__upwards_trend_total_signal_needed.value)
+            ), 'sell'] = 1
 
         # Override Sell Signal: When configured sell signals can be completely turned off for each kind of trend
         if not self.sell___trades_when_downwards.value:
