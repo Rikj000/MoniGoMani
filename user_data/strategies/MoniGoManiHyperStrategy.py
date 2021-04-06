@@ -1,26 +1,21 @@
-# --- Do not remove these libs ------------------------------------------------------------------------
-import freqtrade.vendor.qtpylib.indicators as qtpylib
+# --- Do not remove these libs ----------------------------------------------------------------------
 import numpy as np  # noqa
 import pandas as pd  # noqa
 import talib.abstract as ta
+from pandas import DataFrame
+import freqtrade.vendor.qtpylib.indicators as qtpylib
 from freqtrade.strategy import IStrategy, CategoricalParameter, IntParameter
 # ^ TA-Lib Autofill mostly broken in JetBrains Products,
 # ta._ta_lib.<function_name> can temporarily be used while writing as a workaround
 # Then change back to ta.<function_name> so IDE won't nag about accessing a protected member of TA-Lib
-from pandas import DataFrame
-
-import multiprocessing as mp
-from pathos.multiprocessing import ProcessingPool as Pool
-
-# ------------------------------------------------------------------------------------------------------
-class_name = 'MoniGoManiHyperStrategy'
+# ----------------------------------------------------------------------------------------------------
 
 
 class MoniGoManiHyperStrategy(IStrategy):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.8.0 by Rikj000                         ###
+    ###                         MoniGoMani v0.8.1 by Rikj000                         ###
     ##                          ----------------------------                          ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -57,73 +52,73 @@ class MoniGoManiHyperStrategy(IStrategy):
         'buy___trades_when_downwards': True,
         'buy___trades_when_sideways': False,
         'buy___trades_when_upwards': True,
-        'buy__downwards_trend_total_signal_needed': 2,
-        'buy__sideways_trend_total_signal_needed': 29,
-        'buy__upwards_trend_total_signal_needed': 19,
-        'buy_downwards_trend_adx_strong_up_weight': 76,
-        'buy_downwards_trend_bollinger_bands_weight': 94,
-        'buy_downwards_trend_ema_long_golden_cross_weight': 55,
-        'buy_downwards_trend_ema_short_golden_cross_weight': 32,
-        'buy_downwards_trend_macd_weight': 18,
-        'buy_downwards_trend_rsi_weight': 94,
-        'buy_downwards_trend_sma_long_golden_cross_weight': 69,
-        'buy_downwards_trend_sma_short_golden_cross_weight': 81,
-        'buy_downwards_trend_vwap_cross_weight': 41,
-        'buy_sideways_trend_adx_strong_up_weight': 15,
-        'buy_sideways_trend_bollinger_bands_weight': 53,
-        'buy_sideways_trend_ema_long_golden_cross_weight': 83,
-        'buy_sideways_trend_ema_short_golden_cross_weight': 85,
-        'buy_sideways_trend_macd_weight': 40,
-        'buy_sideways_trend_rsi_weight': 1,
-        'buy_sideways_trend_sma_long_golden_cross_weight': 80,
-        'buy_sideways_trend_sma_short_golden_cross_weight': 63,
-        'buy_sideways_trend_vwap_cross_weight': 65,
-        'buy_upwards_trend_adx_strong_up_weight': 18,
-        'buy_upwards_trend_bollinger_bands_weight': 61,
-        'buy_upwards_trend_ema_long_golden_cross_weight': 18,
-        'buy_upwards_trend_ema_short_golden_cross_weight': 81,
-        'buy_upwards_trend_macd_weight': 48,
-        'buy_upwards_trend_rsi_weight': 94,
-        'buy_upwards_trend_sma_long_golden_cross_weight': 70,
-        'buy_upwards_trend_sma_short_golden_cross_weight': 99,
-        'buy_upwards_trend_vwap_cross_weight': 31
+        'buy__downwards_trend_total_signal_needed': 4,
+        'buy__sideways_trend_total_signal_needed': 17,
+        'buy__upwards_trend_total_signal_needed': 50,
+        'buy_downwards_trend_adx_strong_up_weight': 71,
+        'buy_downwards_trend_bollinger_bands_weight': 54,
+        'buy_downwards_trend_ema_long_golden_cross_weight': 0,
+        'buy_downwards_trend_ema_short_golden_cross_weight': 87,
+        'buy_downwards_trend_macd_weight': 47,
+        'buy_downwards_trend_rsi_weight': 62,
+        'buy_downwards_trend_sma_long_golden_cross_weight': 56,
+        'buy_downwards_trend_sma_short_golden_cross_weight': 46,
+        'buy_downwards_trend_vwap_cross_weight': 44,
+        'buy_sideways_trend_adx_strong_up_weight': 65,
+        'buy_sideways_trend_bollinger_bands_weight': 25,
+        'buy_sideways_trend_ema_long_golden_cross_weight': 74,
+        'buy_sideways_trend_ema_short_golden_cross_weight': 59,
+        'buy_sideways_trend_macd_weight': 64,
+        'buy_sideways_trend_rsi_weight': 52,
+        'buy_sideways_trend_sma_long_golden_cross_weight': 4,
+        'buy_sideways_trend_sma_short_golden_cross_weight': 86,
+        'buy_sideways_trend_vwap_cross_weight': 57,
+        'buy_upwards_trend_adx_strong_up_weight': 13,
+        'buy_upwards_trend_bollinger_bands_weight': 21,
+        'buy_upwards_trend_ema_long_golden_cross_weight': 71,
+        'buy_upwards_trend_ema_short_golden_cross_weight': 12,
+        'buy_upwards_trend_macd_weight': 94,
+        'buy_upwards_trend_rsi_weight': 24,
+        'buy_upwards_trend_sma_long_golden_cross_weight': 14,
+        'buy_upwards_trend_sma_short_golden_cross_weight': 26,
+        'buy_upwards_trend_vwap_cross_weight': 23
     }
 
     # Sell hyperspace params:
     sell_params = {
-        'sell___trades_when_downwards': False,
+        'sell___trades_when_downwards': True,
         'sell___trades_when_sideways': True,
-        'sell___trades_when_upwards': True,
-        'sell__downwards_trend_total_signal_needed': 11,
-        'sell__sideways_trend_total_signal_needed': 41,
-        'sell__upwards_trend_total_signal_needed': 87,
-        'sell_downwards_trend_adx_strong_down_weight': 33,
-        'sell_downwards_trend_bollinger_bands_weight': 21,
-        'sell_downwards_trend_ema_long_death_cross_weight': 92,
-        'sell_downwards_trend_ema_short_death_cross_weight': 96,
-        'sell_downwards_trend_macd_weight': 1,
-        'sell_downwards_trend_rsi_weight': 20,
-        'sell_downwards_trend_sma_long_death_cross_weight': 62,
-        'sell_downwards_trend_sma_short_death_cross_weight': 30,
-        'sell_downwards_trend_vwap_cross_weight': 73,
-        'sell_sideways_trend_adx_strong_down_weight': 43,
-        'sell_sideways_trend_bollinger_bands_weight': 76,
-        'sell_sideways_trend_ema_long_death_cross_weight': 72,
-        'sell_sideways_trend_ema_short_death_cross_weight': 44,
-        'sell_sideways_trend_macd_weight': 21,
-        'sell_sideways_trend_rsi_weight': 24,
-        'sell_sideways_trend_sma_long_death_cross_weight': 27,
-        'sell_sideways_trend_sma_short_death_cross_weight': 86,
-        'sell_sideways_trend_vwap_cross_weight': 60,
-        'sell_upwards_trend_adx_strong_down_weight': 56,
-        'sell_upwards_trend_bollinger_bands_weight': 1,
-        'sell_upwards_trend_ema_long_death_cross_weight': 80,
-        'sell_upwards_trend_ema_short_death_cross_weight': 72,
-        'sell_upwards_trend_macd_weight': 46,
-        'sell_upwards_trend_rsi_weight': 8,
-        'sell_upwards_trend_sma_long_death_cross_weight': 18,
-        'sell_upwards_trend_sma_short_death_cross_weight': 83,
-        'sell_upwards_trend_vwap_cross_weight': 10
+        'sell___trades_when_upwards': False,
+        'sell__downwards_trend_total_signal_needed': 87,
+        'sell__sideways_trend_total_signal_needed': 22,
+        'sell__upwards_trend_total_signal_needed': 89,
+        'sell_downwards_trend_adx_strong_down_weight': 34,
+        'sell_downwards_trend_bollinger_bands_weight': 83,
+        'sell_downwards_trend_ema_long_death_cross_weight': 0,
+        'sell_downwards_trend_ema_short_death_cross_weight': 42,
+        'sell_downwards_trend_macd_weight': 0,
+        'sell_downwards_trend_rsi_weight': 49,
+        'sell_downwards_trend_sma_long_death_cross_weight': 40,
+        'sell_downwards_trend_sma_short_death_cross_weight': 0,
+        'sell_downwards_trend_vwap_cross_weight': 12,
+        'sell_sideways_trend_adx_strong_down_weight': 45,
+        'sell_sideways_trend_bollinger_bands_weight': 94,
+        'sell_sideways_trend_ema_long_death_cross_weight': 8,
+        'sell_sideways_trend_ema_short_death_cross_weight': 33,
+        'sell_sideways_trend_macd_weight': 65,
+        'sell_sideways_trend_rsi_weight': 11,
+        'sell_sideways_trend_sma_long_death_cross_weight': 57,
+        'sell_sideways_trend_sma_short_death_cross_weight': 23,
+        'sell_sideways_trend_vwap_cross_weight': 55,
+        'sell_upwards_trend_adx_strong_down_weight': 54,
+        'sell_upwards_trend_bollinger_bands_weight': 0,
+        'sell_upwards_trend_ema_long_death_cross_weight': 36,
+        'sell_upwards_trend_ema_short_death_cross_weight': 12,
+        'sell_upwards_trend_macd_weight': 90,
+        'sell_upwards_trend_rsi_weight': 52,
+        'sell_upwards_trend_sma_long_death_cross_weight': 97,
+        'sell_upwards_trend_sma_short_death_cross_weight': 18,
+        'sell_upwards_trend_vwap_cross_weight': 51
     }
 
     # ROI table:
@@ -147,12 +142,8 @@ class MoniGoManiHyperStrategy(IStrategy):
     #                                     END OF HYPEROPT RESULTS COPY-PASTE SECTION                                   #
     ####################################################################################################################
 
-    # Detect the number of CPU cores on the system.
-    cpu_cores = mp.cpu_count()
-
     # Optimal timeframe for the strategy.
-    timeframe = '1h'  # ToDo: Remove unneeded one of the 2
-    ticker_interval = '1h'
+    timeframe = '1h'
 
     # Run "populate_indicators()" only for new candle.
     process_only_new_candles = False
@@ -181,6 +172,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         'sell': 'gtc'
     }
 
+    # Plot configuration to show all signals used in MoniGoMani in FreqUI (Use load from Strategy in FreqUI)
     plot_config = {
         'main_plot': {
             # Main Plot Indicators (SMAs, EMAs, Bollinger Bands, VWAP)
@@ -211,6 +203,22 @@ class MoniGoManiHyperStrategy(IStrategy):
         }
     }
 
+    # HyperOpt Settings Override
+    # --------------------------
+    # When the Parameters in below HyperOpt Space Parameters sections are altered as following examples then they can be
+    # used as overrides while hyperopting / backtesting / dry/live-running (only truly useful when hyperopting though!)
+    # Meaning you can use this to set individual buy_params/sell_params to a fixed value when hyperopting!
+    # WARNING: Always double check that when doing a fresh hyperopt or doing a dry/live-run that all overrides are
+    # turned off!
+    #
+    # Override Examples:
+    # Override to False:    CategoricalParameter([True, False], default=False, space='buy', optimize=False, load=False)
+    # Override to 0:        IntParameter(0, 100, default=0, space='sell', optimize=False, load=False)
+    #
+    # default=           The value used when overriding
+    # optimize=False     Exclude from hyperopting (Make static)
+    # load=False         Don't load from above HYPEROPT RESULTS COPY-PASTE SECTION
+
     # ---------------------------------------------------------------- #
     #                  Buy HyperOpt Space Parameters                   #
     # ---------------------------------------------------------------- #
@@ -225,11 +233,11 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # React to Buy Signals when certain trends are detected (False would disable trading in said trend)
     buy___trades_when_downwards = \
-        CategoricalParameter([True, False], default=True, space='buy', optimize=True, load=True)
+        CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=True)
     buy___trades_when_sideways = \
-        CategoricalParameter([True, False], default=True, space='buy', optimize=True, load=True)
+        CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=True)
     buy___trades_when_upwards = \
-        CategoricalParameter([True, False], default=True, space='buy', optimize=True, load=True)
+        CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=True)
 
     # Downwards Trend Buy
     # -------------------
@@ -239,23 +247,23 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # Buy Signal Weight Influence Table
     buy_downwards_trend_adx_strong_up_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_downwards_trend_rsi_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_downwards_trend_macd_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_downwards_trend_sma_short_golden_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_downwards_trend_ema_short_golden_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_downwards_trend_sma_long_golden_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_downwards_trend_ema_long_golden_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_downwards_trend_bollinger_bands_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_downwards_trend_vwap_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
 
     # Sideways Trend Buy
     # ------------------
@@ -265,23 +273,23 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # Buy Signal Weight Influence Table
     buy_sideways_trend_adx_strong_up_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_rsi_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_macd_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_sma_short_golden_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_ema_short_golden_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_sma_long_golden_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_ema_long_golden_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_bollinger_bands_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_vwap_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
 
     # Upwards Trend Buy
     # -----------------
@@ -291,23 +299,23 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # Buy Signal Weight Influence Table
     buy_upwards_trend_adx_strong_up_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_rsi_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_macd_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_sma_short_golden_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_ema_short_golden_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_sma_long_golden_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_ema_long_golden_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_bollinger_bands_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_vwap_cross_weight = \
-        IntParameter(0, 100, default=20, space='buy', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
 
     # ---------------------------------------------------------------- #
     #                  Sell HyperOpt Space Parameters                  #
@@ -323,11 +331,11 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # React to Sell Signals when certain trends are detected (False would disable trading in said trend)
     sell___trades_when_downwards = \
-        CategoricalParameter([True, False], space='sell', optimize=True, load=True)
+        CategoricalParameter([True, False], default=True, space='sell', optimize=True, load=True)
     sell___trades_when_sideways = \
-        CategoricalParameter([True, False], space='sell', optimize=True, load=True)
+        CategoricalParameter([True, False], default=True, space='sell', optimize=True, load=True)
     sell___trades_when_upwards = \
-        CategoricalParameter([True, False], space='sell', optimize=True, load=True)
+        CategoricalParameter([True, False], default=False, space='sell', optimize=True, load=True)
 
     # Downwards Trend Sell
     # --------------------
@@ -337,23 +345,23 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # Sell Signal Weight Influence Table
     sell_downwards_trend_adx_strong_down_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_downwards_trend_rsi_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_downwards_trend_macd_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_downwards_trend_sma_short_death_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_downwards_trend_ema_short_death_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_downwards_trend_sma_long_death_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_downwards_trend_ema_long_death_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_downwards_trend_bollinger_bands_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_downwards_trend_vwap_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
 
     # Sideways Trend Sell
     # -------------------
@@ -363,23 +371,23 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # Sell Signal Weight Influence Table
     sell_sideways_trend_adx_strong_down_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_sideways_trend_rsi_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_sideways_trend_macd_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_sideways_trend_sma_short_death_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_sideways_trend_ema_short_death_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_sideways_trend_sma_long_death_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_sideways_trend_ema_long_death_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_sideways_trend_bollinger_bands_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_sideways_trend_vwap_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
 
     # Upwards Trend Sell
     # ------------------
@@ -389,23 +397,23 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # Sell Signal Weight Influence Table
     sell_upwards_trend_adx_strong_down_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_upwards_trend_rsi_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_upwards_trend_macd_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_upwards_trend_sma_short_death_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_upwards_trend_ema_short_death_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_upwards_trend_sma_long_death_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_upwards_trend_ema_long_death_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_upwards_trend_bollinger_bands_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
     sell_upwards_trend_vwap_cross_weight = \
-        IntParameter(0, 100, default=20, space='sell', optimize=True, load=True)
+        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
 
     # ---------------------------------------------------------------- #
     #                 Custom HyperOpt Space Parameters                 #
