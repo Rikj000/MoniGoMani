@@ -1,0 +1,126 @@
+2021-04-05 12:41:43,462 - freqtrade.optimize.backtesting - INFO - Loading data from 2020-12-15 08:00:00 up to 2021-03-16 00:00:00 (90 days)..
+2021-04-05 12:41:43,612 - freqtrade.optimize.hyperopt - INFO - Hyperopting with data from 2021-01-01 00:00:00 up to 2021-03-16 00:00:00 (74 days)..
+2021-04-05 12:41:43,681 - freqtrade.optimize.hyperopt - INFO - Found 12 CPU cores. Let's make them scream!
+2021-04-05 12:41:43,681 - freqtrade.optimize.hyperopt - INFO - Number of parallel jobs set as: -1
+2021-04-05 12:41:43,707 - freqtrade.optimize.hyperopt_interface - INFO - Min roi table: {0: 0.06883, 120: 0.04589, 240: 0.02294, 360: 0}
+2021-04-05 12:41:43,707 - freqtrade.optimize.hyperopt_interface - INFO - Max roi table: {0: 0.71124, 480: 0.25238, 1200: 0.09177, 2640: 0}
+2021-04-05 12:41:43,728 - freqtrade.optimize.hyperopt - INFO - Effective number of parallel workers used: 12
++--------+-----------+----------+------------------+--------------+------------------------------+----------------+-------------+
+|   Best |     Epoch |   Trades |    Win Draw Loss |   Avg profit |                       Profit |   Avg duration |   Objective |
+|--------+-----------+----------+------------------+--------------+------------------------------+----------------+-------------|
+| * Best |    1/1000 |      594 |    187  104  303 |        0.65% |    0.00387177 BTC  (386.78%) |      1,110.9 m |    -6.13036 |
+| * Best |    2/1000 |      507 |    234  118  155 |        1.81% |    0.00918199 BTC  (917.29%) |      2,272.4 m |    -10.0716 |                                                     
+| * Best |    3/1000 |     1099 |    728   74  297 |        1.38% |   0.01521894 BTC (1,520.39%) |        605.8 m |    -17.8115 |
+|   Best |   63/1000 |      756 |    382   31  343 |        2.23% |   0.01686228 BTC (1,684.54%) |        884.8 m |    -24.9669 |                                                     
+|   Best |   77/1000 |     1025 |    732   37  256 |        2.26% |   0.02319464 BTC (2,317.13%) |      1,089.1 m |    -27.5179 |                                                     
+|   Best |   85/1000 |      869 |    445   15  409 |        2.07% |   0.01800921 BTC (1,799.12%) |        894.5 m |    -27.6154 |                                                     
+|   Best |  103/1000 |     1163 |    750   70  343 |        1.85% |   0.02153877 BTC (2,151.73%) |        849.0 m |    -31.6421 |                                                     
+|   Best |  124/1000 |     2360 |   1312   15 1033 |        0.80% |   0.01888651 BTC (1,886.40%) |        218.7 m |    -33.8609 |                                                     
+|   Best |  142/1000 |     3574 |   2274    0 1300 |        0.70% |   0.02489389 BTC (2,487.39%) |        141.3 m |    -42.6564 |                                                     
+|   Best |  288/1000 |     4267 |   2310    7 1950 |        0.55% |   0.02349231 BTC (2,346.49%) |         64.2 m |    -45.0662 |                                                     
+|   Best |  390/1000 |     2914 |   1841    1 1072 |        0.68% |   0.01980007 BTC (1,977.61%) |         73.2 m |    -47.8744 |                                                     
+|   Best |  398/1000 |     3121 |   2045    0 1076 |        0.70% |   0.02196967 BTC (2,194.75%) |        120.7 m |    -49.5519 |                                                     
+|   Best |  462/1000 |     2973 |   2208    8  757 |        0.80% |   0.02392544 BTC (2,390.10%) |        127.6 m |    -53.4893 |                                                     
+|   Best |  545/1000 |     3691 |   2209    0 1482 |        0.61% |   0.02255003 BTC (2,252.79%) |         57.5 m |    -54.6214 |                                                     
+|   Best |  619/1000 |     3031 |   1457    3 1571 |        0.69% |   0.02101775 BTC (2,099.48%) |         88.1 m |    -56.7724 |                                                     
+|   Best |  921/1000 |     3039 |   1922   22 1095 |        0.76% |   0.02322938 BTC (2,320.67%) |        100.5 m |    -57.7596 |                                                     
+|   Best |  955/1000 |     2843 |   1652    1 1190 |        0.73% |   0.02069258 BTC (2,067.72%) |         54.4 m |    -62.3117 |                                                     
+INFO - 1000 epochs saved to 
+    '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade-HyperStrategy/user_data/hyperopt_results/strategy_MoniGoManiHyperStrategy_hyperopt_results_2021-04-05_12-41-43.pickle'.
+
+Best result:
+
+   955/1000:   
+        2843 trades. 
+        1652/1/1190 Wins/Draws/Losses. 
+        Avg profit   0.73%. 
+        Median profit   0.55%. 
+        Total profit  0.02069258 BTC ( 2067.72Σ%). 
+        Avg duration  54.4 min. 
+        Objective: -62.31168
+
+
+    # Buy hyperspace params:
+    buy_params = {
+        'buy__downwards_trend_total_signal_needed': 67,
+        'buy__sideways_trend_total_signal_needed': 21,
+        'buy__upwards_trend_total_signal_needed': 99,
+        'buy_downwards_trend_adx_strong_up_weight': 79,
+        'buy_downwards_trend_bollinger_bands_weight': 47,
+        'buy_downwards_trend_ema_long_golden_cross_weight': 55,
+        'buy_downwards_trend_ema_short_golden_cross_weight': 16,
+        'buy_downwards_trend_macd_weight': 60,
+        'buy_downwards_trend_rsi_weight': 24,
+        'buy_downwards_trend_sma_long_golden_cross_weight': 19,
+        'buy_downwards_trend_sma_short_golden_cross_weight': 78,
+        'buy_downwards_trend_vwap_cross_weight': 68,
+        'buy_sideways_trend_adx_strong_up_weight': 15,
+        'buy_sideways_trend_bollinger_bands_weight': 37,
+        'buy_sideways_trend_ema_long_golden_cross_weight': 4,
+        'buy_sideways_trend_ema_short_golden_cross_weight': 94,
+        'buy_sideways_trend_macd_weight': 41,
+        'buy_sideways_trend_rsi_weight': 73,
+        'buy_sideways_trend_sma_long_golden_cross_weight': 16,
+        'buy_sideways_trend_sma_short_golden_cross_weight': 65,
+        'buy_sideways_trend_vwap_cross_weight': 44,
+        'buy_upwards_trend_adx_strong_up_weight': 71,
+        'buy_upwards_trend_bollinger_bands_weight': 20,
+        'buy_upwards_trend_ema_long_golden_cross_weight': 53,
+        'buy_upwards_trend_ema_short_golden_cross_weight': 23,
+        'buy_upwards_trend_macd_weight': 63,
+        'buy_upwards_trend_rsi_weight': 63,
+        'buy_upwards_trend_sma_long_golden_cross_weight': 56,
+        'buy_upwards_trend_sma_short_golden_cross_weight': 100,
+        'buy_upwards_trend_vwap_cross_weight': 17
+    }
+
+    # Sell hyperspace params:
+    sell_params = {
+        'sell__downwards_trend_total_signal_needed': 6,
+        'sell__sideways_trend_total_signal_needed': 1,
+        'sell__upwards_trend_total_signal_needed': 67,
+        'sell_downwards_trend_adx_strong_down_weight': 27,
+        'sell_downwards_trend_bollinger_bands_weight': 19,
+        'sell_downwards_trend_ema_long_death_cross_weight': 26,
+        'sell_downwards_trend_ema_short_death_cross_weight': 85,
+        'sell_downwards_trend_macd_weight': 17,
+        'sell_downwards_trend_rsi_weight': 11,
+        'sell_downwards_trend_sma_long_death_cross_weight': 4,
+        'sell_downwards_trend_sma_short_death_cross_weight': 23,
+        'sell_downwards_trend_vwap_cross_weight': 50,
+        'sell_sideways_trend_adx_strong_down_weight': 96,
+        'sell_sideways_trend_bollinger_bands_weight': 41,
+        'sell_sideways_trend_ema_long_death_cross_weight': 5,
+        'sell_sideways_trend_ema_short_death_cross_weight': 15,
+        'sell_sideways_trend_macd_weight': 75,
+        'sell_sideways_trend_rsi_weight': 60,
+        'sell_sideways_trend_sma_long_death_cross_weight': 80,
+        'sell_sideways_trend_sma_short_death_cross_weight': 22,
+        'sell_sideways_trend_vwap_cross_weight': 51,
+        'sell_upwards_trend_adx_strong_down_weight': 28,
+        'sell_upwards_trend_bollinger_bands_weight': 93,
+        'sell_upwards_trend_ema_long_death_cross_weight': 97,
+        'sell_upwards_trend_ema_short_death_cross_weight': 13,
+        'sell_upwards_trend_macd_weight': 41,
+        'sell_upwards_trend_rsi_weight': 82,
+        'sell_upwards_trend_sma_long_death_cross_weight': 76,
+        'sell_upwards_trend_sma_short_death_cross_weight': 30,
+        'sell_upwards_trend_vwap_cross_weight': 89
+    }
+
+    # ROI table:
+    minimal_roi = {
+        "0": 0.34789,
+        "416": 0.14843,
+        "1128": 0.05345,
+        "1365": 0
+    }
+
+    # Stoploss:
+    stoploss = -0.02065
+
+    # Trailing stop:
+    trailing_stop = True
+    trailing_stop_positive = 0.01091
+    trailing_stop_positive_offset = 0.01398
+    trailing_only_offset_is_reached = True

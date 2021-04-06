@@ -1,0 +1,42 @@
+Signal importance report
+--------------------------------------------------------------------
+Stake currency:                       BTC
+
+Total Overall Signal Importance:
+--------------------------------------------------------------------
+                                      avg |   down |   side |     up
+adx_strong_up_down:                51.67% |  67.0% |  44.5% |  43.5%
+bollinger_bands:                   48.67% |  36.0% |  77.5% |  32.5%
+ema_long_golden_death_cross:       45.67% |  45.5% |  31.0% |  60.5%
+ema_short_golden_death_cross:       49.0% |  92.0% |  22.5% |  32.5%
+macd:                              25.67% |  10.0% |  17.0% |  50.0%
+rsi:                               45.17% |  13.0% |  71.5% |  51.0%
+sma_long_golden_death_cross:        41.0% |  51.0% |  47.5% |  24.5%
+sma_short_golden_death_cross:      45.33% |  23.0% |  38.0% |  75.0%
+vwap_cross:                         64.5% |  67.0% |  58.0% |  68.5%
+
+Total Overall Buy Signal Importance:
+--------------------------------------------------------------------
+                                      avg |   down |   side |     up
+adx_strong_up:                     46.67% |    90% |    38% |    12%
+bollinger_bands:                    44.0% |    18% |    56% |    58%
+ema_long_golden_cross:             62.67% |    91% |    45% |    52%
+ema_short_golden_cross:            53.67% |    87% |    33% |    41%
+macd:                              31.33% |    15% |    18% |    61%
+rsi:                                50.0% |    11% |    79% |    60%
+sma_long_golden_cross:             44.33% |    71% |    40% |    22%
+sma_short_golden_cross:             52.0% |    41% |    64% |    51%
+vwap_cross:                        59.33% |    67% |    24% |    87%
+
+Total Overall Sell Signal Importance:
+--------------------------------------------------------------------
+                                      avg |   down |   side |     up
+adx_strong_down:                   56.67% |    44% |    51% |    75%
+bollinger_bands:                   53.33% |    54% |    99% |     7%
+ema_long_death_cross:              28.67% |     0% |    17% |    69%
+ema_short_death_cross:             44.33% |    97% |    12% |    24%
+macd:                               20.0% |     5% |    16% |    39%
+rsi:                               40.33% |    15% |    64% |    42%
+sma_long_death_cross:              37.67% |    31% |    55% |    27%
+sma_short_death_cross:             38.67% |     5% |    12% |    99%
+vwap_cross:                        69.67% |    67% |    92% |    50%
