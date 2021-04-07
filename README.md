@@ -95,6 +95,7 @@ Please use the `Total-Overall-Signal-Importance-Calculator.py` (added in `v0.7.1
 - Feel free to join [**CryptoStonksShallRise**](https://discord.gg/xFZ9bB6vEz) on Discord there you can follow/participate in the official channels:
   - `#moni-go-mani-updates`
   - `#moni-go-mani-testing`
+  - `#moni-go-mani-help`
   - `#moni-go-mani-setup-releases`
 
 ## Need help getting started?
