@@ -42,6 +42,8 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Warning: Disable this for anything else then debugging in an IDE! (Integrated Development Environment)
     debuggable_weighted_signal_dataframe = False
 
+    sell_unclogger_enabled = False
+
     # Ps: Documentation has been moved to the Buy/Sell HyperOpt Space Parameters sections below this copy-paste section
     ####################################################################################################################
     #                                    START OF HYPEROPT RESULTS COPY-PASTE SECTION                                  #
@@ -423,7 +425,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     #     # Define a custom stoploss space.
     #     @staticmethod
     #     def stoploss_space():
-    #         return [Real(-0.01, -0.35, name='stoploss')]
+    #         return [RealParameter(-0.01, -0.35, name='stoploss')]
 
     def informative_pairs(self):
         """
@@ -517,6 +519,14 @@ class MoniGoManiHyperStrategy(IStrategy):
         # Initialize total signal variables (should be 0 = false by default)
         dataframe['total_buy_signal_strength'] = dataframe['total_sell_signal_strength'] = 0
 
+        # Trend Detection
+        # ---------------
+
+        # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
+        dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
+        dataframe.loc[dataframe['adx'] < 20, 'trend'] = 'sideways'
+        dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
+
         return dataframe
 
     def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
@@ -526,11 +536,6 @@ class MoniGoManiHyperStrategy(IStrategy):
         :param metadata: Additional information, like the currently traded pair
         :return: DataFrame with buy column
         """
-
-        # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
-        dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
-        dataframe.loc[dataframe['adx'] < 20, 'trend'] = 'sideways'
-        dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
 
         # If a Weighted Buy Signal goes off => Bullish Indication, Set to true (=1) and multiply by weight percentage
 
@@ -736,11 +741,6 @@ class MoniGoManiHyperStrategy(IStrategy):
         :param metadata: Additional information, like the currently traded pair
         :return: DataFrame with buy column
         """
-
-        # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
-        dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
-        dataframe.loc[dataframe['adx'] < 20, 'trend'] = 'sideways'
-        dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
 
         # If a Weighted Sell Signal goes off => Bearish Indication, Set to true (=1) and multiply by weight percentage
 
