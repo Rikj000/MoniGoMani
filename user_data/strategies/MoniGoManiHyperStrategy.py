@@ -318,7 +318,6 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Signal(lambda df: True, overridable=False, min_value=0, max_value=100)
 
     buy_signals = [
-        BuySignal('adx_strong_up', lambda df: df['adx'] > 25, overridable=True, min_value=0, max_value=100, default_value=65),
         BuySignal('adx_strong_up', lambda df: df['adx'] > 25),
         BuySignal('rsi', lambda df: qtpylib.crossed_above(df['rsi'], 30)),
         BuySignal('macd', lambda df: df['macd'] > df['macdsignal']),
@@ -350,7 +349,6 @@ class MoniGoManiHyperStrategy(IStrategy):
         # TODO: Add loading parameter values from json
         logger = logging.getLogger(__name__)
 
-        # buy_weight_names = self.buy_signals.keys()
         for trend in self.trends:
             for signal in [*self.buy_signals, *self.sell_signals]:
                 logger.info(signal.name)
