@@ -5,12 +5,41 @@ import talib.abstract as ta
 from pandas import DataFrame
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 from freqtrade.strategy import IStrategy, CategoricalParameter, IntParameter
+import logging
 
 
 # ^ TA-Lib Autofill mostly broken in JetBrains Products,
 # ta._ta_lib.<function_name> can temporarily be used while writing as a workaround
 # Then change back to ta.<function_name> so IDE won't nag about accessing a protected member of TA-Lib
 # ----------------------------------------------------------------------------------------------------
+
+
+class Signal:
+    optimize = True
+    min_value = 0
+    max_value = 100
+    default_value = 0
+    type = ''
+    name = ''
+
+    def __init__(self, name: str, test, overridable: bool = True, min_value: int = 0, max_value: int = 100,
+                 default_value: int = 0):
+        self.optimize = overridable
+        self.min_value = min_value
+        self.max_value = max_value
+        self.test = test
+        self.default_value = default_value
+        self.name = name
+
+
+class BuySignal(Signal):
+    type = 'buy'
+    pass
+
+
+class SellSignal(Signal):
+    type = 'sell'
+    pass
 
 
 class MoniGoManiHyperStrategy(IStrategy):
@@ -243,83 +272,14 @@ class MoniGoManiHyperStrategy(IStrategy):
     buy___trades_when_upwards = \
         CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=True)
 
-    # Downwards Trend Buy
-    # -------------------
-
     # Total Buy Signal Percentage needed for a signal to be positive
     buy__downwards_trend_total_signal_needed = IntParameter(0, 100, default=65, space='buy', optimize=True, load=True)
-
-    # Buy Signal Weight Influence Table
-    buy_downwards_trend_adx_strong_up_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_downwards_trend_rsi_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_downwards_trend_macd_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_downwards_trend_sma_short_golden_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_downwards_trend_ema_short_golden_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_downwards_trend_sma_long_golden_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_downwards_trend_ema_long_golden_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_downwards_trend_bollinger_bands_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_downwards_trend_vwap_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-
-    # Sideways Trend Buy
-    # ------------------
 
     # Total Buy Signal Percentage needed for a signal to be positive
     buy__sideways_trend_total_signal_needed = IntParameter(0, 100, default=65, space='buy', optimize=True, load=True)
 
-    # Buy Signal Weight Influence Table
-    buy_sideways_trend_adx_strong_up_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_sideways_trend_rsi_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_sideways_trend_macd_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_sideways_trend_sma_short_golden_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_sideways_trend_ema_short_golden_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_sideways_trend_sma_long_golden_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_sideways_trend_ema_long_golden_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_sideways_trend_bollinger_bands_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_sideways_trend_vwap_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-
-    # Upwards Trend Buy
-    # -----------------
-
     # Total Buy Signal Percentage needed for a signal to be positive
     buy__upwards_trend_total_signal_needed = IntParameter(0, 100, default=65, space='buy', optimize=True, load=True)
-
-    # Buy Signal Weight Influence Table
-    buy_upwards_trend_adx_strong_up_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_upwards_trend_rsi_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_upwards_trend_macd_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_upwards_trend_sma_short_golden_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_upwards_trend_ema_short_golden_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_upwards_trend_sma_long_golden_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_upwards_trend_ema_long_golden_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_upwards_trend_bollinger_bands_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
-    buy_upwards_trend_vwap_cross_weight = \
-        IntParameter(0, 100, default=0, space='buy', optimize=True, load=True)
 
     # ---------------------------------------------------------------- #
     #                  Sell HyperOpt Space Parameters                  #
@@ -341,100 +301,78 @@ class MoniGoManiHyperStrategy(IStrategy):
     sell___trades_when_upwards = \
         CategoricalParameter([True, False], default=False, space='sell', optimize=True, load=True)
 
-    # Downwards Trend Sell
-    # --------------------
-
     # Total Sell Signal Percentage needed for a signal to be positive
     sell__downwards_trend_total_signal_needed = IntParameter(0, 100, default=65, space='sell', optimize=True, load=True)
-
-    # Sell Signal Weight Influence Table
-    sell_downwards_trend_adx_strong_down_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_downwards_trend_rsi_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_downwards_trend_macd_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_downwards_trend_sma_short_death_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_downwards_trend_ema_short_death_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_downwards_trend_sma_long_death_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_downwards_trend_ema_long_death_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_downwards_trend_bollinger_bands_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_downwards_trend_vwap_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-
-    # Sideways Trend Sell
-    # -------------------
 
     # Total Sell Signal Percentage needed for a signal to be positive
     sell__sideways_trend_total_signal_needed = IntParameter(0, 100, default=65, space='sell', optimize=True, load=True)
 
-    # Sell Signal Weight Influence Table
-    sell_sideways_trend_adx_strong_down_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_sideways_trend_rsi_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_sideways_trend_macd_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_sideways_trend_sma_short_death_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_sideways_trend_ema_short_death_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_sideways_trend_sma_long_death_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_sideways_trend_ema_long_death_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_sideways_trend_bollinger_bands_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_sideways_trend_vwap_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-
-    # Upwards Trend Sell
-    # ------------------
-
     # Total Sell Signal Percentage needed for a signal to be positive
     sell__upwards_trend_total_signal_needed = IntParameter(0, 100, default=65, space='sell', optimize=True, load=True)
-
-    # Sell Signal Weight Influence Table
-    sell_upwards_trend_adx_strong_down_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_upwards_trend_rsi_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_upwards_trend_macd_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_upwards_trend_sma_short_death_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_upwards_trend_ema_short_death_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_upwards_trend_sma_long_death_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_upwards_trend_ema_long_death_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_upwards_trend_bollinger_bands_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
-    sell_upwards_trend_vwap_cross_weight = \
-        IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
 
     # ---------------------------------------------------------------- #
     #                 Custom HyperOpt Space Parameters                 #
     # ---------------------------------------------------------------- #
 
+    # Signal hyperopt is configurable by changing Signal object
+    # Signal(lambda df: True, overridable=False, min_value=0, max_value=100)
+
+    buy_signals = [
+        BuySignal('adx_strong_up', lambda df: df['adx'] > 25, overridable=True, min_value=0, max_value=100, default_value=65),
+        BuySignal('adx_strong_up', lambda df: df['adx'] > 25),
+        BuySignal('rsi', lambda df: qtpylib.crossed_above(df['rsi'], 30)),
+        BuySignal('macd', lambda df: df['macd'] > df['macdsignal']),
+        BuySignal('sma_short_golden_cross', lambda df: qtpylib.crossed_above(df['sma9'], df['sma50'])),
+        BuySignal('ema_short_golden_cross', lambda df: qtpylib.crossed_above(df['ema9'], df['ema50'])),
+        BuySignal('sma_long_golden_cross', lambda df: qtpylib.crossed_above(df['sma50'], df['sma200'])),
+        BuySignal('ema_long_golden_cross', lambda df: qtpylib.crossed_above(df['ema50'], df['ema200'])),
+        BuySignal('bollinger_bands', lambda df: qtpylib.crossed_above(df['close'], df['bb_lowerband'])),
+        BuySignal('vwap_cross', lambda df: qtpylib.crossed_above(df['vwap'], df['close'])),
+    ]
+
+    sell_signals = [
+        SellSignal('adx_strong_down', lambda df: df['adx'] > 25),
+        SellSignal('rsi', lambda df: qtpylib.crossed_below(df['rsi'], 30)),
+        SellSignal('macd', lambda df: df['macd'] < df['macdsignal']),
+        SellSignal('sma_short_death_cross', lambda df: qtpylib.crossed_below(df['sma9'], df['sma50'])),
+        SellSignal('ema_short_death_cross', lambda df: qtpylib.crossed_below(df['ema9'], df['ema50'])),
+        SellSignal('sma_long_death_cross', lambda df: qtpylib.crossed_below(df['sma50'], df['sma200'])),
+        SellSignal('ema_long_death_cross', lambda df: qtpylib.crossed_below(df['ema50'], df['ema200'])),
+        SellSignal('bollinger_bands', lambda df: qtpylib.crossed_below(df['close'], df['bb_lowerband'])),
+        SellSignal('vwap_cross', lambda df: qtpylib.crossed_below(df['vwap'], df['close'])),
+    ]
+
     trends = ['upwards', 'sideways', 'downwards']
 
-    def generate_buy_config(self, signal_tests: dict) -> dict:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # TODO: Add loading parameter values from json
+        logger = logging.getLogger(__name__)
+
+        # buy_weight_names = self.buy_signals.keys()
+        for trend in self.trends:
+            for signal in [*self.buy_signals, *self.sell_signals]:
+                logger.info(signal.name)
+                setattr(self, f"{signal.type}_{trend}_trend_{signal.name}_weight",
+                        IntParameter(
+                            signal.min_value,
+                            signal.max_value,
+                            default=signal.default_value,
+                            space=signal.type,
+                            optimize=signal.optimize,
+                            load=True))
+
+    def generate_buy_config(self, signals: list) -> dict:
         config = {}
-        for signal in signal_tests.keys():
-            config[signal] = self.generate_config_for(signal, signal_tests[signal], 'buy')
+        for signal in signals:
+            config[signal] = self.generate_config_for(signal.name, signal.test, 'buy')
         return config
 
-    def generate_sell_config(self, signal_tests: dict) -> dict:
+    def generate_sell_config(self, signals: list) -> dict:
         config = {}
-        for signal in signal_tests.keys():
-            config[signal] = self.generate_config_for(signal, signal_tests[signal], 'sell')
+        for signal in signals:
+            config[signal] = self.generate_config_for(signal.name, signal.test, 'sell')
         return config
 
     def generate_config_for(self, signal: str, test, param_space: str) -> dict:
@@ -446,10 +384,8 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     def generate_weight_table_for(self, signal: str, param_space: str) -> dict:
         data = {}
-
         for trend in self.trends:
             data[trend] = getattr(self, f'{param_space}_{trend}_trend_{signal}_weight').value
-
         return data
 
     @staticmethod
@@ -574,7 +510,6 @@ class MoniGoManiHyperStrategy(IStrategy):
 
         return dataframe
 
-
     def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Based on TA indicators, populates the buy signal for the given dataframe
@@ -582,29 +517,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         :param metadata: Additional information, like the currently traded pair
         :return: DataFrame with buy column
         """
-
-        signals = {
-            'adx_strong_up':
-                lambda df: df['adx'] > 25,
-            'rsi':
-                lambda df: qtpylib.crossed_above(df['rsi'], 30),
-            'macd':
-                lambda df: df['macd'] > df['macdsignal'],
-            'sma_short_golden_cross':
-                lambda df: qtpylib.crossed_above(df['sma9'], df['sma50']),
-            'ema_short_golden_cross':
-                lambda df: qtpylib.crossed_above(dataframe['ema9'], dataframe['ema50']),
-            'sma_long_golden_cross':
-                lambda df: qtpylib.crossed_above(dataframe['ema50'], dataframe['ema200']),
-            'ema_long_golden_cross':
-                lambda df: qtpylib.crossed_above(dataframe['ema50'], dataframe['ema200']),
-            'bollinger_bands':
-                lambda df: qtpylib.crossed_above(dataframe['close'], dataframe['bb_lowerband']),
-            'vwap_cross':
-                lambda df: qtpylib.crossed_above(dataframe['vwap'], dataframe['close'])
-        }
-
-        config = self.generate_buy_config(signals)
+        config = self.generate_buy_config(self.buy_signals)
         dataframe = self.calculate_signal_strength(dataframe, config)
 
         dataframe.loc[
@@ -629,7 +542,6 @@ class MoniGoManiHyperStrategy(IStrategy):
 
         return dataframe
 
-
     def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Based on TA indicators, populates the sell signal for the given dataframe
@@ -639,28 +551,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         """
 
         # If a Weighted Sell Signal goes off => Bearish Indication, Set to true (=1) and multiply by weight percentage
-        signals = {
-            'adx_strong_down':
-                lambda df: df['adx'] > 25,
-            'rsi':
-                lambda df: qtpylib.crossed_below(df['rsi'], 70),
-            'macd':
-                lambda df: df['macd'] < df['macdsignal'],
-            'sma_short_death_cross':
-                lambda df: qtpylib.crossed_below(df['sma9'], df['sma50']),
-            'ema_short_death_cross':
-                lambda df: qtpylib.crossed_below(df['ema9'], df['ema50']),
-            'sma_long_death_cross':
-                lambda df: qtpylib.crossed_below(df['ema50'], df['ema200']),
-            'ema_long_death_cross':
-                lambda df: qtpylib.crossed_below(df['ema50'], df['ema200']),
-            'bollinger_bands':
-                lambda df: qtpylib.crossed_below(df['close'], df['bb_upperband']),
-            'vwap_cross':
-                lambda df: qtpylib.crossed_below(df['vwap'], df['close'])
-        }
-
-        config = self.generate_sell_config(signals)
+        config = self.generate_sell_config(self.sell_signals)
         dataframe = self.calculate_signal_strength(dataframe, config)
 
         # Check if sell signal should be sent depending on the current trend
