@@ -3,8 +3,10 @@ import numpy as np  # noqa
 import pandas as pd  # noqa
 import talib.abstract as ta
 from pandas import DataFrame
+import pandas as pd
 import freqtrade.vendor.qtpylib.indicators as qtpylib
-from freqtrade.strategy import IStrategy, CategoricalParameter, IntParameter
+from freqtrade.strategy import IStrategy, CategoricalParameter, IntParameter, merge_informative_pair, timeframe_to_minutes
+from datetime import datetime, timedelta
 # ^ TA-Lib Autofill mostly broken in JetBrains Products,
 # ta._ta_lib.<function_name> can temporarily be used while writing as a workaround
 # Then change back to ta.<function_name> so IDE won't nag about accessing a protected member of TA-Lib
@@ -146,6 +148,7 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # Optimal timeframe for the strategy.
     timeframe = '1h'
+    informative_timeframe = "1h"
 
     # Run "populate_indicators()" only for new candle.
     process_only_new_candles = False
@@ -156,7 +159,9 @@ class MoniGoManiHyperStrategy(IStrategy):
     ignore_roi_if_buy_signal = False
 
     # Number of candles the strategy requires before producing valid signals
-    startup_candle_count: int = 400
+    # in live and dry runs this ratio will be 1, so nothing changes there.
+    # But we need `startup_candle_count` to be for the timeframe of `informative_timeframe` (1h) not `timeframe` (5m)
+    startup_candle_count: int = 400 * int(timeframe_to_minutes(informative_timeframe) / timeframe_to_minutes(timeframe))
     # SMA200 needs 200 candles before producing valid signals
     # EMA200 needs an extra 200 candles of SMA200 before producing valid signals
 
@@ -438,9 +443,11 @@ class MoniGoManiHyperStrategy(IStrategy):
                             ("BTC/USDT", "15m"),
                             ]
         """
-        return []
+        pairs = self.dp.current_whitelist()
+        informative_pairs = [(pair, self.informative_timeframe) for pair in pairs]
+        return informative_pairs
 
-    def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def _populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Adds several different TA indicators to the given DataFrame
 
@@ -451,7 +458,6 @@ class MoniGoManiHyperStrategy(IStrategy):
         :param metadata: Additional information, like the currently traded pair
         :return: a Dataframe with all mandatory indicators for the strategies
         """
-
         # Momentum Indicators (timeperiod is expressed in candles)
         # -------------------
 
@@ -526,6 +532,54 @@ class MoniGoManiHyperStrategy(IStrategy):
         dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
         dataframe.loc[dataframe['adx'] < 20, 'trend'] = 'sideways'
         dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
+
+        return dataframe
+
+    def round_time_down_to_nearest(self, time: pd.Timestamp, time_in_minutes: int) -> datetime:
+        """
+        Round a time to the nearest minutes. e.g. time=08:21 time_in_minutes=15 converts to 08:15.
+        """
+        # convert to datetime then round down. Seconds will be 0, but include anyway.
+        time = datetime(time.year, time.month, time.day, time.hour, time.minute, time.second)
+        time = time - (time - time.min) % timedelta(minutes=time_in_minutes)
+        return pd.to_datetime(time)
+
+    def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        """
+        :param dataframe: Dataframe with data from the exchange
+        :param metadata: Additional information, like the currently traded pair
+        :return: a Dataframe with all mandatory indicators for the strategies
+        """
+        # Check which mode we are in.
+        if self.config['runmode'].value in ('backtest', 'hyperopt'):
+            assert (timeframe_to_minutes(self.timeframe) <= 5), "Backtest this strategy in 5m or 1m timeframe."
+
+            if not self.dp:
+                # Not sure what to do here. This shouldn't really happen though.
+                print("WARNING --- data provider is not populated. No indicators will be computed.")
+                return dataframe
+
+            # Warning! This method gets ALL downloaded data that you have (when in backtesting mode).
+            # If you have many months or years downloaded for this pair, this will take a long time!
+            informative = self.dp.get_pair_dataframe(pair=metadata['pair'], timeframe=self.informative_timeframe)
+
+            # Throw away older data that isn't needed.
+            first_informative = dataframe["date"].min().floor("H")
+            informative = informative[informative["date"] >= first_informative]
+
+            # populate indicators at a larger timeframe
+            informative = self._populate_indicators(informative.copy(), metadata)
+
+            # merge indicators back in with, filling in missing values.
+            dataframe = merge_informative_pair(dataframe, informative, self.timeframe, self.informative_timeframe, ffill=True)
+
+            # rename columns, since merge_informative_pair adds `_<timeframe>` to the end of each name. Skip over date etc.
+            skip_columns = [(s + "_" + self.informative_timeframe) for s in ['date', 'open', 'high', 'low', 'close', 'volume']]
+            dataframe.rename(columns=lambda s: s.replace("_{}".format(self.informative_timeframe), "") if (not s in skip_columns) else s, inplace=True)
+        else:
+            assert self.timeframe == self.informative_timeframe, f"Dry and live should be run at {self.informative_timeframe} timeframe."
+            # Just populate indicators.
+            dataframe = self._populate_indicators(dataframe, metadata)
 
         return dataframe
 
