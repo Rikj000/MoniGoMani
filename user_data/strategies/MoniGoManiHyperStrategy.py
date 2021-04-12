@@ -6,7 +6,6 @@ from pandas import DataFrame
 import pandas as pd
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 from freqtrade.strategy import IStrategy, CategoricalParameter, IntParameter, merge_informative_pair, timeframe_to_minutes
-from datetime import datetime, timedelta
 # ^ TA-Lib Autofill mostly broken in JetBrains Products,
 # ta._ta_lib.<function_name> can temporarily be used while writing as a workaround
 # Then change back to ta.<function_name> so IDE won't nag about accessing a protected member of TA-Lib
@@ -147,7 +146,9 @@ class MoniGoManiHyperStrategy(IStrategy):
     ####################################################################################################################
 
     # Optimal timeframe for the strategy.
+    # easy switching between backtesting and live/dry run, just remove _
     timeframe = '1h'
+    _timeframe = '5m'
     informative_timeframe = "1h"
 
     # Run "populate_indicators()" only for new candle.
@@ -534,15 +535,6 @@ class MoniGoManiHyperStrategy(IStrategy):
         dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
 
         return dataframe
-
-    def round_time_down_to_nearest(self, time: pd.Timestamp, time_in_minutes: int) -> datetime:
-        """
-        Round a time to the nearest minutes. e.g. time=08:21 time_in_minutes=15 converts to 08:15.
-        """
-        # convert to datetime then round down. Seconds will be 0, but include anyway.
-        time = datetime(time.year, time.month, time.day, time.hour, time.minute, time.second)
-        time = time - (time - time.min) % timedelta(minutes=time_in_minutes)
-        return pd.to_datetime(time)
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
