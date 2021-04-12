@@ -450,7 +450,8 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     def _populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Adds several different TA indicators to the given DataFrame
+        Actually adds several different TA indicators to the given DataFrame. 
+        Should be called with 1h informative pair in backtesting.
 
         Performance Note: For the best performance be frugal on the number of indicators
         you are using. Let uncomment only the indicator you are using in your strategies
@@ -538,6 +539,9 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
+        Adds indicators based on run mode. If backtesting it pulls 1h informative pairs to compute
+        indicators, but then tests on 1-5m timeframe. If live/dry use 1h either way.
+
         :param dataframe: Dataframe with data from the exchange
         :param metadata: Additional information, like the currently traded pair
         :return: a Dataframe with all mandatory indicators for the strategies
