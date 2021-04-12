@@ -146,9 +146,8 @@ class MoniGoManiHyperStrategy(IStrategy):
     ####################################################################################################################
 
     # Optimal timeframe for the strategy.
-    # easy switching between backtesting and live/dry run, just remove _
     timeframe = '1h'
-    _timeframe = '5m'
+    backtest_timeframe = "5m"
     informative_timeframe = "1h"
 
     # Run "populate_indicators()" only for new candle.
@@ -434,6 +433,12 @@ class MoniGoManiHyperStrategy(IStrategy):
     #     def stoploss_space():
     #         return [RealParameter(-0.01, -0.35, name='stoploss')]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if (self.dp is not None) & (self.dp.runmode.value in ('backtest', 'hyperopt')):
+            self.timeframe = self.backtest_timeframe
+            print(f"Auto updating timeframe to {self.timeframe}")
+
     def informative_pairs(self):
         """
         Define additional, informative pair/interval combinations to be cached from the exchange.
@@ -548,7 +553,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         :return: a Dataframe with all mandatory indicators for the strategies
         """
         # Check which mode we are in.
-        if self.config['runmode'].value in ('backtest', 'hyperopt'):
+        if (self.dp is not None) & (self.dp.runmode.value in ('backtest', 'hyperopt')):
             assert (timeframe_to_minutes(self.timeframe) <= 5), "Backtest this strategy in 5m or 1m timeframe."
 
             if not self.dp:
