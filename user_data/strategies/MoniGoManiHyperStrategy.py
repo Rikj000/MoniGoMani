@@ -161,7 +161,8 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # Number of candles the strategy requires before producing valid signals
     # in live and dry runs this ratio will be 1, so nothing changes there.
-    # But we need `startup_candle_count` to be for the timeframe of `informative_timeframe` (1h) not `timeframe` (5m)
+    # But we need `startup_candle_count` to be for the timeframe of 
+    # `informative_timeframe` (1h) not `timeframe` (5m) for backtesting.
     startup_candle_count: int = 400 * int(timeframe_to_minutes(informative_timeframe) / timeframe_to_minutes(timeframe))
     # SMA200 needs 200 candles before producing valid signals
     # EMA200 needs an extra 200 candles of SMA200 before producing valid signals
