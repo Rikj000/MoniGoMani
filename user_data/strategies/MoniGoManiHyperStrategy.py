@@ -435,7 +435,7 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if (self.dp is not None) & (self.dp.runmode.value in ('backtest', 'hyperopt')):
+        if (self.dp is not None) and (self.dp.runmode.value in ('backtest', 'hyperopt')):
             self.timeframe = self.backtest_timeframe
             print(f"Auto updating timeframe to {self.timeframe}")
 
@@ -553,7 +553,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         :return: a Dataframe with all mandatory indicators for the strategies
         """
         # Check which mode we are in.
-        if (self.dp is not None) & (self.dp.runmode.value in ('backtest', 'hyperopt')):
+        if (self.dp is not None) and (self.dp.runmode.value in ('backtest', 'hyperopt')):
             assert (timeframe_to_minutes(self.timeframe) <= 5), "Backtest this strategy in 5m or 1m timeframe."
 
             if not self.dp:
