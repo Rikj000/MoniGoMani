@@ -91,7 +91,7 @@ Please use the `Total-Overall-Signal-Importance-Calculator.py` (added in `v0.7.1
 ## **ChangeLog**:  
 [View the ChangeLog](https://github.com/Rikj000/MoniGoMani/blob/main/CHANGELOG.md)
 
-## Got Test Results / Ideas / Config Improvements?
+## **Got Test Results / Ideas / Config Improvements?**
 - Feel free to join [**CryptoStonksShallRise**](https://discord.gg/xFZ9bB6vEz) on Discord there you can follow/participate in the official channels:
   - `#moni-go-mani-updates`
   - `#moni-go-mani-testing`
@@ -102,5 +102,11 @@ Please use the `Total-Overall-Signal-Importance-Calculator.py` (added in `v0.7.1
 [View the VeryQuickStart](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md)
 
 ## **Freqtrade**:   
-The Bot that makes this strategy possible: https://github.com/freqtrade/freqtrade   
-Big thank you to **xmatthias** and everyone who helped on it!
+[**Freqtrade**](https://github.com/freqtrade/freqtrade) is the Bot that makes this strategy possible!    
+Big thank you to **xmatthias** and everyone who helped on it!   
+   
+## **Iconomi**:   
+Can't wait until MoniGoMani is fully on point? Or is this all too technical for you?   
+Check out [**Iconomi**](https://www.iconomi.com/register?ref=JdFzz)! *(Please use this link if you would sign up)*   
+
+More information about this platform can be found in the `#welcome` channel of [CryptoStonksShallRise](https://discord.gg/xFZ9bB6vEz) on Discord.
