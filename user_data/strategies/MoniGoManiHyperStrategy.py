@@ -28,7 +28,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
     ##       By giving you/HyperOpt a lot of signals to alter the weight from         ##
     ###           ------------------------------------------------------             ###
-    ##        Big thank you to xmatthias and everyone who helped on Freqtrade,        ##
+    ##        Big thank you to xmatthias and everyone who helped on MoniGoMani,       ##
     ##      Freqtrade Discord support was also really helpful so thank you too!       ##
     ###         -------------------------------------------------------              ###
     ##              Disclaimer: This strategy is under development.                   ##
@@ -1057,16 +1057,17 @@ class MoniGoManiHyperStrategy(IStrategy):
                 self.mgm_logger('debug', custom_information_storage, 'all_open_trades contents: ' +
                                 repr(all_open_trades))
 
-                # Store current pair's open trade + it's current profit & create trend dictionary if needed
-                # in custom_info
+                # Store current pair's open_trade + it's current profit & open_date in custom_info
                 for open_trade in all_open_trades:
                     if str(open_trade.pair) == str(pair):
                         if str(open_trade.pair) not in self.custom_info['open_trades']:
                             self.custom_info['open_trades'][str(open_trade.pair)] = {}
                         self.custom_info['open_trades'][str(open_trade.pair)]['trade'] = str(open_trade)
                         self.custom_info['open_trades'][str(open_trade.pair)]['current_profit'] = current_profit
-                        self.mgm_logger('info', custom_information_storage, 'Storing trade + current profit/loss for' +
-                                        ' pair (' + str(pair) + ') in custom_info')
+                        # self.custom_info['open_trades'][str(open_trade.pair)]['open_date'] = trade.open_date
+                        # ToDo: ^ BugFix/Improve or remove (old trend_indicator garbage)
+                        self.mgm_logger('info', custom_information_storage, 'Storing trade + current profit/loss + ' +
+                                        'open date for pair (' + str(pair) + ') in custom_info')
                         break
 
                 # Custom Information Storage Garbage Collector
@@ -1096,7 +1097,24 @@ class MoniGoManiHyperStrategy(IStrategy):
                                                 'Successfully removed garbage_trade ' + str(garbage_trade) +
                                                 ' from custom_info!')
                                 break
-                # ToDo: Clear trend data as trades close to make custom_storage lighter in size/weight
+
+                    # ToDo: BugFix/Improve or remove
+                    # Check if any old trend_indicator garbage needs to be removed
+                    #if is_live_or_dry_run is not True:
+
+                    #    oldest_date = datetime.utcnow().replace(tzinfo=None)
+                    #    for open_trade_pair in self.custom_info['open_trades']:
+                    #        if self.custom_info['open_trades'][open_trade_pair]['open_date'].replace(tzinfo=None) < \
+                    #                oldest_date:
+                    #            oldest_date = self.custom_info['open_trades'][open_trade_pair][
+                    #                'open_date'].replace(tzinfo=None)
+
+                    #    for trend_indicator_pair in self.custom_info['trend_indicator']:
+                    #        self.custom_info['trend_indicator'][trend_indicator_pair] = \
+                    #            self.custom_info['trend_indicator'][trend_indicator_pair][
+                    #                self.custom_info['trend_indicator'][trend_indicator_pair].index.tz_convert(None)
+                    #                > (oldest_date.replace(tzinfo=None) - timedelta(hours=self.sell_params[
+                    #                    'sell___unclogger_trend_lookback_candles_window']))]
 
                 # Check if everything in custom_storage is up to date with all_open_trades
                 elif len(all_open_trades) > len(self.custom_info['open_trades']):

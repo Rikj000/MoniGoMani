@@ -1,6 +1,6 @@
-**WARNING: MoniGoManiHyperStrategy should always be HyperOpted unless you really know what you are doing when manually allocating weights!**   
+**<span style="color:darkorange">WARNING:</span> MoniGoManiHyperStrategy should always be HyperOpted unless you really know what you are doing when manually allocating weights!**   
 **MoniGoManiHyperStrategy found in releases already has a decent hyperopt applied to it for BTC pairs!**   
-**When changing anything in `config.json` please [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani)!**   
+**When changing anything in one of the `config.json`'s please [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani)!**   
 
 # Very Quick Start (With Docker)   
 1) [Download](https://github.com/Rikj000/MoniGoMani/releases) the latest `MoniGoMani` release and unzip it somewhere. Or clone the `main` branch through git.
@@ -56,8 +56,8 @@ When the Parameters in the HyperOpt Space Parameters sections are altered as fol
 (only truly useful when hyperopting though!) Meaning you can use this to set individual buy_params/sell_params to a fixed value when hyperopting!   
 *(MoniGoManiHyperStrategy v0.8.1 or above Required!)*   
    
-**WARNING: Always double check that when doing a fresh hyperopt or doing a dry/live-run that all overrides are turned off!**   
-**WARNING: Overridden buy/sell_params will be missing from the HyperOpt Results!**   
+**<span style="color:darkorange">WARNING:</span> Always double check that when doing a fresh hyperopt or doing a dry/live-run that all overrides are turned off!**   
+**<span style="color:darkorange">WARNING:</span> Overridden buy/sell_params will be missing from the HyperOpt Results!, after hyperopting with IntParameters overridden to 0 you can use the Total Overall Signal Importance Calculator's `--fix-missing` subcommand to re-include the missing IntParameter results with 0 as their weight**   
 
 ### Override Examples:
 Override `buy___trades_when_sideways` to always be **False**:
@@ -72,11 +72,27 @@ sell_downwards_trend_macd_weight = \
 ```
 | Function Param | Meaning |
 | --- |--- |
-| default=X      | The value used when overriding |
-| optimize=False | Exclude from hyperopting (Make static) |
-| load=False     | Don't load from the HyperOpt Results Copy/Paste Section |  
+| **default**=X      | The value used when overriding |
+| **optimize**=False | Exclude from hyperopting (Make static) |
+| **load**=False     | Don't load from the HyperOpt Results Copy/Paste Section |  
 
-## Total Overall Signal Importance Calculator
+# Open Trade Unclogger:
+
+When the Open Trade Unclogger is enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades.   
+This `custom_stoploss` function should be able to work in tandem with `Trailing stoploss`.   
+
+It will only unclog a losing trade when all of following checks have been full-filled:    
+- Check if everything in custom_storage is up to date with all_open_trades
+- Check if there are enough losing trades open for unclogging to occur
+- Check if there is a losing trade open for the pair currently being ran through the MoniGoMani loop
+- Check if trade has been open for X minutes (long enough to give it a recovery chance)
+- Check if total open trades losing % is met
+- Check if open_trade's trend changed negatively during past X candles
+
+Please configurable/hyperoptable in the sell_params dictionary under the hyperopt results copy/paste section.
+Only used when `use_custom_stoploss` & `sell_params['sell___unclogger_enabled']` are both set to `True`!
+
+# Total Overall Signal Importance Calculator
 
 Paste the `buy_params` & `sell_params` results from your HyperOpt over in the `/user_data/Total-Overall-Signal-Importance-Calculator.py` file.   
 Then execute: `python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc BTC` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
@@ -86,16 +102,48 @@ Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so
 - Now you must fill in `-sc` or `--stake-currency` with the one you use in `config.json` as `stake_currency` since it really matters
 - Optional fill in `-f` or `--file` to submit a custom file name for the log file to be exported
 - Optional fill in `-nf` or `--no-file` if you don't want a log file to be exported   
-- Optional fill in `-fm` or `--fix-missing` to re-include missing weighted buy/sell_params with 0 as their value & re-print them as copy/paste-able results. Also keeps the tool from crashing when there are missing weighted values (Mostly useful after a hyperopt with overridden values)
+- Optional fill in `-fm` or `--fix-missing` to re-include missing weighted buy/sell_params with 0 as their value & re-print them as copy/paste-able results. Also keeps the tool from crashing when there are missing weighted values (Mostly useful after a hyperopt with overridden values)   
+- Optional fill in `-pu` or `--precision-used` to re-calculate the weights to what would be expected after running hyperopt with precision enabled. Always use this after running hyperopt with precision different from 1!   
+
+# Precision Setting
+
+The `precision` setting can be used to control the precision / step size used during hyperopting.   
+A value **smaller than 1** will limit the search space, but may skip over good values.   
+While a value **larger than 1** increases the search space, but will increase the duration of hyperopting.   
+To disable `precision` / for old the work mode **just** use **1**.   
+
+**<span style="color:darkorange">WARNING:</span> Only use a precision different from 1 during hyperopting & restore to 1 afterwards!**   
+**<span style="color:darkorange">WARNING:</span> HyperOpt Results don't take precision into consideration, after hyperopting with precision use the Total Overall Signal Importance Calculator's `--precision-used` subcommand to fix the results**   
+
+### Precision Examples:
+| Precision Value | Step Size effectively used during HyperOpting |
+| --- | --- |
+| **1/5** or **0.2** | **5** (0, 5, 10 ...) |
+| **5**   | **1/5** or **0.2** (0, 0.2, 0.4, 0.8, ...) |
+
+# TimeFrame-Zoom
+
+**<span style="color:darkorange">WARNING:</span> When backtesting/hyperopting without TimeFrame-Zoom the profit shown will be unrealisticly high!**   
+
+To prevent profit exploitation during hyperopting the strategy will zoom in upon the timeframe during backtesting/hyperopting.   
+This should result to way more reliable/realistic results after hyperopting/backtesting.   
+For more information on why this is needed please read [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)!   
+
+### TimeFrame-Zoom Examples:
+| Parameter | Meaning |
+| --- | --- |
+| **timeframe**='1h' | TimeFrame used during dry/live-runs |
+| **backtest_timeframe**='5m' | Zoomed in TimeFrame used during backtesting/hyperopting |
+
 
 # Go-To Commands:
 For Hyper Opting *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py))*:
 ```properties
-freqtrade hyperopt -c ./user_data/config.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all -s MoniGoManiHyperStrategy -e 1000 --timerange 20210101-20210316
+freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all -s MoniGoManiHyperStrategy -e 1000 --timerange 20210101-20210316
 ```
 For Back Testing *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) or legacy [MoniGoManiHyperOpted.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoManiHyperOpted.py) or legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py))*:
 ```properties
-freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/config.json -c ./user_data/config-private.json --timerange 20210101-20210316
+freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/config-btc.json -c ./user_data/config-private.json --timerange 20210101-20210316
 ```
 For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/Total-Overall-Signal-Importance-Calculator.py))*:
 ```properties
@@ -103,5 +151,5 @@ python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc BTC
 ```
 For Hyper Opting *(the legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py) + legacy [MoniGoManiHyperOpt.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/hyperopts/MoniGoManiHyperOpt.py))*:
 ```properties
-freqtrade hyperopt -c ./user_data/config.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all --hyperopt MoniGoManiHyperOpt -s MoniGoMani -e 1000 --timerange 20210101-20210316
+freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all --hyperopt MoniGoManiHyperOpt -s MoniGoMani -e 1000 --timerange 20210101-20210316
 ```
