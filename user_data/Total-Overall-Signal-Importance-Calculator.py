@@ -294,7 +294,7 @@ def main():
     for signal, importance in total_overall_sell_weights.items():
         print_full_sell_signal(signal, importance)
 
-    if args.fix_missing:
+    if args.fix_missing or (args.precision_used != 1):
         print_section_header("Buy/Sell Hyperspace Params (Missing Zero Fixed):")
         print_fixed_buy_sell_params()
 
