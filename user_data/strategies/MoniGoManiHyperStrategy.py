@@ -191,6 +191,8 @@ class MoniGoManiHyperStrategy(IStrategy):
     # SMA200 needs 200 candles before producing valid signals
     # EMA200 needs an extra 200 candles of SMA200 before producing valid signals
 
+    precision = 1
+
     # Optional order type mapping.
     order_types = {
         'buy': 'limit',
@@ -273,13 +275,13 @@ class MoniGoManiHyperStrategy(IStrategy):
         CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=True)
 
     # Total Buy Signal Percentage needed for a signal to be positive
-    buy__downwards_trend_total_signal_needed = IntParameter(0, 100, default=65, space='buy', optimize=True, load=True)
+    buy__downwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy', optimize=True, load=True)
 
     # Total Buy Signal Percentage needed for a signal to be positive
-    buy__sideways_trend_total_signal_needed = IntParameter(0, 100, default=65, space='buy', optimize=True, load=True)
+    buy__sideways_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy', optimize=True, load=True)
 
     # Total Buy Signal Percentage needed for a signal to be positive
-    buy__upwards_trend_total_signal_needed = IntParameter(0, 100, default=65, space='buy', optimize=True, load=True)
+    buy__upwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy', optimize=True, load=True)
 
     # ---------------------------------------------------------------- #
     #                  Sell HyperOpt Space Parameters                  #
@@ -302,13 +304,13 @@ class MoniGoManiHyperStrategy(IStrategy):
         CategoricalParameter([True, False], default=False, space='sell', optimize=True, load=True)
 
     # Total Sell Signal Percentage needed for a signal to be positive
-    sell__downwards_trend_total_signal_needed = IntParameter(0, 100, default=65, space='sell', optimize=True, load=True)
+    sell__downwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='sell', optimize=True, load=True)
 
     # Total Sell Signal Percentage needed for a signal to be positive
-    sell__sideways_trend_total_signal_needed = IntParameter(0, 100, default=65, space='sell', optimize=True, load=True)
+    sell__sideways_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='sell', optimize=True, load=True)
 
     # Total Sell Signal Percentage needed for a signal to be positive
-    sell__upwards_trend_total_signal_needed = IntParameter(0, 100, default=65, space='sell', optimize=True, load=True)
+    sell__upwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='sell', optimize=True, load=True)
 
     # ---------------------------------------------------------------- #
     #                 Custom HyperOpt Space Parameters                 #
@@ -355,7 +357,7 @@ class MoniGoManiHyperStrategy(IStrategy):
                 setattr(self, f"{signal.type}_{trend}_trend_{signal.name}_weight",
                         IntParameter(
                             signal.min_value,
-                            signal.max_value,
+                            int(signal.max_value * self.precision),
                             default=signal.default_value,
                             space=signal.type,
                             optimize=signal.optimize,
@@ -383,7 +385,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     def generate_weight_table_for(self, signal: str, param_space: str) -> dict:
         data = {}
         for trend in self.trends:
-            data[trend] = getattr(self, f'{param_space}_{trend}_trend_{signal}_weight').value
+            data[trend] = getattr(self, f'{param_space}_{trend}_trend_{signal}_weight').value / self.precision
         return data
 
     @staticmethod
