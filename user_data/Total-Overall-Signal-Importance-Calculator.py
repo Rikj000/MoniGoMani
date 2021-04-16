@@ -4,7 +4,7 @@ import json
 import sys
 # --------------------------------
 
-# Total Overall Signal Importance Calculator for MoniGoMani v0.8.1
+# Total Overall Signal Importance Calculator for MoniGoMani v0.9.0
 # ----------------------------------------------------------------
 # Paste the results from your HyperOpt over below `buy_params` & `sell_params` arrays
 # Then execute: `python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc BTC` from your favorite
@@ -58,14 +58,25 @@ sell_params = {
     'sell___trades_when_downwards': True,
     'sell___trades_when_sideways': True,
     'sell___trades_when_upwards': False,
+    'sell___unclogger_enabled': True,
+    'sell___unclogger_enabled_when_downwards': True,
+    'sell___unclogger_enabled_when_sideways': True,
+    'sell___unclogger_enabled_when_upwards': False,
+    'sell___unclogger_minimal_losing_trades_open': 5,
+    'sell___unclogger_minimal_losing_trade_duration_minutes': 70,
+    'sell___unclogger_percentage_open_trades_losing': 60,
+    'sell___unclogger_trend_lookback_candles_window': 10,
     'sell__downwards_trend_total_signal_needed': 87,
     'sell__sideways_trend_total_signal_needed': 22,
     'sell__upwards_trend_total_signal_needed': 89,
     'sell_downwards_trend_adx_strong_down_weight': 34,
     'sell_downwards_trend_bollinger_bands_weight': 83,
+    'sell_downwards_trend_ema_long_death_cross_weight': 0,
     'sell_downwards_trend_ema_short_death_cross_weight': 42,
+    'sell_downwards_trend_macd_weight': 0,
     'sell_downwards_trend_rsi_weight': 49,
     'sell_downwards_trend_sma_long_death_cross_weight': 40,
+    'sell_downwards_trend_sma_short_death_cross_weight': 0,
     'sell_downwards_trend_vwap_cross_weight': 12,
     'sell_sideways_trend_adx_strong_down_weight': 45,
     'sell_sideways_trend_bollinger_bands_weight': 94,
@@ -77,6 +88,7 @@ sell_params = {
     'sell_sideways_trend_sma_short_death_cross_weight': 23,
     'sell_sideways_trend_vwap_cross_weight': 55,
     'sell_upwards_trend_adx_strong_down_weight': 54,
+    'sell_upwards_trend_bollinger_bands_weight': 0,
     'sell_upwards_trend_ema_long_death_cross_weight': 36,
     'sell_upwards_trend_ema_short_death_cross_weight': 12,
     'sell_upwards_trend_macd_weight': 90,
@@ -175,10 +187,13 @@ def main():
                         help='Filename to save result to')
     parser.add_argument('-nf', '--no-file', dest='output_to_file', const=False, default=True, nargs='?',
                         help='Do not output to a file')
-    parser.add_argument("--verbosity", help="increase output verbosity")
     parser.add_argument('-fm', '--fix-missing', dest='fix_missing', action="store_true",
                         help='Re-Include missing weighted buy/sell_params with 0 as their value & re-print them as '
                              'copy/paste-able results. Also keeps the tool from crashing when there are missing values')
+    parser.add_argument("-pu", "--precision-used", dest="precision_used", default=1, type=lambda x: eval(x),
+                        help="The precision value used during hyperopt. Can be decimal (0.2) or fraction 1/5."
+                             "If you didn't change the precision set this to 1 (default value when -pu is not omitted.")
+    parser.add_argument("--verbosity", help="increase output verbosity")
     args = parser.parse_args()
 
     trend_names = ['downwards', 'sideways', 'upwards']
@@ -217,6 +232,11 @@ def main():
         'sma_short_golden_death_cross': ['sma_short_golden_cross', 'sma_short_death_cross'],
         'vwap_cross': ['vwap_cross']
     }
+
+    for params in [sell_params, buy_params]:
+        for p in params:
+            if isinstance(params[p], (int, float, complex)) and not isinstance(params[p], bool):
+                params[p] /= args.precision_used
 
     total_overall_buy_weights = {}
     total_overall_sell_weights = {}
