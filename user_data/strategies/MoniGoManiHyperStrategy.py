@@ -1,14 +1,16 @@
 # --- Do not remove these libs ----------------------------------------------------------------------
-import logging
-from datetime import datetime, timedelta
 import freqtrade.vendor.qtpylib.indicators as qtpylib
+import logging
 import numpy as np  # noqa
 import pandas as pd  # noqa
 import talib.abstract as ta
+from datetime import datetime, timedelta
 from freqtrade.persistence import Trade
+from freqtrade.strategy \
+    import IStrategy, CategoricalParameter, IntParameter, RealParameter, merge_informative_pair, timeframe_to_minutes
 from numpy import timedelta64
-from freqtrade.strategy import IStrategy, CategoricalParameter, IntParameter, RealParameter
 from pandas import DataFrame
+
 
 logger = logging.getLogger(__name__)
 
@@ -179,8 +181,26 @@ class MoniGoManiHyperStrategy(IStrategy):
         'trend_indicator': {}
     }
 
-    # Optimal timeframe for MoniGoMani
-    timeframe = '1h'
+    # TimeFrame-Zoom
+    # To prevent profit exploitation during backtesting/hyperopting we backtest/hyperopt MoniGoMani which would normally
+    # use a 'timeframe' (1h candles) using a smaller 'backtest_timeframe' (5m candles) instead.
+    # This happens while still using an 'informative_timeframe' (original 1h candles) to generate the buy/sell signals.
+
+    # With this more realistic results should be found during backtesting/hyperopting. Since the buy/sell signals will 
+    # operate on the same 'timeframe' that live would use (1h candles), while at the same time 'backtest_timeframe' 
+    # (5m or 1m candles) will simulate price movement during that 'timeframe' (1h candle), providing more realistic 
+    # trailing stoploss and ROI behaviour during backtesting/hyperopting.
+
+    # Warning: Candle data for both 'timeframe' as 'backtest_timeframe' will have to be downloaded before you will be
+    # able to backtest/hyperopt! (Since both will be used)
+    # Warning: This will be slower than backtesting at 1h and 1m is a CPU killer. But if you plan on using trailing
+    # stoploss or ROI, you probably want to know that your backtest results are not complete lies.
+    # Source: https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/
+
+    # To disable TimeFrame-Zoom just use the same candles for 'timeframe' & 'backtest_timeframe'
+    timeframe = '1h'  # Optimal TimeFrame for MoniGoMani (used during Dry/Live-Runs)
+    backtest_timeframe = "5m"  # Optimal TimeFrame-Zoom for MoniGoMani (used to zoom in during Backtesting/HyperOpting)
+    informative_timeframe = timeframe
 
     # Run "populate_indicators()" only for new candle
     process_only_new_candles = False
@@ -190,12 +210,16 @@ class MoniGoManiHyperStrategy(IStrategy):
     sell_profit_only = False
     ignore_roi_if_buy_signal = False
 
-    # Number of candles MoniGoMani requires before producing valid signals
-    startup_candle_count: int = 400
+    # Number of candles the strategy requires before producing valid signals.
+    # In live and dry runs this ratio will be 1, so nothing changes there.
+    # But we need `startup_candle_count` to be for the timeframe of 
+    # `informative_timeframe` (1h) not `timeframe` (5m) for backtesting.
+    startup_candle_count: int = 400 * int(timeframe_to_minutes(informative_timeframe) / timeframe_to_minutes(timeframe))
     # SMA200 needs 200 candles before producing valid signals
     # EMA200 needs an extra 200 candles of SMA200 before producing valid signals
 
-    # Use this value to control the precision of hyperopting.
+    # Precision
+    # This value can be used to control the precision of hyperopting.
     # A value of 1/5 will effectively set the step size to be 5 (0, 5, 10 ...)
     # A value of 5 will set the step size to be 1/5=0.2 (0, 0.2, 0.4, 0.8, ...)
     # A smaller value will limit the search space a lot, but may skip over good values.
@@ -485,26 +509,94 @@ class MoniGoManiHyperStrategy(IStrategy):
     sell___unclogger_trend_lookback_candles_window = \
         IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
 
+    def __init__(self, *args, **kwargs):
+        """
+        First method to be called once during the MoniGoMani class initialization process
+        :param args:
+        :param kwargs:
+        """
+        super().__init__(*args, **kwargs)
+        # ToDo: Implement class level is_live_or_dry_run boolean to optimize the codebase a little bit
+        if (self.dp is not None) and (self.dp.runmode.value in ('backtest', 'hyperopt')):
+            self.timeframe = self.backtest_timeframe
+            # ToDo: Implement syntax for all mgm_logging like this f'Parametername: {parametername}'
+            self.mgm_logger('info', 'TimeFrame-Zoom', f'Auto updating timeframe to {self.timeframe}')
+
     def informative_pairs(self):
         """
-        Define additional, informative pair/interval combinations to be cached from the exchange.
-        These pair/interval combinations are non-tradeable, unless they are part
-        of the whitelist as well.
-        For more information, please consult the documentation
-        :return: List of tuples in the format (pair, interval)
-            Sample: return [("ETH/USDT", "5m"),
-                            ("BTC/USDT", "15m"),
-                            ]
+        Defines additional informative pair/interval combinations to be cached from the exchange, these will be used
+        during TimeFrame-Zoom.
+        :return:
         """
-        return []
+        pairs = self.dp.current_whitelist()
+        informative_pairs = [(pair, self.informative_timeframe) for pair in pairs]
+        return informative_pairs
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Adds several different TA indicators to the given DataFrame
+        Adds indicators based on Run-Mode:
+        If BackTesting/HyperOpting it pulls 'informative_pairs' (1h candles) to compute indicators, but then tests upon
+        'backtest_timeframe' (5m or 1m candles) to simulate price movement during that 'timeframe' (1h candle).
 
-        Performance Note: For the best performance be frugal on the number of indicators
-        you are using. Let uncomment only the indicator you are using in MoniGoMani
-        or your hyperopt configuration, otherwise you will waste your memory and CPU usage.
+        If Dry/Live-running it just pulls 'timeframe' (1h candles) to compute indicators.
+
+        :param dataframe: Dataframe with data from the exchange
+        :param metadata: Additional information, like the currently traded pair
+        :return: a Dataframe with all mandatory indicators for MoniGoMani
+        """
+        timeframe_zoom = 'TimeFrame-Zoom'
+
+        # Compute indicator data during Backtesting / Hyperopting
+        if (self.dp is not None) and (self.dp.runmode.value in ('backtest', 'hyperopt')):
+            self.mgm_logger('info', timeframe_zoom, 'Backtesting/Hyperopting this strategy with a ' +
+                            f'informative_timeframe ({self.informative_timeframe}candles) and a ' +
+                            f'backtest_timeframe ({self.backtest_timeframe} candles)')
+
+            # ToDo: Move to __init__
+            if not self.dp:
+                self.mgm_logger('error', timeframe_zoom, 'Data Provider is not populated!' +
+                                ' No indicators will be computed!')
+                return dataframe
+
+            # Warning! This method gets ALL downloaded data that you have (when in backtesting mode).
+            # If you have many months or years downloaded for this pair, this will take a long time!
+            informative = self.dp.get_pair_dataframe(pair=metadata['pair'], timeframe=self.informative_timeframe)
+
+            # Throw away older data that isn't needed.
+            first_informative = dataframe["date"].min().floor("H")
+            informative = informative[informative["date"] >= first_informative]
+
+            # Populate indicators at a larger timeframe
+            informative = self._populate_indicators(informative.copy(), metadata)
+
+            # Merge indicators back in with, filling in missing values.
+            dataframe = merge_informative_pair(dataframe, informative, self.timeframe, self.informative_timeframe,
+                                               ffill=True)
+
+            # Rename columns, since merge_informative_pair adds `_<timeframe>` to the end of each name.
+            # Skip over date etc..
+            skip_columns = [(s + "_" + self.informative_timeframe) for s in
+                            ['date', 'open', 'high', 'low', 'close', 'volume']]
+            dataframe.rename(columns=lambda s: s.replace("_{}".format(self.informative_timeframe), "") if
+            (not s in skip_columns) else s, inplace=True)
+
+        # Compute indicator data during Dry & Live Running
+        else:
+            self.mgm_logger('info', timeframe_zoom,
+                            f'Dry/Live-running MoniGoMani with normal timeframe ({self.timeframe} candles)')
+            # Just populate indicators.
+            dataframe = self._populate_indicators(dataframe, metadata)
+
+        return dataframe
+
+    def _populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        """
+        Adds several different TA indicators to the given DataFrame.
+        Should be called with 'informative_pair' (1h candles) during backtesting/hyperopting!
+
+        Performance Note: For the best performance be frugal on the number of indicators you are using.
+        Let uncomment only the indicator you are using in MoniGoMani or your hyperopt configuration,
+        otherwise you will waste your memory and CPU usage.
         :param dataframe: Dataframe with data from the exchange
         :param metadata: Additional information, like the currently traded pair
         :return: a Dataframe with all mandatory indicators for MoniGoMani
@@ -1302,24 +1394,25 @@ class MoniGoManiHyperStrategy(IStrategy):
                                     for candle in range(1,
                                                         round(self.sell___unclogger_trend_lookback_candles_window.value
                                                               / self.precision) + 1):
-                                        # Convert the candle time to the one being used by the current timeframe
-                                        candle_multiplier = int(self.timeframe.rstrip("mhdwM"))
+                                        # Convert the candle time to the one being used by the 'informative_timeframe'
+                                        candle_multiplier = int(self.informative_timeframe.rstrip("mhdwM"))
                                         candle_time = current_time - timedelta(minutes=int(candle * candle_multiplier))
-                                        if self.timeframe.find('h') != -1:
+                                        if self.informative_timeframe.find('h') != -1:
                                             candle_time = current_time - \
                                                           timedelta(hours=int(candle * candle_multiplier))
-                                        elif self.timeframe.find('d') != -1:
+                                        elif self.informative_timeframe.find('d') != -1:
                                             candle_time = current_time - \
                                                           timedelta(days=int(candle * candle_multiplier))
-                                        elif self.timeframe.find('w') != -1:
+                                        elif self.informative_timeframe.find('w') != -1:
                                             candle_time = current_time - \
                                                           timedelta(weeks=int(candle * candle_multiplier))
-                                        elif self.timeframe.find('M') != -1:
+                                        elif self.informative_timeframe.find('M') != -1:
                                             candle_time = current_time - \
                                                           timedelta64(int(1 * candle_multiplier), 'M')
                                         stored_trend_dataframe[candle] = \
                                             self.custom_info['trend_indicator'][pair].loc[candle_time]['trend']
 
+                                # ToDo: Implement hyperoptable sell___unclogger_trend_lookback_window_percentage_needed
                                 if len(stored_trend_dataframe) < \
                                         round(self.sell___unclogger_trend_lookback_candles_window.value /
                                               self.precision):
