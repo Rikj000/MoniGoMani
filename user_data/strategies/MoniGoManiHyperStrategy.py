@@ -6,6 +6,7 @@ import numpy as np  # noqa
 import pandas as pd  # noqa
 import talib.abstract as ta
 from freqtrade.persistence import Trade
+from numpy import timedelta64
 from freqtrade.strategy import IStrategy, CategoricalParameter, IntParameter, RealParameter
 from pandas import DataFrame
 
@@ -74,36 +75,36 @@ class MoniGoManiHyperStrategy(IStrategy):
         'buy___trades_when_downwards': True,
         'buy___trades_when_sideways': False,
         'buy___trades_when_upwards': True,
-        'buy__downwards_trend_total_signal_needed': 4,
-        'buy__sideways_trend_total_signal_needed': 17,
-        'buy__upwards_trend_total_signal_needed': 50,
-        'buy_downwards_trend_adx_strong_up_weight': 71,
+        'buy__downwards_trend_total_signal_needed': 5,
+        'buy__sideways_trend_total_signal_needed': 66,
+        'buy__upwards_trend_total_signal_needed': 35,
+        'buy_downwards_trend_adx_strong_up_weight': 95,
         'buy_downwards_trend_bollinger_bands_weight': 54,
-        'buy_downwards_trend_ema_long_golden_cross_weight': 0,
-        'buy_downwards_trend_ema_short_golden_cross_weight': 87,
-        'buy_downwards_trend_macd_weight': 47,
-        'buy_downwards_trend_rsi_weight': 62,
-        'buy_downwards_trend_sma_long_golden_cross_weight': 56,
-        'buy_downwards_trend_sma_short_golden_cross_weight': 46,
-        'buy_downwards_trend_vwap_cross_weight': 44,
-        'buy_sideways_trend_adx_strong_up_weight': 65,
-        'buy_sideways_trend_bollinger_bands_weight': 25,
-        'buy_sideways_trend_ema_long_golden_cross_weight': 74,
-        'buy_sideways_trend_ema_short_golden_cross_weight': 59,
-        'buy_sideways_trend_macd_weight': 64,
-        'buy_sideways_trend_rsi_weight': 52,
-        'buy_sideways_trend_sma_long_golden_cross_weight': 4,
-        'buy_sideways_trend_sma_short_golden_cross_weight': 86,
-        'buy_sideways_trend_vwap_cross_weight': 57,
-        'buy_upwards_trend_adx_strong_up_weight': 13,
-        'buy_upwards_trend_bollinger_bands_weight': 21,
-        'buy_upwards_trend_ema_long_golden_cross_weight': 71,
-        'buy_upwards_trend_ema_short_golden_cross_weight': 12,
-        'buy_upwards_trend_macd_weight': 94,
-        'buy_upwards_trend_rsi_weight': 24,
-        'buy_upwards_trend_sma_long_golden_cross_weight': 14,
-        'buy_upwards_trend_sma_short_golden_cross_weight': 26,
-        'buy_upwards_trend_vwap_cross_weight': 23
+        'buy_downwards_trend_ema_long_golden_cross_weight': 97,
+        'buy_downwards_trend_ema_short_golden_cross_weight': 54,
+        'buy_downwards_trend_macd_weight': 72,
+        'buy_downwards_trend_rsi_weight': 3,
+        'buy_downwards_trend_sma_long_golden_cross_weight': 87,
+        'buy_downwards_trend_sma_short_golden_cross_weight': 56,
+        'buy_downwards_trend_vwap_cross_weight': 93,
+        'buy_sideways_trend_adx_strong_up_weight': 58,
+        'buy_sideways_trend_bollinger_bands_weight': 100,
+        'buy_sideways_trend_ema_long_golden_cross_weight': 14,
+        'buy_sideways_trend_ema_short_golden_cross_weight': 8,
+        'buy_sideways_trend_macd_weight': 16,
+        'buy_sideways_trend_rsi_weight': 36,
+        'buy_sideways_trend_sma_long_golden_cross_weight': 26,
+        'buy_sideways_trend_sma_short_golden_cross_weight': 20,
+        'buy_sideways_trend_vwap_cross_weight': 96,
+        'buy_upwards_trend_adx_strong_up_weight': 88,
+        'buy_upwards_trend_bollinger_bands_weight': 73,
+        'buy_upwards_trend_ema_long_golden_cross_weight': 37,
+        'buy_upwards_trend_ema_short_golden_cross_weight': 40,
+        'buy_upwards_trend_macd_weight': 54,
+        'buy_upwards_trend_rsi_weight': 8,
+        'buy_upwards_trend_sma_long_golden_cross_weight': 95,
+        'buy_upwards_trend_sma_short_golden_cross_weight': 12,
+        'buy_upwards_trend_vwap_cross_weight': 84
     }
 
     # Sell hyperspace params:
@@ -115,58 +116,58 @@ class MoniGoManiHyperStrategy(IStrategy):
         'sell___unclogger_enabled_when_downwards': True,
         'sell___unclogger_enabled_when_sideways': True,
         'sell___unclogger_enabled_when_upwards': False,
-        'sell___unclogger_minimal_losing_trades_open': 5,
-        'sell___unclogger_minimal_losing_trade_duration_minutes': 70,
-        'sell___unclogger_percentage_open_trades_losing': 60,
-        'sell___unclogger_trend_lookback_candles_window': 10,
-        'sell__downwards_trend_total_signal_needed': 87,
-        'sell__sideways_trend_total_signal_needed': 22,
-        'sell__upwards_trend_total_signal_needed': 89,
-        'sell_downwards_trend_adx_strong_down_weight': 34,
-        'sell_downwards_trend_bollinger_bands_weight': 83,
-        'sell_downwards_trend_ema_long_death_cross_weight': 0,
-        'sell_downwards_trend_ema_short_death_cross_weight': 42,
-        'sell_downwards_trend_macd_weight': 0,
-        'sell_downwards_trend_rsi_weight': 49,
-        'sell_downwards_trend_sma_long_death_cross_weight': 40,
-        'sell_downwards_trend_sma_short_death_cross_weight': 0,
-        'sell_downwards_trend_vwap_cross_weight': 12,
-        'sell_sideways_trend_adx_strong_down_weight': 45,
-        'sell_sideways_trend_bollinger_bands_weight': 94,
-        'sell_sideways_trend_ema_long_death_cross_weight': 8,
-        'sell_sideways_trend_ema_short_death_cross_weight': 33,
-        'sell_sideways_trend_macd_weight': 65,
-        'sell_sideways_trend_rsi_weight': 11,
-        'sell_sideways_trend_sma_long_death_cross_weight': 57,
-        'sell_sideways_trend_sma_short_death_cross_weight': 23,
-        'sell_sideways_trend_vwap_cross_weight': 55,
-        'sell_upwards_trend_adx_strong_down_weight': 54,
-        'sell_upwards_trend_bollinger_bands_weight': 0,
-        'sell_upwards_trend_ema_long_death_cross_weight': 36,
-        'sell_upwards_trend_ema_short_death_cross_weight': 12,
-        'sell_upwards_trend_macd_weight': 90,
-        'sell_upwards_trend_rsi_weight': 52,
-        'sell_upwards_trend_sma_long_death_cross_weight': 97,
-        'sell_upwards_trend_sma_short_death_cross_weight': 18,
-        'sell_upwards_trend_vwap_cross_weight': 51
+        'sell___unclogger_minimal_losing_trade_duration_minutes': 31,
+        'sell___unclogger_minimal_losing_trades_open': 2,
+        'sell___unclogger_percentage_open_trades_losing': 7,
+        'sell___unclogger_trend_lookback_candles_window': 0,
+        'sell__downwards_trend_total_signal_needed': 85,
+        'sell__sideways_trend_total_signal_needed': 42,
+        'sell__upwards_trend_total_signal_needed': 77,
+        'sell_downwards_trend_adx_strong_down_weight': 38,
+        'sell_downwards_trend_bollinger_bands_weight': 6,
+        'sell_downwards_trend_ema_long_death_cross_weight': 46,
+        'sell_downwards_trend_ema_short_death_cross_weight': 88,
+        'sell_downwards_trend_macd_weight': 32,
+        'sell_downwards_trend_rsi_weight': 34,
+        'sell_downwards_trend_sma_long_death_cross_weight': 15,
+        'sell_downwards_trend_sma_short_death_cross_weight': 96,
+        'sell_downwards_trend_vwap_cross_weight': 90,
+        'sell_sideways_trend_adx_strong_down_weight': 46,
+        'sell_sideways_trend_bollinger_bands_weight': 46,
+        'sell_sideways_trend_ema_long_death_cross_weight': 69,
+        'sell_sideways_trend_ema_short_death_cross_weight': 61,
+        'sell_sideways_trend_macd_weight': 94,
+        'sell_sideways_trend_rsi_weight': 4,
+        'sell_sideways_trend_sma_long_death_cross_weight': 8,
+        'sell_sideways_trend_sma_short_death_cross_weight': 52,
+        'sell_sideways_trend_vwap_cross_weight': 17,
+        'sell_upwards_trend_adx_strong_down_weight': 15,
+        'sell_upwards_trend_bollinger_bands_weight': 77,
+        'sell_upwards_trend_ema_long_death_cross_weight': 83,
+        'sell_upwards_trend_ema_short_death_cross_weight': 38,
+        'sell_upwards_trend_macd_weight': 53,
+        'sell_upwards_trend_rsi_weight': 98,
+        'sell_upwards_trend_sma_long_death_cross_weight': 70,
+        'sell_upwards_trend_sma_short_death_cross_weight': 17,
+        'sell_upwards_trend_vwap_cross_weight': 38
     }
 
     # ROI table:
     minimal_roi = {
-        "0": 0.38648,
-        "335": 0.15347,
-        "674": 0.05148,
-        "1928": 0
+        "0": 0.17788,
+        "401": 0.12705,
+        "543": 0.06093,
+        "1669": 0
     }
 
     # Stoploss:
-    stoploss = -0.34755
+    stoploss = -0.21241
 
     # Trailing stop:
     trailing_stop = True
-    trailing_stop_positive = 0.01156
-    trailing_stop_positive_offset = 0.02329
-    trailing_only_offset_is_reached = True
+    trailing_stop_positive = 0.14725
+    trailing_stop_positive_offset = 0.2259
+    trailing_only_offset_is_reached = False
 
     ####################################################################################################################
     #                                     END OF HYPEROPT RESULTS COPY-PASTE SECTION                                   #
@@ -198,7 +199,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     # A value of 1/5 will effectively set the step size to be 5 (0, 5, 10 ...)
     # A value of 5 will set the step size to be 1/5=0.2 (0, 0.2, 0.4, 0.8, ...)
     # A smaller value will limit the search space a lot, but may skip over good values.
-    precision = 1
+    precision = 1/2
 
     # Optional order type mapping.
     order_types = {
@@ -1296,7 +1297,17 @@ class MoniGoManiHyperStrategy(IStrategy):
 
                                     for candle in range(1, int(self.sell___unclogger_trend_lookback_candles_window.value
                                                                / self.precision) + 1):
-                                        candle_time = current_time - timedelta(hours=candle)
+
+                                        # ToDo: Multiply if needed, example '4h', hours=candle*4
+                                        candle_time = current_time - timedelta(minutes=candle)
+                                        if self.timeframe.find('h') != -1:
+                                            candle_time = current_time - timedelta(hours=candle)
+                                        elif self.timeframe.find('d') != -1:
+                                            candle_time = current_time - timedelta(days=candle)
+                                        elif self.timeframe.find('w') != -1:
+                                            candle_time = current_time - timedelta(weeks=candle)
+                                        elif self.timeframe.find('M') != -1:
+                                            candle_time = current_time - timedelta64(1, 'M')  # ToDo: Test
                                         stored_trend_dataframe[candle] = \
                                             self.custom_info['trend_indicator'][pair].loc[candle_time]['trend']
 
