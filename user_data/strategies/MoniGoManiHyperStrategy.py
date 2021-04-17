@@ -199,7 +199,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     # A value of 1/5 will effectively set the step size to be 5 (0, 5, 10 ...)
     # A value of 5 will set the step size to be 1/5=0.2 (0, 0.2, 0.4, 0.8, ...)
     # A smaller value will limit the search space a lot, but may skip over good values.
-    precision = 1/2
+    precision = 1
 
     # Optional order type mapping.
     order_types = {
@@ -1216,7 +1216,8 @@ class MoniGoManiHyperStrategy(IStrategy):
                 self.mgm_logger('debug', open_trade_unclogger, 'Fetched losing_open_trades (' +
                                 str(len(losing_open_trades)) + ') from custom information storage!')
 
-                if len(losing_open_trades) < (self.sell___unclogger_minimal_losing_trades_open.value / self.precision):
+                if len(losing_open_trades) < \
+                        round(self.sell___unclogger_minimal_losing_trades_open.value / self.precision):
                     self.mgm_logger('debug', open_trade_unclogger, 'No unclogging needed! ' +
                                     'Not enough losing trades currently open!')
                 else:
@@ -1241,13 +1242,15 @@ class MoniGoManiHyperStrategy(IStrategy):
                             trade.open_date_utc.replace(tzinfo=None)))
                         self.mgm_logger('debug', open_trade_unclogger, 'Minimal open time: ' + str(
                             current_datetime_to_use.replace(tzinfo=None) -
-                            timedelta(minutes=(self.sell___unclogger_minimal_losing_trade_duration_minutes.value /
-                                               self.precision))))
+                            timedelta(minutes=round(
+                                self.sell___unclogger_minimal_losing_trade_duration_minutes.value /
+                                self.precision))))
 
                         if trade.open_date_utc.replace(tzinfo=None) > (
                                 current_datetime_to_use.replace(tzinfo=None) -
-                                timedelta(minutes=(self.sell___unclogger_minimal_losing_trade_duration_minutes.value /
-                                                   self.precision))):
+                                timedelta(minutes=round(
+                                    self.sell___unclogger_minimal_losing_trade_duration_minutes.value /
+                                    self.precision))):
                             self.mgm_logger('debug', open_trade_unclogger,
                                             'No unclogging needed! Currently checked pair ('
                                             + pair + ') has not been open been open for long enough!')
@@ -1260,7 +1263,7 @@ class MoniGoManiHyperStrategy(IStrategy):
                             self.mgm_logger('debug', open_trade_unclogger, 'percentage_open_trades_losing: ' +
                                             str(percentage_open_trades_losing) + '%')
                             if percentage_open_trades_losing < \
-                                    (self.sell___unclogger_percentage_open_trades_losing.value / self.precision):
+                                    round(self.sell___unclogger_percentage_open_trades_losing.value / self.precision):
                                 self.mgm_logger('debug', open_trade_unclogger, 'No unclogging needed! ' +
                                                 'Percentage of open trades losing needed has not been satisfied!')
                             else:
@@ -1283,8 +1286,9 @@ class MoniGoManiHyperStrategy(IStrategy):
                                                                                              timeframe=self.timeframe)
 
                                     # Data is nan at 0 so incrementing loop with 1
-                                    for candle in range(1, int(self.sell___unclogger_trend_lookback_candles_window.value
-                                                               / self.precision) + 1):
+                                    for candle in range(1,
+                                                        round(self.sell___unclogger_trend_lookback_candles_window.value
+                                                              / self.precision) + 1):
                                         stored_trend_dataframe[candle] = dataframe['trend'].iat[candle * -1]
                                         # Warning: Only use .iat[-1] in dry/live-run modes! Not during
                                         # backtesting/hyperopting! (Otherwise you will try to look into the future)
@@ -1295,24 +1299,30 @@ class MoniGoManiHyperStrategy(IStrategy):
                                                     'Fetching all needed \'trend\' trade data during ' +
                                                     'BackTesting/HyperOpting')
 
-                                    for candle in range(1, int(self.sell___unclogger_trend_lookback_candles_window.value
-                                                               / self.precision) + 1):
-
-                                        # ToDo: Multiply if needed, example '4h', hours=candle*4
-                                        candle_time = current_time - timedelta(minutes=candle)
+                                    for candle in range(1,
+                                                        round(self.sell___unclogger_trend_lookback_candles_window.value
+                                                              / self.precision) + 1):
+                                        # Convert the candle time to the one being used by the current timeframe
+                                        candle_multiplier = int(self.timeframe.rstrip("mhdwM"))
+                                        candle_time = current_time - timedelta(minutes=int(candle * candle_multiplier))
                                         if self.timeframe.find('h') != -1:
-                                            candle_time = current_time - timedelta(hours=candle)
+                                            candle_time = current_time - \
+                                                          timedelta(hours=int(candle * candle_multiplier))
                                         elif self.timeframe.find('d') != -1:
-                                            candle_time = current_time - timedelta(days=candle)
+                                            candle_time = current_time - \
+                                                          timedelta(days=int(candle * candle_multiplier))
                                         elif self.timeframe.find('w') != -1:
-                                            candle_time = current_time - timedelta(weeks=candle)
+                                            candle_time = current_time - \
+                                                          timedelta(weeks=int(candle * candle_multiplier))
                                         elif self.timeframe.find('M') != -1:
-                                            candle_time = current_time - timedelta64(1, 'M')  # ToDo: Test
+                                            candle_time = current_time - \
+                                                          timedelta64(int(1 * candle_multiplier), 'M')
                                         stored_trend_dataframe[candle] = \
                                             self.custom_info['trend_indicator'][pair].loc[candle_time]['trend']
 
                                 if len(stored_trend_dataframe) < \
-                                        (self.sell___unclogger_trend_lookback_candles_window.value / self.precision):
+                                        round(self.sell___unclogger_trend_lookback_candles_window.value /
+                                              self.precision):
                                     self.mgm_logger('debug', open_trade_unclogger, 'No unclogging needed! ' +
                                                     'Not enough trend data stored yet!')
                                 else:
@@ -1328,8 +1338,8 @@ class MoniGoManiHyperStrategy(IStrategy):
                                                     'unclogger_candles_satisfied satisfied for pair: ' + pair)
                                     unclogger_candles_satisfied = 0
                                     for lookback_candle \
-                                            in range(1, int(self.sell___unclogger_trend_lookback_candles_window.value /
-                                                            self.precision) + 1):
+                                            in range(1, round(self.sell___unclogger_trend_lookback_candles_window.value
+                                                              / self.precision) + 1):
                                         if self.sell___unclogger_enabled_when_downwards.value & \
                                                 (stored_trend_dataframe[lookback_candle] == 'downwards'):
                                             unclogger_candles_satisfied += 1
@@ -1345,8 +1355,8 @@ class MoniGoManiHyperStrategy(IStrategy):
                                     # Override Sell Signal: Unclog trade by setting it's stoploss to 0% forcing a sell &
                                     # attempt to continue the profit climb with the "freed up trading slot"
                                     if unclogger_candles_satisfied >= \
-                                            (self.sell___unclogger_trend_lookback_candles_window.value /
-                                             self.precision):
+                                            round(self.sell___unclogger_trend_lookback_candles_window.value /
+                                                  self.precision):
                                         self.mgm_logger('info', open_trade_unclogger, 'Unclogging losing trade...')
                                         return -0.00001  # Setting very low since 0% is seen as invalid by Freqtrade
                                     else:
