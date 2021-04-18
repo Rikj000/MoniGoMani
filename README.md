@@ -36,7 +36,8 @@ Each signal has it's own weight allocated to it & a total buy/sell signal needed
 MGM (MoniGoMani) will loop through all signals, if they trigger it will add up the weight and eventually it will check if it's bigger then what's needed in total, if it is it will buy/sell.   
 The beauty lies in using MGM in combination with hyperopting (= a form of machine learning where you backtest a timeframe a lot of times to find the most ideal values), since all weighted signals have been made hyperoptable it can be used to find the most "ideal" weight divisions.   
 Also will it teach us what works where & what doesn't since MoniGoMani first detects Downwards/Sideways/Upwards trends and then does all of the above individually for each kind of trend (Creating basically 3 individual strategies, 1 for each kind of trend).   
-Further it will do various hyperoptable checks upon the open trades to see if there are "bad" ones to unclog.
+Further it will do various hyperoptable checks upon the open trades to see if there are "bad" ones to unclog while running.   
+
 
 ## Feature List:   
 - [Auto-HyperOptable Strategy](https://github.com/freqtrade/freqtrade/pull/4596)! \*No more need for legacy MoniGoMani, legacy MoniGoManiHyperOpt and MoniGoManiHyperOpted strategy classes!   
@@ -84,6 +85,7 @@ freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.
 
 ## **Planned**:   
 *Ordered by current schedule/priority*
+- Huge refactor that should improve the codebase reducing a lot of duplicate code & making implementing new weighted signals even easier
 - Extract all `MoniGoMani Settings` into a `config-mgm.json` that will require manual configuration + Extract the `HyperOpt Results Copy/Paste section` into a `config-mgm-hyperopt.json`, this last file will be extractable from hyperopts results using a command!
 - Hyperopt over 3 separate timeranges (one representing each individual kind of trend, downwards/sideways/upwards, a timeframe that represents a corresponding trend should be picked)
 - **Other & Better indicators!** MoniGoMani has been designed so signals can easily be inserted / swapped out   
@@ -105,11 +107,16 @@ View the Legacy [ChangeLog](https://github.com/Rikj000/MoniGoMani/blob/main/CHAN
 [View the VeryQuickStart](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md), the current place where you can find all MoniGoMani Documentation!   
 
 ## **Freqtrade**:   
-[**Freqtrade**](https://github.com/freqtrade/freqtrade) is the Bot that makes this strategy possible!    
+**Freqtrade** is the well known `open source crypto day-trading bot` that makes this strategy possible!   
+It's completely free to use and alter and has many amazing features.   
 Big thank you to **xmatthias** and everyone who helped on it!   
-   
+- **[Official Freqtrade Website](https://www.freqtrade.io/en/latest/)**
+- **[Official Freqtrade GitHub Repository](https://github.com/freqtrade/freqtrade)**
+- **[Official Freqtrade Discord Server](https://discord.gg/j84KnP57kW)**
+
+
 ## **Iconomi**:   
 Can't wait until MoniGoMani is fully on point? Or is this all too technical for you?   
 Check out [**Iconomi**](https://www.iconomi.com/register?ref=JdFzz)! *(Please use this link if you would sign up)*   
 
-More information about this platform can be found in the `#welcome` channel of [CryptoStonksShallRise](https://discord.gg/xFZ9bB6vEz) on Discord.
+More information about this platform can be found in the `#welcome` channel of **[CryptoStonksShallRise](https://discord.gg/xFZ9bB6vEz)** on Discord.

@@ -63,7 +63,7 @@ When the Parameters in the HyperOpt Space Parameters sections are altered as fol
 **<span style="color:darkorange">WARNING:</span> Always double check that when doing a fresh hyperopt or doing a dry/live-run that all overrides are turned off!**   
 **<span style="color:darkorange">WARNING:</span> Overridden buy/sell_params will be missing from the HyperOpt Results!, after hyperopting with IntParameters overridden to 0 you can use the Total Overall Signal Importance Calculator's `--fix-missing` subcommand to re-include the missing IntParameter results with 0 as their weight**   
 
-### Override Examples:
+### Override / Static Examples:
 Override `buy___trades_when_sideways` to always be **False**:
 ```python
 buy___trades_when_sideways = \
@@ -79,6 +79,23 @@ sell_downwards_trend_macd_weight = \
 | **default**=X      | The value used when overriding |
 | **optimize**=False | Exclude from hyperopting (Make static) |
 | **load**=False     | Don't load from the HyperOpt Results Copy/Paste Section |  
+
+### HyperOptable / Normal Examples:
+Normal usage of `buy___trades_when_sideways` making it hyperoptable:
+```python
+buy___trades_when_sideways = \
+    CategoricalParameter([True, False], default=True, space='buy', optimize=True, load=True)
+```
+Normal usage of `sell_downwards_trend_macd_weight` making it hyperoptable:
+```python
+sell_downwards_trend_macd_weight = \
+    IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
+```
+| Function Param | Meaning |
+| --- |--- |
+| **default**=X     | Not used in this case |
+| **optimize**=True | Include during hyperopting (Look for "ideal" value) |
+| **load**=True     | Load from the HyperOpt Results Copy/Paste Section |  
 
 
 # Open Trade Unclogger:
@@ -158,13 +175,24 @@ For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal
 python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc BTC
 ```
 
-To retrieve all tradable pairs on Binance and create your own pairs.json file for 'freqtrade data-download' *(with [binance-retrieve-pair-list.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/binance-retrieve-pair-list.py))*:
+For retrieving all tradable pairs on Binance and creating your own `pairs-btc.json` file for `freqtrade data-download` *(with [Binance-Retrieve-Pair-List.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Pair-List.py))*:
 ```properties
-python ./user_data/mgm_tools/binance-retrieve-pair-list.py -q BTC > pairs.json
-freqtrade download-data --exchange binance -c ./user_data/config.json -c ./user_data/config-private.json --data-format-ohlcv hdf5 --days 740 --pairs-file user_data/pairs.json --timeframes 5m 1h
+# Step 1: Retrieve all tradable pairs on Binance and create a 'pairs-btc.json file'
+python ./user_data/mgm_tools/binance-retrieve-pair-list.py -q BTC > pairs-btc.json
+
+# Step 2: Download candle data for 'freqtrade data-download' using 'pairs-btc.json'
+freqtrade download-data --exchange binance -c ./user_data/config-btc.json -c ./user_data/config-private.json --data-format-ohlcv hdf5 --days 740 --pairs-file user_data/pairs-btc.json --timeframes 5m 1h
 ```
 
 For Hyper Opting *(the legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py) + legacy [MoniGoManiHyperOpt.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/hyperopts/MoniGoManiHyperOpt.py))*:
 ```properties
 freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all --hyperopt MoniGoManiHyperOpt -s MoniGoMani -e 1000 --timerange 20210101-20210316
 ```
+
+# How to share your test results properly:
+Easiest way to share how your MGM setup has been doing would be by posting a screenshot in the [Discord Server](https://discord.gg/xFZ9bB6vEz) with the output of the `/status table` and `/profit` commands (Using the Telegram connection of the bot).   
+   
+Also one of the other most welcome things is the results from the `Total-Overall-Signal-Importance-Calculator`, but you'll have to paste your own fresh hyperopt results in it first before it can make you a nice report that can help us find better signals for MGM !:rocket:   
+
+Of course all FreqUI / Telegram / config / HyperOpt results done on MGM **can be** useful / be learned from!
+But try to **always include** a  `Total-Overall-Signal-Importance-Calculator` report or just your own MoniGoMani file with your hyperopt results applied to it! Since without knowing which signal weights or which on/off settings are applied we can't really truly learn much from your results!
