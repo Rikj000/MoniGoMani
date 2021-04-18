@@ -203,7 +203,7 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # To disable TimeFrame-Zoom just use the same candles for 'timeframe' & 'backtest_timeframe'
     timeframe = '1h'  # Optimal TimeFrame for MoniGoMani (used during Dry/Live-Runs)
-    backtest_timeframe = '5m'  # Optimal TimeFrame-Zoom for MoniGoMani (used to zoom in during Backtesting/HyperOpting)
+    backtest_timeframe = '1h'  # Optimal TimeFrame-Zoom for MoniGoMani (used to zoom in during Backtesting/HyperOpting)
     informative_timeframe = timeframe
 
     # Run "populate_indicators()" only for new candle

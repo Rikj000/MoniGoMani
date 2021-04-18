@@ -127,22 +127,6 @@ Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so
 - Optional fill in `-pu` or `--precision-used` to re-calculate the weights to what would be expected after running hyperopt with precision enabled. Always use this after running hyperopt with precision different from 1!   
 
 
-# Precision Setting:
-The `precision` setting can be used to control the precision / step size used during hyperopting.   
-A value **smaller than 1** will limit the search space, but may skip over good values.   
-While a value **larger than 1** increases the search space, but will increase the duration of hyperopting.   
-To disable `precision` / for old the work mode **just** use **1**.   
-
-**<span style="color:darkorange">WARNING:</span> Only use a precision different from 1 during hyperopting & restore to 1 afterwards!**   
-**<span style="color:darkorange">WARNING:</span> HyperOpt Results don't take precision into consideration, after hyperopting with precision use the Total Overall Signal Importance Calculator's `--precision-used` subcommand to fix the results**   
-
-### Precision Examples:
-| Precision Value | Step Size effectively used during HyperOpting |
-| --- | --- |
-| **1/5** or **0.2** | **5** (0, 5, 10 ...) |
-| **5**   | **1/5** or **0.2** (0, 0.2, 0.4, 0.8, ...) |
-
-
 # TimeFrame-Zoom:
 To prevent profit exploitation during backtesting/hyperopting we backtest/hyperopt MoniGoMani which would normally use a `timeframe` (1h candles) using a smaller `backtest_timeframe` (5m candles) instead. This happens while still using an `informative_timeframe` (original 1h candles) to generate the buy/sell signals.   
 
@@ -161,22 +145,54 @@ For more information on why this is needed please read [Backtesting-Traps](https
 | **backtest_timeframe**='5m' | Zoomed in TimeFrame used during backtesting/hyperopting |
 
 
+# Precision Setting:
+The `precision` setting can be used to control the precision / step size used during hyperopting.   
+A value **smaller than 1** will limit the search space, but may skip over good values.   
+While a value **larger than 1** increases the search space, but will increase the duration of hyperopting.   
+To disable `precision` / for old the work mode **just** use **1**.   
+
+**<span style="color:darkorange">WARNING:</span> Only use a precision different from 1 during hyperopting & restore to 1 afterwards!**   
+**<span style="color:darkorange">WARNING:</span> HyperOpt Results don't take precision into consideration, after hyperopting with precision use the Total Overall Signal Importance Calculator's `--precision-used` subcommand to fix the results**   
+
+### Precision Examples:
+| Precision Value | Step Size effectively used during HyperOpting |
+| --- | --- |
+| **1/5** or **0.2** | **5** (0, 5, 10 ...) |
+| **5**   | **1/5** or **0.2** (0, 0.2, 0.4, 0.8, ...) |
+
+
+# Switching PairLists:
+By default MoniGoMani includes 2 pairlists in `config-btc.json`:   
+- A StaticPairList: Used for BackTesting / HyperOpting   
+- A VolumePairList: Used for Dry / Live - Running   
+Switching between the PairList in use can easily be one by moving the `_` in front of the `pairlists` value you wish to disable.
+
+### Enabled StaticPairList / Disabled VolumePairList Example:
+```json
+"pairlists": [{
+        "method": "StaticPairList"
+    }],
+"_pairlists": [
+    {
+        "method": "VolumePairList",
+```
+
 # Go-To Commands:
 For Hyper Opting *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py))*:
-```properties
+```powershell
 freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all -s MoniGoManiHyperStrategy -e 1000 --timerange 20210101-20210316
 ```
 For Back Testing *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) or legacy [MoniGoManiHyperOpted.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoManiHyperOpted.py) or legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py))*:
-```properties
+```powershell
 freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/config-btc.json -c ./user_data/config-private.json --timerange 20210101-20210316
 ```
 For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
-```properties
+```powershell
 python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc BTC
 ```
 
 For retrieving all tradable pairs on Binance and creating your own `pairs-btc.json` file for `freqtrade data-download` *(with [Binance-Retrieve-Pair-List.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Pair-List.py))*:
-```properties
+```powershell
 # Step 1: Retrieve all tradable pairs on Binance and create a 'pairs-btc.json file'
 python ./user_data/mgm_tools/binance-retrieve-pair-list.py -q BTC > pairs-btc.json
 
@@ -185,7 +201,7 @@ freqtrade download-data --exchange binance -c ./user_data/config-btc.json -c ./u
 ```
 
 For Hyper Opting *(the legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py) + legacy [MoniGoManiHyperOpt.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/hyperopts/MoniGoManiHyperOpt.py))*:
-```properties
+```powershell
 freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all --hyperopt MoniGoManiHyperOpt -s MoniGoMani -e 1000 --timerange 20210101-20210316
 ```
 
