@@ -157,6 +157,13 @@ For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal
 ```properties
 python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc BTC
 ```
+
+To retrieve all tradable pairs on Binance and create your own pairs.json file for 'freqtrade data-download' *(with [binance-retrieve-pair-list.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/binance-retrieve-pair-list.py))*:
+```properties
+python ./user_data/mgm_tools/binance-retrieve-pair-list.py -q BTC > pairs.json
+freqtrade download-data --exchange binance -c ./user_data/config.json -c ./user_data/config-private.json --data-format-ohlcv hdf5 --days 740 --pairs-file user_data/pairs.json --timeframes 5m 1h
+```
+
 For Hyper Opting *(the legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py) + legacy [MoniGoManiHyperOpt.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/hyperopts/MoniGoManiHyperOpt.py))*:
 ```properties
 freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all --hyperopt MoniGoManiHyperOpt -s MoniGoMani -e 1000 --timerange 20210101-20210316
