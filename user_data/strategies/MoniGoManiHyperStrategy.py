@@ -59,7 +59,7 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # If enabled MoniGoMani logging will be displayed to the console and be integrated in Freqtrades native logging
     # For live it's recommended to disable at least info/debug logging, to keep MGM as lightweight as possible!
-    use_mgm_logging = True
+    use_mgm_logging = False
     mgm_log_levels_enabled = {
         'info': False,
         'warning': True,
