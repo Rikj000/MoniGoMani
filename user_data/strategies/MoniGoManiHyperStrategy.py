@@ -181,6 +181,10 @@ class MoniGoManiHyperStrategy(IStrategy):
         'trend_indicator': {}
     }
 
+    # Create class level runmode detection (No need for configuration, will automatically be detected,
+    # changed & used at runtime)
+    is_dry_live_run_detected = True
+
     # TimeFrame-Zoom
     # To prevent profit exploitation during backtesting/hyperopting we backtest/hyperopt MoniGoMani which would normally
     # use a 'timeframe' (1h candles) using a smaller 'backtest_timeframe' (5m candles) instead.
@@ -199,7 +203,7 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # To disable TimeFrame-Zoom just use the same candles for 'timeframe' & 'backtest_timeframe'
     timeframe = '1h'  # Optimal TimeFrame for MoniGoMani (used during Dry/Live-Runs)
-    backtest_timeframe = "5m"  # Optimal TimeFrame-Zoom for MoniGoMani (used to zoom in during Backtesting/HyperOpting)
+    backtest_timeframe = '5m'  # Optimal TimeFrame-Zoom for MoniGoMani (used to zoom in during Backtesting/HyperOpting)
     informative_timeframe = timeframe
 
     # Run "populate_indicators()" only for new candle
@@ -515,12 +519,25 @@ class MoniGoManiHyperStrategy(IStrategy):
         :param args:
         :param kwargs:
         """
+        initialization = 'Initialization'
+
         super().__init__(*args, **kwargs)
-        # ToDo: Implement class level is_live_or_dry_run boolean to optimize the codebase a little bit
+        if not self.dp:
+            self.mgm_logger('error', initialization, 'Data Provider is not populated!' +
+                            ' No indicators will be computed!')
+
         if (self.dp is not None) and (self.dp.runmode.value in ('backtest', 'hyperopt')):
+            self.mgm_logger('info', initialization, 'Current run mode detected as: HyperOpting/BackTesting. ' +
+                            'Auto updating is_dry_live_run_detected to: False')
+            self.is_dry_live_run_detected = False
+
             self.timeframe = self.backtest_timeframe
             # ToDo: Implement syntax for all mgm_logging like this f'Parametername: {parametername}'
-            self.mgm_logger('info', 'TimeFrame-Zoom', f'Auto updating timeframe to {self.timeframe}')
+            self.mgm_logger('info', 'TimeFrame-Zoom', f'Auto updating timeframe to: {self.timeframe}')
+        else:
+            self.mgm_logger('info', initialization, 'Current run mode detected as: Dry/Live-Run. ' +
+                            'Auto updating is_dry_live_run_detected to: True')
+            self.is_dry_live_run_detected = True
 
     def informative_pairs(self):
         """
@@ -547,16 +564,10 @@ class MoniGoManiHyperStrategy(IStrategy):
         timeframe_zoom = 'TimeFrame-Zoom'
 
         # Compute indicator data during Backtesting / Hyperopting
-        if (self.dp is not None) and (self.dp.runmode.value in ('backtest', 'hyperopt')):
+        if self.is_dry_live_run_detected is False:
             self.mgm_logger('info', timeframe_zoom, 'Backtesting/Hyperopting this strategy with a ' +
                             f'informative_timeframe ({self.informative_timeframe}candles) and a ' +
                             f'backtest_timeframe ({self.backtest_timeframe} candles)')
-
-            # ToDo: Move to __init__
-            if not self.dp:
-                self.mgm_logger('error', timeframe_zoom, 'Data Provider is not populated!' +
-                                ' No indicators will be computed!')
-                return dataframe
 
             # Warning! This method gets ALL downloaded data that you have (when in backtesting mode).
             # If you have many months or years downloaded for this pair, this will take a long time!
@@ -681,8 +692,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         # -------------------------------------
         # Store the trend indicator mapped to the correct date-times for all pairs in pair_list jf needed,
         # stored in custom information storage to maintain backtest/hyperopt-ability while using the sell unclogger
-        if self.sell___unclogger_enabled.value and self.dp and (
-                self.dp.runmode.value in ('backtest', 'hyperopt')):
+        if self.sell___unclogger_enabled.value and (self.is_dry_live_run_detected is False):
             self.mgm_logger('info', 'Custom Information Storage', 'Storing whole \'trend\' indicator for ' +
                             'pair (' + metadata['pair'] + ') in custom_info')
 
@@ -1199,8 +1209,7 @@ class MoniGoManiHyperStrategy(IStrategy):
                 # Open Trade Custom Information Storage
                 # -------------------------------------
                 # Fetch all open trade data during Dry & Live Running
-                is_live_or_dry_run = self.dp and self.dp.runmode.value in ('live', 'dry_run')
-                if is_live_or_dry_run:
+                if self.is_dry_live_run_detected is True:
                     self.mgm_logger('debug', custom_information_storage,
                                     'Fetching all currently open trades during Dry/Live Run')
 
@@ -1257,9 +1266,9 @@ class MoniGoManiHyperStrategy(IStrategy):
                                                 ' from custom_info!')
                                 break
 
-                    # ToDo: BugFix/Improve or remove
+                    # ToDo: BugFix/Improve or remove (Warning: outdated code by now)
                     # Check if any old trend_indicator garbage needs to be removed
-                    # if is_live_or_dry_run is not True:
+                    # if self.is_live_or_dry_run is False:
 
                     #    oldest_date = datetime.utcnow().replace(tzinfo=None)
                     #    for open_trade_pair in self.custom_info['open_trades']:
@@ -1325,7 +1334,7 @@ class MoniGoManiHyperStrategy(IStrategy):
                                         ') is losing! Proceeding to the next check!')
 
                         # Check if trade has been open for X minutes (long enough to give it a recovery chance)
-                        if is_live_or_dry_run:
+                        if self.is_dry_live_run_detected is True:
                             current_datetime_to_use = datetime.utcnow()
                         else:
                             current_datetime_to_use = current_time
@@ -1371,7 +1380,7 @@ class MoniGoManiHyperStrategy(IStrategy):
 
                                 # Fetch all needed 'trend' trade data during Dry & Live Running
                                 stored_trend_dataframe = {}
-                                if is_live_or_dry_run:
+                                if self.is_dry_live_run_detected is True:
                                     self.mgm_logger('debug', open_trade_unclogger,
                                                     'Fetching all needed \'trend\' trade data during Dry/Live Run')
                                     dataframe, last_updated = self.dp.get_analyzed_dataframe(pair=pair,
