@@ -6,40 +6,17 @@ from pandas import DataFrame
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 from freqtrade.strategy import IStrategy, CategoricalParameter, IntParameter
 import logging
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
+from Signal import BuySignal, SellSignal
 
 
 # ^ TA-Lib Autofill mostly broken in JetBrains Products,
 # ta._ta_lib.<function_name> can temporarily be used while writing as a workaround
 # Then change back to ta.<function_name> so IDE won't nag about accessing a protected member of TA-Lib
 # ----------------------------------------------------------------------------------------------------
-
-
-class Signal:
-    optimize = True
-    min_value = 0
-    max_value = 100
-    default_value = 0
-    type = ''
-    name = ''
-
-    def __init__(self, name: str, test, overridable: bool = True, min_value: int = 0, max_value: int = 100,
-                 default_value: int = 0):
-        self.optimize = overridable
-        self.min_value = min_value
-        self.max_value = max_value
-        self.test = test
-        self.default_value = default_value
-        self.name = name
-
-
-class BuySignal(Signal):
-    type = 'buy'
-    pass
-
-
-class SellSignal(Signal):
-    type = 'sell'
-    pass
 
 
 class MoniGoManiHyperStrategy(IStrategy):
@@ -275,13 +252,16 @@ class MoniGoManiHyperStrategy(IStrategy):
         CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=True)
 
     # Total Buy Signal Percentage needed for a signal to be positive
-    buy__downwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy', optimize=True, load=True)
+    buy__downwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy',
+                                                            optimize=True, load=True)
 
     # Total Buy Signal Percentage needed for a signal to be positive
-    buy__sideways_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy', optimize=True, load=True)
+    buy__sideways_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy',
+                                                           optimize=True, load=True)
 
     # Total Buy Signal Percentage needed for a signal to be positive
-    buy__upwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy', optimize=True, load=True)
+    buy__upwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy',
+                                                          optimize=True, load=True)
 
     # ---------------------------------------------------------------- #
     #                  Sell HyperOpt Space Parameters                  #
@@ -304,13 +284,16 @@ class MoniGoManiHyperStrategy(IStrategy):
         CategoricalParameter([True, False], default=False, space='sell', optimize=True, load=True)
 
     # Total Sell Signal Percentage needed for a signal to be positive
-    sell__downwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='sell', optimize=True, load=True)
+    sell__downwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='sell',
+                                                             optimize=True, load=True)
 
     # Total Sell Signal Percentage needed for a signal to be positive
-    sell__sideways_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='sell', optimize=True, load=True)
+    sell__sideways_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='sell',
+                                                            optimize=True, load=True)
 
     # Total Sell Signal Percentage needed for a signal to be positive
-    sell__upwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='sell', optimize=True, load=True)
+    sell__upwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='sell',
+                                                           optimize=True, load=True)
 
     # ---------------------------------------------------------------- #
     #                 Custom HyperOpt Space Parameters                 #
