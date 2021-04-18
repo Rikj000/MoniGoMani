@@ -20,7 +20,6 @@ from Signal import BuySignal, SellSignal
 logger = logging.getLogger(__name__)
 
 
-
 # ^ TA-Lib Autofill mostly broken in JetBrains Products,
 # ta._ta_lib.<function_name> can temporarily be used while writing as a workaround
 # Then change back to ta.<function_name> so IDE won't nag about accessing a protected member of TA-Lib
@@ -419,6 +418,7 @@ class MoniGoManiHyperStrategy(IStrategy):
                             space=signal.type,
                             optimize=signal.optimize,
                             load=True))
+
     # Signal hyperopt is configurable by changing Signal object
     # Signal(lambda df: True, overridable=False, min_value=0, max_value=100)
 
@@ -447,7 +447,6 @@ class MoniGoManiHyperStrategy(IStrategy):
     ]
 
     trends = ['upwards', 'sideways', 'downwards']
-
 
     def generate_weight_table_for(self, signal: str, param_space: str) -> dict:
         data = {}
