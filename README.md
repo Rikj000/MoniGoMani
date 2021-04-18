@@ -36,18 +36,12 @@ Each signal has it's own weight allocated to it & a total buy/sell signal needed
 MGM (MoniGoMani) will loop through all signals, if they trigger it will add up the weight and eventually it will check if it's bigger then what's needed in total, if it is it will buy/sell.   
 The beauty lies in using MGM in combination with hyperopting (= a form of machine learning where you backtest a timeframe a lot of times to find the most ideal values), since all weighted signals have been made hyperoptable it can be used to find the most "ideal" weight divisions.   
 Also will it teach us what works where & what doesn't since MoniGoMani first detects Downwards/Sideways/Upwards trends and then does all of the above individually for each kind of trend (Creating basically 3 individual strategies, 1 for each kind of trend).   
+Further it will do various hyperoptable checks upon the open trades to see if there are "bad" ones to unclog.
 
 ## Feature List:   
-- [Auto-HyperOptable Strategy](https://github.com/freqtrade/freqtrade/pull/4596)! \**(No more need for legacy MoniGoMani, legacy MoniGoManiHyperOpt and MoniGoManiHyperOpted strategy classes)*   
-- All Configurable & HyperOptable settings are **easily copy/paste-able from the HyperOpt Results
-- Configurable & HyperOptable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends
-- Configurable & HyperOptable Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends
-- Turn On/Off Trading on Downwards/Sideways/Upwards trends for Buys/Sells *(HyperOptable)*
-- Settings to Enable/Disable HyperOpting for individual `buy_params` & `sell_params` through [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#hyperopt-setting-overrides)
-- [TimeFrame-Zoom](MoniGoMani/blob/main/VERYQUICKSTART.md#timeframe-zoom) during backtesting/hyperopting to prevent profit exploitation! *(Read: [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/))*
-- [Precision Setting](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#precision-setting) to alter the step-size used during HyperOpts
-- Turn On/Off **All** Individual Weighted Signal DataFrame entries for easy debugging in an IDE or better speed while dry/live running or hyperopting
-- Each Table has 9 Buy & 9 Sell signals implemented each Configurable & HyperOptable:
+- [Auto-HyperOptable Strategy](https://github.com/freqtrade/freqtrade/pull/4596)! \*No more need for legacy MoniGoMani, legacy MoniGoManiHyperOpt and MoniGoManiHyperOpted strategy classes!   
+- All HyperOptable settings are \*\*easily copy/paste-able from the HyperOpt Results
+- Configurable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends, each table **currently** has 9 Buy & 9 Sell signals implemented ***(HyperOptable!)***:
   - ADX + Strong Up/Strong Down
   - RSI
   - MACD
@@ -57,12 +51,18 @@ Also will it teach us what works where & what doesn't since MoniGoMani first det
   - EMA Long Death/Golden Cross 
   - Bollinger Band Re-Entrance
   - VWAP Cross
-- Configurable & Hyperoptable [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#open-trade-unclogger), if enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades :rocket:   
+- Configurable Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends ***(HyperOptable!)***
+- Configurable Trading on Downwards/Sideways/Upwards trends for Buys/Sells ***(HyperOptable!)***
+- Settings to Enable/Disable HyperOpting for individual `buy_params` & `sell_params` and setting them to a static value through [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#hyperopt-setting-overrides)
+- Configurable [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#open-trade-unclogger), if enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades ***(HyperOptable!)*** :rocket:   
+- [TimeFrame-Zoom](MoniGoMani/blob/main/VERYQUICKSTART.md#timeframe-zoom) during backtesting/hyperopting to prevent profit exploitation! *(Read: [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/))*
+- [Precision Setting](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#precision-setting) to alter the step-size used during HyperOpting
 - [Total Overall Signal Importance Calculator](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#total-overall-signal-importance-calculator) for Total Average Signal Importance Calculation upon the HyperOpt Results (With some really handy subcommands)
-- Main/Sub Plot Configurations for all indicators used *(Handy in FreqUI)*   
+- Pre-Configured Main/Sub Plot Configurations for visualisation of all indicators used in FreqUI
+- Turn On/Off **All** Individual Weighted Signal DataFrame entries for easy debugging in an IDE or better speed while dry/live running or hyperopting   
    
-*\*Support/Updates for Legacy versions stopped since Auto-HyperOptable Strategies are merged into the official Freqtrade Development Branch! **Please switch to the new MoniGoManiHyperStrategy!***   
-*\*\*Overrides will exclude some from hyperopts results check*
+*\*Support/Updates for Legacy versions stopped since Auto-HyperOptable Strategies are merged into the official Freqtrade Development Branch! Please switch to the new MoniGoManiHyperStrategy!*   
+*\*\*If you set up overrides then currently these will be missing from hyperopts results! Please add these back in manually to prevent unexpected behaviour!*   
 
 ## Go-To Commands:
 For Hyper Opting *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py))*:
@@ -73,9 +73,9 @@ For Back Testing *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj0
 ```properties
 freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/config-btc.json -c ./user_data/config-private.json --timerange 20210101-20210316
 ```
-For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/Total-Overall-Signal-Importance-Calculator.py))*:
+For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
 ```properties
-python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc BTC
+python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc BTC
 ```
 For Hyper Opting *(the legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py) + legacy [MoniGoManiHyperOpt.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/hyperopts/MoniGoManiHyperOpt.py))*:
 ```properties
