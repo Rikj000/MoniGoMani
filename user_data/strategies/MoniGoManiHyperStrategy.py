@@ -346,30 +346,22 @@ class MoniGoManiHyperStrategy(IStrategy):
                             optimize=signal.optimize,
                             load=True))
 
-    def generate_buy_config(self, signals: list) -> dict:
-        config = {}
-        for signal in signals:
-            config[signal] = self.generate_config_for(signal.name, signal.test, 'buy')
-        return config
-
-    def generate_sell_config(self, signals: list) -> dict:
-        config = {}
-        for signal in signals:
-            config[signal] = self.generate_config_for(signal.name, signal.test, 'sell')
-        return config
-
-    def generate_config_for(self, signal: str, test, param_space: str) -> dict:
-        return {
-            'test': test,
-            'trend_weights': self.generate_weight_table_for(signal, param_space),
-            'debug_param': f'{signal}_weighted_{param_space}_signal'
-        }
-
     def generate_weight_table_for(self, signal: str, param_space: str) -> dict:
         data = {}
         for trend in self.trends:
             data[trend] = getattr(self, f'{param_space}_{trend}_trend_{signal}_weight').value / self.precision
         return data
+
+    def generate_config(self, signals: list, param_space) -> dict:
+        config = {}
+        for signal in signals:
+            # config[signal] = self.generate_config_for(signal.name, signal.test, 'sell')
+            config[signal] = {
+                'test': signal.test,
+                'trend_weights': self.generate_weight_table_for(signal, param_space),
+                'debug_param': f'{signal}_weighted_{param_space}_signal'
+            }
+        return config
 
     @staticmethod
     def generate_weight_column(dataframe: DataFrame, signal: dict):
@@ -500,7 +492,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         :param metadata: Additional information, like the currently traded pair
         :return: DataFrame with buy column
         """
-        config = self.generate_buy_config(self.buy_signals)
+        config = self.generate_config(self.buy_signals, 'buy')
         dataframe = self.calculate_signal_strength(dataframe, config)
 
         dataframe.loc[
@@ -534,7 +526,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         """
 
         # If a Weighted Sell Signal goes off => Bearish Indication, Set to true (=1) and multiply by weight percentage
-        config = self.generate_sell_config(self.sell_signals)
+        config = self.generate_config(self.sell_signals, 'sell')
         dataframe = self.calculate_signal_strength(dataframe, config)
 
         # Check if sell signal should be sent depending on the current trend
