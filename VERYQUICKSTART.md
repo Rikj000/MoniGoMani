@@ -134,6 +134,7 @@ With this more realistic results should be found during backtesting/hyperopting.
 
 For more information on why this is needed please read [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)! 
 
+**<span style="color:darkorange">WARNING:</span> Remove the `timeframe` line from your `config-btc.json` if it would still be there! Otherwise TimeFrame-Zoom won't work properly in the current version!**   
 **<span style="color:darkorange">WARNING:</span> Candle data for both `timeframe` as `backtest_timeframe` will have to be downloaded before you will be able to backtest/hyperopt! (Since both will be used)**   
 **<span style="color:darkorange">WARNING:</span> This will be slower than backtesting at 1h and 1m is a CPU killer. But if you plan on using trailing stoploss or ROI, you probably want to know that your backtest results are not complete lies.**   
 **<span style="color:darkorange">WARNING:</span> To disable TimeFrame-Zoom just use the same candles for `timeframe` & `backtest_timeframe`**   
@@ -194,7 +195,7 @@ python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc B
 For retrieving all tradable pairs on Binance and creating your own `pairs-btc.json` file for `freqtrade data-download` *(with [Binance-Retrieve-Pair-List.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Pair-List.py))*:
 ```powershell
 # Step 1: Retrieve all tradable pairs on Binance and create a 'pairs-btc.json file'
-python ./user_data/mgm_tools/binance-retrieve-pair-list.py -q BTC > pairs-btc.json
+python ./user_data/mgm_tools/Binance-Retrieve-Pair-List.py -q BTC > pairs-btc.json
 
 # Step 2: Download candle data for 'freqtrade data-download' using 'pairs-btc.json'
 freqtrade download-data --exchange binance -c ./user_data/config-btc.json -c ./user_data/config-private.json --data-format-ohlcv hdf5 --days 740 --pairs-file user_data/pairs-btc.json --timeframes 5m 1h
@@ -211,4 +212,5 @@ Easiest way to share how your MGM setup has been doing would be by posting a scr
 Also one of the other most welcome things is the results from the `Total-Overall-Signal-Importance-Calculator`, but you'll have to paste your own fresh hyperopt results in it first before it can make you a nice report that can help us find better signals for MGM !:rocket:   
 
 Of course all FreqUI / Telegram / config / HyperOpt results done on MGM **can be** useful / be learned from!
-But try to **always include** a  `Total-Overall-Signal-Importance-Calculator` report or just your own MoniGoMani file with your hyperopt results applied to it! Since without knowing which signal weights or which on/off settings are applied we can't really truly learn much from your results!
+But try to **always include** a  `Total-Overall-Signal-Importance-Calculator` report or just your own MoniGoMani file with your hyperopt results applied to it!   
+Since without knowing which signal weights or which on/off settings are applied we can't really truly learn much from your results!   

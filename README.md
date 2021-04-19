@@ -59,7 +59,6 @@ Further it will do various hyperoptable checks upon the open trades to see if th
 - [TimeFrame-Zoom](MoniGoMani/blob/main/VERYQUICKSTART.md#timeframe-zoom) during backtesting/hyperopting to prevent profit exploitation! *(Read: [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/))*
 - [Precision Setting](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#precision-setting) to alter the step-size used during HyperOpting
 - [Total Overall Signal Importance Calculator](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#total-overall-signal-importance-calculator) for Total Average Signal Importance Calculation upon the HyperOpt Results (With some really handy subcommands)
-- [Total Overall Signal Importance Calculator](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#total-overall-signal-importance-calculator) for Total Average Signal Importance Calculation upon the HyperOpt Results (With some really handy subcommands)
 - Pre-Configured Main/Sub Plot Configurations for visualisation of all indicators used in FreqUI
 - Turn On/Off **All** Individual Weighted Signal DataFrame entries for easy debugging in an IDE or better speed while dry/live running or hyperopting   
    

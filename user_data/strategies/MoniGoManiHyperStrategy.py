@@ -203,7 +203,7 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # To disable TimeFrame-Zoom just use the same candles for 'timeframe' & 'backtest_timeframe'
     timeframe = '1h'  # Optimal TimeFrame for MoniGoMani (used during Dry/Live-Runs)
-    backtest_timeframe = '1h'  # Optimal TimeFrame-Zoom for MoniGoMani (used to zoom in during Backtesting/HyperOpting)
+    backtest_timeframe = '5m'  # Optimal TimeFrame-Zoom for MoniGoMani (used to zoom in during Backtesting/HyperOpting)
     informative_timeframe = timeframe
 
     # Run "populate_indicators()" only for new candle
@@ -505,13 +505,16 @@ class MoniGoManiHyperStrategy(IStrategy):
     sell___unclogger_enabled_when_upwards = \
         CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
     sell___unclogger_minimal_losing_trades_open = \
-        IntParameter(0, int(15 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(1, int(15 * precision), default=0, space='sell', optimize=True, load=True)
+        # IntParameter(0, int(15 * precision), default=0, space='sell', optimize=True, load=True)
     sell___unclogger_minimal_losing_trade_duration_minutes = \
-        IntParameter(0, int(300 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(15, int(60 * precision), default=0, space='sell', optimize=True, load=True)
+        # IntParameter(0, int(300 * precision), default=0, space='sell', optimize=True, load=True)
     sell___unclogger_percentage_open_trades_losing = \
         IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
     sell___unclogger_trend_lookback_candles_window = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(10, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        # IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
 
     def __init__(self, *args, **kwargs):
         """
