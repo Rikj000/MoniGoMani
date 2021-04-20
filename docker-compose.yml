@@ -7,9 +7,9 @@ services:
     # Use plotting image
     # image: freqtradeorg/freqtrade:develop_plot
     # Build step - only needed when additional dependencies are needed
-    build:
-      context: .
-      dockerfile: "./docker/Dockerfile.technical"
+    #build:
+    #  context: .
+    #  dockerfile: "./docker/Dockerfile.technical"
     restart: unless-stopped
     container_name: Freqtrade-MoniGoMani
     volumes:
