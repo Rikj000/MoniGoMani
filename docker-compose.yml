@@ -25,6 +25,6 @@ services:
       trade
       --logfile /freqtrade/user_data/logs/freqtrade.log
       --db-url sqlite:////freqtrade/user_data/tradesv3-MoniGoMani_v0.8.1_HyperStrategy.sqlite
-      --config /freqtrade/user_data/config.json
+      --config /freqtrade/user_data/config-btc.json
       --config /freqtrade/user_data/config-private.json
       --strategy MoniGoManiHyperStrategy
