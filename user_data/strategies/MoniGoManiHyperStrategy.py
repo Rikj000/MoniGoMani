@@ -323,7 +323,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     buy_downwards_trend_rsi_weight = \
         IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_downwards_trend_macd_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=False, load=False)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_downwards_trend_sma_short_golden_cross_weight = \
         IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_downwards_trend_ema_short_golden_cross_weight = \
@@ -335,7 +335,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     buy_downwards_trend_bollinger_bands_weight = \
         IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_downwards_trend_vwap_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=False, load=False)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
 
     # Sideways Trend Buy
     # ------------------
@@ -379,13 +379,13 @@ class MoniGoManiHyperStrategy(IStrategy):
     buy_upwards_trend_macd_weight = \
         IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_sma_short_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=False, load=False)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_ema_short_golden_cross_weight = \
         IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_sma_long_golden_cross_weight = \
         IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_ema_long_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=False, load=False)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_bollinger_bands_weight = \
         IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_upwards_trend_vwap_cross_weight = \
@@ -420,9 +420,9 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # Sell Signal Weight Influence Table
     sell_downwards_trend_adx_strong_down_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=False, load=False)
+        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
     sell_downwards_trend_rsi_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=False, load=False)
+        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
     sell_downwards_trend_macd_weight = \
         IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
     sell_downwards_trend_sma_short_death_cross_weight = \
@@ -455,7 +455,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     sell_sideways_trend_sma_short_death_cross_weight = \
         IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
     sell_sideways_trend_ema_short_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=False, load=False)
+        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
     sell_sideways_trend_sma_long_death_cross_weight = \
         IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
     sell_sideways_trend_ema_long_death_cross_weight = \
@@ -506,15 +506,12 @@ class MoniGoManiHyperStrategy(IStrategy):
         CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
     sell___unclogger_minimal_losing_trades_open = \
         IntParameter(1, int(15 * precision), default=0, space='sell', optimize=True, load=True)
-        # IntParameter(0, int(15 * precision), default=0, space='sell', optimize=True, load=True)
     sell___unclogger_minimal_losing_trade_duration_minutes = \
         IntParameter(15, int(60 * precision), default=0, space='sell', optimize=True, load=True)
-        # IntParameter(0, int(300 * precision), default=0, space='sell', optimize=True, load=True)
     sell___unclogger_percentage_open_trades_losing = \
         IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
     sell___unclogger_trend_lookback_candles_window = \
         IntParameter(10, int(100 * precision), default=0, space='sell', optimize=True, load=True)
-        # IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
 
     def __init__(self, *args, **kwargs):
         """
