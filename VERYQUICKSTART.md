@@ -1,6 +1,6 @@
-**<span style="color:darkorange">WARNING:</span> MoniGoManiHyperStrategy should always be HyperOpted unless you really know what you are doing when manually allocating weights!**   
-**MoniGoManiHyperStrategy found in releases already has a decent hyperopt applied to it for BTC pairs!**   
-**When changing anything in one of the `config.json`'s please [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani)!**   
+**<span style="color:darkorange">WARNING:</span> I am in no way responsible for your live results! This strategy is still experimental and under development!**   
+**<span style="color:darkorange">WARNING:</span> MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) unless you really know what you are doing when manually allocating parameters!**   
+**I strongly recommended to [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!**   
 
 
 # Very Quick Start (With Docker):   

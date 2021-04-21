@@ -1,3 +1,21 @@
+# **Current `MoniGoMani` status @ `v0.9.0`**   
+      
+
+<p align="left">
+    <a href="https://discord.gg/xFZ9bB6vEz">
+        <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join CryptoStonksShallRise on Discord">
+    </a>
+    <a href="https://github.com/Rikj000/MoniGoMani/releases/latest">
+        <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
+    </a>
+    <a href="https://github.com/Rikj000/MoniGoMani/releases">
+        <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
+    </a>
+    <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
+        <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
+    </a>
+</p>
+
 ```
     ####################################################################################
     ####                                                                            ####
@@ -24,12 +42,10 @@
     ####################################################################################
 ```
 
-**<span style="color:darkorange">WARNING:</span> MoniGoManiHyperStrategy should always be HyperOpted unless you really know what you are doing when manually allocating weights!**   
-**MoniGoManiHyperStrategy found in releases already has a decent hyperopt applied to it for BTC pairs!**   
-**When changing anything in one of the `config.json`'s please [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani)!**   
+**<span style="color:darkorange">WARNING:</span> I am in no way responsible for your live results! This strategy is still experimental and under development!**   
+**<span style="color:darkorange">WARNING:</span> MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) unless you really know what you are doing when manually allocating parameters!**   
+**I strongly recommended to [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!**   
 
-# **Current `MoniGoMani` status @ `v0.9.0`**   
-      
 ## The idea / Theory:   
 MoniGoMani derives iteself from other strategies by it's use of something I called "weighted signals".   
 Each signal has it's own weight allocated to it & a total buy/sell signal needed is defined too.   
