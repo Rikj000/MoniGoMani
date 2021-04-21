@@ -1,0 +1,120 @@
+python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc BTC -fm
+======================================================================================
+
+Signal importance report
+--------------------------------------------------------------------
+Stake currency:                       BTC
+
+Total Overall Signal Importance:
+--------------------------------------------------------------------
+                                      avg |   down |   side |     up
+adx_strong_up_down:                38.67% |  46.0% |  21.0% |  49.0%
+bollinger_bands:                    42.5% |  41.0% |   6.0% |  80.5%
+ema_long_golden_death_cross:        24.0% |  28.0% |  35.0% |   9.0%
+ema_short_golden_death_cross:      26.83% |  42.0% |   3.0% |  35.5%
+macd:                               39.5% |   5.5% |  81.5% |  31.5%
+rsi:                               51.67% |  18.0% |  70.5% |  66.5%
+sma_long_golden_death_cross:        66.0% |  84.0% |  55.0% |  59.0%
+sma_short_golden_death_cross:      35.83% |  68.0% |  39.0% |   0.5%
+vwap_cross:                        53.67% |  37.0% |  55.5% |  68.5%
+
+Total Overall Buy Signal Importance:
+--------------------------------------------------------------------
+                                      avg |   down |   side |     up
+adx_strong_up:                      66.0% |  92.0% |  12.0% |  94.0%
+bollinger_bands:                   31.33% |   3.0% |   1.0% |  90.0%
+ema_long_golden_cross:               6.0% |   8.0% |  10.0% |     0%
+ema_short_golden_cross:            17.33% |  34.0% |   6.0% |  12.0%
+macd:                               30.0% |     0% |  68.0% |  22.0%
+rsi:                               67.33% |  36.0% |  90.0% |  76.0%
+sma_long_golden_cross:             59.67% |  80.0% |  77.0% |  22.0%
+sma_short_golden_cross:            33.67% |  92.0% |   9.0% |     0%
+vwap_cross:                        40.33% |     0% |  40.0% |  81.0%
+
+Total Overall Sell Signal Importance:
+--------------------------------------------------------------------
+                                      avg |   down |   side |     up
+adx_strong_down:                   11.33% |     0% |  30.0% |   4.0%
+bollinger_bands:                   53.67% |  79.0% |  11.0% |  71.0%
+ema_long_death_cross:               42.0% |  48.0% |  60.0% |  18.0%
+ema_short_death_cross:             36.33% |  50.0% |     0% |  59.0%
+macd:                               49.0% |  11.0% |  95.0% |  41.0%
+rsi:                                36.0% |     0% |  51.0% |  57.0%
+sma_long_death_cross:              72.33% |  88.0% |  33.0% |  96.0%
+sma_short_death_cross:              38.0% |  44.0% |  69.0% |   1.0%
+vwap_cross:                         67.0% |  74.0% |  71.0% |  56.0%
+
+Buy/Sell Hyperspace Params (Missing Zero Fixed):
+--------------------------------------------------------------------
+(buy/sell___trades_when_downwards/sideways/upwards might still be missing!)
+
+# Buy hyperspace params:
+buy_params = {
+    'buy__downwards_trend_total_signal_needed': 54,
+    'buy__sideways_trend_total_signal_needed': 82,
+    'buy__upwards_trend_total_signal_needed': 37,
+    'buy_downwards_trend_adx_strong_up_weight': 92,
+    'buy_downwards_trend_bollinger_bands_weight': 3,
+    'buy_downwards_trend_ema_long_golden_cross_weight': 8,
+    'buy_downwards_trend_ema_short_golden_cross_weight': 34,
+    'buy_downwards_trend_macd_weight': 0,
+    'buy_downwards_trend_rsi_weight': 36,
+    'buy_downwards_trend_sma_long_golden_cross_weight': 80,
+    'buy_downwards_trend_sma_short_golden_cross_weight': 92,
+    'buy_downwards_trend_vwap_cross_weight': 0,
+    'buy_sideways_trend_adx_strong_up_weight': 12,
+    'buy_sideways_trend_bollinger_bands_weight': 1,
+    'buy_sideways_trend_ema_long_golden_cross_weight': 10,
+    'buy_sideways_trend_ema_short_golden_cross_weight': 6,
+    'buy_sideways_trend_macd_weight': 68,
+    'buy_sideways_trend_rsi_weight': 90,
+    'buy_sideways_trend_sma_long_golden_cross_weight': 77,
+    'buy_sideways_trend_sma_short_golden_cross_weight': 9,
+    'buy_sideways_trend_vwap_cross_weight': 40,
+    'buy_upwards_trend_adx_strong_up_weight': 94,
+    'buy_upwards_trend_bollinger_bands_weight': 90,
+    'buy_upwards_trend_ema_long_golden_cross_weight': 0,
+    'buy_upwards_trend_ema_short_golden_cross_weight': 12,
+    'buy_upwards_trend_macd_weight': 22,
+    'buy_upwards_trend_rsi_weight': 76,
+    'buy_upwards_trend_sma_long_golden_cross_weight': 22,
+    'buy_upwards_trend_sma_short_golden_cross_weight': 0,
+    'buy_upwards_trend_vwap_cross_weight': 81
+}
+
+# Sell hyperspace params:
+sell_params = {
+    'sell___unclogger_minimal_losing_trade_duration_minutes': 31,
+    'sell___unclogger_minimal_losing_trades_open': 14,
+    'sell___unclogger_percentage_open_trades_losing': 33,
+    'sell___unclogger_trend_lookback_candles_window': 25,
+    'sell__downwards_trend_total_signal_needed': 87,
+    'sell__sideways_trend_total_signal_needed': 21,
+    'sell__upwards_trend_total_signal_needed': 36,
+    'sell_downwards_trend_adx_strong_down_weight': 0,
+    'sell_downwards_trend_bollinger_bands_weight': 79,
+    'sell_downwards_trend_ema_long_death_cross_weight': 48,
+    'sell_downwards_trend_ema_short_death_cross_weight': 50,
+    'sell_downwards_trend_macd_weight': 11,
+    'sell_downwards_trend_rsi_weight': 0,
+    'sell_downwards_trend_sma_long_death_cross_weight': 88,
+    'sell_downwards_trend_sma_short_death_cross_weight': 44,
+    'sell_downwards_trend_vwap_cross_weight': 74,
+    'sell_sideways_trend_adx_strong_down_weight': 30,
+    'sell_sideways_trend_bollinger_bands_weight': 11,
+    'sell_sideways_trend_ema_long_death_cross_weight': 60,
+    'sell_sideways_trend_ema_short_death_cross_weight': 0,
+    'sell_sideways_trend_macd_weight': 95,
+    'sell_sideways_trend_rsi_weight': 51,
+    'sell_sideways_trend_sma_long_death_cross_weight': 33,
+    'sell_sideways_trend_sma_short_death_cross_weight': 69,
+    'sell_sideways_trend_vwap_cross_weight': 71,
+    'sell_upwards_trend_adx_strong_down_weight': 4,
+    'sell_upwards_trend_bollinger_bands_weight': 71,
+    'sell_upwards_trend_ema_long_death_cross_weight': 18,
+    'sell_upwards_trend_ema_short_death_cross_weight': 59,
+    'sell_upwards_trend_macd_weight': 41,
+    'sell_upwards_trend_rsi_weight': 57,
+    'sell_upwards_trend_sma_long_death_cross_weight': 96,
+    'sell_upwards_trend_sma_short_death_cross_weight': 1,
+    'sell_upwards_trend_vwap_cross_weight': 56

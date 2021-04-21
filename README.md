@@ -29,7 +29,7 @@
 **When changing anything in one of the `config.json`'s please [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani)!**   
 
 # **Current `MoniGoMani` status @ `v0.9.0`**   
-
+      
 ## The idea / Theory:   
 MoniGoMani derives iteself from other strategies by it's use of something I called "weighted signals".   
 Each signal has it's own weight allocated to it & a total buy/sell signal needed is defined too.   
