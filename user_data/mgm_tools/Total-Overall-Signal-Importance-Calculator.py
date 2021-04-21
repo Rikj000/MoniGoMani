@@ -2,6 +2,7 @@
 import argparse
 import json
 import sys
+
 # --------------------------------
 
 # Total Overall Signal Importance Calculator for MoniGoMani v0.9.0
@@ -18,67 +19,86 @@ import sys
 
 # Buy hyperspace params:
 buy_params = {
-    'buy__downwards_trend_total_signal_needed': 54,
-    'buy__sideways_trend_total_signal_needed': 82,
-    'buy__upwards_trend_total_signal_needed': 37,
-    'buy_downwards_trend_adx_strong_up_weight': 92,
-    'buy_downwards_trend_bollinger_bands_weight': 3,
-    'buy_downwards_trend_ema_long_golden_cross_weight': 8,
-    'buy_downwards_trend_ema_short_golden_cross_weight': 34,
-    'buy_downwards_trend_rsi_weight': 36,
-    'buy_downwards_trend_sma_long_golden_cross_weight': 80,
-    'buy_downwards_trend_sma_short_golden_cross_weight': 92,
-    'buy_sideways_trend_adx_strong_up_weight': 12,
-    'buy_sideways_trend_bollinger_bands_weight': 1,
-    'buy_sideways_trend_ema_long_golden_cross_weight': 10,
-    'buy_sideways_trend_ema_short_golden_cross_weight': 6,
-    'buy_sideways_trend_macd_weight': 68,
-    'buy_sideways_trend_rsi_weight': 90,
-    'buy_sideways_trend_sma_long_golden_cross_weight': 77,
-    'buy_sideways_trend_sma_short_golden_cross_weight': 9,
-    'buy_sideways_trend_vwap_cross_weight': 40,
+    'buy___trades_when_downwards': True,
+    'buy___trades_when_sideways': False,
+    'buy___trades_when_upwards': True,
+    'buy__downwards_trend_total_signal_needed': 25,
+    'buy__sideways_trend_total_signal_needed': 73,
+    'buy__upwards_trend_total_signal_needed': 58,
+    'buy_downwards_trend_adx_strong_up_weight': 51,
+    'buy_downwards_trend_bollinger_bands_weight': 60,
+    'buy_downwards_trend_ema_long_golden_cross_weight': 48,
+    'buy_downwards_trend_ema_short_golden_cross_weight': 17,
+    'buy_downwards_trend_macd_weight': 0,
+    'buy_downwards_trend_rsi_weight': 84,
+    'buy_downwards_trend_sma_long_golden_cross_weight': 24,
+    'buy_downwards_trend_sma_short_golden_cross_weight': 83,
+    'buy_downwards_trend_vwap_cross_weight': 0,
+    'buy_sideways_trend_adx_strong_up_weight': 42,
+    'buy_sideways_trend_bollinger_bands_weight': 32,
+    'buy_sideways_trend_ema_long_golden_cross_weight': 90,
+    'buy_sideways_trend_ema_short_golden_cross_weight': 89,
+    'buy_sideways_trend_macd_weight': 44,
+    'buy_sideways_trend_rsi_weight': 33,
+    'buy_sideways_trend_sma_long_golden_cross_weight': 20,
+    'buy_sideways_trend_sma_short_golden_cross_weight': 76,
+    'buy_sideways_trend_vwap_cross_weight': 46,
     'buy_upwards_trend_adx_strong_up_weight': 94,
-    'buy_upwards_trend_bollinger_bands_weight': 90,
-    'buy_upwards_trend_ema_short_golden_cross_weight': 12,
-    'buy_upwards_trend_macd_weight': 22,
-    'buy_upwards_trend_rsi_weight': 76,
-    'buy_upwards_trend_sma_long_golden_cross_weight': 22,
-    'buy_upwards_trend_vwap_cross_weight': 81
+    'buy_upwards_trend_bollinger_bands_weight': 34,
+    'buy_upwards_trend_ema_long_golden_cross_weight': 0,
+    'buy_upwards_trend_ema_short_golden_cross_weight': 54,
+    'buy_upwards_trend_macd_weight': 65,
+    'buy_upwards_trend_rsi_weight': 36,
+    'buy_upwards_trend_sma_long_golden_cross_weight': 41,
+    'buy_upwards_trend_sma_short_golden_cross_weight': 0,
+    'buy_upwards_trend_vwap_cross_weight': 27
 }
+
 # Sell hyperspace params:
 sell_params = {
-    'sell___unclogger_minimal_losing_trade_duration_minutes': 31,
-    'sell___unclogger_minimal_losing_trades_open': 14,
-    'sell___unclogger_percentage_open_trades_losing': 33,
-    'sell___unclogger_trend_lookback_candles_window': 25,
-    'sell__downwards_trend_total_signal_needed': 87,
-    'sell__sideways_trend_total_signal_needed': 21,
-    'sell__upwards_trend_total_signal_needed': 36,
-    'sell_downwards_trend_bollinger_bands_weight': 79,
-    'sell_downwards_trend_ema_long_death_cross_weight': 48,
-    'sell_downwards_trend_ema_short_death_cross_weight': 50,
-    'sell_downwards_trend_macd_weight': 11,
-    'sell_downwards_trend_sma_long_death_cross_weight': 88,
-    'sell_downwards_trend_sma_short_death_cross_weight': 44,
-    'sell_downwards_trend_vwap_cross_weight': 74,
-    'sell_sideways_trend_adx_strong_down_weight': 30,
-    'sell_sideways_trend_bollinger_bands_weight': 11,
-    'sell_sideways_trend_ema_long_death_cross_weight': 60,
-    'sell_sideways_trend_macd_weight': 95,
-    'sell_sideways_trend_rsi_weight': 51,
-    'sell_sideways_trend_sma_long_death_cross_weight': 33,
-    'sell_sideways_trend_sma_short_death_cross_weight': 69,
-    'sell_sideways_trend_vwap_cross_weight': 71,
-    'sell_upwards_trend_adx_strong_down_weight': 4,
-    'sell_upwards_trend_bollinger_bands_weight': 71,
-    'sell_upwards_trend_ema_long_death_cross_weight': 18,
-    'sell_upwards_trend_ema_short_death_cross_weight': 59,
-    'sell_upwards_trend_macd_weight': 41,
-    'sell_upwards_trend_rsi_weight': 57,
-    'sell_upwards_trend_sma_long_death_cross_weight': 96,
-    'sell_upwards_trend_sma_short_death_cross_weight': 1,
-    'sell_upwards_trend_vwap_cross_weight': 56
+    'sell___trades_when_downwards': True,
+    'sell___trades_when_sideways': True,
+    'sell___trades_when_upwards': False,
+    'sell___unclogger_enabled': True,
+    'sell___unclogger_enabled_when_downwards': True,
+    'sell___unclogger_enabled_when_sideways': True,
+    'sell___unclogger_enabled_when_upwards': False,
+    'sell___unclogger_minimal_losing_trade_duration_minutes': 46,
+    'sell___unclogger_minimal_losing_trades_open': 11,
+    'sell___unclogger_percentage_open_trades_losing': 69,
+    'sell___unclogger_trend_lookback_candles_window': 100,
+    'sell__downwards_trend_total_signal_needed': 93,
+    'sell__sideways_trend_total_signal_needed': 12,
+    'sell__upwards_trend_total_signal_needed': 87,
+    'sell_downwards_trend_adx_strong_down_weight': 65,
+    'sell_downwards_trend_bollinger_bands_weight': 23,
+    'sell_downwards_trend_ema_long_death_cross_weight': 57,
+    'sell_downwards_trend_ema_short_death_cross_weight': 21,
+    'sell_downwards_trend_macd_weight': 88,
+    'sell_downwards_trend_rsi_weight': 0,
+    'sell_downwards_trend_sma_long_death_cross_weight': 55,
+    'sell_downwards_trend_sma_short_death_cross_weight': 26,
+    'sell_downwards_trend_vwap_cross_weight': 22,
+    'sell_sideways_trend_adx_strong_down_weight': 0,
+    'sell_sideways_trend_bollinger_bands_weight': 90,
+    'sell_sideways_trend_ema_long_death_cross_weight': 29,
+    'sell_sideways_trend_ema_short_death_cross_weight': 0,
+    'sell_sideways_trend_macd_weight': 75,
+    'sell_sideways_trend_rsi_weight': 11,
+    'sell_sideways_trend_sma_long_death_cross_weight': 99,
+    'sell_sideways_trend_sma_short_death_cross_weight': 86,
+    'sell_sideways_trend_vwap_cross_weight': 89,
+    'sell_upwards_trend_adx_strong_down_weight': 33,
+    'sell_upwards_trend_bollinger_bands_weight': 79,
+    'sell_upwards_trend_ema_long_death_cross_weight': 93,
+    'sell_upwards_trend_ema_short_death_cross_weight': 72,
+    'sell_upwards_trend_macd_weight': 53,
+    'sell_upwards_trend_rsi_weight': 39,
+    'sell_upwards_trend_sma_long_death_cross_weight': 68,
+    'sell_upwards_trend_sma_short_death_cross_weight': 33,
+    'sell_upwards_trend_vwap_cross_weight': 55
 }
+
 
 ########################################################################################################################
 #                                   END OF HYPEROPT BUY/SELL RESULTS COPY-PASTE SECTION                                #
@@ -112,6 +132,7 @@ def print_section_header(header, whitespace=True):
 
 initial_offset = 40
 signal_format = '{:<35s}{:>6s}'
+unclogger_format = '{:<45s}{:>6s}'
 full_signal_format = '{:<35s}{:>6s} | {:>6s} | {:>6s} | {:>6s}'
 
 
@@ -145,6 +166,37 @@ def print_full_avg_signal(signal, importance, avg_weights):
                                     str(round(avg_weights["avg_downwards_trend_" + signal + "_weight"], 2)) + "%",
                                     str(round(avg_weights["avg_sideways_trend_" + signal + "_weight"], 2)) + "%",
                                     str(round(avg_weights["avg_upwards_trend_" + signal + "_weight"], 2)) + "%"))
+
+
+def print_sell_unclogger_signal():
+    print("")
+    if 'sell___unclogger_enabled' in sell_params:
+        print(unclogger_format.format("enabled:",
+                                      str(sell_params['sell___unclogger_enabled']).replace(".0", "")))
+    if 'sell___unclogger_enabled_when_downwards' in sell_params:
+        print(unclogger_format.format("enabled_when_downwards:",
+                                      str(sell_params['sell___unclogger_enabled_when_downwards']).replace(".0", "")))
+    if 'sell___unclogger_enabled_when_sideways' in sell_params:
+        print(unclogger_format.format("enabled_when_sideways:",
+                                      str(sell_params['sell___unclogger_enabled_when_sideways']).replace(".0", "")))
+    if 'sell___unclogger_enabled_when_upwards' in sell_params:
+        print(unclogger_format.format("enabled_when_upwards:",
+                                      str(sell_params['sell___unclogger_enabled_when_upwards']).replace(".0", "")))
+    if 'sell___unclogger_minimal_losing_trade_duration_minutes' in sell_params:
+        print(unclogger_format.format("minimal_losing_trade_duration_minutes:",
+                                      str(sell_params['sell___unclogger_minimal_losing_trade_duration_minutes'])
+                                      .replace(".0", "")))
+    if 'sell___unclogger_minimal_losing_trades_open' in sell_params:
+        print(unclogger_format.format("minimal_losing_trades_open:",
+                                      str(sell_params['sell___unclogger_minimal_losing_trades_open'])
+                                      .replace(".0", "")))
+    if 'sell___unclogger_percentage_open_trades_losing' in sell_params:
+        print(unclogger_format.format("percentage_open_trades_losing:",
+                                      str(sell_params['sell___unclogger_percentage_open_trades_losing']) + "%"))
+    if 'sell___unclogger_trend_lookback_candles_window' in sell_params:
+        print(unclogger_format.format("trend_lookback_candles_window:",
+                                      str(sell_params['sell___unclogger_trend_lookback_candles_window'])
+                                      .replace(".0", "")))
 
 
 def print_fixed_buy_sell_params():
@@ -199,7 +251,7 @@ def main():
         'rsi',
         'sma_long_death_cross',
         'sma_short_death_cross',
-        'vwap_cross',
+        'vwap_cross'
     ]
 
     combined_indicator_names = {
@@ -274,6 +326,9 @@ def main():
     print_full_signal_header()
     for signal, importance in total_overall_sell_weights.items():
         print_full_sell_signal(signal, importance)
+
+    print_section_header("Losing Open Trade Sell Unclogger:")
+    print_sell_unclogger_signal()
 
     if args.fix_missing or (args.precision_used != 1):
         print_section_header("Buy/Sell Hyperspace Params (Missing Zero Fixed):")
