@@ -47,13 +47,14 @@
 **I strongly recommended to [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!**   
 
 ## The idea / Theory:   
-MoniGoMani derives iteself from other strategies by it's use of something I called "weighted signals".   
+MoniGoMani is more a framework to "easily" find a profitable strategy configuration then just a conventional strategy!   
+It derives itself from other strategies by it's use of something I called "weighted signals".   
 Each signal has it's own weight allocated to it & a total buy/sell signal needed is defined too.   
-MGM (MoniGoMani) will loop through all signals, if they trigger it will add up the weight and eventually it will check if it's bigger then what's needed in total, if it is it will buy/sell.   
-The beauty lies in using MGM in combination with hyperopting (= a form of machine learning where you backtest a timeframe a lot of times to find the most ideal values), since all weighted signals have been made hyperoptable it can be used to find the most "ideal" weight divisions.   
+MGM (MoniGoMani) will loop through all signals, if they trigger it will add up the weight and eventually it will check if it's bigger then what's needed in total, if it is it will buy/sell. The signals used here are implemented so they can easily be changed by a developer to further improve upon them.   
+   
+The beauty lies in using MGM in combination with HyperOpting (= A form of machine learning where you BackTest a timerange a lot of times to find the most ideal values), since all weighted signals have been made HyperOptable it can be used to find the most "ideal" weight divisions.   
 Also will it teach us what works where & what doesn't since MoniGoMani first detects Downwards/Sideways/Upwards trends and then does all of the above individually for each kind of trend (Creating basically 3 individual strategies, 1 for each kind of trend).   
-Further it will do various hyperoptable checks upon the open trades to see if there are "bad" ones to unclog while running.   
-
+Further it will do various HyperOptable checks upon the open trades to see if there are "bad" ones to unclog while running.   
 
 ## Feature List:   
 - [Auto-HyperOptable Strategy](https://github.com/freqtrade/freqtrade/pull/4596)! \*No more need for legacy MoniGoMani, legacy MoniGoManiHyperOpt and MoniGoManiHyperOpted strategy classes!   

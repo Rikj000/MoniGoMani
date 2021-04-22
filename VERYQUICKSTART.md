@@ -123,6 +123,7 @@ Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so
 - Now you must fill in `-sc` or `--stake-currency` with the one you use in `config.json` as `stake_currency` since it really matters
 - Optional fill in `-f` or `--file` to submit a custom file name for the log file to be exported
 - Optional fill in `-nf` or `--no-file` if you don't want a log file to be exported   
+- Optional fill in `-lf` or `--load-file` if you want to calculate a report upon a `.json` exported with `freqtrade hyperopt-show --best --no-header --print-json > ./user_data/config-mgm-hyperopt.json`. **Warning** Make sure your calculator copy-paste section is complete before doing this!   
 - Optional fill in `-fm` or `--fix-missing` to re-include missing weighted buy/sell_params with 0 as their value & re-print them as copy/paste-able results. Also keeps the tool from crashing when there are missing weighted values (Mostly useful after a hyperopt with overridden values)   
 - Optional fill in `-pu` or `--precision-used` to re-calculate the weights to what would be expected after running hyperopt with precision enabled. Always use this after running hyperopt with precision different from 1!   
 
