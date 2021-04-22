@@ -177,6 +177,12 @@ Switching between the PairList in use can easily be one by moving the `_` in fro
     {
         "method": "VolumePairList",
 ```
+# MGM hyperloss functions for HyperOpt:
+MoniGoMani comes with an extra set of loss functions for hyperoptimizing, supplementing the ones shipped with FreqTrade.
+You can find these functions in user_data/hyperopts, and can use them by overriding the freqtrade hyperopt parameter 'hyperopt-loss', e.g.:
+```powershell
+ --hyperopt-loss TimewatchedWinRatioAndProfitLoss
+```
 
 # Go-To Commands:
 For Hyper Opting *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py))*:
