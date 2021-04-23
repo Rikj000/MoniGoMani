@@ -9,7 +9,7 @@ from pandas import DataFrame
 from freqtrade.optimize.hyperopt import IHyperOptLoss
 
 
-class WinRatioAndAbsProfitLoss(IHyperOptLoss):
+class TimeWatchedWinRatioAndProfitRatioLoss(IHyperOptLoss):
 
     @staticmethod
     def hyperopt_loss_function(results: DataFrame, trade_count: int,
@@ -26,7 +26,8 @@ class WinRatioAndAbsProfitLoss(IHyperOptLoss):
         # stop_loss_ratio, stop_loss_abs
 
         wins = len(results[results['profit_ratio'] > 0])
-        abs_profit = results['profit_abs'].sum()
+        avg_profit = results['profit_ratio'].mean() * 100.0
+        trade_duration = results['trade_duration'].mean()
 
         win_ratio = wins / trade_count
-        return -abs_profit * win_ratio * 100
+        return -avg_profit * win_ratio / trade_duration * 100
