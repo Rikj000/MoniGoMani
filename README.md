@@ -1,3 +1,21 @@
+# **Current `MoniGoMani` status @ `v0.9.0`**   
+      
+
+<p align="left">
+    <a href="https://discord.gg/xFZ9bB6vEz">
+        <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join CryptoStonksShallRise on Discord">
+    </a>
+    <a href="https://github.com/Rikj000/MoniGoMani/releases/latest">
+        <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
+    </a>
+    <a href="https://github.com/Rikj000/MoniGoMani/releases">
+        <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
+    </a>
+    <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
+        <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
+    </a>
+</p>
+
 ```
     ####################################################################################
     ####                                                                            ####
@@ -24,19 +42,19 @@
     ####################################################################################
 ```
 
-**<span style="color:darkorange">WARNING:</span> MoniGoManiHyperStrategy should always be HyperOpted unless you really know what you are doing when manually allocating weights!**   
-**MoniGoManiHyperStrategy found in releases already has a decent hyperopt applied to it for BTC pairs!**   
-**When changing anything in one of the `config.json`'s please [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani)!**   
-
-# **Current `MoniGoMani` status @ `v0.9.0`**   
+**<span style="color:darkorange">WARNING:</span> I am in no way responsible for your live results! This strategy is still experimental and under development!**   
+**<span style="color:darkorange">WARNING:</span> MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) unless you really know what you are doing when manually allocating parameters!**   
+**I strongly recommended to [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!**   
 
 ## The idea / Theory:   
-MoniGoMani derives iteself from other strategies by it's use of something I called "weighted signals".   
+MoniGoMani is more a framework to "easily" find a profitable strategy configuration then just a conventional strategy!   
+It derives itself from other strategies by it's use of something I called "weighted signals".   
 Each signal has it's own weight allocated to it & a total buy/sell signal needed is defined too.   
-MGM (MoniGoMani) will loop through all signals, if they trigger it will add up the weight and eventually it will check if it's bigger then what's needed in total, if it is it will buy/sell.   
-The beauty lies in using MGM in combination with hyperopting (= a form of machine learning where you backtest a timeframe a lot of times to find the most ideal values), since all weighted signals have been made hyperoptable it can be used to find the most "ideal" weight divisions.   
+MGM (MoniGoMani) will loop through all signals, if they trigger it will add up the weight and eventually it will check if it's bigger then what's needed in total, if it is it will buy/sell. The signals used here are implemented so they can easily be changed by a developer to further improve upon them.   
+   
+The beauty lies in using MGM in combination with HyperOpting (= A form of machine learning where you BackTest a timerange a lot of times to find the most ideal values), since all weighted signals have been made HyperOptable it can be used to find the most "ideal" weight divisions.   
 Also will it teach us what works where & what doesn't since MoniGoMani first detects Downwards/Sideways/Upwards trends and then does all of the above individually for each kind of trend (Creating basically 3 individual strategies, 1 for each kind of trend).   
-Further it will do various hyperoptable checks upon the open trades to see if there are "bad" ones to unclog.
+Further it will do various HyperOptable checks upon the open trades to see if there are "bad" ones to unclog while running.   
 
 ## Feature List:   
 - [Auto-HyperOptable Strategy](https://github.com/freqtrade/freqtrade/pull/4596)! \*No more need for legacy MoniGoMani, legacy MoniGoManiHyperOpt and MoniGoManiHyperOpted strategy classes!   
@@ -66,36 +84,42 @@ Further it will do various hyperoptable checks upon the open trades to see if th
 
 ## Go-To Commands:
 For Hyper Opting *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py))*:
-```properties
+```powershell
 freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all -s MoniGoManiHyperStrategy -e 1000 --timerange 20210101-20210316
 ```
 For Back Testing *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) or legacy [MoniGoManiHyperOpted.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoManiHyperOpted.py) or legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py))*:
-```properties
+```powershell
 freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/config-btc.json -c ./user_data/config-private.json --timerange 20210101-20210316
 ```
 For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
-```properties
+```powershell
 python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc BTC
 ```
 For Hyper Opting *(the legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py) + legacy [MoniGoManiHyperOpt.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/hyperopts/MoniGoManiHyperOpt.py))*:
-```properties
+```powershell
 freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all --hyperopt MoniGoManiHyperOpt -s MoniGoMani -e 1000 --timerange 20210101-20210316
 ```
 
 ## **Planned**:   
 *Ordered by current schedule/priority*
+- Huge refactor that should improve the codebase reducing a lot of duplicate code & making implementing new weighted signals even easier
 - Extract all `MoniGoMani Settings` into a `config-mgm.json` that will require manual configuration + Extract the `HyperOpt Results Copy/Paste section` into a `config-mgm-hyperopt.json`, this last file will be extractable from hyperopts results using a command!
-- Hyperopt over 3 separate timeranges (one representing each individual kind of trend, downwards/sideways/upwards, a timeframe that represents a corresponding trend should be picked)
+- Improve upon bot loop speed (Try to improve code to reach reduction in HyperOpting time needed)
+- Lookback candle window for weighted signals (As learned from a picture in [EmperorBTC's Trading Manual](https://drive.google.com/file/d/1W-9XUcTRc1Zerwi6D-ZYTVzRrVbXoVbG/view) a combination of different 6 signals triggering rapidly after eachother (but within a window of a few candles) lead to using a total buy/sell signal
 - **Other & Better indicators!** MoniGoMani has been designed so signals can easily be inserted / swapped out   
 Please use the `Total-Overall-Signal-Importance-Calculator.py` (added in `v0.7.1`) to find out which signals do best and report your results to the Discord server, so we can improve! :rocket:
+- Hyperopt over 3 separate timeranges (one representing each individual kind of trend, downwards/sideways/upwards, a timeframe that represents a corresponding trend should be picked)
 - Individual `config-btc.json` & `config-usdt.json` files, as well as individual `MoniGoManiHyperOpted-btc.py` & `MoniGoManiHyperOpted.py` releases
+- A method to pull a `Static Averaged Volume PairList` (Calculated by summing up the top volume pairlists for each candle over the period of the timerange to hyperopt upon & then dividing by the total amount of candles in the timerange, to create an averaged "volume" pairlist that can be used during backtesting/hyperopting which should lead to a more "realistic" pairlist to test upon when using a VolumePairList when dry/live-running)
+- Automate as much of the [optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) of MoniGoMani as possible  
+- HyperOpt over a `timerange` through a simple Telegram commands, review the results and choose if and which new epoch should be applied.   
 - [MultiProcessed DataFrame indicator checking](https://www.machinelearningplus.com/python/parallel-processing-python/) if possible for speed improvements
 
 ## **ChangeLog**:  
 View the Legacy [ChangeLog](https://github.com/Rikj000/MoniGoMani/blob/main/CHANGELOG.md), newer changelogs are appended with each [Release](https://github.com/Rikj000/MoniGoMani/releases/)
 
 ## **Got Test Results / Ideas / Config Improvements?**
-- Feel free to join [**CryptoStonksShallRise**](https://discord.gg/xFZ9bB6vEz) on Discord there you can follow/participate in the official channels:
+- Feel free to join [**CryptoStonksShallRise**](https://discord.gg/xFZ9bB6vEz) on Discord there you can follow/participate in the Official MoniGoMani Channels:
   - `#moni-go-mani-updates`
   - `#moni-go-mani-testing`
   - `#moni-go-mani-help`
@@ -105,11 +129,16 @@ View the Legacy [ChangeLog](https://github.com/Rikj000/MoniGoMani/blob/main/CHAN
 [View the VeryQuickStart](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md), the current place where you can find all MoniGoMani Documentation!   
 
 ## **Freqtrade**:   
-[**Freqtrade**](https://github.com/freqtrade/freqtrade) is the Bot that makes this strategy possible!    
+**Freqtrade** is the well known `open source crypto day-trading bot` that makes this strategy possible!   
+It's completely free to use and alter and has many amazing features.   
 Big thank you to **xmatthias** and everyone who helped on it!   
-   
+- **[Official Freqtrade Website](https://www.freqtrade.io/en/latest/)**
+- **[Official Freqtrade GitHub Repository](https://github.com/freqtrade/freqtrade)**
+- **[Official Freqtrade Discord Server](https://discord.gg/j84KnP57kW)**
+
+
 ## **Iconomi**:   
 Can't wait until MoniGoMani is fully on point? Or is this all too technical for you?   
-Check out [**Iconomi**](https://www.iconomi.com/register?ref=JdFzz)! *(Please use this link if you would sign up)*   
+Check out **[Iconomi](https://www.iconomi.com/register?ref=JdFzz)**! *(Please use this link if you would sign up)*   
 
-More information about this platform can be found in the `#welcome` channel of [CryptoStonksShallRise](https://discord.gg/xFZ9bB6vEz) on Discord.
+More information about this platform can be found in the `#welcome` channel of **[CryptoStonksShallRise](https://discord.gg/xFZ9bB6vEz)** on Discord.

@@ -1,6 +1,6 @@
-**<span style="color:darkorange">WARNING:</span> MoniGoManiHyperStrategy should always be HyperOpted unless you really know what you are doing when manually allocating weights!**   
-**MoniGoManiHyperStrategy found in releases already has a decent hyperopt applied to it for BTC pairs!**   
-**When changing anything in one of the `config.json`'s please [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani)!**   
+**<span style="color:darkorange">WARNING:</span> I am in no way responsible for your live results! This strategy is still experimental and under development!**   
+**<span style="color:darkorange">WARNING:</span> MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) unless you really know what you are doing when manually allocating parameters!**   
+**I strongly recommended to [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!**   
 
 
 # Very Quick Start (With Docker):   
@@ -63,7 +63,7 @@ When the Parameters in the HyperOpt Space Parameters sections are altered as fol
 **<span style="color:darkorange">WARNING:</span> Always double check that when doing a fresh hyperopt or doing a dry/live-run that all overrides are turned off!**   
 **<span style="color:darkorange">WARNING:</span> Overridden buy/sell_params will be missing from the HyperOpt Results!, after hyperopting with IntParameters overridden to 0 you can use the Total Overall Signal Importance Calculator's `--fix-missing` subcommand to re-include the missing IntParameter results with 0 as their weight**   
 
-### Override Examples:
+### Override / Static Examples:
 Override `buy___trades_when_sideways` to always be **False**:
 ```python
 buy___trades_when_sideways = \
@@ -79,6 +79,23 @@ sell_downwards_trend_macd_weight = \
 | **default**=X      | The value used when overriding |
 | **optimize**=False | Exclude from hyperopting (Make static) |
 | **load**=False     | Don't load from the HyperOpt Results Copy/Paste Section |  
+
+### HyperOptable / Normal Examples:
+Normal usage of `buy___trades_when_sideways` making it hyperoptable:
+```python
+buy___trades_when_sideways = \
+    CategoricalParameter([True, False], default=True, space='buy', optimize=True, load=True)
+```
+Normal usage of `sell_downwards_trend_macd_weight` making it hyperoptable:
+```python
+sell_downwards_trend_macd_weight = \
+    IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
+```
+| Function Param | Meaning |
+| --- |--- |
+| **default**=X     | Not used in this case |
+| **optimize**=True | Include during hyperopting (Look for "ideal" value) |
+| **load**=True     | Load from the HyperOpt Results Copy/Paste Section |  
 
 
 # Open Trade Unclogger:
@@ -106,8 +123,28 @@ Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so
 - Now you must fill in `-sc` or `--stake-currency` with the one you use in `config.json` as `stake_currency` since it really matters
 - Optional fill in `-f` or `--file` to submit a custom file name for the log file to be exported
 - Optional fill in `-nf` or `--no-file` if you don't want a log file to be exported   
+- Optional fill in `-lf` or `--load-file` if you want to calculate a report upon a `.json` exported with `freqtrade hyperopt-show --best --no-header --print-json > ./user_data/config-mgm-hyperopt.json`. **Warning** Make sure your calculator copy-paste section is complete before doing this!   
 - Optional fill in `-fm` or `--fix-missing` to re-include missing weighted buy/sell_params with 0 as their value & re-print them as copy/paste-able results. Also keeps the tool from crashing when there are missing weighted values (Mostly useful after a hyperopt with overridden values)   
 - Optional fill in `-pu` or `--precision-used` to re-calculate the weights to what would be expected after running hyperopt with precision enabled. Always use this after running hyperopt with precision different from 1!   
+
+
+# TimeFrame-Zoom:
+To prevent profit exploitation during backtesting/hyperopting we backtest/hyperopt MoniGoMani which would normally use a `timeframe` (1h candles) using a smaller `backtest_timeframe` (5m candles) instead. This happens while still using an `informative_timeframe` (original 1h candles) to generate the buy/sell signals.   
+
+With this more realistic results should be found during backtesting/hyperopting. Since the buy/sell signals will operate on the same `timeframe` that live would use (1h candles), while at the same time `backtest_timeframe` (5m or 1m candles) will simulate price movement during that `timeframe` (1h candle), providing more realistic trailing stoploss and ROI behaviour during backtesting/hyperopting.   
+
+For more information on why this is needed please read [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)! 
+
+**<span style="color:darkorange">WARNING:</span> Remove the `timeframe` line from your `config-btc.json` if it would still be there! Otherwise TimeFrame-Zoom won't work properly in the current version!**   
+**<span style="color:darkorange">WARNING:</span> Candle data for both `timeframe` as `backtest_timeframe` will have to be downloaded before you will be able to backtest/hyperopt! (Since both will be used)**   
+**<span style="color:darkorange">WARNING:</span> This will be slower than backtesting at 1h and 1m is a CPU killer. But if you plan on using trailing stoploss or ROI, you probably want to know that your backtest results are not complete lies.**   
+**<span style="color:darkorange">WARNING:</span> To disable TimeFrame-Zoom just use the same candles for `timeframe` & `backtest_timeframe`**   
+
+### TimeFrame-Zoom Examples:
+| Parameter | Meaning |
+| --- | --- |
+| **timeframe**='1h' | TimeFrame used during dry/live-runs |
+| **backtest_timeframe**='5m' | Zoomed in TimeFrame used during backtesting/hyperopting |
 
 
 # Precision Setting:
@@ -126,38 +163,55 @@ To disable `precision` / for old the work mode **just** use **1**.
 | **5**   | **1/5** or **0.2** (0, 0.2, 0.4, 0.8, ...) |
 
 
-# TimeFrame-Zoom:
-To prevent profit exploitation during backtesting/hyperopting we backtest/hyperopt MoniGoMani which would normally use a `timeframe` (1h candles) using a smaller `backtest_timeframe` (5m candles) instead. This happens while still using an `informative_timeframe` (original 1h candles) to generate the buy/sell signals.   
+# Switching PairLists:
+By default MoniGoMani includes 2 pairlists in `config-btc.json`:   
+- A StaticPairList: Used for BackTesting / HyperOpting   
+- A VolumePairList: Used for Dry / Live - Running   
+Switching between the PairList in use can easily be one by moving the `_` in front of the `pairlists` value you wish to disable.
 
-With this more realistic results should be found during backtesting/hyperopting. Since the buy/sell signals will operate on the same `timeframe` that live would use (1h candles), while at the same time `backtest_timeframe` (5m or 1m candles) will simulate price movement during that `timeframe` (1h candle), providing more realistic trailing stoploss and ROI behaviour during backtesting/hyperopting.   
-
-For more information on why this is needed please read [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)! 
-
-**<span style="color:darkorange">WARNING:</span> Candle data for both `timeframe` as `backtest_timeframe` will have to be downloaded before you will be able to backtest/hyperopt! (Since both will be used)**   
-**<span style="color:darkorange">WARNING:</span> This will be slower than backtesting at 1h and 1m is a CPU killer. But if you plan on using trailing stoploss or ROI, you probably want to know that your backtest results are not complete lies.**   
-**<span style="color:darkorange">WARNING:</span> To disable TimeFrame-Zoom just use the same candles for `timeframe` & `backtest_timeframe`**   
-
-### TimeFrame-Zoom Examples:
-| Parameter | Meaning |
-| --- | --- |
-| **timeframe**='1h' | TimeFrame used during dry/live-runs |
-| **backtest_timeframe**='5m' | Zoomed in TimeFrame used during backtesting/hyperopting |
-
+### Enabled StaticPairList / Disabled VolumePairList Example:
+```json
+"pairlists": [{
+        "method": "StaticPairList"
+    }],
+"_pairlists": [
+    {
+        "method": "VolumePairList",
+```
 
 # Go-To Commands:
 For Hyper Opting *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py))*:
-```properties
+```powershell
 freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all -s MoniGoManiHyperStrategy -e 1000 --timerange 20210101-20210316
 ```
 For Back Testing *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) or legacy [MoniGoManiHyperOpted.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoManiHyperOpted.py) or legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py))*:
-```properties
+```powershell
 freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/config-btc.json -c ./user_data/config-private.json --timerange 20210101-20210316
 ```
 For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
-```properties
+```powershell
 python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc BTC
 ```
+
+For retrieving all tradable pairs on Binance and creating your own `pairs-btc.json` file for `freqtrade data-download` *(with [Binance-Retrieve-Pair-List.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Pair-List.py))*:
+```powershell
+# Step 1: Retrieve all tradable pairs on Binance and create a 'pairs-btc.json file'
+python ./user_data/mgm_tools/Binance-Retrieve-Pair-List.py -q BTC > pairs-btc.json
+
+# Step 2: Download candle data for 'freqtrade data-download' using 'pairs-btc.json'
+freqtrade download-data --exchange binance -c ./user_data/config-btc.json -c ./user_data/config-private.json --data-format-ohlcv hdf5 --days 740 --pairs-file user_data/pairs-btc.json --timeframes 5m 1h
+```
+
 For Hyper Opting *(the legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py) + legacy [MoniGoManiHyperOpt.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/hyperopts/MoniGoManiHyperOpt.py))*:
-```properties
+```powershell
 freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all --hyperopt MoniGoManiHyperOpt -s MoniGoMani -e 1000 --timerange 20210101-20210316
 ```
+
+# How to share your test results properly:
+Easiest way to share how your MGM setup has been doing would be by posting a screenshot in the [Discord Server](https://discord.gg/xFZ9bB6vEz) with the output of the `/status table` and `/profit` commands (Using the Telegram connection of the bot).   
+   
+Also one of the other most welcome things is the results from the `Total-Overall-Signal-Importance-Calculator`, but you'll have to paste your own fresh hyperopt results in it first before it can make you a nice report that can help us find better signals for MGM !:rocket:   
+
+Of course all FreqUI / Telegram / config / HyperOpt results done on MGM **can be** useful / be learned from!
+But try to **always include** a  `Total-Overall-Signal-Importance-Calculator` report or just your own MoniGoMani file with your hyperopt results applied to it!   
+Since without knowing which signal weights or which on/off settings are applied we can't really truly learn much from your results!   

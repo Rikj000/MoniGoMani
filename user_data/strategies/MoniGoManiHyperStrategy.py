@@ -82,36 +82,36 @@ class MoniGoManiHyperStrategy(IStrategy):
         'buy___trades_when_downwards': True,
         'buy___trades_when_sideways': False,
         'buy___trades_when_upwards': True,
-        'buy__downwards_trend_total_signal_needed': 5,
-        'buy__sideways_trend_total_signal_needed': 66,
-        'buy__upwards_trend_total_signal_needed': 35,
-        'buy_downwards_trend_adx_strong_up_weight': 95,
-        'buy_downwards_trend_bollinger_bands_weight': 54,
-        'buy_downwards_trend_ema_long_golden_cross_weight': 97,
-        'buy_downwards_trend_ema_short_golden_cross_weight': 54,
-        'buy_downwards_trend_macd_weight': 72,
-        'buy_downwards_trend_rsi_weight': 3,
-        'buy_downwards_trend_sma_long_golden_cross_weight': 87,
-        'buy_downwards_trend_sma_short_golden_cross_weight': 56,
-        'buy_downwards_trend_vwap_cross_weight': 93,
-        'buy_sideways_trend_adx_strong_up_weight': 58,
-        'buy_sideways_trend_bollinger_bands_weight': 100,
-        'buy_sideways_trend_ema_long_golden_cross_weight': 14,
-        'buy_sideways_trend_ema_short_golden_cross_weight': 8,
-        'buy_sideways_trend_macd_weight': 16,
-        'buy_sideways_trend_rsi_weight': 36,
-        'buy_sideways_trend_sma_long_golden_cross_weight': 26,
-        'buy_sideways_trend_sma_short_golden_cross_weight': 20,
-        'buy_sideways_trend_vwap_cross_weight': 96,
-        'buy_upwards_trend_adx_strong_up_weight': 88,
-        'buy_upwards_trend_bollinger_bands_weight': 73,
-        'buy_upwards_trend_ema_long_golden_cross_weight': 37,
-        'buy_upwards_trend_ema_short_golden_cross_weight': 40,
-        'buy_upwards_trend_macd_weight': 54,
-        'buy_upwards_trend_rsi_weight': 8,
-        'buy_upwards_trend_sma_long_golden_cross_weight': 95,
-        'buy_upwards_trend_sma_short_golden_cross_weight': 12,
-        'buy_upwards_trend_vwap_cross_weight': 84
+        'buy__downwards_trend_total_signal_needed': 25,
+        'buy__sideways_trend_total_signal_needed': 73,
+        'buy__upwards_trend_total_signal_needed': 58,
+        'buy_downwards_trend_adx_strong_up_weight': 51,
+        'buy_downwards_trend_bollinger_bands_weight': 60,
+        'buy_downwards_trend_ema_long_golden_cross_weight': 48,
+        'buy_downwards_trend_ema_short_golden_cross_weight': 17,
+        'buy_downwards_trend_macd_weight': 0,
+        'buy_downwards_trend_rsi_weight': 84,
+        'buy_downwards_trend_sma_long_golden_cross_weight': 24,
+        'buy_downwards_trend_sma_short_golden_cross_weight': 83,
+        'buy_downwards_trend_vwap_cross_weight': 0,
+        'buy_sideways_trend_adx_strong_up_weight': 42,
+        'buy_sideways_trend_bollinger_bands_weight': 32,
+        'buy_sideways_trend_ema_long_golden_cross_weight': 90,
+        'buy_sideways_trend_ema_short_golden_cross_weight': 89,
+        'buy_sideways_trend_macd_weight': 44,
+        'buy_sideways_trend_rsi_weight': 33,
+        'buy_sideways_trend_sma_long_golden_cross_weight': 20,
+        'buy_sideways_trend_sma_short_golden_cross_weight': 76,
+        'buy_sideways_trend_vwap_cross_weight': 46,
+        'buy_upwards_trend_adx_strong_up_weight': 94,
+        'buy_upwards_trend_bollinger_bands_weight': 34,
+        'buy_upwards_trend_ema_long_golden_cross_weight': 0,
+        'buy_upwards_trend_ema_short_golden_cross_weight': 54,
+        'buy_upwards_trend_macd_weight': 65,
+        'buy_upwards_trend_rsi_weight': 36,
+        'buy_upwards_trend_sma_long_golden_cross_weight': 41,
+        'buy_upwards_trend_sma_short_golden_cross_weight': 0,
+        'buy_upwards_trend_vwap_cross_weight': 27
     }
 
     # Sell hyperspace params:
@@ -123,57 +123,57 @@ class MoniGoManiHyperStrategy(IStrategy):
         'sell___unclogger_enabled_when_downwards': True,
         'sell___unclogger_enabled_when_sideways': True,
         'sell___unclogger_enabled_when_upwards': False,
-        'sell___unclogger_minimal_losing_trade_duration_minutes': 31,
-        'sell___unclogger_minimal_losing_trades_open': 2,
-        'sell___unclogger_percentage_open_trades_losing': 7,
-        'sell___unclogger_trend_lookback_candles_window': 0,
-        'sell__downwards_trend_total_signal_needed': 85,
-        'sell__sideways_trend_total_signal_needed': 42,
-        'sell__upwards_trend_total_signal_needed': 77,
-        'sell_downwards_trend_adx_strong_down_weight': 38,
-        'sell_downwards_trend_bollinger_bands_weight': 6,
-        'sell_downwards_trend_ema_long_death_cross_weight': 46,
-        'sell_downwards_trend_ema_short_death_cross_weight': 88,
-        'sell_downwards_trend_macd_weight': 32,
-        'sell_downwards_trend_rsi_weight': 34,
-        'sell_downwards_trend_sma_long_death_cross_weight': 15,
-        'sell_downwards_trend_sma_short_death_cross_weight': 96,
-        'sell_downwards_trend_vwap_cross_weight': 90,
-        'sell_sideways_trend_adx_strong_down_weight': 46,
-        'sell_sideways_trend_bollinger_bands_weight': 46,
-        'sell_sideways_trend_ema_long_death_cross_weight': 69,
-        'sell_sideways_trend_ema_short_death_cross_weight': 61,
-        'sell_sideways_trend_macd_weight': 94,
-        'sell_sideways_trend_rsi_weight': 4,
-        'sell_sideways_trend_sma_long_death_cross_weight': 8,
-        'sell_sideways_trend_sma_short_death_cross_weight': 52,
-        'sell_sideways_trend_vwap_cross_weight': 17,
-        'sell_upwards_trend_adx_strong_down_weight': 15,
-        'sell_upwards_trend_bollinger_bands_weight': 77,
-        'sell_upwards_trend_ema_long_death_cross_weight': 83,
-        'sell_upwards_trend_ema_short_death_cross_weight': 38,
+        'sell___unclogger_minimal_losing_trade_duration_minutes': 46,
+        'sell___unclogger_minimal_losing_trades_open': 11,
+        'sell___unclogger_percentage_open_trades_losing': 69,
+        'sell___unclogger_trend_lookback_candles_window': 100,
+        'sell__downwards_trend_total_signal_needed': 93,
+        'sell__sideways_trend_total_signal_needed': 12,
+        'sell__upwards_trend_total_signal_needed': 87,
+        'sell_downwards_trend_adx_strong_down_weight': 65,
+        'sell_downwards_trend_bollinger_bands_weight': 23,
+        'sell_downwards_trend_ema_long_death_cross_weight': 57,
+        'sell_downwards_trend_ema_short_death_cross_weight': 21,
+        'sell_downwards_trend_macd_weight': 88,
+        'sell_downwards_trend_rsi_weight': 0,
+        'sell_downwards_trend_sma_long_death_cross_weight': 55,
+        'sell_downwards_trend_sma_short_death_cross_weight': 26,
+        'sell_downwards_trend_vwap_cross_weight': 22,
+        'sell_sideways_trend_adx_strong_down_weight': 0,
+        'sell_sideways_trend_bollinger_bands_weight': 90,
+        'sell_sideways_trend_ema_long_death_cross_weight': 29,
+        'sell_sideways_trend_ema_short_death_cross_weight': 0,
+        'sell_sideways_trend_macd_weight': 75,
+        'sell_sideways_trend_rsi_weight': 11,
+        'sell_sideways_trend_sma_long_death_cross_weight': 99,
+        'sell_sideways_trend_sma_short_death_cross_weight': 86,
+        'sell_sideways_trend_vwap_cross_weight': 89,
+        'sell_upwards_trend_adx_strong_down_weight': 33,
+        'sell_upwards_trend_bollinger_bands_weight': 79,
+        'sell_upwards_trend_ema_long_death_cross_weight': 93,
+        'sell_upwards_trend_ema_short_death_cross_weight': 72,
         'sell_upwards_trend_macd_weight': 53,
-        'sell_upwards_trend_rsi_weight': 98,
-        'sell_upwards_trend_sma_long_death_cross_weight': 70,
-        'sell_upwards_trend_sma_short_death_cross_weight': 17,
-        'sell_upwards_trend_vwap_cross_weight': 38
+        'sell_upwards_trend_rsi_weight': 39,
+        'sell_upwards_trend_sma_long_death_cross_weight': 68,
+        'sell_upwards_trend_sma_short_death_cross_weight': 33,
+        'sell_upwards_trend_vwap_cross_weight': 55
     }
 
     # ROI table:
     minimal_roi = {
-        "0": 0.17788,
-        "401": 0.12705,
-        "543": 0.06093,
-        "1669": 0
+        "0": 0.2365,
+        "22": 0.04099,
+        "59": 0.0251,
+        "86": 0
     }
 
     # Stoploss:
-    stoploss = -0.21241
+    stoploss = -0.32764
 
     # Trailing stop:
     trailing_stop = True
-    trailing_stop_positive = 0.14725
-    trailing_stop_positive_offset = 0.2259
+    trailing_stop_positive = 0.15754
+    trailing_stop_positive_offset = 0.17856
     trailing_only_offset_is_reached = False
 
     ####################################################################################################################
@@ -510,13 +510,13 @@ class MoniGoManiHyperStrategy(IStrategy):
     sell___unclogger_enabled_when_upwards = \
         CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
     sell___unclogger_minimal_losing_trades_open = \
-        IntParameter(0, int(15 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(1, int(15 * precision), default=0, space='sell', optimize=True, load=True)
     sell___unclogger_minimal_losing_trade_duration_minutes = \
-        IntParameter(0, int(300 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(15, int(60 * precision), default=0, space='sell', optimize=True, load=True)
     sell___unclogger_percentage_open_trades_losing = \
         IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
     sell___unclogger_trend_lookback_candles_window = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(10, int(100 * precision), default=0, space='sell', optimize=True, load=True)
 
     def __init__(self, *args, **kwargs):
         """
