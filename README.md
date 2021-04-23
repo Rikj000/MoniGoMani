@@ -105,6 +105,7 @@ freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.
 - Huge refactor that should improve the codebase reducing a lot of duplicate code & making implementing new weighted signals even easier
 - Extract all `MoniGoMani Settings` into a `config-mgm.json` that will require manual configuration + Extract the `HyperOpt Results Copy/Paste section` into a `config-mgm-hyperopt.json`, this last file will be extractable from hyperopts results using a command!
 - Improve upon bot loop speed (Try to improve code to reach reduction in HyperOpting time needed)
+- Lookback candle window for weighted signals (As learned from a picture in [EmperorBTC's Trading Manual](https://drive.google.com/file/d/1W-9XUcTRc1Zerwi6D-ZYTVzRrVbXoVbG/view) a combination of different 6 signals triggering rapidly after eachother (but within a window of a few candles) lead to using a total buy/sell signal
 - **Other & Better indicators!** MoniGoMani has been designed so signals can easily be inserted / swapped out   
 Please use the `Total-Overall-Signal-Importance-Calculator.py` (added in `v0.7.1`) to find out which signals do best and report your results to the Discord server, so we can improve! :rocket:
 - Update the `Total-Overall-Signal-Importance-Calculator.py` to show UnClogger hyperoptable variable results   
