@@ -18,15 +18,18 @@ class WinRatioAndProfitRatioLoss(IHyperOptLoss):
                                *args, **kwargs) -> float:
         """
         Custom objective function, returns smaller number for better results
-        """
-
-        # results DataFrame: pair, profit_ratio, profit_abs, open_date,
-        # open_rate, fee_open, close_date, close_rate, fee_close, amount,
-        # trade_duration, is_open, sell_reason, stake_amount, min_rate, max_rate,
-        # stop_loss_ratio, stop_loss_abs
+        
+        This function optimizes for both: best profit AND stability
+        
+        On stability, the final score has an incentive, through 'win_ratio', 
+        to make more winning deals out of all deals done
+        
+        This might prove to be more reliable for dry and live runs of FreqTrade
+        and prevent over-fitting on best profit only
+        """        
 
         wins = len(results[results['profit_ratio'] > 0])
-        avg_profit = results['profit_ratio'].mean() * 100.0
+        avg_profit = results['profit_ratio'].sum() * 100.0
 
         win_ratio = wins / trade_count
         return -avg_profit * win_ratio * 100
