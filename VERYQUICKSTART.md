@@ -1,3 +1,24 @@
+<p align="left">
+    <a href="https://discord.gg/xFZ9bB6vEz">
+        <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join CryptoStonksShallRise on Discord">
+    </a>
+        <a href="https://github.com/Rikj000/MoniGoMani/releases">
+        <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
+    </a>
+    <a href="https://github.com/Rikj000/MoniGoMani/releases/latest">
+        <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
+    </a>
+    <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
+        <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
+    </a>
+    <a href="https://www.freqtrade.io/en/latest/">
+        <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
+    </a>
+        <a href="https://www.iconomi.com/register?ref=JdFzz">
+        <img src="https://img.shields.io/badge/Join-ICONOMI-blue?logo=bitcoin&logoColor=white" alt="ICONOMI - The world’s largest crypto strategy provider">
+    </a>
+</p>
+
 **<span style="color:darkorange">WARNING:</span> I am in no way responsible for your live results! This strategy is still experimental and under development!**   
 **<span style="color:darkorange">WARNING:</span> MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) unless you really know what you are doing when manually allocating parameters!**   
 **I strongly recommended to [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!**   
@@ -97,20 +118,54 @@ sell_downwards_trend_macd_weight = \
 | **optimize**=True | Include during hyperopting (Look for "ideal" value) |
 | **load**=True     | Load from the HyperOpt Results Copy/Paste Section |  
 
+### Current Default MoniGoMani Overrides:
+*(More testing should be done to find out if there are other/more overrides that would work better!)*   
+Feel free to **manually** alter these if you think other values are more logical. These should be applied using the examples above.   
+
+Following have proven to sometimes create a hodlr bot when hyperopting, which is not what we want!   
+- `buy___trades_when_downwards` = `True`
+- `buy___trades_when_sideways` = `False`
+- `buy___trades_when_upwards` = `True`
+- `sell___trades_when_downwards` = `True`
+- `sell___trades_when_sideways` = `False`
+- `sell___trades_when_upwards` = `True`   
+
+We would like to use the sell unclogger
+- `sell___unclogger_enabled` = `True`   
+
+Setting these logically manually is not too hard to do and will narrow down the hyperopt space, thus resulting in less time/system resources needed to run our hyperopt (We basically push it in the direction we want by hand doing this)
+- `sell___unclogger_trend_lookback_window_uses_downwards_candles` = `True`
+- `sell___unclogger_trend_lookback_window_uses_sideways_candles` = `True`
+- `sell___unclogger_trend_lookback_window_uses_upwards_candles` = `False`
+
+# HyperOpt Narrowing Down Search Spaces:   
+The search spaces used for HyperOptable settings in MoniGoMani can easily be tweaked/fine-tuned to try and improve upon profit being made.   
+It also helps in cutting down the time needed for HyperOpting since less values will be possible. This if applied right it means we are pushing/pointing hyperopt in the right direction before it runs off doing it's crunching.   
+
+### Narrowed Down Space Example:
+Hyperopt Space for `sell___unclogger_minimal_losing_trades_open` narrowed down to only search for an ideal setup between **1 up to 5** losing trades open:
+```python
+sell___unclogger_minimal_losing_trades_open = \
+    IntParameter(1, int(5 * precision), default=0, space='sell', optimize=True, load=True)
+```
 
 # Open Trade Unclogger:
 When the Open Trade Unclogger is enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades.   
 This `custom_stoploss` function should be able to work in tandem with `Trailing stoploss`.   
 
-It will only unclog a losing trade when all of following checks have been full-filled:    
+It will only unclog a losing trade when all of following checks have been full-filled (If a check is set to `0` it will be taken out of the equation, thus the unclogger will continue checking further without it):    
+- Check if `sell___unclogger_enabled` is `True`, otherwise abort further unclogger logic.
 - Check if everything in custom_storage is up to date with all_open_trades
-- Check if there are enough losing trades open for unclogging to occur
+- Check if there are enough losing trades open to fullfil `sell___unclogger_minimal_losing_trades_open`
 - Check if there is a losing trade open for the pair currently being ran through the MoniGoMani loop
-- Check if trade has been open for X minutes (long enough to give it a recovery chance)
-- Check if total open trades losing % is met
-- Check if open_trade's trend changed negatively during past X candles
+- Check if trade has been open for `sell___unclogger_minimal_losing_trade_duration_minutes` (long enough to give it a recovery chance)
+- Check if `sell___unclogger_open_trades_losing_percentage_needed` is fulfilled
+- Check if open_trade's trend changed negatively during past `sell___unclogger_trend_lookback_candles_window`:   
+For unclogging to occur `sell___unclogger_trend_lookback_candles_window_percentage_needed` should be fulfilled!   
+The trends used for the calculations in this check can be configured with `sell___unclogger_trend_lookback_window_uses_downwards/sideways/upwards_candles=True/False` (Recommended to set these last 3 true/false values manually using [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#hyperopt-setting-overrides)).   
+Each candle fulfilling a trend set to `True` will be added in the sum used to calculate the value for `sell___unclogger_trend_lookback_candles_window_percentage_needed` if it is found in the lookback window.   
 
-Please configurable/hyperoptable in the sell_params dictionary under the hyperopt results copy/paste section.
+
 Only used when `use_custom_stoploss` & `sell_params['sell___unclogger_enabled']` are both set to `True`!
 
 
@@ -119,13 +174,17 @@ Paste the `buy_params` & `sell_params` results from your HyperOpt over in the `/
 Then execute: `python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc BTC` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
 The higher the score of a signal the better! And now it will also export to a `importance.log` file in the same folder for easy sharing!   
 Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can improve the signals!   
-   
-- Now you must fill in `-sc` or `--stake-currency` with the one you use in `config.json` as `stake_currency` since it really matters
-- Optional fill in `-f` or `--file` to submit a custom file name for the log file to be exported
-- Optional fill in `-nf` or `--no-file` if you don't want a log file to be exported   
-- Optional fill in `-lf` or `--load-file` if you want to calculate a report upon a `.json` exported with `freqtrade hyperopt-show --best --no-header --print-json > ./user_data/config-mgm-hyperopt.json`. **Warning** Make sure your calculator copy-paste section is complete before doing this!   
-- Optional fill in `-fm` or `--fix-missing` to re-include missing weighted buy/sell_params with 0 as their value & re-print them as copy/paste-able results. Also keeps the tool from crashing when there are missing weighted values (Mostly useful after a hyperopt with overridden values)   
-- Optional fill in `-pu` or `--precision-used` to re-calculate the weights to what would be expected after running hyperopt with precision enabled. Always use this after running hyperopt with precision different from 1!   
+
+### Handy Calculator Sub Commands:
+- `-h` or `--help`: Print out information about the usage of all sub commands.
+- `-sc` or `--stake-currency` ***Mandatory***: Stake currency displayed in the report (Should match to what is under `stake_currency` in your `config.json`)
+- `-lf` or `--load-file` ***Optional (Unused by default)***: Path to `.json` file to load HyperOpt Results from which will be used in the Calculator.   
+`.json`'s should be extracted with `freqtrade hyperopt-show --best --no-header --print-json > ./user_data/config-mgm-hyperopt.json`   
+**Warning** Make sure your calculator copy-paste section is complete before using this sub-command!   
+- `-cf` or `--create-file` ***Optional (Unused by default)***: Save the Total-Average-Signal-Importance-Report as a `.log` file with a custom filename and file output location   
+- `-nf` or `--no-file` ***Optional (Defaults to `True` when not omitted)***: Do not output the Total-Average-Signal-Importance-Report as a `.log` file
+- `-fm` or `--fix-missing` ***Optional (Defaults to `True` when not omitted)***: Re-Include missing weighted buy/sell_params with **0 as their value** & re-print them as copy/paste-able results. Also keeps the tool from crashing when there are missing values. Mostly useful after a hyperopt with overridden/missing values in the hyperopt results.
+- `-pu` or `--precision-used` ***Optional (Defaults to `1` when not omitted)***: The precision value used during hyperopt. Can be decimal (0.2) or fraction 1/5. Mostly useful after a running a hyperopt with precision different from 1, used to patch the weights of the signals displayed in the report to what we would expect them to be for comparison with other results.
 
 
 # TimeFrame-Zoom:
@@ -163,11 +222,20 @@ To disable `precision` / for old the work mode **just** use **1**.
 | **5**   | **1/5** or **0.2** (0, 0.2, 0.4, 0.8, ...) |
 
 
-# Switching PairLists:
+# PairLists:
 By default MoniGoMani includes 2 pairlists in `config-btc.json`:   
-- A StaticPairList: Used for BackTesting / HyperOpting   
-- A VolumePairList: Used for Dry / Live - Running   
-Switching between the PairList in use can easily be one by moving the `_` in front of the `pairlists` value you wish to disable.
+- A VolumePairList: 
+  - Best to use for Dry and Live Running
+  - Will automatically update to the current best top volume coin pairs available
+- A StaticPairList: 
+  - Used for BackTesting / HyperOpting since a VolumePairList cannot be used here.
+  - When [optimizing](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) MoniGoMani for actual dry/live-running (instead of testing) it's truly recommended to [download a fresh top volume StaticPairList](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#download-staticpairlists) and HyperOpt upon that (Preferably as big as possible, but beware for the warning below)!   
+  This should yield much better & more realistic results during HyperOpting/BackTesting!   
+  This is due to giving a better reflection of the current market and being closer to the VolumePairList used during dry/live-run's.
+
+Switching between the PairList in use can easily be done by moving the `_` in front of the `pairlists` value inside `config-btc.json` for the pairlist you wish to disable.
+
+**<span style="color:darkorange">WARNING:</span> The bigger the (Volume/Static)PairList in use the higher the system requirements (CPU usage, RAM usage & Time needed to HyperOpt will go up)! Switch to a smaller list if your system can't handle it!**   
 
 ### Enabled StaticPairList / Disabled VolumePairList Example:
 ```json
@@ -185,6 +253,24 @@ You can find these functions in user_data/hyperopts, and can use them by overrid
  --hyperopt-loss TimewatchedWinRatioAndProfitLoss
 ```
 
+### Download StaticPairLists   
+Retrieve a current **Binance-BTC-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))* (The amount of pairs in these top volume lists can be altered by opening up `Binance-Retrieve-Top-Volume-StaticPairList.json` and changing the `number_assets` value inside to the amount of pairs you'd like in your list):
+```powershell
+freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json --quote BTC --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-BTC-Top-Volume-StaticPairList.json
+```
+
+Retrieve a current **Binance-BTC-All-Tradable-StaticPairList.json** file *(using [Binance-Retrieve-All-Tradable-StaticPairList.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-All-Tradable-StaticPairList.py))* (Beware, very high system requirements due to a lot of BTC pairs!):
+```powershell
+python ./user_data/mgm_tools/Binance-Retrieve-All-Tradable-StaticPairList.py -q BTC > ./user_data/mgm_pair_lists/Binance-BTC-All-Tradable-StaticPairList.json
+```
+
+**After Downloading** the StaticPairList will be available under `./user_data/mgm_pair_lists/<<NAME_HERE>>-StaticPairList.json`, just open up the file and copy the PairList Data into your own `config-private.json` file under `pair_whitelist` section to start using it!   
+
+Don't forget to **Download Candle Data** before HyperOpting or Backtesting (Example for last 2 years of candle data):   
+```powershell
+freqtrade download-data --exchange binance -c ./user_data/config-btc.json -c ./user_data/config-private.json --data-format-ohlcv hdf5 --days 740 --timeframes 5m 1h
+```
+
 # Go-To Commands:
 For Hyper Opting *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py))*:
 ```powershell
@@ -199,16 +285,13 @@ For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal
 python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc BTC
 ```
 
-For retrieving all tradable pairs on Binance and creating your own `pairs-btc.json` file for `freqtrade data-download` *(with [Binance-Retrieve-Pair-List.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Pair-List.py))*:
+To retrieve a current **Binance-BTC-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*:
 ```powershell
-# Step 1: Retrieve all tradable pairs on Binance and create a 'pairs-btc.json file'
-python ./user_data/mgm_tools/Binance-Retrieve-Pair-List.py -q BTC > pairs-btc.json
-
-# Step 2: Download candle data for 'freqtrade data-download' using 'pairs-btc.json'
-freqtrade download-data --exchange binance -c ./user_data/config-btc.json -c ./user_data/config-private.json --data-format-ohlcv hdf5 --days 740 --pairs-file user_data/pairs-btc.json --timeframes 5m 1h
+freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json --quote BTC --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-BTC-Top-Volume-StaticPairList.json
+# Don't forget to open the downloaded '...-StaticPairList.json' and copy the PairList Data into your own 'config-private.json' file to start using it!
 ```
 
-For Hyper Opting *(the legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py) + legacy [MoniGoManiHyperOpt.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/hyperopts/MoniGoManiHyperOpt.py))*:
+For Hyper Opting *(the legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py) + legacy [MoniGoManiHyperOpt.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/hyperopts/MoniGoManiHyperOpt.py). Please use the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) instead though since support for Legacy versions stopped!)*:
 ```powershell
 freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all --hyperopt MoniGoManiHyperOpt -s MoniGoMani -e 1000 --timerange 20210101-20210316
 ```
@@ -221,3 +304,12 @@ Also one of the other most welcome things is the results from the `Total-Overall
 Of course all FreqUI / Telegram / config / HyperOpt results done on MGM **can be** useful / be learned from!
 But try to **always include** a  `Total-Overall-Signal-Importance-Calculator` report or just your own MoniGoMani file with your hyperopt results applied to it!   
 Since without knowing which signal weights or which on/off settings are applied we can't really truly learn much from your results!   
+
+The epoch table being generated when hyperopting + the number of the epoch you used is also very helpful, so we can easily rule out if your test results are exploited. (See [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)!)   
+
+# Common mistakes:
+
+### TypeError: integer argument expected, got float   
+You likely are using a `Float` value where you should be using a `Integer` value. Hopefully your error will show more information about which Parameter.   
+- `Integer` = Whole number. Examples: 1, 3, 23
+- `Float` = Decimal number. Examples: 1.53, 4.2, 17.12   

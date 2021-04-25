@@ -1,0 +1,70 @@
+freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces trailing -s MoniGoManiHyperStrategy -e 1000 --timerange 20210101-20210316
+================================================================================================================================================================================================================
+Overrides used:
+===============
+WARNING - Parameter "buy___trades_when_downwards" exists, but is disabled. Default value "True" used.
+WARNING - Parameter "buy___trades_when_sideways" exists, but is disabled. Default value "False" used.
+WARNING - Parameter "buy___trades_when_upwards" exists, but is disabled. Default value "True" used.
+WARNING - Parameter "sell___trades_when_downwards" exists, but is disabled. Default value "True" used.
+WARNING - Parameter "sell___trades_when_sideways" exists, but is disabled. Default value "False" used.
+WARNING - Parameter "sell___trades_when_upwards" exists, but is disabled. Default value "True" used.
+WARNING - Parameter "sell___unclogger_enabled" exists, but is disabled. Default value "True" used.
+WARNING - Parameter "sell___unclogger_trend_lookback_window_uses_downwards_candles" exists, but is disabled. Default value "True" used.
+WARNING - Parameter "sell___unclogger_trend_lookback_window_uses_sideways_candles" exists, but is disabled. Default value "True" used.
+WARNING - Parameter "sell___unclogger_trend_lookback_window_uses_upwards_candles" exists, but is disabled. Default value "False" used.
+
+INFO - Loading data from 2020-12-30 14:40:00 up to 2021-03-16 00:00:00 (75 days)..
+INFO - Hyperopting with data from 2021-01-01 00:00:00 up to 2021-03-16 00:00:00 (74 days)..
+INFO - Found 12 CPU cores. Let's make them scream!
+INFO - Number of parallel jobs set as: -1
+INFO - Effective number of parallel workers used: 12
++--------+-----------+----------+------------------+--------------+------------------------------+----------------+-------------+
+|   Best |     Epoch |   Trades |    Win Draw Loss |   Avg profit |                       Profit |   Avg duration |   Objective |
+|--------+-----------+----------+------------------+--------------+------------------------------+----------------+-------------|
+| * Best |    1/1000 |      821 |    320  176  325 |        0.31% |    0.00253512 BTC  (253.27%) |        786.5 m |    -4.55707 |
+| * Best |    2/1000 |      820 |    319  176  325 |        0.31% |    0.00257941 BTC  (257.69%) |        803.3 m |    -4.60918 |                                                      
+| * Best |    4/1000 |      822 |    319  176  327 |        0.34% |    0.00275992 BTC  (275.72%) |        773.3 m |    -5.12337 |
+| * Best |   13/1000 |      774 |    271  177  326 |        0.68% |    0.00524393 BTC  (523.87%) |        891.1 m |    -9.94278 |
+| * Best |   15/1000 |      817 |    318  174  325 |        0.70% |    0.00575842 BTC  (575.28%) |        837.5 m |    -11.3698 |                                                      
+| * Best |   24/1000 |      817 |    318  174  325 |        0.71% |    0.00578521 BTC  (577.95%) |        842.4 m |    -11.3765 |
+|   Best |   38/1000 |      820 |    319  176  325 |        0.71% |    0.00586655 BTC  (586.08%) |        813.4 m |    -11.5838 |                                                      
+|   Best |   39/1000 |      820 |    319  176  325 |        0.72% |    0.00592098 BTC  (591.51%) |        813.3 m |     -11.703 |
+|   Best |   42/1000 |      819 |    318  175  326 |        0.73% |    0.00598688 BTC  (598.10%) |        826.3 m |    -11.9129 |
+|   Best |   43/1000 |      819 |    318  175  326 |        0.73% |    0.00598770 BTC  (598.18%) |        826.3 m |    -11.9148 |
+|   Best |   71/1000 |      819 |    318  175  326 |        0.73% |    0.00599231 BTC  (598.64%) |        826.3 m |    -11.9254 |                                                      
+|   Best |   82/1000 |      819 |    318  175  326 |        0.73% |    0.00599264 BTC  (598.67%) |        826.3 m |    -11.9261 |                                                      
+|   Best |  211/1000 |      819 |    318  175  326 |        0.73% |    0.00599271 BTC  (598.68%) |        826.3 m |    -11.9263 |                                                      
+|   Best |  217/1000 |      819 |    318  175  326 |        0.73% |    0.00599277 BTC  (598.69%) |        826.3 m |    -11.9264 |
+|   Best |  433/1000 |      819 |    318  175  326 |        0.73% |    0.00599280 BTC  (598.69%) |        826.3 m |    -11.9265 |                                                      
+|   Best |  571/1000 |      819 |    318  175  326 |        0.73% |    0.00599287 BTC  (598.70%) |        826.3 m |    -11.9266 |                                                      
+|   Best |  806/1000 |      818 |    318  175  325 |        0.73% |    0.00599963 BTC  (599.37%) |        827.6 m |    -11.9474 |                                                      
+|   Best |  816/1000 |      818 |    318  175  325 |        0.73% |    0.00600149 BTC  (599.56%) |        827.6 m |    -11.9516 |                                                      
+|   Best |  829/1000 |      818 |    318  175  325 |        0.73% |    0.00600417 BTC  (599.83%) |        827.6 m |    -11.9577 |                                                      
+|   Best |  846/1000 |      818 |    318  175  325 |        0.73% |    0.00600482 BTC  (599.89%) |        827.6 m |    -11.9592 |                                                      
+|   Best |  853/1000 |      818 |    318  175  325 |        0.73% |    0.00600670 BTC  (600.08%) |        827.6 m |    -11.9634 |                                                      
+|   Best |  860/1000 |      818 |    318  175  325 |        0.73% |    0.00600924 BTC  (600.33%) |        827.6 m |    -11.9692 |                                                      
+|   Best |  863/1000 |      818 |    318  175  325 |        0.73% |    0.00601170 BTC  (600.58%) |        827.6 m |    -11.9748 |                                                      
+|   Best |  865/1000 |      818 |    318  175  325 |        0.73% |    0.00601423 BTC  (600.83%) |        827.6 m |    -11.9805 |                                                      
+|   Best |  946/1000 |      818 |    318  175  325 |        0.73% |    0.00601559 BTC  (600.97%) |        827.6 m |    -11.9836 |                                                      
+
+Elapsed Time: 4:11:13
+INFO - 1000 epochs saved to 
+    '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade-Git/user_data/hyperopt_results/strategy_MoniGoManiHyperStrategy_hyperopt_results_2021-04-24_19-35-29.pickle'.
+
+Best result:
+
+   946/1000:    
+        818 trades. 
+        318/175/325 Wins/Draws/Losses. 
+        Avg profit   0.73%. 
+        Median profit   0.00%. 
+        Total profit  0.00601559 BTC ( 600.97Σ%). 
+        Avg duration 827.6 min. 
+        Objective: -11.98358
+
+
+    # Trailing stop:
+    trailing_stop = True
+    trailing_stop_positive = 0.21539
+    trailing_stop_positive_offset = 0.24886
+    trailing_only_offset_is_reached = False

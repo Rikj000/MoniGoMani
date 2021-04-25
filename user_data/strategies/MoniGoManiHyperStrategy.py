@@ -11,7 +11,6 @@ from freqtrade.strategy \
 from numpy import timedelta64
 from pandas import DataFrame
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -25,7 +24,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.9.0 by Rikj000                         ###
+    ###                         MoniGoMani v0.9.1 by Rikj000                         ###
     ##                          ----------------------------                          ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -77,93 +76,94 @@ class MoniGoManiHyperStrategy(IStrategy):
         'buy___trades_when_downwards': True,
         'buy___trades_when_sideways': False,
         'buy___trades_when_upwards': True,
-        'buy__downwards_trend_total_signal_needed': 25,
-        'buy__sideways_trend_total_signal_needed': 73,
-        'buy__upwards_trend_total_signal_needed': 58,
-        'buy_downwards_trend_adx_strong_up_weight': 51,
-        'buy_downwards_trend_bollinger_bands_weight': 60,
-        'buy_downwards_trend_ema_long_golden_cross_weight': 48,
-        'buy_downwards_trend_ema_short_golden_cross_weight': 17,
-        'buy_downwards_trend_macd_weight': 0,
-        'buy_downwards_trend_rsi_weight': 84,
-        'buy_downwards_trend_sma_long_golden_cross_weight': 24,
-        'buy_downwards_trend_sma_short_golden_cross_weight': 83,
-        'buy_downwards_trend_vwap_cross_weight': 0,
+        'buy__downwards_trend_total_signal_needed': 19,
+        'buy__sideways_trend_total_signal_needed': 100,
+        'buy__upwards_trend_total_signal_needed': 21,
+        'buy_downwards_trend_adx_strong_up_weight': 28,
+        'buy_downwards_trend_bollinger_bands_weight': 100,
+        'buy_downwards_trend_ema_long_golden_cross_weight': 36,
+        'buy_downwards_trend_ema_short_golden_cross_weight': 27,
+        'buy_downwards_trend_macd_weight': 37,
+        'buy_downwards_trend_rsi_weight': 60,
+        'buy_downwards_trend_sma_long_golden_cross_weight': 66,
+        'buy_downwards_trend_sma_short_golden_cross_weight': 82,
+        'buy_downwards_trend_vwap_cross_weight': 64,
         'buy_sideways_trend_adx_strong_up_weight': 42,
-        'buy_sideways_trend_bollinger_bands_weight': 32,
-        'buy_sideways_trend_ema_long_golden_cross_weight': 90,
-        'buy_sideways_trend_ema_short_golden_cross_weight': 89,
-        'buy_sideways_trend_macd_weight': 44,
-        'buy_sideways_trend_rsi_weight': 33,
-        'buy_sideways_trend_sma_long_golden_cross_weight': 20,
-        'buy_sideways_trend_sma_short_golden_cross_weight': 76,
-        'buy_sideways_trend_vwap_cross_weight': 46,
-        'buy_upwards_trend_adx_strong_up_weight': 94,
-        'buy_upwards_trend_bollinger_bands_weight': 34,
-        'buy_upwards_trend_ema_long_golden_cross_weight': 0,
-        'buy_upwards_trend_ema_short_golden_cross_weight': 54,
-        'buy_upwards_trend_macd_weight': 65,
-        'buy_upwards_trend_rsi_weight': 36,
-        'buy_upwards_trend_sma_long_golden_cross_weight': 41,
-        'buy_upwards_trend_sma_short_golden_cross_weight': 0,
-        'buy_upwards_trend_vwap_cross_weight': 27
+        'buy_sideways_trend_bollinger_bands_weight': 40,
+        'buy_sideways_trend_ema_long_golden_cross_weight': 88,
+        'buy_sideways_trend_ema_short_golden_cross_weight': 28,
+        'buy_sideways_trend_macd_weight': 73,
+        'buy_sideways_trend_rsi_weight': 96,
+        'buy_sideways_trend_sma_long_golden_cross_weight': 79,
+        'buy_sideways_trend_sma_short_golden_cross_weight': 0,
+        'buy_sideways_trend_vwap_cross_weight': 62,
+        'buy_upwards_trend_adx_strong_up_weight': 29,
+        'buy_upwards_trend_bollinger_bands_weight': 42,
+        'buy_upwards_trend_ema_long_golden_cross_weight': 85,
+        'buy_upwards_trend_ema_short_golden_cross_weight': 70,
+        'buy_upwards_trend_macd_weight': 50,
+        'buy_upwards_trend_rsi_weight': 63,
+        'buy_upwards_trend_sma_long_golden_cross_weight': 73,
+        'buy_upwards_trend_sma_short_golden_cross_weight': 69,
+        'buy_upwards_trend_vwap_cross_weight': 22
     }
 
     # Sell hyperspace params:
     sell_params = {
         'sell___trades_when_downwards': True,
-        'sell___trades_when_sideways': True,
-        'sell___trades_when_upwards': False,
+        'sell___trades_when_sideways': False,
+        'sell___trades_when_upwards': True,
         'sell___unclogger_enabled': True,
-        'sell___unclogger_enabled_when_downwards': True,
-        'sell___unclogger_enabled_when_sideways': True,
-        'sell___unclogger_enabled_when_upwards': False,
-        'sell___unclogger_minimal_losing_trade_duration_minutes': 46,
-        'sell___unclogger_minimal_losing_trades_open': 11,
-        'sell___unclogger_percentage_open_trades_losing': 69,
-        'sell___unclogger_trend_lookback_candles_window': 100,
-        'sell__downwards_trend_total_signal_needed': 93,
-        'sell__sideways_trend_total_signal_needed': 12,
-        'sell__upwards_trend_total_signal_needed': 87,
-        'sell_downwards_trend_adx_strong_down_weight': 65,
-        'sell_downwards_trend_bollinger_bands_weight': 23,
-        'sell_downwards_trend_ema_long_death_cross_weight': 57,
-        'sell_downwards_trend_ema_short_death_cross_weight': 21,
-        'sell_downwards_trend_macd_weight': 88,
-        'sell_downwards_trend_rsi_weight': 0,
-        'sell_downwards_trend_sma_long_death_cross_weight': 55,
-        'sell_downwards_trend_sma_short_death_cross_weight': 26,
-        'sell_downwards_trend_vwap_cross_weight': 22,
-        'sell_sideways_trend_adx_strong_down_weight': 0,
-        'sell_sideways_trend_bollinger_bands_weight': 90,
-        'sell_sideways_trend_ema_long_death_cross_weight': 29,
-        'sell_sideways_trend_ema_short_death_cross_weight': 0,
-        'sell_sideways_trend_macd_weight': 75,
-        'sell_sideways_trend_rsi_weight': 11,
-        'sell_sideways_trend_sma_long_death_cross_weight': 99,
-        'sell_sideways_trend_sma_short_death_cross_weight': 86,
-        'sell_sideways_trend_vwap_cross_weight': 89,
-        'sell_upwards_trend_adx_strong_down_weight': 33,
-        'sell_upwards_trend_bollinger_bands_weight': 79,
-        'sell_upwards_trend_ema_long_death_cross_weight': 93,
-        'sell_upwards_trend_ema_short_death_cross_weight': 72,
-        'sell_upwards_trend_macd_weight': 53,
-        'sell_upwards_trend_rsi_weight': 39,
-        'sell_upwards_trend_sma_long_death_cross_weight': 68,
-        'sell_upwards_trend_sma_short_death_cross_weight': 33,
-        'sell_upwards_trend_vwap_cross_weight': 55
+        'sell___unclogger_minimal_losing_trade_duration_minutes': 51,
+        'sell___unclogger_minimal_losing_trades_open': 5,
+        'sell___unclogger_open_trades_losing_percentage_needed': 5,
+        'sell___unclogger_trend_lookback_candles_window': 93,
+        'sell___unclogger_trend_lookback_candles_window_percentage_needed': 90,
+        'sell___unclogger_trend_lookback_window_uses_downwards_candles': True,
+        'sell___unclogger_trend_lookback_window_uses_sideways_candles': True,
+        'sell___unclogger_trend_lookback_window_uses_upwards_candles': False,
+        'sell__downwards_trend_total_signal_needed': 63,
+        'sell__sideways_trend_total_signal_needed': 86,
+        'sell__upwards_trend_total_signal_needed': 76,
+        'sell_downwards_trend_adx_strong_down_weight': 82,
+        'sell_downwards_trend_bollinger_bands_weight': 85,
+        'sell_downwards_trend_ema_long_death_cross_weight': 1,
+        'sell_downwards_trend_ema_short_death_cross_weight': 6,
+        'sell_downwards_trend_macd_weight': 55,
+        'sell_downwards_trend_rsi_weight': 21,
+        'sell_downwards_trend_sma_long_death_cross_weight': 92,
+        'sell_downwards_trend_sma_short_death_cross_weight': 82,
+        'sell_downwards_trend_vwap_cross_weight': 37,
+        'sell_sideways_trend_adx_strong_down_weight': 60,
+        'sell_sideways_trend_bollinger_bands_weight': 62,
+        'sell_sideways_trend_ema_long_death_cross_weight': 14,
+        'sell_sideways_trend_ema_short_death_cross_weight': 14,
+        'sell_sideways_trend_macd_weight': 63,
+        'sell_sideways_trend_rsi_weight': 7,
+        'sell_sideways_trend_sma_long_death_cross_weight': 43,
+        'sell_sideways_trend_sma_short_death_cross_weight': 63,
+        'sell_sideways_trend_vwap_cross_weight': 93,
+        'sell_upwards_trend_adx_strong_down_weight': 87,
+        'sell_upwards_trend_bollinger_bands_weight': 98,
+        'sell_upwards_trend_ema_long_death_cross_weight': 40,
+        'sell_upwards_trend_ema_short_death_cross_weight': 6,
+        'sell_upwards_trend_macd_weight': 100,
+        'sell_upwards_trend_rsi_weight': 63,
+        'sell_upwards_trend_sma_long_death_cross_weight': 91,
+        'sell_upwards_trend_sma_short_death_cross_weight': 82,
+        'sell_upwards_trend_vwap_cross_weight': 73
     }
 
     # ROI table:
     minimal_roi = {
-        "0": 0.2365,
-        "22": 0.04099,
-        "59": 0.0251,
-        "86": 0
+        "0": 0.18955,
+        "28": 0.0466,
+        "75": 0.0314,
+        "99": 0
     }
 
     # Stoploss:
-    stoploss = -0.32764
+    stoploss = -0.29036
 
     # Trailing stop:
     trailing_stop = True
@@ -407,9 +407,9 @@ class MoniGoManiHyperStrategy(IStrategy):
     sell___trades_when_downwards = \
         CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
     sell___trades_when_sideways = \
-        CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
-    sell___trades_when_upwards = \
         CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
+    sell___trades_when_upwards = \
+        CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
 
     # Downwards Trend Sell
     # --------------------
@@ -498,20 +498,22 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     sell___unclogger_enabled = \
         CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
-    sell___unclogger_enabled_when_downwards = \
-        CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
-    sell___unclogger_enabled_when_sideways = \
-        CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
-    sell___unclogger_enabled_when_upwards = \
-        CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
     sell___unclogger_minimal_losing_trades_open = \
-        IntParameter(1, int(15 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(1, int(5 * precision), default=0, space='sell', optimize=True, load=True)
     sell___unclogger_minimal_losing_trade_duration_minutes = \
         IntParameter(15, int(60 * precision), default=0, space='sell', optimize=True, load=True)
-    sell___unclogger_percentage_open_trades_losing = \
+    sell___unclogger_open_trades_losing_percentage_needed = \
         IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
     sell___unclogger_trend_lookback_candles_window = \
         IntParameter(10, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+    sell___unclogger_trend_lookback_candles_window_percentage_needed = \
+        IntParameter(10, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+    sell___unclogger_trend_lookback_window_uses_downwards_candles = \
+        CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
+    sell___unclogger_trend_lookback_window_uses_sideways_candles = \
+        CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
+    sell___unclogger_trend_lookback_window_uses_upwards_candles = \
+        CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
 
     def __init__(self, *args, **kwargs):
         """
@@ -1364,7 +1366,8 @@ class MoniGoManiHyperStrategy(IStrategy):
                             self.mgm_logger('debug', open_trade_unclogger, 'percentage_open_trades_losing: ' +
                                             str(percentage_open_trades_losing) + '%')
                             if percentage_open_trades_losing < \
-                                    round(self.sell___unclogger_percentage_open_trades_losing.value / self.precision):
+                                    round(
+                                        self.sell___unclogger_open_trades_losing_percentage_needed.value / self.precision):
                                 self.mgm_logger('debug', open_trade_unclogger, 'No unclogging needed! ' +
                                                 'Percentage of open trades losing needed has not been satisfied!')
                             else:
@@ -1421,7 +1424,6 @@ class MoniGoManiHyperStrategy(IStrategy):
                                         stored_trend_dataframe[candle] = \
                                             self.custom_info['trend_indicator'][pair].loc[candle_time]['trend']
 
-                                # ToDo: Implement hyperoptable sell___unclogger_trend_lookback_window_percentage_needed
                                 if len(stored_trend_dataframe) < \
                                         round(self.sell___unclogger_trend_lookback_candles_window.value /
                                               self.precision):
@@ -1442,23 +1444,29 @@ class MoniGoManiHyperStrategy(IStrategy):
                                     for lookback_candle \
                                             in range(1, round(self.sell___unclogger_trend_lookback_candles_window.value
                                                               / self.precision) + 1):
-                                        if self.sell___unclogger_enabled_when_downwards.value & \
+                                        if self.sell___unclogger_trend_lookback_window_uses_downwards_candles.value & \
                                                 (stored_trend_dataframe[lookback_candle] == 'downwards'):
                                             unclogger_candles_satisfied += 1
-                                        if self.sell___unclogger_enabled_when_sideways.value & \
+                                        if self.sell___unclogger_trend_lookback_window_uses_sideways_candles.value & \
                                                 (stored_trend_dataframe[lookback_candle] == 'sideways'):
                                             unclogger_candles_satisfied += 1
-                                        if self.sell___unclogger_enabled_when_upwards.value & \
+                                        if self.sell___unclogger_trend_lookback_window_uses_upwards_candles.value & \
                                                 (stored_trend_dataframe[lookback_candle] == 'upwards'):
                                             unclogger_candles_satisfied += 1
                                     self.mgm_logger('debug', open_trade_unclogger, 'unclogger_candles_satisfied: ' +
                                                     str(unclogger_candles_satisfied) + ' for pair: ' + pair)
 
+                                    # Calculate the percentage of the lookback window currently satisfied
+                                    unclogger_candles_percentage_satisfied = \
+                                        (unclogger_candles_satisfied /
+                                         round(self.sell___unclogger_trend_lookback_candles_window.value /
+                                               self.precision)) * 100
+
                                     # Override Sell Signal: Unclog trade by setting it's stoploss to 0% forcing a sell &
                                     # attempt to continue the profit climb with the "freed up trading slot"
-                                    if unclogger_candles_satisfied >= \
-                                            round(self.sell___unclogger_trend_lookback_candles_window.value /
-                                                  self.precision):
+                                    if unclogger_candles_percentage_satisfied >= \
+                                            round(self.sell___unclogger_trend_lookback_candles_window_percentage_needed.value
+                                                  / self.precision):
                                         self.mgm_logger('info', open_trade_unclogger, 'Unclogging losing trade...')
                                         return -0.00001  # Setting very low since 0% is seen as invalid by Freqtrade
                                     else:

@@ -1,3 +1,4 @@
+#!/user/bin/python3
 # --- Do not remove these libs ---
 import argparse
 import json
@@ -8,7 +9,7 @@ import sys
 
 class TotalOverallSignalImportanceCalculator:
     """
-    Total Overall Signal Importance Calculator for MoniGoMani v0.9.0
+    Total Overall Signal Importance Calculator for MoniGoMani v0.9.1
     ----------------------------------------------------------------
     Paste the results from your HyperOpt over below `buy_params` & `sell_params` arrays
     Then execute: `python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc BTC` from your favorite
@@ -225,23 +226,29 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-sc', '--stake-currency', dest='stake_currency', type=str, required=True,
-                        help='Stake currency displayed in the report (Should match to what is under '
+                        help='Mandatory: Stake currency displayed in the report (Should match to what is under '
                              '"stake_currency" in your config.json)')
     parser.add_argument('-lf', '--load-file', dest='load_file', type=str,
-                        help='Path to JSON file to load HyperOpt Results from. JSONs should be extracted with '
-                             '"freqtrade hyperopt-show --best --no-header --print-json > '
+                        help='Optional (Unused by default): Path to JSON file to load HyperOpt Results from. JSONs '
+                             'should be extracted with "freqtrade hyperopt-show --best --no-header --print-json > '
                              './user_data/config-mgm-hyperopt.json"')
     parser.add_argument('-cf', '--create-file', dest='create_file', type=str,
                         default='Total-Average-Signal-Importance-Report.log',
-                        help='Save the Total-Average-Signal-Importance-Report as a .log file (with a custom name)')
+                        help='Optional (Unused by default): Save the Total-Average-Signal-Importance-Report as a .log '
+                             'file with a custom filename and file output location')
     parser.add_argument('-nf', '--no-file', dest='output_to_file', const=False, default=True, nargs='?',
-                        help='Do not output to a file')
+                        help='Optional (Defaults to True when not omitted): Do not output the '
+                             'Total-Average-Signal-Importance-Report as a .log file')
     parser.add_argument('-fm', '--fix-missing', dest='fix_missing', action='store_true',
-                        help='Re-Include missing weighted buy/sell_params with 0 as their value & re-print them as '
-                             'copy/paste-able results. Also keeps the tool from crashing when there are missing values')
+                        help='Optional (Defaults to True when not omitted): Re-Include missing weighted buy/sell_params'
+                             ' with **0 as their value** & re-print them as copy/paste-able results. Also keeps the '
+                             'tool from crashing when there are missing values. Mostly useful after a hyperopt with '
+                             'overridden/missing values in the hyperopt results.')
     parser.add_argument('-pu', '--precision-used', dest='precision_used', default=1, type=lambda x: eval(x),
-                        help='The precision value used during hyperopt. Can be decimal (0.2) or fraction 1/5. If you '
-                             'did not change the precision set this to 1 (default value when -pu is not omitted.')
+                        help='Optional (Defaults to 1 when not omitted): The precision value used during hyperopt. Can '
+                             'be decimal (0.2) or fraction 1/5. Mostly useful after a running a hyperopt with precision'
+                             ' different from 1, used to patch the weights of the signals displayed in the report to '
+                             'what we would expect them to be for comparison with other results.')
     args = parser.parse_args()
 
     trend_names = ['downwards', 'sideways', 'upwards']
