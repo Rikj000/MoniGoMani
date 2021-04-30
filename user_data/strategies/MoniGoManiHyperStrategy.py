@@ -528,20 +528,18 @@ class MoniGoManiHyperStrategy(IStrategy):
 
         super().__init__(*args, **kwargs)
         if not self.dp:
-            self.mgm_logger('error', initialization, 'Data Provider is not populated!' +
-                            ' No indicators will be computed!')
+            self.mgm_logger('error', initialization, f'Data Provider is not populated! No indicators will be computed!')
 
         if (self.dp is not None) and (self.dp.runmode.value in ('backtest', 'hyperopt')):
-            self.mgm_logger('info', initialization, 'Current run mode detected as: HyperOpting/BackTesting. ' +
-                            'Auto updating is_dry_live_run_detected to: False')
+            self.mgm_logger('info', initialization, f'Current run mode detected as: HyperOpting/BackTesting. '
+                                                    f'Auto updating is_dry_live_run_detected to: False')
             self.is_dry_live_run_detected = False
 
             self.timeframe = self.backtest_timeframe
-            # ToDo: Implement syntax for all mgm_logging like this f'Parametername: {parametername}'
             self.mgm_logger('info', 'TimeFrame-Zoom', f'Auto updating timeframe to: {self.timeframe}')
         else:
-            self.mgm_logger('info', initialization, 'Current run mode detected as: Dry/Live-Run. ' +
-                            'Auto updating is_dry_live_run_detected to: True')
+            self.mgm_logger('info', initialization, f'Current run mode detected as: Dry/Live-Run. '
+                                                    f'Auto updating is_dry_live_run_detected to: True')
             self.is_dry_live_run_detected = True
 
     def informative_pairs(self):
@@ -570,9 +568,9 @@ class MoniGoManiHyperStrategy(IStrategy):
 
         # Compute indicator data during Backtesting / Hyperopting
         if self.is_dry_live_run_detected is False:
-            self.mgm_logger('info', timeframe_zoom, 'Backtesting/Hyperopting this strategy with a ' +
-                            f'informative_timeframe ({self.informative_timeframe}candles) and a ' +
-                            f'backtest_timeframe ({self.backtest_timeframe} candles)')
+            self.mgm_logger('info', timeframe_zoom, f'Backtesting/Hyperopting this strategy with a '
+                                                    f'informative_timeframe ({self.informative_timeframe}candles) and a'
+                                                    f' backtest_timeframe ({self.backtest_timeframe} candles)')
 
             # Warning! This method gets ALL downloaded data that you have (when in backtesting mode).
             # If you have many months or years downloaded for this pair, this will take a long time!
@@ -698,8 +696,8 @@ class MoniGoManiHyperStrategy(IStrategy):
         # Store the trend indicator mapped to the correct date-times for all pairs in pair_list jf needed,
         # stored in custom information storage to maintain backtest/hyperopt-ability while using the sell unclogger
         if self.sell___unclogger_enabled.value and (self.is_dry_live_run_detected is False):
-            self.mgm_logger('info', 'Custom Information Storage', 'Storing whole \'trend\' indicator for ' +
-                            'pair (' + metadata['pair'] + ') in custom_info')
+            self.mgm_logger('info', 'Custom Information Storage', f'Storing whole "trend" indicator for '
+                                                                  f'pair ({metadata["pair"]}) in custom_info')
 
             if metadata['pair'] not in self.custom_info['trend_indicator']:
                 self.custom_info['trend_indicator'][metadata['pair']] = {}
@@ -1216,19 +1214,19 @@ class MoniGoManiHyperStrategy(IStrategy):
                 # Fetch all open trade data during Dry & Live Running
                 if self.is_dry_live_run_detected is True:
                     self.mgm_logger('debug', custom_information_storage,
-                                    'Fetching all currently open trades during Dry/Live Run')
+                                    f'Fetching all currently open trades during Dry/Live Run')
 
                     all_open_trades = Trade.get_trades([Trade.is_open.is_(True)]).order_by(Trade.open_date).all()
                 # Fetch all open trade data during Back Testing & Hyper Opting
                 else:
                     self.mgm_logger('debug', custom_information_storage,
-                                    'Fetching all currently open trades during BackTesting/HyperOpting')
+                                    f'Fetching all currently open trades during BackTesting/HyperOpting')
                     all_open_trades = trade.trades_open
 
                 self.mgm_logger('debug', custom_information_storage,
-                                'Up-to-date open trades (' + str(len(all_open_trades)) + ') fetched!')
-                self.mgm_logger('debug', custom_information_storage, 'all_open_trades contents: ' +
-                                repr(all_open_trades))
+                                f'Up-to-date open trades ({str(len(all_open_trades))}) fetched!')
+                self.mgm_logger('debug', custom_information_storage,
+                                f'all_open_trades contents: {repr(all_open_trades)}')
 
                 # Store current pair's open_trade + it's current profit & open_date in custom_info
                 for open_trade in all_open_trades:
@@ -1239,8 +1237,9 @@ class MoniGoManiHyperStrategy(IStrategy):
                         self.custom_info['open_trades'][str(open_trade.pair)]['current_profit'] = current_profit
                         # self.custom_info['open_trades'][str(open_trade.pair)]['open_date'] = trade.open_date
                         # ToDo: ^ BugFix/Improve or remove (old trend_indicator garbage)
-                        self.mgm_logger('info', custom_information_storage, 'Storing trade + current profit/loss + ' +
-                                        'open date for pair (' + str(pair) + ') in custom_info')
+                        self.mgm_logger('info', custom_information_storage,
+                                        f'Storing trade + current profit/loss + open date for pair ({str(pair)}) '
+                                        f'in custom_info')
                         break
 
                 # Custom Information Storage Garbage Collector
@@ -1248,27 +1247,29 @@ class MoniGoManiHyperStrategy(IStrategy):
                 # Check if any old open_trade garbage needs to be removed
                 if len(all_open_trades) < len(self.custom_info['open_trades']):
                     garbage_trade_amount = len(self.custom_info['open_trades']) - len(all_open_trades)
-                    self.mgm_logger('info', garbage_collector, 'Old open trade garbage detected for ' +
-                                    str(garbage_trade_amount) + ' trades, starting cleanup')
+                    self.mgm_logger('info', garbage_collector, f'Old open trade garbage detected for '
+                                                               f'{str(garbage_trade_amount)} trades, starting cleanup')
 
                     for garbage_trade in range(garbage_trade_amount):
                         for stored_trade in self.custom_info['open_trades']:
                             pair_still_open = False
                             for open_trade in all_open_trades:
                                 if str(stored_trade) == str(open_trade.pair):
-                                    self.mgm_logger('debug', garbage_collector, 'Open trade found, no action needed ' +
-                                                    'for pair (' + stored_trade + ') in custom_info')
+                                    self.mgm_logger('debug', garbage_collector,
+                                                    f'Open trade found, no action needed for pair ({stored_trade}) '
+                                                    f'in custom_info')
                                     pair_still_open = True
                                     break
 
                             # Remove old open_trade garbage
                             if not pair_still_open:
-                                self.mgm_logger('info', garbage_collector, 'No open trade found for pair (' +
-                                                stored_trade + '), removing from custom_info')
+                                self.mgm_logger('info', garbage_collector,
+                                                f'No open trade found for pair ({stored_trade}), removing '
+                                                f'from custom_info')
                                 self.custom_info['open_trades'].pop(stored_trade)
                                 self.mgm_logger('debug', garbage_collector,
-                                                'Successfully removed garbage_trade ' + str(garbage_trade) +
-                                                ' from custom_info!')
+                                                f'Successfully removed garbage_trade {str(garbage_trade)} '
+                                                f'from custom_info!')
                                 break
 
                     # ToDo: BugFix/Improve or remove (Warning: outdated code by now)
@@ -1292,26 +1293,27 @@ class MoniGoManiHyperStrategy(IStrategy):
 
                 # Check if everything in custom_storage is up to date with all_open_trades
                 elif len(all_open_trades) > len(self.custom_info['open_trades']):
-                    self.mgm_logger('warning', custom_information_storage, 'Open trades (' +
-                                    str(len(self.custom_info['open_trades'])) + ') in custom_storage do not match yet '
-                                    + 'with trades in live open trades (' + str(len(all_open_trades)) +
-                                    ') aborting unclogger for now!')
+                    self.mgm_logger('warning', custom_information_storage,
+                                    f'Open trades ({str(len(self.custom_info["open_trades"]))}) in custom_storage do '
+                                    f'not match yet with trades in live open trades ({str(len(all_open_trades))}) '
+                                    f'aborting unclogger for now!')
                     return self.stoploss
 
                 # Print all stored open trade info in custom_storage
-                self.mgm_logger('debug', custom_information_storage, 'Open trades (' + str(len(
-                    self.custom_info['open_trades'])) + ') in custom_info updated successfully!')
-                self.mgm_logger('debug', custom_information_storage, 'custom_info[\'open_trades\'] contents: ' +
-                                repr(self.custom_info['open_trades']))
+                self.mgm_logger('debug', custom_information_storage,
+                                f'Open trades ({str(len(self.custom_info["open_trades"]))}) in custom_info updated '
+                                f'successfully!')
+                self.mgm_logger('debug', custom_information_storage,
+                                f'custom_info["open_trades"] contents: {repr(self.custom_info["open_trades"])}')
 
                 # Open Trade Unclogger
                 # --------------------
                 self.mgm_logger('debug', open_trade_unclogger,
-                                'Running trough all checks to see if unclogging is needed')
+                                f'Running trough all checks to see if unclogging is needed')
 
                 # Check if there are enough losing trades open for unclogging to occur
                 self.mgm_logger('debug', open_trade_unclogger,
-                                'Fetching all currently losing_open_trades from custom information storage')
+                                f'Fetching all currently losing_open_trades from custom information storage')
                 losing_open_trades = {}
                 for stored_trade in self.custom_info['open_trades']:
                     stored_current_profit = self.custom_info['open_trades'][stored_trade]['current_profit']
@@ -1319,24 +1321,26 @@ class MoniGoManiHyperStrategy(IStrategy):
                         if not str(pair) in losing_open_trades:
                             losing_open_trades[str(stored_trade)] = {}
                         losing_open_trades[str(stored_trade)] = stored_current_profit
-                self.mgm_logger('debug', open_trade_unclogger, 'Fetched losing_open_trades (' +
-                                str(len(losing_open_trades)) + ') from custom information storage!')
+                self.mgm_logger('debug', open_trade_unclogger,
+                                f'Fetched losing_open_trades ({str(len(losing_open_trades))}) from custom information '
+                                f'storage!')
 
                 if len(losing_open_trades) < \
                         round(self.sell___unclogger_minimal_losing_trades_open.value / self.precision):
-                    self.mgm_logger('debug', open_trade_unclogger, 'No unclogging needed! ' +
-                                    'Not enough losing trades currently open!')
+                    self.mgm_logger('debug', open_trade_unclogger,
+                                    f'No unclogging needed! Not enough losing trades currently open!')
                 else:
-                    self.mgm_logger('debug', open_trade_unclogger, 'Enough losing trades detected! '
-                                    + 'Proceeding to the next check!')
+                    self.mgm_logger('debug', open_trade_unclogger,
+                                    f'Enough losing trades detected! Proceeding to the next check!')
 
                     # Check if there is a losing trade open for the pair currently being ran through the MoniGoMani loop
                     if pair not in losing_open_trades:
-                        self.mgm_logger('debug', open_trade_unclogger, 'No unclogging needed! Currently checked pair ('
-                                        + pair + ') is not making a loss at this point in time!')
+                        self.mgm_logger('debug', open_trade_unclogger,
+                                        f'No unclogging needed! Currently checked pair ({pair}) is not making a loss '
+                                        f'at this point in time!')
                     else:
-                        self.mgm_logger('debug', open_trade_unclogger, 'Currently checked pair (' + pair +
-                                        ') is losing! Proceeding to the next check!')
+                        self.mgm_logger('debug', open_trade_unclogger,
+                                        f'Currently checked pair ({pair}) is losing! Proceeding to the next check!')
 
                         # Check if trade has been open for X minutes (long enough to give it a recovery chance)
                         if self.is_dry_live_run_detected is True:
@@ -1344,8 +1348,8 @@ class MoniGoManiHyperStrategy(IStrategy):
                         else:
                             current_datetime_to_use = current_time
 
-                        self.mgm_logger('debug', open_trade_unclogger, 'Trade open time : ' + str(
-                            trade.open_date_utc.replace(tzinfo=None)))
+                        self.mgm_logger('debug', open_trade_unclogger,
+                                        f'Trade open time : {str(trade.open_date_utc.replace(tzinfo=None))}')
                         self.mgm_logger('debug', open_trade_unclogger, 'Minimal open time: ' + str(
                             current_datetime_to_use.replace(tzinfo=None) -
                             timedelta(minutes=round(
@@ -1358,44 +1362,45 @@ class MoniGoManiHyperStrategy(IStrategy):
                                     self.sell___unclogger_minimal_losing_trade_duration_minutes.value /
                                     self.precision))):
                             self.mgm_logger('debug', open_trade_unclogger,
-                                            'No unclogging needed! Currently checked pair ('
-                                            + pair + ') has not been open been open for long enough!')
+                                            f'No unclogging needed! Currently checked pair ({pair}) has not been open '
+                                            f'been open for long enough!')
                         else:
-                            self.mgm_logger('debug', open_trade_unclogger, 'Trade has been open for long enough! '
-                                            + 'Proceeding to the next check!')
+                            self.mgm_logger('debug', open_trade_unclogger,
+                                            f'Trade has been open for long enough! Proceeding to the next check!')
 
                             # Check if total open trades losing % is met
                             percentage_open_trades_losing = int((len(losing_open_trades) / len(all_open_trades)) * 100)
-                            self.mgm_logger('debug', open_trade_unclogger, 'percentage_open_trades_losing: ' +
-                                            str(percentage_open_trades_losing) + '%')
-                            if percentage_open_trades_losing < \
-                                    round(
-                                        self.sell___unclogger_open_trades_losing_percentage_needed.value / self.precision):
-                                self.mgm_logger('debug', open_trade_unclogger, 'No unclogging needed! ' +
-                                                'Percentage of open trades losing needed has not been satisfied!')
+                            self.mgm_logger('debug', open_trade_unclogger,
+                                            f'percentage_open_trades_losing: {str(percentage_open_trades_losing)}%')
+                            if percentage_open_trades_losing < round(
+                                    self.sell___unclogger_open_trades_losing_percentage_needed.value / self.precision):
+                                self.mgm_logger('debug', open_trade_unclogger,
+                                                f'No unclogging needed! Percentage of open trades losing needed has '
+                                                f'not been satisfied!')
                             else:
-                                self.mgm_logger('debug', open_trade_unclogger, 'Percentage of open trades losing ' +
-                                                'needed has been satisfied! Proceeding to the next check!')
+                                self.mgm_logger('debug', open_trade_unclogger,
+                                                f'Percentage of open trades losing needed has been satisfied! '
+                                                f'Proceeding to the next check!')
 
                                 # Fetch current dataframe for the pair currently being ran through the MoniGoMani loop
                                 self.mgm_logger('debug', open_trade_unclogger,
-                                                'Fetching currently needed \'trend\' dataframe data to check how pair ('
-                                                + pair + ') has been doing in during the last ' +
-                                                str(self.sell___unclogger_trend_lookback_candles_window.value /
-                                                    self.precision) + ' candles')
+                                                f'Fetching currently needed "trend" dataframe data to check how pair '
+                                                f'({pair}) has been doing in during the last '
+                                                f'{str(self.sell___unclogger_trend_lookback_candles_window.value / self.precision)}'
+                                                f' candles')
 
                                 # Fetch all needed 'trend' trade data during Dry & Live Running
                                 stored_trend_dataframe = {}
                                 if self.is_dry_live_run_detected is True:
                                     self.mgm_logger('debug', open_trade_unclogger,
-                                                    'Fetching all needed \'trend\' trade data during Dry/Live Run')
+                                                    f'Fetching all needed "trend" trade data during Dry/Live Run')
                                     dataframe, last_updated = self.dp.get_analyzed_dataframe(pair=pair,
                                                                                              timeframe=self.timeframe)
 
                                     # Data is nan at 0 so incrementing loop with 1
-                                    for candle in range(1,
-                                                        round(self.sell___unclogger_trend_lookback_candles_window.value
-                                                              / self.precision) + 1):
+                                    for candle in range(1, round(
+                                            self.sell___unclogger_trend_lookback_candles_window.value / self.precision)
+                                                           + 1):
                                         stored_trend_dataframe[candle] = dataframe['trend'].iat[candle * -1]
                                         # Warning: Only use .iat[-1] in dry/live-run modes! Not during
                                         # backtesting/hyperopting! (Otherwise you will try to look into the future)
@@ -1403,8 +1408,8 @@ class MoniGoManiHyperStrategy(IStrategy):
                                 # Fetch all needed 'trend' trade data during Backtesting/Hyperopting
                                 else:
                                     self.mgm_logger('debug', open_trade_unclogger,
-                                                    'Fetching all needed \'trend\' trade data during ' +
-                                                    'BackTesting/HyperOpting')
+                                                    f'Fetching all needed "trend" trade data during '
+                                                    f'BackTesting/HyperOpting')
 
                                     for candle in range(1,
                                                         round(self.sell___unclogger_trend_lookback_candles_window.value
@@ -1430,19 +1435,21 @@ class MoniGoManiHyperStrategy(IStrategy):
                                 if len(stored_trend_dataframe) < \
                                         round(self.sell___unclogger_trend_lookback_candles_window.value /
                                               self.precision):
-                                    self.mgm_logger('debug', open_trade_unclogger, 'No unclogging needed! ' +
-                                                    'Not enough trend data stored yet!')
+                                    self.mgm_logger('debug', open_trade_unclogger,
+                                                    f'No unclogging needed! Not enough trend data stored yet!')
                                 else:
 
                                     # Print all fetched 'trend' trade data
-                                    self.mgm_logger('debug', open_trade_unclogger, 'All needed \'trend\' trade ' +
-                                                    'data (' + str(len(stored_trend_dataframe)) + ') fetched!')
                                     self.mgm_logger('debug', open_trade_unclogger,
-                                                    'stored_trend_dataframe contents: ' + repr(stored_trend_dataframe))
+                                                    f'All needed "trend" trade data '
+                                                    f'({str(len(stored_trend_dataframe))}) fetched!')
+                                    self.mgm_logger('debug', open_trade_unclogger,
+                                                    f'stored_trend_dataframe contents: {repr(stored_trend_dataframe)}')
 
                                     # Check if open_trade's trend changed negatively during past X candles
-                                    self.mgm_logger('debug', open_trade_unclogger, 'Calculating amount of ' +
-                                                    'unclogger_candles_satisfied satisfied for pair: ' + pair)
+                                    self.mgm_logger('debug', open_trade_unclogger,
+                                                    f'Calculating amount of unclogger_candles_satisfied satisfied for '
+                                                    f'pair: {pair}')
                                     unclogger_candles_satisfied = 0
                                     for lookback_candle \
                                             in range(1, round(self.sell___unclogger_trend_lookback_candles_window.value
@@ -1456,8 +1463,9 @@ class MoniGoManiHyperStrategy(IStrategy):
                                         if self.sell___unclogger_trend_lookback_window_uses_upwards_candles.value & \
                                                 (stored_trend_dataframe[lookback_candle] == 'upwards'):
                                             unclogger_candles_satisfied += 1
-                                    self.mgm_logger('debug', open_trade_unclogger, 'unclogger_candles_satisfied: ' +
-                                                    str(unclogger_candles_satisfied) + ' for pair: ' + pair)
+                                    self.mgm_logger('debug', open_trade_unclogger,
+                                                    f'unclogger_candles_satisfied: {str(unclogger_candles_satisfied)} '
+                                                    f'for pair: {pair}')
 
                                     # Calculate the percentage of the lookback window currently satisfied
                                     unclogger_candles_percentage_satisfied = \
@@ -1471,15 +1479,36 @@ class MoniGoManiHyperStrategy(IStrategy):
                                             round(
                                                 self.sell___unclogger_trend_lookback_candles_window_percentage_needed.value
                                                 / self.precision):
-                                        self.mgm_logger('info', open_trade_unclogger, 'Unclogging losing trade...')
+                                        self.mgm_logger('info', open_trade_unclogger, f'Unclogging losing trade...')
                                         return -0.00001  # Setting very low since 0% is seen as invalid by Freqtrade
                                     else:
-                                        self.mgm_logger('info', open_trade_unclogger, 'No need to unclog open trade...')
+                                        self.mgm_logger('info', open_trade_unclogger, f'No need to unclog open trade...')
 
             except Exception as e:
                 self.mgm_logger('error', open_trade_unclogger,
-                                'Following error has occurred in the Open Trade Unclogger:')
+                                f'Following error has occurred in the Open Trade Unclogger:')
                 self.mgm_logger('error', open_trade_unclogger, str(e))
+
+        # ==============================================================================================================
+        # patched_stoploss = 'Patched Trailing StopLoss'
+        # if self.trailing_stop:
+        #     if (current_profit > 0) and (self.trailing_stop_positive > 0) \
+        #             and (not self.trailing_only_offset_is_reached):
+        #         self.mgm_logger('debug', patched_stoploss,
+        #                         f'Returning {-self.trailing_stop_positive} in no offset mode')
+        #         return -self.trailing_stop_positive
+        #     elif (current_profit >= self.trailing_stop_positive_offset) and (self.trailing_stop_positive > 0) \
+        #             and self.trailing_only_offset_is_reached:
+        #         self.mgm_logger('debug', patched_stoploss,
+        #                         f'Returning {-self.trailing_stop_positive} in offset mode since {current_profit} >= '
+        #                         f'{self.trailing_stop_positive_offset}')
+        #         return -self.trailing_stop_positive
+        #     else:
+        #         return self.stoploss
+        # else:
+        #     self.mgm_logger('debug', patched_stoploss, f'Returning default stoploss {self.stoploss}')
+        #     return self.stoploss
+        # ==============================================================================================================
 
         return self.stoploss
 
