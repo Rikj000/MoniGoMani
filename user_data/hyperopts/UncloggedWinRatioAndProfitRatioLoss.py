@@ -30,7 +30,7 @@ class UncloggedWinRatioAndProfitRatioLoss(IHyperOptLoss):
         are ignored, as those are considered to be a by-product of the MGM unclogger
         """
 
-        # Percentage of loss to ignore ignore while HyperOpting
+        # Percentage of loss to ignore while HyperOpting
         unclogger_profit_ratio_loss_tolerance = -1/100  # -1%
 
         wins = len(results[results['profit_ratio'] > 0])

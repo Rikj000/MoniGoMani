@@ -62,24 +62,24 @@ Check the [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQ
 
 
 # How to Optimize MoniGoMani:   
-*(These are just my ideas/theories, if you have other ideas, please test them & report your results to [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can learn and improve this flow! Also yes the current process is lengthy but we hope to automate this where possible in further versions)*   
+*(These are just my ideas/theories, if you have other ideas, please test them & report your results to [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can learn and improve this flow! Also yes the current process is lengthy, but we hope to automate this where possible in further versions)*   
    
 0) When you change anything in your `config.json`, `config-private.json` (besides personal info etc) or in `MoniGoManiHyperStrategy` itself you should always re-hyperopt to find the new ideal weights for your setup. This should also be done when the market changes in it's long term direction!   
 1) Do some Technical Analysis on how your stake currency has been behaving in the last months/weeks & pick a logical timeframe to do your hyperopt upon (The timeframe in the go-to commands for example resembles some bullish rise/correction cycles & I believe 2021 will be a bullish year thus I think it's a good timeframe to test upon).   
-2) Setup the [Current Default MoniGoMani Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#current-default-monigomani-overrides) manually with some logical thinking. We do this to disable HyperOpting for some settings inside MGM that don't always get placed logically by HyperOpt. This helps refine the search space during HyperOpting, pushing it more towards where we want it to look. Instructions for how to do this are under [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#hyperopt-setting-overrides)   
+2) Set up the [Current Default MoniGoMani Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#current-default-monigomani-overrides) manually with some logical thinking. We do this to disable HyperOpting for some settings inside MGM that don't always get placed logically by HyperOpt. This helps refine the search space during HyperOpting, pushing it more towards where we want it to look. Instructions for how to do this are under [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#hyperopt-setting-overrides)   
 3) HyperOpt MoniGoManiHyperStrategy for a 1st run with the command provided in the [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#go-to-commands) (Free to alter the command if you have a good idea that you want to test)   
 4) Pick the `epoch` you deem best. The last one is not always the best one & be wary of profit exploitation on the last epochs! You can use `freqtrade hyperopt-show -n <EPOCH HERE>` to print out HyperOpt results found for a certain epoch.   
 5) Apply the HyperOpt results from your 1st run into the HyperOpt Results Copy/Paste Section of `MoniGoManiHyperStrategy.py` (Manually add the settings back in that where overridden in step 2 since they will be excluded from HyperOpts results!)
-6) Further Disable HyperOpting for `buy/sell_downwards/sideways/upwards_trend_signal_weight` settings that scored lower then `10%` in the 1st HyperOpt run and override them manually to `0%` (Indication of weak signal / signal not working well during these trends with your current weight allocation setup.   
+6) Further, Disable HyperOpting for `buy/sell_downwards/sideways/upwards_trend_signal_weight` settings that scored lower then `10%` in the 1st HyperOpt run and override them manually to `0%` (Indication of weak signal / signal not working well during these trends with your current weight allocation setup.   
 Also `10%` was just an idea, feel free to change this) instructions for how to do this are under [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#hyperopt-setting-overrides)   
-7) Further Disable HyperOpting for `buy/sell_downwards/sideways/upwards_trend_signal_weight` settings that scored higher then `90%` in the 1st HyperOpt run and override them manually to `100%` (Indication of strong signal / signal good enough in that trend to act on it's own as a full buy/sell signal.   
+7) Further, Disable HyperOpting for `buy/sell_downwards/sideways/upwards_trend_signal_weight` settings that scored higher then `90%` in the 1st HyperOpt run and override them manually to `100%` (Indication of strong signal / signal good enough in that trend to act on its own as a full buy/sell signal.   
 Also `90%` was just an idea, feel free to change this) instructions for how to do this are under [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#hyperopt-setting-overrides)   
-8) Refine the search spaces for **all** weighted signals in the tables still remaining in the HyperOpt space (aka normal, not overrided). We do this to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run. See [HyperOpt Narrowing Down Search Spaces](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#hyperopt-narrowing-down-search-spaces) for how to do this.   
+8) Refine the search spaces for **all** weighted signals in the tables still remaining in the HyperOpt space (aka normal, not overridden). We do this to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run. See [HyperOpt Narrowing Down Search Spaces](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#hyperopt-narrowing-down-search-spaces) for how to do this.   
 By changing the search space for each signal remaining, from the usual (0 - 100) and setting it's to ±10 the value found for said signal during the 1st HyperOpt run.   
 Example: If for `sell_sideways_trend_bollinger_bands_weight` a weight of `33` was found during the 1st HyperOpt run, then the refined search space would become as following:   
 `sell_sideways_trend_bollinger_bands_weight = IntParameter(23, int(43 * precision), default=0, space='sell', optimize=True, load=True)`   
 *(1000 epochs might be overkill for the 2nd run with refined search spaces, we will have to take notice where new 'best' results stop popping up since it could save us time if for example no results are ever found after epoch 250)*   
-*(Please refine the Open Trade Unclogger's spaces too, but do not bindly follow this step which is meant for the **weighted signal tables**, but refine using values that you deem to make sense)*   
+*(Please refine the Open Trade Unclogger's spaces too, but do not blindly follow this step which is meant for the **weighted signal tables**, but refine using values that you deem to make sense)*   
 9) HyperOpt MoniGoManiHyperStrategy for a 2nd run with the command provided in the [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#go-to-commands). This is needed since we have been altering the "perfectly" calculated setup, thus we have to re-balance the weights in use now. This should not cause overfitting since it's a complete fresh hyperopt run.   
 10) Pick the `epoch` you deem best. The last one is not always the best one & be wary of profit exploitation on the last epochs! You can use `freqtrade hyperopt-show -n <EPOCH HERE>` to print out HyperOpt results found for a certain epoch.  
 11) Copy/Paste your results into the `Total-Overall-Signal-Importance-Calculator.py` & run it's [Go-To Command](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#go-to-commands) but include `-fm` or `--fix-missing` at the end of your command. This is needed to make them whole again since overridden weighted buy/sell_params will be missing from your HyperOpt results. (This command will re-include them with **0** as their value & re-print the fixed copy/paste-able weighted buy/sell_params.   
@@ -105,7 +105,7 @@ buy___trades_when_sideways = \
 Override `sell_downwards_trend_macd_weight` to always be **0**:
 ```python
 sell_downwards_trend_macd_weight = \
-    IntParameter(0, 100, default=0, space='sell', optimize=False, load=False)
+    IntParameter(0, int(100 * precision), default=0, space='sell', optimize=False, load=False)
 ```
 | Function Param | Meaning |
 | --- |--- |
@@ -122,7 +122,7 @@ buy___trades_when_sideways = \
 Normal usage of `sell_downwards_trend_macd_weight` making it hyperoptable:
 ```python
 sell_downwards_trend_macd_weight = \
-    IntParameter(0, 100, default=0, space='sell', optimize=True, load=True)
+    IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
 ```
 | Function Param | Meaning |
 | --- |--- |
@@ -152,7 +152,7 @@ Setting these logically manually is not too hard to do and will narrow down the 
 
 # HyperOpt Narrowing Down Search Spaces:   
 The search spaces used for HyperOptable settings in MoniGoMani can easily be tweaked/fine-tuned to try and improve upon profit being made.   
-It also helps in cutting down the time needed for HyperOpting since less values will be possible. This if applied right it means we are pushing/pointing hyperopt in the right direction before it runs off doing it's crunching.   
+It also helps in cutting down the time needed for HyperOpting since fewer values will be possible. This if applied right it means we are pushing/pointing hyperopt in the right direction before it runs off doing its crunching.   
 
 ### Narrowed Down Space Example:
 Hyperopt Space for `sell___unclogger_minimal_losing_trades_open` narrowed down to only search for an ideal setup between **1 up to 5** losing trades open:
@@ -165,16 +165,16 @@ sell___unclogger_minimal_losing_trades_open = \
 When the Open Trade Unclogger is enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades.   
 This `custom_stoploss` function should be able to work in tandem with `Trailing stoploss`.   
 
-It will only unclog a losing trade when all of following checks have been full-filled (If a check is set to `0` it will be taken out of the equation, thus the unclogger will continue checking further without it):    
+It will only unclog a losing trade when all following checks have been full-filled (If a check is set to `0` it will be taken out of the equation, thus the unclogger will continue checking further without it):    
 - Check if `sell___unclogger_enabled` is `True`, otherwise abort further unclogger logic.
 - Check if everything in custom_storage is up to date with all_open_trades
-- Check if there are enough losing trades open to fullfil `sell___unclogger_minimal_losing_trades_open`
-- Check if there is a losing trade open for the pair currently being ran through the MoniGoMani loop
+- Check if there are enough losing trades open to fulfil `sell___unclogger_minimal_losing_trades_open`
+- Check if there is a losing trade open for the pair currently being run through the MoniGoMani loop
 - Check if trade has been open for `sell___unclogger_minimal_losing_trade_duration_minutes` (long enough to give it a recovery chance)
 - Check if `sell___unclogger_open_trades_losing_percentage_needed` is fulfilled
 - Check if open_trade's trend changed negatively during past `sell___unclogger_trend_lookback_candles_window`:   
 For unclogging to occur `sell___unclogger_trend_lookback_candles_window_percentage_needed` should be fulfilled!   
-The trends used for the calculations in this check can be configured with `sell___unclogger_trend_lookback_window_uses_downwards/sideways/upwards_candles=True/False` (Recommended to set these last 3 true/false values manually using [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#hyperopt-setting-overrides)).   
+The trends used for the calculations in this check can be configured with `sell___unclogger_trend_lookback_window_uses_downwards/sideways/upwards_candles=True/False` (Its recommended setting these last 3 true/false values manually using [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#hyperopt-setting-overrides)).   
 Each candle fulfilling a trend set to `True` will be added in the sum used to calculate the value for `sell___unclogger_trend_lookback_candles_window_percentage_needed` if it is found in the lookback window.   
 
 
@@ -184,7 +184,7 @@ Only used when `use_custom_stoploss` & `sell_params['sell___unclogger_enabled']`
 # Total Overall Signal Importance Calculator:
 Paste the `buy_params` & `sell_params` results from your HyperOpt over in the `/user_data/Total-Overall-Signal-Importance-Calculator.py` file.   
 Then execute: `python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc BTC` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
-The higher the score of a signal the better! And now it will also export to a `importance.log` file in the same folder for easy sharing!   
+The higher the score of a signal the better! Now it will also export to a `importance.log` file in the same folder for easy sharing!   
 Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can improve the signals!   
 
 ### Handy Calculator Sub Commands:
@@ -206,9 +206,9 @@ With this more realistic results should be found during backtesting/hyperopting.
 
 For more information on why this is needed please read [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)! 
 
-**<span style="color:darkorange">WARNING:</span> Remove the `timeframe` line from your `config-btc.json` if it would still be there! Otherwise TimeFrame-Zoom won't work properly in the current version!**   
+**<span style="color:darkorange">WARNING:</span> Remove the `timeframe` line from your `config-btc.json` if it would still be there! Otherwise, TimeFrame-Zoom won't work properly in the current version!**   
 **<span style="color:darkorange">WARNING:</span> Candle data for both `timeframe` as `backtest_timeframe` will have to be downloaded before you will be able to backtest/hyperopt! (Since both will be used)**   
-**<span style="color:darkorange">WARNING:</span> This will be slower than backtesting at 1h and 1m is a CPU killer. But if you plan on using trailing stoploss or ROI, you probably want to know that your backtest results are not complete lies.**   
+**<span style="color:darkorange">WARNING:</span> This will be slower than backtesting at 1h and 1m is a CPU killer. If you plan on using trailing stoploss or ROI, you probably want to know that your backtest results are not complete lies.**   
 **<span style="color:darkorange">WARNING:</span> To disable TimeFrame-Zoom just use the same candles for `timeframe` & `backtest_timeframe`**   
 
 ### TimeFrame-Zoom Examples:
@@ -235,13 +235,13 @@ To disable `precision` / for old the work mode **just** use **1**.
 
 
 # PairLists:
-By default MoniGoMani includes 2 pairlists in `config-btc.json`:   
+By default, MoniGoMani includes 2 pairlists in `config-btc.json`:   
 - A VolumePairList: 
   - Best to use for Dry and Live Running
   - Will automatically update to the current best top volume coin pairs available
 - A StaticPairList: 
   - Used for BackTesting / HyperOpting since a VolumePairList cannot be used here.
-  - When [optimizing](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) MoniGoMani for actual dry/live-running (instead of testing) it's truly recommended to [download a fresh top volume StaticPairList](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#download-staticpairlists) and HyperOpt upon that (Preferably as big as possible, but beware for the warning below)!   
+  - When [optimizing](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#how-to-optimize-monigomani) MoniGoMani for actual dry/live-running (instead of testing) it's truly recommended to [download a fresh top volume StaticPairList](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md#download-staticpairlists) and HyperOpt upon that (Preferably as big as possible, but beware of the warning below)!   
   This should yield much better & more realistic results during HyperOpting/BackTesting!   
   This is due to giving a better reflection of the current market and being closer to the VolumePairList used during dry/live-run's.
 
@@ -258,11 +258,17 @@ Switching between the PairList in use can easily be done by moving the `_` in fr
     {
         "method": "VolumePairList",
 ```
-# MGM hyperloss functions for HyperOpt:
-MoniGoMani comes with an extra set of loss functions for hyperoptimizing, supplementing the ones shipped with FreqTrade.
-You can find these functions in user_data/hyperopts, and can use them by overriding the freqtrade hyperopt parameter 'hyperopt-loss', e.g.:
+# Custom HyperLoss Functions:
+MoniGoMani comes with an extra set of loss functions for HyperOpting, supplementing the ones shipped with FreqTrade.
+You can find these functions in `M̀oniGoMani/user_data/hyperopts/`, and can use them by overriding the freqtrade hyperopt parameter `--hyperopt-loss`.   
+   
+Following 2 Custom HyperLoss Functions ship with the MoniGoMani Framework:
+- [**WinRatioAndProfitRatioLoss**](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/hyperopts/WinRatioAndProfitRatioLoss.py): Attempts to optimise for the best profit **and** stability (Returns smaller number for better results)   
+- [**UncloggedWinRatioAndProfitRatioLoss**](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/hyperopts/UncloggedWinRatioAndProfitRatioLoss.py): Same as WinRatioAndProfitRatioLoss but has a configurable Percentage of loss to ignore while HyperOpting (Small losses are a by-product of the Unclogger)
+   
+**Example Usage:**
 ```powershell
- --hyperopt-loss TimewatchedWinRatioAndProfitLoss
+--hyperopt-loss WinRatioAndProfitRatioLoss
 ```
 
 ### Download StaticPairLists   
@@ -286,7 +292,7 @@ freqtrade download-data --exchange binance -c ./user_data/config-btc.json -c ./u
 # Go-To Commands:
 For Hyper Opting *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py))*:
 ```powershell
-freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all -s MoniGoManiHyperStrategy -e 1000 --timerange 20210101-20210316
+freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -s MoniGoManiHyperStrategy -e 1000 --timerange 20210101-20210316
 ```
 For Back Testing *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) or legacy [MoniGoManiHyperOpted.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoManiHyperOpted.py) or legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py))*:
 ```powershell
@@ -305,16 +311,16 @@ freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-Sta
 
 For Hyper Opting *(the legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py) + legacy [MoniGoManiHyperOpt.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/hyperopts/MoniGoManiHyperOpt.py). Please use the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) instead though since support for Legacy versions stopped!)*:
 ```powershell
-freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss SortinoHyperOptLossDaily --spaces all --hyperopt MoniGoManiHyperOpt -s MoniGoMani -e 1000 --timerange 20210101-20210316
+freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all --hyperopt MoniGoManiHyperOpt -s MoniGoMani -e 1000 --timerange 20210101-20210316
 ```
 
 # How to share your test results properly:
-Easiest way to share how your MGM setup has been doing would be by posting a screenshot in the [Discord Server](https://discord.gg/xFZ9bB6vEz) with the output of the `/status table` and `/profit` commands (Using the Telegram connection of the bot).   
+The easiest way to share how your MGM setup has been doing would be by posting a screenshot in the [Discord Server](https://discord.gg/xFZ9bB6vEz) with the output of the `/status table` and `/profit` commands (Using the Telegram connection of the bot).   
    
-Also one of the other most welcome things is the results from the `Total-Overall-Signal-Importance-Calculator`, but you'll have to paste your own fresh hyperopt results in it first before it can make you a nice report that can help us find better signals for MGM !:rocket:   
+Also, one of the other most welcome things is the results from the `Total-Overall-Signal-Importance-Calculator`, but you'll have to paste your own fresh hyperopt results in it first before it can make you a nice report that can help us find better signals for MGM !:rocket:   
 
 Of course all FreqUI / Telegram / config / HyperOpt results done on MGM **can be** useful / be learned from!
-But try to **always include** a  `Total-Overall-Signal-Importance-Calculator` report or just your own MoniGoMani file with your hyperopt results applied to it!   
+Try to **always include** a  `Total-Overall-Signal-Importance-Calculator` report or just your own MoniGoMani file with your hyperopt results applied to it!   
 Since without knowing which signal weights or which on/off settings are applied we can't really truly learn much from your results!   
 
 The epoch table being generated when hyperopting + the number of the epoch you used is also very helpful, so we can easily rule out if your test results are exploited. (See [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)!)   

@@ -9,3 +9,5 @@ Legacy MoniGoMani/user_data/strategies/__pycache__/
 workspace.code-workspace
 # Ignore JetBrains .idea Folder
 .idea/
+# Ignore Logo Folder
+Logo/
