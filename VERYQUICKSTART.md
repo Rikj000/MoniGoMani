@@ -234,6 +234,20 @@ To disable `precision` / for old the work mode **just** use **1**.
 | **5**   | **1/5** or **0.2** (0, 0.2, 0.4, 0.8, ...) |
 
 
+# Custom HyperLoss Functions:
+MoniGoMani comes with an extra set of loss functions for HyperOpting, supplementing the ones shipped with FreqTrade.
+You can find these functions in `M̀oniGoMani/user_data/hyperopts/`, and can use them by overriding the freqtrade hyperopt parameter `--hyperopt-loss`.   
+   
+Following 2 Custom HyperLoss Functions ship with the MoniGoMani Framework:
+- [**WinRatioAndProfitRatioLoss**](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/hyperopts/WinRatioAndProfitRatioLoss.py): Attempts to optimise for the best profit **and** stability (Returns smaller number for better results)   
+- [**UncloggedWinRatioAndProfitRatioLoss**](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/hyperopts/UncloggedWinRatioAndProfitRatioLoss.py): Same as WinRatioAndProfitRatioLoss but has a configurable Percentage of loss to ignore while HyperOpting (Small losses are a by-product of the Unclogger)
+   
+**Example Usage:**
+```powershell
+--hyperopt-loss WinRatioAndProfitRatioLoss
+```
+
+
 # PairLists:
 By default, MoniGoMani includes 2 pairlists in `config-btc.json`:   
 - A VolumePairList: 
@@ -257,18 +271,6 @@ Switching between the PairList in use can easily be done by moving the `_` in fr
 "_pairlists": [
     {
         "method": "VolumePairList",
-```
-# Custom HyperLoss Functions:
-MoniGoMani comes with an extra set of loss functions for HyperOpting, supplementing the ones shipped with FreqTrade.
-You can find these functions in `M̀oniGoMani/user_data/hyperopts/`, and can use them by overriding the freqtrade hyperopt parameter `--hyperopt-loss`.   
-   
-Following 2 Custom HyperLoss Functions ship with the MoniGoMani Framework:
-- [**WinRatioAndProfitRatioLoss**](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/hyperopts/WinRatioAndProfitRatioLoss.py): Attempts to optimise for the best profit **and** stability (Returns smaller number for better results)   
-- [**UncloggedWinRatioAndProfitRatioLoss**](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/hyperopts/UncloggedWinRatioAndProfitRatioLoss.py): Same as WinRatioAndProfitRatioLoss but has a configurable Percentage of loss to ignore while HyperOpting (Small losses are a by-product of the Unclogger)
-   
-**Example Usage:**
-```powershell
---hyperopt-loss WinRatioAndProfitRatioLoss
 ```
 
 ### Download StaticPairLists   
