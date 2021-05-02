@@ -26,16 +26,18 @@ class UncloggedWinRatioAndProfitRatioLoss(IHyperOptLoss):
         This might prove to be more reliable for dry and live runs of FreqTrade
         and prevent over-fitting on best profit only
 
-        PLEASE NOTE: trades with losses between 0% to 1% (UNCLOGGER_PROFIT_RATIO_LOSS_TOLERANCE) 
-        are ignored, as those are considered to be a by-product of the MGM un-clogger
+        PLEASE NOTE: trades with losses between 0% to 1% (unclogger_profit_ratio_loss_tolerance)
+        are ignored, as those are considered to be a by-product of the MGM unclogger
         """
 
-        UNCLOGGER_PROFIT_RATIO_LOSS_TOLERANCE = -1/100 # -1%
+        # Percentage of loss to ignore ignore while HyperOpting
+        unclogger_profit_ratio_loss_tolerance = -1/100  # -1%
 
         wins = len(results[results['profit_ratio'] > 0])
         draws = len(results[results['profit_ratio'] == 0])
-        losts_excluding_unclogger_ones = len(results[results['profit_ratio'] < UNCLOGGER_PROFIT_RATIO_LOSS_TOLERANCE])
+        losing_trades_excluding_unclogger_ones = \
+            len(results[results['profit_ratio'] < unclogger_profit_ratio_loss_tolerance])
         avg_profit = results['profit_ratio'].sum() * 100.0
 
-        win_ratio = wins / (draws + losts_excluding_unclogger_ones)
+        win_ratio = wins / (draws + losing_trades_excluding_unclogger_ones)
         return -avg_profit * win_ratio * 100
