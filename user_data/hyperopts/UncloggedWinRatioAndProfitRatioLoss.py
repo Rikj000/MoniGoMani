@@ -39,5 +39,6 @@ class UncloggedWinRatioAndProfitRatioLoss(IHyperOptLoss):
             len(results[results['profit_ratio'] < unclogger_profit_ratio_loss_tolerance])
         avg_profit = results['profit_ratio'].sum() * 100.0
 
-        win_ratio = wins / (draws + losing_trades_excluding_unclogger_ones)
+        denominator = draws + losing_trades_excluding_unclogger_ones
+        win_ratio = wins / denominator if denominator != 0 else 0
         return -avg_profit * win_ratio * 100
