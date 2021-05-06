@@ -177,7 +177,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Create dictionary to store custom information MoniGoMani will be using in RAM
     custom_info = {
         'open_trades': {},
-        # 'trend_indicator': {}
+        'trend_indicator': {}
     }
 
     # MoniGoMani uses the "custom_stoploss()" function only to be able to store all custom_info about "open_trades" that
@@ -538,7 +538,7 @@ class MoniGoManiHyperStrategy(IStrategy):
             self.is_dry_live_run_detected = False
 
             self.timeframe = self.backtest_timeframe
-            self.mgm_logger('info', 'TimeFrame-Zoom', f'Auto updating timeframe to: {self.timeframe}')
+            self.mgm_logger('info', 'TimeFrame-Zoom', f'Auto updating to zoomed "backtest_timeframe": {self.timeframe}')
         else:
             self.mgm_logger('info', initialization, f'Current run mode detected as: Dry/Live-Run. '
                                                     f'Auto updating is_dry_live_run_detected to: True')
@@ -698,7 +698,6 @@ class MoniGoManiHyperStrategy(IStrategy):
         # Store the trend indicator mapped to the correct date-times for all pairs in pair_list jf needed,
         # stored in custom information storage to maintain backtest/hyperopt-ability while using the sell unclogger
         # ToDo: Remove once sure that "custom_sell()" unclogger is completely working correctly
-        """
         if self.sell___unclogger_enabled.value and (self.is_dry_live_run_detected is False):
             self.mgm_logger('info', 'Custom Information Storage', f'Storing whole "trend" indicator for '
                                                                   f'pair ({metadata["pair"]}) in custom_info')
@@ -707,7 +706,6 @@ class MoniGoManiHyperStrategy(IStrategy):
                 self.custom_info['trend_indicator'][metadata['pair']] = {}
             self.custom_info['trend_indicator'][metadata['pair']] = \
                 dataframe[['date', 'trend']].dropna().copy().set_index('date')
-        """
 
         return dataframe
 
@@ -1472,18 +1470,19 @@ class MoniGoManiHyperStrategy(IStrategy):
                                             elif self.informative_timeframe.find('M') != -1:
                                                 candle_time = current_time - \
                                                               timedelta64(int(1 * candle_multiplier), 'M')
-
-                                            try:
-                                                stored_trend_dataframe[candle] = \
-                                                    dataframe.loc[dataframe['date'] == candle_time, 'trend'].iloc[0]
-                                            except IndexError as e:
-                                                self.mgm_logger('warning', open_trade_unclogger,
-                                                                f'Following error has occurred w the trend data:')
-                                                self.mgm_logger('warning', open_trade_unclogger, str(e))
-                                                self.mgm_logger('debug', open_trade_unclogger,
-                                                                f'No unclogging needed! '
-                                                                f'Not enough trend data stored yet!')
-                                                return None  # By default we don't want a force sell to occur
+                                            stored_trend_dataframe[candle] = \
+                                                self.custom_info['trend_indicator'][pair].loc[candle_time]['trend']
+                                            # try:
+                                            #     stored_trend_dataframe[candle] = \
+                                            #         dataframe.loc[dataframe['date'] == candle_time, 'trend'].iloc[0]
+                                            # except IndexError as e:
+                                            #     self.mgm_logger('warning', open_trade_unclogger,
+                                            #                     f'Following error has occurred w the trend data:')
+                                            #     self.mgm_logger('warning', open_trade_unclogger, str(e))
+                                            #     self.mgm_logger('debug', open_trade_unclogger,
+                                            #                     f'No unclogging needed! '
+                                            #                     f'Not enough trend data stored yet!')
+                                            #     return None  # By default we don't want a force sell to occur
 
                                     if len(stored_trend_dataframe) < \
                                             round(self.sell___unclogger_trend_lookback_candles_window.value /
