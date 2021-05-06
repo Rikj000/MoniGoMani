@@ -9,8 +9,8 @@ import sys
 
 class TotalOverallSignalImportanceCalculator:
     """
-    Total Overall Signal Importance Calculator for MoniGoMani v0.9.1
-    ----------------------------------------------------------------
+    Total Overall Signal Importance Calculator for MoniGoMani v0.10.0
+    -----------------------------------------------------------------
     Paste the results from your HyperOpt over below `buy_params` & `sell_params` arrays
     Then execute: `python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc BTC` from your favorite
     terminal / CLI to calculate the overall importance of the signals being used.

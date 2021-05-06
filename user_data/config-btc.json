@@ -64,7 +64,7 @@
         "max_trade_duration_minute": 1440,
         "remove_pumps": false
     },
-    "bot_name": "Freqtrade - MoniGoMani v0.9.1",
+    "bot_name": "Freqtrade - MoniGoMani v0.10.0",
     "initial_state": "running",
     "forcebuy_enable": false,
     "internals": {

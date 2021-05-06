@@ -1,4 +1,4 @@
-# **Current `MoniGoMani` status @ `v0.9.1`**   
+# **Current `MoniGoMani` status @ `v0.10.0`**   
       
 <p align="left">
     <a href="https://discord.gg/xFZ9bB6vEz">
@@ -24,8 +24,8 @@
 ```
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.9.1 by Rikj000                         ###
-    ##                          ----------------------------                          ##
+    ###                         MoniGoMani v0.10.0 by Rikj000                        ###
+    ##                          -----------------------------                         ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
     ##       By giving you/HyperOpt a lot of signals to alter the weight from         ##
@@ -135,12 +135,16 @@ Please use the `Total-Overall-Signal-Importance-Calculator.py` to find out which
 View the Legacy [ChangeLog](https://github.com/Rikj000/MoniGoMani/blob/main/CHANGELOG.md), newer changelogs are appended with each [Release](https://github.com/Rikj000/MoniGoMani/releases/)
 
 ## **Got Test Results / Ideas / Config Improvements?**
-- Feel free to join [**CryptoStonksShallRise**](https://discord.gg/xFZ9bB6vEz) on Discord there you can follow/participate in the Official MoniGoMani Channels:
+- Feel free to join our community [**CryptoStonksShallRise**](https://discord.gg/xFZ9bB6vEz) on Discord, there you can follow/participate in the **Official MoniGoMani Channels**:
+  - `#moni-go-mani-announcements` *(Private for now, will go public real soon!)*
+  - `#moni-go-mani-development` *(Only available to MoniGoMani Developers!)*
   - `#moni-go-mani-updates`
   - `#moni-go-mani-testing`
-  - `#moni-go-mani-help` (Be sure to take your time to read the [Documentation](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md) thoroughly before asking questions though!)
-  - `#moni-go-mani-cluster-releases`
+  - `#moni-go-mani-help` *(Be sure to take your time to read the [Documentation](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md) thoroughly before asking questions though!)*
+  - `#moni-go-mani-cluster-releases` *(Only available to the MoniGoMani Cluster Maintainer & MoniGoMani Developers, for now!)*
   - `#moni-go-mani-setup-releases`
+   
+More general chats for `Technical Analysis`, `Freqtrade`, `Iconomi` and `Random` discussion are also available there :slight_smile:   
 
 ## Need help getting started?
 [View the VeryQuickStart](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART.md), the current place where you can find all MoniGoMani Documentation!   
