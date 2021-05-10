@@ -72,7 +72,11 @@
             ".*/BNB",
             "BNB/.*",
             ".*_PREMIUM",
-            ".*PERP"
+            ".*PERP",
+            ".*BULL/.*",
+            ".*BEAR/.*",
+            ".*BULL2021/.*",
+            ".*BEAR2021/.*"
         ]
     },
     "telegram": {
