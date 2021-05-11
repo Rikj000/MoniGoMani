@@ -24,7 +24,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.9.1 by Rikj000                         ###
+    ###                         MoniGoMani v0.9.2 by Rikj000                         ###
     ##                          ----------------------------                          ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -174,6 +174,8 @@ class MoniGoManiHyperStrategy(IStrategy):
     ####################################################################################################################
     #                                     END OF HYPEROPT RESULTS COPY-PASTE SECTION                                   #
     ####################################################################################################################
+    # ToDo: Implement Continuous ROI Table idea from AdenBurns
+    #  https://discord.com/channels/@me/836084263102447636/838183765565374495
 
     # Create dictionary to store custom information MoniGoMani will be using in RAM
     custom_info = {
@@ -314,6 +316,8 @@ class MoniGoManiHyperStrategy(IStrategy):
     # -------------------
 
     # Total Buy Signal Percentage needed for a signal to be positive
+    # ToDo: Take total number of signals into the equation
+    #  https://discord.com/channels/@me/836084263102447636/838125417415311360
     buy__downwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy',
                                                             optimize=True, load=True)
 
@@ -499,7 +503,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     sell___unclogger_enabled = \
         CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
     sell___unclogger_minimal_losing_trade_duration_minutes = \
-    IntParameter(15, int(60 * precision), default=15, space='sell', optimize=True, load=True)
+        IntParameter(15, int(60 * precision), default=15, space='sell', optimize=True, load=True)
     sell___unclogger_minimal_losing_trades_open = \
         IntParameter(1, int(5 * precision), default=1, space='sell', optimize=True, load=True)
     sell___unclogger_open_trades_losing_percentage_needed = \
@@ -1174,7 +1178,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         return dataframe
 
     def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
-                        current_rate: float, current_profit: float, **kwargs) -> float:
+                        current_rate: float, current_profit: float, dataframe: DataFrame, **kwargs) -> float:
         """
         Open Trade Unclogger:
         ---------------------
@@ -1197,6 +1201,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         :param current_time: datetime object, containing the current datetime
         :param current_rate: Rate, calculated based on pricing settings in ask_strategy.
         :param current_profit: Current profit (as ratio), calculated based on current_rate.
+         :param dataframe: Dataframe with data from the exchange
         :param **kwargs: Ensure to keep this here so updates to this won't break MoniGoMani.
         :return float: New stoploss value, relative to the current-rate
         """
@@ -1225,15 +1230,13 @@ class MoniGoManiHyperStrategy(IStrategy):
                 self.mgm_logger('debug', custom_information_storage,
                                 f'all_open_trades contents: {repr(all_open_trades)}')
 
-                # Store current pair's open_trade + it's current profit & open_date in custom_info
+                # Store current pair's open_trade + it's current profit in custom_info
                 for open_trade in all_open_trades:
                     if str(open_trade.pair) == str(pair):
                         if str(open_trade.pair) not in self.custom_info['open_trades']:
                             self.custom_info['open_trades'][str(open_trade.pair)] = {}
                         self.custom_info['open_trades'][str(open_trade.pair)]['trade'] = str(open_trade)
                         self.custom_info['open_trades'][str(open_trade.pair)]['current_profit'] = current_profit
-                        # self.custom_info['open_trades'][str(open_trade.pair)]['open_date'] = trade.open_date
-                        # ToDo: ^ BugFix/Improve or remove (old trend_indicator garbage)
                         self.mgm_logger('info', custom_information_storage,
                                         f'Storing trade + current profit/loss + open date for pair ({str(pair)}) '
                                         f'in custom_info')
@@ -1269,32 +1272,13 @@ class MoniGoManiHyperStrategy(IStrategy):
                                                 f'from custom_info!')
                                 break
 
-                    # ToDo: BugFix/Improve or remove (Warning: outdated code by now)
-                    # Check if any old trend_indicator garbage needs to be removed
-                    # if self.is_live_or_dry_run is False:
-
-                    #    oldest_date = datetime.utcnow().replace(tzinfo=None)
-                    #    for open_trade_pair in self.custom_info['open_trades']:
-                    #        if self.custom_info['open_trades'][open_trade_pair]['open_date'].replace(tzinfo=None) < \
-                    #                oldest_date:
-                    #            oldest_date = self.custom_info['open_trades'][open_trade_pair][
-                    #                'open_date'].replace(tzinfo=None)
-
-                    #    for trend_indicator_pair in self.custom_info['trend_indicator']:
-                    #        self.custom_info['trend_indicator'][trend_indicator_pair] = \
-                    #            self.custom_info['trend_indicator'][trend_indicator_pair][
-                    #                self.custom_info['trend_indicator'][trend_indicator_pair].index.tz_convert(None)
-                    #                > (oldest_date.replace(tzinfo=None) -
-                    #                timedelta(hours=(self.sell___unclogger_trend_lookback_candles_window.value /
-                    #                self.precision))]
-
                 # Check if everything in custom_storage is up to date with all_open_trades
                 elif len(all_open_trades) > len(self.custom_info['open_trades']):
                     self.mgm_logger('warning', custom_information_storage,
                                     f'Open trades ({str(len(self.custom_info["open_trades"]))}) in custom_storage do '
                                     f'not match yet with trades in live open trades ({str(len(all_open_trades))}) '
                                     f'aborting unclogger for now!')
-                    return self.stoploss
+                    return -1  # By default we don't want a force sell to occur & just use the normal (trailing)stoploss
 
                 # Print all stored open trade info in custom_storage
                 self.mgm_logger('debug', custom_information_storage,
@@ -1481,32 +1465,8 @@ class MoniGoManiHyperStrategy(IStrategy):
                                 f'Following error has occurred in the Open Trade Unclogger:')
                 self.mgm_logger('error', open_trade_unclogger, str(e))
 
-        """
-        # ==============================================================================================================
-        # Unsure if this is needed, Freqtrade bot-loop-execution docs unclear on the matter
-        # ==============================================================================================================
-        patched_stoploss = 'Patched Trailing StopLoss'
-        if self.trailing_stop:
-            if (current_profit > 0) and (self.trailing_stop_positive > 0) \
-                    and (not self.trailing_only_offset_is_reached):
-                self.mgm_logger('debug', patched_stoploss,
-                                f'Returning {-self.trailing_stop_positive} in no offset mode')
-                return -self.trailing_stop_positive
-            elif (current_profit >= self.trailing_stop_positive_offset) and (self.trailing_stop_positive > 0) \
-                    and self.trailing_only_offset_is_reached:
-                self.mgm_logger('debug', patched_stoploss,
-                                f'Returning {-self.trailing_stop_positive} in offset mode since {current_profit} >= '
-                                f'{self.trailing_stop_positive_offset}')
-                return -self.trailing_stop_positive
-            else:
-                return self.stoploss
-        else:
-            self.mgm_logger('debug', patched_stoploss, f'Returning default stoploss {self.stoploss}')
-            return self.stoploss
-        # ==============================================================================================================
-        """
-
-        return self.stoploss
+        # return self.stoploss <= This is not how we keep trailing/stoploss working normally ...
+        return -1  # By default we don't want a force sell to occur & just use the normal (trailing)stoploss
 
     def mgm_logger(self, message_type: str, code_section: str, message: str):
         """
