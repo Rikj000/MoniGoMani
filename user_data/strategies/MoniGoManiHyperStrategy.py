@@ -1,4 +1,6 @@
 # --- Do not remove these libs ----------------------------------------------------------------------
+from scipy.interpolate import interp1d
+
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 import logging
 import numpy as np  # noqa
@@ -174,8 +176,6 @@ class MoniGoManiHyperStrategy(IStrategy):
     ####################################################################################################################
     #                                     END OF HYPEROPT RESULTS COPY-PASTE SECTION                                   #
     ####################################################################################################################
-    # ToDo: Implement Continuous ROI Table idea from AdenBurns
-    #  https://discord.com/channels/@me/836084263102447636/838183765565374495
 
     # Create dictionary to store custom information MoniGoMani will be using in RAM
     custom_info = {
@@ -187,7 +187,7 @@ class MoniGoManiHyperStrategy(IStrategy):
     # changed & used at runtime)
     is_dry_live_run_detected = True
 
-    # TimeFrame-Zoom
+    # TimeFrame-Zoom:
     # To prevent profit exploitation during backtesting/hyperopting we backtest/hyperopt MoniGoMani which would normally
     # use a 'timeframe' (1h candles) using a smaller 'backtest_timeframe' (5m candles) instead.
     # This happens while still using an 'informative_timeframe' (original 1h candles) to generate the buy/sell signals.
@@ -224,12 +224,23 @@ class MoniGoManiHyperStrategy(IStrategy):
     # SMA200 needs 200 candles before producing valid signals
     # EMA200 needs an extra 200 candles of SMA200 before producing valid signals
 
-    # Precision
+    # Precision:
     # This value can be used to control the precision of hyperopting.
     # A value of 1/5 will effectively set the step size to be 5 (0, 5, 10 ...)
     # A value of 5 will set the step size to be 1/5=0.2 (0, 0.2, 0.4, 0.8, ...)
     # A smaller value will limit the search space a lot, but may skip over good values.
     precision = 1
+
+    # Number of weighted signals:
+    # Fill in the total number of different weighted signals in use in the weighted tables
+    # 'buy/sell__downwards/sideways/upwards_trend_total_signal_needed' settings will be multiplied with this value
+    # so their search spaces will be larger, resulting in more equally divided weighted signal scores when hyperopting
+    number_of_weighted_signals = 9
+
+    # ROI Table StepSize:
+    # Size of the steps in minutes to be used when calculating the long continuous ROI table
+    # We generate a really long table so it will have less gaps in it and be more continuous in it's decrease
+    roi_table_step_size = 5
 
     # Optional order type mapping.
     order_types = {
@@ -316,10 +327,8 @@ class MoniGoManiHyperStrategy(IStrategy):
     # -------------------
 
     # Total Buy Signal Percentage needed for a signal to be positive
-    # ToDo: Take total number of signals into the equation
-    #  https://discord.com/channels/@me/836084263102447636/838125417415311360
-    buy__downwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy',
-                                                            optimize=True, load=True)
+    buy__downwards_trend_total_signal_needed = IntParameter(30, int(100 * precision * number_of_weighted_signals),
+                                                            default=30, space='buy', optimize=True, load=True)
 
     # Buy Signal Weight Influence Table
     buy_downwards_trend_adx_strong_up_weight = \
@@ -345,8 +354,8 @@ class MoniGoManiHyperStrategy(IStrategy):
     # ------------------
 
     # Total Buy Signal Percentage needed for a signal to be positive
-    buy__sideways_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy',
-                                                           optimize=True, load=True)
+    buy__sideways_trend_total_signal_needed = IntParameter(30, int(100 * precision * number_of_weighted_signals),
+                                                           default=30, space='buy', optimize=True, load=True)
 
     # Buy Signal Weight Influence Table
     buy_sideways_trend_adx_strong_up_weight = \
@@ -372,8 +381,8 @@ class MoniGoManiHyperStrategy(IStrategy):
     # -----------------
 
     # Total Buy Signal Percentage needed for a signal to be positive
-    buy__upwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='buy',
-                                                          optimize=True, load=True)
+    buy__upwards_trend_total_signal_needed = IntParameter(30, int(100 * precision * number_of_weighted_signals),
+                                                          default=30, space='buy', optimize=True, load=True)
 
     # Buy Signal Weight Influence Table
     buy_upwards_trend_adx_strong_up_weight = \
@@ -419,8 +428,8 @@ class MoniGoManiHyperStrategy(IStrategy):
     # --------------------
 
     # Total Sell Signal Percentage needed for a signal to be positive
-    sell__downwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='sell',
-                                                             optimize=True, load=True)
+    sell__downwards_trend_total_signal_needed = IntParameter(30, int(100 * precision * number_of_weighted_signals),
+                                                             default=30, space='sell', optimize=True, load=True)
 
     # Sell Signal Weight Influence Table
     sell_downwards_trend_adx_strong_down_weight = \
@@ -446,8 +455,8 @@ class MoniGoManiHyperStrategy(IStrategy):
     # -------------------
 
     # Total Sell Signal Percentage needed for a signal to be positive
-    sell__sideways_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='sell',
-                                                            optimize=True, load=True)
+    sell__sideways_trend_total_signal_needed = IntParameter(30, int(100 * precision * number_of_weighted_signals),
+                                                            default=30, space='sell', optimize=True, load=True)
 
     # Sell Signal Weight Influence Table
     sell_sideways_trend_adx_strong_down_weight = \
@@ -473,8 +482,8 @@ class MoniGoManiHyperStrategy(IStrategy):
     # ------------------
 
     # Total Sell Signal Percentage needed for a signal to be positive
-    sell__upwards_trend_total_signal_needed = IntParameter(0, int(100 * precision), default=65, space='sell',
-                                                           optimize=True, load=True)
+    sell__upwards_trend_total_signal_needed = IntParameter(30, int(100 * precision * number_of_weighted_signals),
+                                                           default=30, space='sell', optimize=True, load=True)
 
     # Sell Signal Weight Influence Table
     sell_upwards_trend_adx_strong_down_weight = \
@@ -509,15 +518,36 @@ class MoniGoManiHyperStrategy(IStrategy):
     sell___unclogger_open_trades_losing_percentage_needed = \
         IntParameter(1, int(100 * precision), default=1, space='sell', optimize=True, load=True)
     sell___unclogger_trend_lookback_candles_window = \
-        IntParameter(10, int(100 * precision), default=10, space='sell', optimize=True, load=True)
+        IntParameter(10, int(60 * precision), default=10, space='sell', optimize=True, load=True)
     sell___unclogger_trend_lookback_candles_window_percentage_needed = \
-        IntParameter(10, int(100 * precision), default=10, space='sell', optimize=True, load=True)
+        IntParameter(10, int(40 * precision), default=10, space='sell', optimize=True, load=True)
     sell___unclogger_trend_lookback_window_uses_downwards_candles = \
         CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
     sell___unclogger_trend_lookback_window_uses_sideways_candles = \
         CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
     sell___unclogger_trend_lookback_window_uses_upwards_candles = \
         CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
+
+    class HyperOpt:
+        # Generate a long continuous ROI-table with less gaps in it
+        def generate_roi_table(params):
+            step = MoniGoManiHyperStrategy.roi_table_step_size
+            minimal_roi = {0: params['roi_p1'] + params['roi_p2'] + params['roi_p3'],
+                           params['roi_t3']: params['roi_p1'] + params['roi_p2'],
+                           params['roi_t3'] + params['roi_t2']: params['roi_p1'],
+                           params['roi_t3'] + params['roi_t2'] + params['roi_t1']: 0}
+
+            max_value = max(map(int, minimal_roi.keys()))
+            f = interp1d(
+                list(map(int, minimal_roi.keys())),
+                list(minimal_roi.values())
+            )
+            x = list(range(0, max_value, step))
+            y = list(map(float, map(f, x)))
+            if y[-1] != 0:
+                x.append(x[-1] + step)
+                y.append(0)
+            return dict(zip(x, y))
 
     def __init__(self, *args, **kwargs):
         """
@@ -1178,7 +1208,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         return dataframe
 
     def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
-                        current_rate: float, current_profit: float, dataframe: DataFrame, **kwargs) -> float:
+                        current_rate: float, current_profit: float, **kwargs) -> float:
         """
         Open Trade Unclogger:
         ---------------------
@@ -1201,7 +1231,6 @@ class MoniGoManiHyperStrategy(IStrategy):
         :param current_time: datetime object, containing the current datetime
         :param current_rate: Rate, calculated based on pricing settings in ask_strategy.
         :param current_profit: Current profit (as ratio), calculated based on current_rate.
-         :param dataframe: Dataframe with data from the exchange
         :param **kwargs: Ensure to keep this here so updates to this won't break MoniGoMani.
         :return float: New stoploss value, relative to the current-rate
         """
