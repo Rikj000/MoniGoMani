@@ -718,9 +718,9 @@ class MoniGoManiHyperStrategy(IStrategy):
         # ---------------
 
         # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
-        dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
-        dataframe.loc[dataframe['adx'] < 20, 'trend'] = 'sideways'
-        dataframe.loc[(dataframe['adx'] > 20) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
+        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
+        dataframe.loc[dataframe['adx'] < 22, 'trend'] = 'sideways'
+        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
 
         # Trend Indicator Custom Information Storage
         # -------------------------------------
