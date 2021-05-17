@@ -24,84 +24,91 @@ class TotalOverallSignalImportanceCalculator:
 
     # Buy hyperspace params:
     buy_params = {
-        'buy___trades_when_downwards': True,
-        'buy___trades_when_sideways': False,
-        'buy___trades_when_upwards': True,
-        'buy__downwards_trend_total_signal_needed': 25,
-        'buy__sideways_trend_total_signal_needed': 73,
-        'buy__upwards_trend_total_signal_needed': 58,
-        'buy_downwards_trend_adx_strong_up_weight': 51,
-        'buy_downwards_trend_bollinger_bands_weight': 60,
-        'buy_downwards_trend_ema_long_golden_cross_weight': 48,
-        'buy_downwards_trend_ema_short_golden_cross_weight': 17,
-        'buy_downwards_trend_macd_weight': 0,
-        'buy_downwards_trend_rsi_weight': 84,
-        'buy_downwards_trend_sma_long_golden_cross_weight': 24,
-        'buy_downwards_trend_sma_short_golden_cross_weight': 83,
-        'buy_downwards_trend_vwap_cross_weight': 0,
-        'buy_sideways_trend_adx_strong_up_weight': 42,
-        'buy_sideways_trend_bollinger_bands_weight': 32,
-        'buy_sideways_trend_ema_long_golden_cross_weight': 90,
-        'buy_sideways_trend_ema_short_golden_cross_weight': 89,
-        'buy_sideways_trend_macd_weight': 44,
-        'buy_sideways_trend_rsi_weight': 33,
-        'buy_sideways_trend_sma_long_golden_cross_weight': 20,
-        'buy_sideways_trend_sma_short_golden_cross_weight': 76,
-        'buy_sideways_trend_vwap_cross_weight': 46,
-        'buy_upwards_trend_adx_strong_up_weight': 94,
-        'buy_upwards_trend_bollinger_bands_weight': 34,
-        'buy_upwards_trend_ema_long_golden_cross_weight': 0,
-        'buy_upwards_trend_ema_short_golden_cross_weight': 54,
-        'buy_upwards_trend_macd_weight': 65,
-        'buy_upwards_trend_rsi_weight': 36,
-        'buy_upwards_trend_sma_long_golden_cross_weight': 41,
-        'buy_upwards_trend_sma_short_golden_cross_weight': 0,
-        'buy_upwards_trend_vwap_cross_weight': 27
+        "buy___trades_when_downwards": True,  # value loaded from strategy
+        "buy___trades_when_sideways": False,  # value loaded from strategy
+        "buy___trades_when_upwards": True,  # value loaded from strategy
+        "buy__downwards_trend_total_signal_needed": 281,
+        "buy__downwards_trend_total_signal_needed_candles_lookback_window": 6,  # value loaded from strategy
+        "buy__sideways_trend_total_signal_needed": 859,
+        "buy__sideways_trend_total_signal_needed_candles_lookback_window": 3,  # value loaded from strategy
+        "buy__upwards_trend_total_signal_needed": 268,
+        "buy__upwards_trend_total_signal_needed_candles_lookback_window": 6,  # value loaded from strategy
+        "buy_downwards_trend_adx_strong_up_weight": 100,  # value loaded from strategy
+        "buy_downwards_trend_bollinger_bands_weight": 100,  # value loaded from strategy
+        "buy_downwards_trend_ema_long_golden_cross_weight": 55,
+        "buy_downwards_trend_ema_short_golden_cross_weight": 87,
+        "buy_downwards_trend_macd_weight": 70,
+        "buy_downwards_trend_rsi_weight": 99,
+        "buy_downwards_trend_sma_long_golden_cross_weight": 100,  # value loaded from strategy
+        "buy_downwards_trend_sma_short_golden_cross_weight": 29,
+        "buy_downwards_trend_vwap_cross_weight": 66,
+        "buy_sideways_trend_adx_strong_up_weight": 75,
+        "buy_sideways_trend_bollinger_bands_weight": 64,
+        "buy_sideways_trend_ema_long_golden_cross_weight": 50,
+        "buy_sideways_trend_ema_short_golden_cross_weight": 100,  # value loaded from strategy
+        "buy_sideways_trend_macd_weight": 64,
+        "buy_sideways_trend_rsi_weight": 0,  # value loaded from strategy
+        "buy_sideways_trend_sma_long_golden_cross_weight": 37,
+        "buy_sideways_trend_sma_short_golden_cross_weight": 100,  # value loaded from strategy
+        "buy_sideways_trend_vwap_cross_weight": 81,
+        "buy_upwards_trend_adx_strong_up_weight": 73,
+        "buy_upwards_trend_bollinger_bands_weight": 100,  # value loaded from strategy
+        "buy_upwards_trend_ema_long_golden_cross_weight": 49,
+        "buy_upwards_trend_ema_short_golden_cross_weight": 30,
+        "buy_upwards_trend_macd_weight": 83,
+        "buy_upwards_trend_rsi_weight": 61,
+        "buy_upwards_trend_sma_long_golden_cross_weight": 80,
+        "buy_upwards_trend_sma_short_golden_cross_weight": 100,  # value loaded from strategy
+        "buy_upwards_trend_vwap_cross_weight": 43
     }
 
     # Sell hyperspace params:
     sell_params = {
-        'sell___trades_when_downwards': True,
-        'sell___trades_when_sideways': True,
-        'sell___trades_when_upwards': False,
-        'sell___unclogger_enabled': True,
-        'sell___unclogger_enabled_when_downwards': True,
-        'sell___unclogger_enabled_when_sideways': True,
-        'sell___unclogger_enabled_when_upwards': False,
-        'sell___unclogger_minimal_losing_trade_duration_minutes': 46,
-        'sell___unclogger_minimal_losing_trades_open': 11,
-        'sell___unclogger_percentage_open_trades_losing': 69,
-        'sell___unclogger_trend_lookback_candles_window': 100,
-        'sell__downwards_trend_total_signal_needed': 93,
-        'sell__sideways_trend_total_signal_needed': 12,
-        'sell__upwards_trend_total_signal_needed': 87,
-        'sell_downwards_trend_adx_strong_down_weight': 65,
-        'sell_downwards_trend_bollinger_bands_weight': 23,
-        'sell_downwards_trend_ema_long_death_cross_weight': 57,
-        'sell_downwards_trend_ema_short_death_cross_weight': 21,
-        'sell_downwards_trend_macd_weight': 88,
-        'sell_downwards_trend_rsi_weight': 0,
-        'sell_downwards_trend_sma_long_death_cross_weight': 55,
-        'sell_downwards_trend_sma_short_death_cross_weight': 26,
-        'sell_downwards_trend_vwap_cross_weight': 22,
-        'sell_sideways_trend_adx_strong_down_weight': 0,
-        'sell_sideways_trend_bollinger_bands_weight': 90,
-        'sell_sideways_trend_ema_long_death_cross_weight': 29,
-        'sell_sideways_trend_ema_short_death_cross_weight': 0,
-        'sell_sideways_trend_macd_weight': 75,
-        'sell_sideways_trend_rsi_weight': 11,
-        'sell_sideways_trend_sma_long_death_cross_weight': 99,
-        'sell_sideways_trend_sma_short_death_cross_weight': 86,
-        'sell_sideways_trend_vwap_cross_weight': 89,
-        'sell_upwards_trend_adx_strong_down_weight': 33,
-        'sell_upwards_trend_bollinger_bands_weight': 79,
-        'sell_upwards_trend_ema_long_death_cross_weight': 93,
-        'sell_upwards_trend_ema_short_death_cross_weight': 72,
-        'sell_upwards_trend_macd_weight': 53,
-        'sell_upwards_trend_rsi_weight': 39,
-        'sell_upwards_trend_sma_long_death_cross_weight': 68,
-        'sell_upwards_trend_sma_short_death_cross_weight': 33,
-        'sell_upwards_trend_vwap_cross_weight': 55
+        "sell___trades_when_downwards": True,  # value loaded from strategy
+        "sell___trades_when_sideways": False,  # value loaded from strategy
+        "sell___trades_when_upwards": True,  # value loaded from strategy
+        "sell___unclogger_enabled": True,  # value loaded from strategy
+        "sell___unclogger_minimal_losing_trade_duration_minutes": 14,
+        "sell___unclogger_minimal_losing_trades_open": 1,
+        "sell___unclogger_open_trades_losing_percentage_needed": 20,
+        "sell___unclogger_trend_lookback_candles_window": 48,
+        "sell___unclogger_trend_lookback_candles_window_percentage_needed": 42,
+        "sell___unclogger_trend_lookback_window_uses_downwards_candles": True,  # value loaded from strategy
+        "sell___unclogger_trend_lookback_window_uses_sideways_candles": True,  # value loaded from strategy
+        "sell___unclogger_trend_lookback_window_uses_upwards_candles": False,  # value loaded from strategy
+        "sell__downwards_trend_total_signal_needed": 252,
+        "sell__downwards_trend_total_signal_needed_candles_lookback_window": 1,  # value loaded from strategy
+        "sell__sideways_trend_total_signal_needed": 187,
+        "sell__sideways_trend_total_signal_needed_candles_lookback_window": 3,  # value loaded from strategy
+        "sell__upwards_trend_total_signal_needed": 647,
+        "sell__upwards_trend_total_signal_needed_candles_lookback_window": 3,  # value loaded from strategy
+        "sell_downwards_trend_adx_strong_down_weight": 4,
+        "sell_downwards_trend_bollinger_bands_weight": 65,
+        "sell_downwards_trend_ema_long_death_cross_weight": 0,  # value loaded from strategy
+        "sell_downwards_trend_ema_short_death_cross_weight": 45,
+        "sell_downwards_trend_macd_weight": 68,
+        "sell_downwards_trend_rsi_weight": 50,
+        "sell_downwards_trend_sma_long_death_cross_weight": 44,
+        "sell_downwards_trend_sma_short_death_cross_weight": 72,
+        "sell_downwards_trend_vwap_cross_weight": 5,
+        "sell_sideways_trend_adx_strong_down_weight": 100,  # value loaded from strategy
+        "sell_sideways_trend_bollinger_bands_weight": 0,  # value loaded from strategy
+        "sell_sideways_trend_ema_long_death_cross_weight": 44,
+        "sell_sideways_trend_ema_short_death_cross_weight": 23,
+        "sell_sideways_trend_macd_weight": 34,
+        "sell_sideways_trend_rsi_weight": 60,
+        "sell_sideways_trend_sma_long_death_cross_weight": 100,  # value loaded from strategy
+        "sell_sideways_trend_sma_short_death_cross_weight": 44,
+        "sell_sideways_trend_vwap_cross_weight": 49,
+        "sell_upwards_trend_adx_strong_down_weight": 14,
+        "sell_upwards_trend_bollinger_bands_weight": 19,
+        "sell_upwards_trend_ema_long_death_cross_weight": 80,
+        "sell_upwards_trend_ema_short_death_cross_weight": 0,
+        "sell_upwards_trend_macd_weight": 97,
+        "sell_upwards_trend_rsi_weight": 62,
+        "sell_upwards_trend_sma_long_death_cross_weight": 19,
+        "sell_upwards_trend_sma_short_death_cross_weight": 18,
+        "sell_upwards_trend_vwap_cross_weight": 78
     }
 
     ####################################################################################################################
