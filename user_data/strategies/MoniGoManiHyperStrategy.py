@@ -462,16 +462,10 @@ class MoniGoManiHyperStrategy(IStrategy):
     is_dry_live_run_detected = True
 
     # TimeFrame-Zoom:
-<<<<<<< HEAD
-    # To prevent profit exploitation during backtesting/hyperopting we backtest/hyperopt MoniGoMani which would normally
-    # use a 'timeframe' (1h candles) using a smaller 'backtest_timeframe' (5m candles) instead.
-    # This happens while still using an 'informative_timeframe' (original 1h candles) to generate the buy/sell signals.
-=======
     # To prevent profit exploitation during backtesting/hyperopting we backtest/hyperopt this can be used.
     # When normally a 'timeframe' (1h candles) would be used, you can zoom in using a smaller 'backtest_timeframe'
     # (5m candles) instead. This happens while still using an 'informative_timeframe' (original 1h candles) to generate
     # the buy/sell signals.
->>>>>>> feature/custom_sell_unclogger
 
     # With this more realistic results should be found during backtesting/hyperopting. Since the buy/sell signals will 
     # operate on the same 'timeframe' that live would use (1h candles), while at the same time 'backtest_timeframe' 
@@ -521,11 +515,7 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # ROI Table StepSize:
     # Size of the steps in minutes to be used when calculating the long continuous ROI table
-<<<<<<< HEAD
-    # We generate a really long table so it will have less gaps in it and be more continuous in it's decrease
-=======
     # MGM generates a custom really long table so it will have less gaps in it and be more continuous in it's decrease
->>>>>>> feature/custom_sell_unclogger
     roi_table_step_size = 5
 
     # Optional order type mapping.
@@ -612,11 +602,6 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Downwards Trend Buy
     # -------------------
 
-<<<<<<< HEAD
-    # Total Buy Signal Percentage needed for a signal to be positive
-    buy__downwards_trend_total_signal_needed = IntParameter(30, int(100 * precision * number_of_weighted_signals),
-                                                            default=30, space='buy', optimize=True, load=True)
-=======
     # Total Buy Signal Weight needed for Downwards Trends, calculated over a small lookback window, 
     # to check if an actual buy should occur
     buy__downwards_trend_total_signal_needed = \
@@ -624,7 +609,6 @@ class MoniGoManiHyperStrategy(IStrategy):
                      default=int(30 * precision), space='buy', optimize=True, load=True)
     buy__downwards_trend_total_signal_needed_candles_lookback_window = \
         IntParameter(1, 6, default=1, space='buy', optimize=True, load=True)
->>>>>>> feature/custom_sell_unclogger
 
     # Buy Signal Weight Influence Table
     buy_downwards_trend_adx_strong_up_weight = \
@@ -649,11 +633,6 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Sideways Trend Buy
     # ------------------
 
-<<<<<<< HEAD
-    # Total Buy Signal Percentage needed for a signal to be positive
-    buy__sideways_trend_total_signal_needed = IntParameter(30, int(100 * precision * number_of_weighted_signals),
-                                                           default=30, space='buy', optimize=True, load=True)
-=======
     # Total Buy Signal Weight needed for Sideways Trends, calculated over a small lookback window, 
     # to check if an actual buy should occur
     buy__sideways_trend_total_signal_needed = \
@@ -661,7 +640,6 @@ class MoniGoManiHyperStrategy(IStrategy):
                      default=int(30 * precision), space='buy', optimize=True, load=True)
     buy__sideways_trend_total_signal_needed_candles_lookback_window = \
         IntParameter(1, 6, default=1, space='buy', optimize=True, load=True)
->>>>>>> feature/custom_sell_unclogger
 
     # Buy Signal Weight Influence Table
     buy_sideways_trend_adx_strong_up_weight = \
@@ -686,11 +664,6 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Upwards Trend Buy
     # -----------------
 
-<<<<<<< HEAD
-    # Total Buy Signal Percentage needed for a signal to be positive
-    buy__upwards_trend_total_signal_needed = IntParameter(30, int(100 * precision * number_of_weighted_signals),
-                                                          default=30, space='buy', optimize=True, load=True)
-=======
     # Total Buy Signal Weight needed for Upwards Trends, calculated over a small lookback window, 
     # to check if an actual buy should occur
     buy__upwards_trend_total_signal_needed = \
@@ -698,7 +671,6 @@ class MoniGoManiHyperStrategy(IStrategy):
                      default=int(30 * precision), space='buy', optimize=True, load=True)
     buy__upwards_trend_total_signal_needed_candles_lookback_window = \
         IntParameter(1, 6, default=1, space='buy', optimize=True, load=True)
->>>>>>> feature/custom_sell_unclogger
 
     # Buy Signal Weight Influence Table
     buy_upwards_trend_adx_strong_up_weight = \
@@ -743,11 +715,6 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Downwards Trend Sell
     # --------------------
 
-<<<<<<< HEAD
-    # Total Sell Signal Percentage needed for a signal to be positive
-    sell__downwards_trend_total_signal_needed = IntParameter(30, int(100 * precision * number_of_weighted_signals),
-                                                             default=30, space='sell', optimize=True, load=True)
-=======
     # Total Sell Signal Weight needed for Downwards Trends, calculated over a small lookback window, 
     # to check if an actual sell should occur
     sell__downwards_trend_total_signal_needed = \
@@ -755,7 +722,6 @@ class MoniGoManiHyperStrategy(IStrategy):
                      default=int(30 * precision), space='sell', optimize=True, load=True)
     sell__downwards_trend_total_signal_needed_candles_lookback_window = \
         IntParameter(1, 6, default=1, space='sell', optimize=True, load=True)
->>>>>>> feature/custom_sell_unclogger
 
     # Sell Signal Weight Influence Table
     sell_downwards_trend_adx_strong_down_weight = \
@@ -780,11 +746,6 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Sideways Trend Sell
     # -------------------
 
-<<<<<<< HEAD
-    # Total Sell Signal Percentage needed for a signal to be positive
-    sell__sideways_trend_total_signal_needed = IntParameter(30, int(100 * precision * number_of_weighted_signals),
-                                                            default=30, space='sell', optimize=True, load=True)
-=======
     # Total Sell Signal Weight needed for Sideways Trends, calculated over a small lookback window, 
     # to check if an actual sell should occur
     sell__sideways_trend_total_signal_needed = \
@@ -792,7 +753,6 @@ class MoniGoManiHyperStrategy(IStrategy):
                      default=int(30 * precision), space='sell', optimize=True, load=True)
     sell__sideways_trend_total_signal_needed_candles_lookback_window = \
         IntParameter(1, 6, default=1, space='sell', optimize=True, load=True)
->>>>>>> feature/custom_sell_unclogger
 
     # Sell Signal Weight Influence Table
     sell_sideways_trend_adx_strong_down_weight = \
@@ -817,11 +777,6 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Upwards Trend Sell
     # ------------------
 
-<<<<<<< HEAD
-    # Total Sell Signal Percentage needed for a signal to be positive
-    sell__upwards_trend_total_signal_needed = IntParameter(30, int(100 * precision * number_of_weighted_signals),
-                                                           default=30, space='sell', optimize=True, load=True)
-=======
     # Total Sell Signal Weight needed for Sideways Trends, calculated over a small lookback window, 
     # to check if an actual sell should occur
     sell__upwards_trend_total_signal_needed = \
@@ -829,7 +784,6 @@ class MoniGoManiHyperStrategy(IStrategy):
                      default=int(30 * precision), space='sell', optimize=True, load=True)
     sell__upwards_trend_total_signal_needed_candles_lookback_window = \
         IntParameter(1, 6, default=1, space='sell', optimize=True, load=True)
->>>>>>> feature/custom_sell_unclogger
 
     # Sell Signal Weight Influence Table
     sell_upwards_trend_adx_strong_down_weight = \
@@ -858,25 +812,15 @@ class MoniGoManiHyperStrategy(IStrategy):
     sell___unclogger_enabled = \
         CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
     sell___unclogger_minimal_losing_trade_duration_minutes = \
-<<<<<<< HEAD
-        IntParameter(15, int(60 * precision), default=15, space='sell', optimize=True, load=True)
-=======
         IntParameter(int(15 * precision), int(60 * precision), default=int(15 * precision), space='sell', optimize=True, load=True)
->>>>>>> feature/custom_sell_unclogger
     sell___unclogger_minimal_losing_trades_open = \
         IntParameter(1, 5, default=1, space='sell', optimize=True, load=True)
     sell___unclogger_open_trades_losing_percentage_needed = \
         IntParameter(1, int(60 * precision), default=1, space='sell', optimize=True, load=True)
     sell___unclogger_trend_lookback_candles_window = \
-<<<<<<< HEAD
-        IntParameter(10, int(60 * precision), default=10, space='sell', optimize=True, load=True)
-    sell___unclogger_trend_lookback_candles_window_percentage_needed = \
-        IntParameter(10, int(40 * precision), default=10, space='sell', optimize=True, load=True)
-=======
         IntParameter(int(10 * precision), int(60 * precision), default=int(10 * precision), space='sell', optimize=True, load=True)
     sell___unclogger_trend_lookback_candles_window_percentage_needed = \
         IntParameter(int(10 * precision), int(40 * precision), default=int(10 * precision), space='sell', optimize=True, load=True)
->>>>>>> feature/custom_sell_unclogger
     sell___unclogger_trend_lookback_window_uses_downwards_candles = \
         CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
     sell___unclogger_trend_lookback_window_uses_sideways_candles = \
@@ -885,12 +829,8 @@ class MoniGoManiHyperStrategy(IStrategy):
         CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
 
     class HyperOpt:
-<<<<<<< HEAD
-        # Generate a long continuous ROI-table with less gaps in it
-=======
         # Generate a Custom Long Continuous ROI-Table with less gaps in it
         @staticmethod
->>>>>>> feature/custom_sell_unclogger
         def generate_roi_table(params):
             step = MoniGoManiHyperStrategy.roi_table_step_size
             minimal_roi = {0: params['roi_p1'] + params['roi_p2'] + params['roi_p3'],
@@ -910,11 +850,7 @@ class MoniGoManiHyperStrategy(IStrategy):
                 y.append(0)
             return dict(zip(x, y))
 
-<<<<<<< HEAD
-    def __init__(self, *args, **kwargs):
-=======
     def __init__(self, config: dict):
->>>>>>> feature/custom_sell_unclogger
         """
         First method to be called once during the MoniGoMani class initialization process
         :param config::
@@ -1085,22 +1021,6 @@ class MoniGoManiHyperStrategy(IStrategy):
         dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
         dataframe.loc[dataframe['adx'] < 22, 'trend'] = 'sideways'
         dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
-<<<<<<< HEAD
-
-        # Trend Indicator Custom Information Storage
-        # -------------------------------------
-        # Store the trend indicator mapped to the correct date-times for all pairs in pair_list jf needed,
-        # stored in custom information storage to maintain backtest/hyperopt-ability while using the sell unclogger
-        if self.sell___unclogger_enabled.value and (self.is_dry_live_run_detected is False):
-            self.mgm_logger('info', 'Custom Information Storage', f'Storing whole "trend" indicator for '
-                                                                  f'pair ({metadata["pair"]}) in custom_info')
-
-            if metadata['pair'] not in self.custom_info['trend_indicator']:
-                self.custom_info['trend_indicator'][metadata['pair']] = {}
-            self.custom_info['trend_indicator'][metadata['pair']] = \
-                dataframe[['date', 'trend']].dropna().copy().set_index('date')
-=======
->>>>>>> feature/custom_sell_unclogger
 
         return dataframe
 
@@ -1732,78 +1652,17 @@ class MoniGoManiHyperStrategy(IStrategy):
                 self.mgm_logger('debug', custom_information_storage,
                                 f'all_open_trades contents: {repr(all_open_trades)}')
 
-<<<<<<< HEAD
-                # Store current pair's open_trade + it's current profit in custom_info
-                for open_trade in all_open_trades:
-                    if str(open_trade.pair) == str(pair):
-                        if str(open_trade.pair) not in self.custom_info['open_trades']:
-                            self.custom_info['open_trades'][str(open_trade.pair)] = {}
-                        self.custom_info['open_trades'][str(open_trade.pair)]['trade'] = str(open_trade)
-                        self.custom_info['open_trades'][str(open_trade.pair)]['current_profit'] = current_profit
-                        self.mgm_logger('info', custom_information_storage,
-                                        f'Storing trade + current profit/loss + open date for pair ({str(pair)}) '
-                                        f'in custom_info')
-                        break
-
-                # Custom Information Storage Garbage Collector
-                # --------------------------------------------
-                # Check if any old open_trade garbage needs to be removed
-                if len(all_open_trades) < len(self.custom_info['open_trades']):
-                    garbage_trade_amount = len(self.custom_info['open_trades']) - len(all_open_trades)
-                    self.mgm_logger('info', garbage_collector, f'Old open trade garbage detected for '
-                                                               f'{str(garbage_trade_amount)} trades, starting cleanup')
-
-                    for garbage_trade in range(garbage_trade_amount):
-                        for stored_trade in self.custom_info['open_trades']:
-                            pair_still_open = False
-                            for open_trade in all_open_trades:
-                                if str(stored_trade) == str(open_trade.pair):
-                                    self.mgm_logger('debug', garbage_collector,
-                                                    f'Open trade found, no action needed for pair ({stored_trade}) '
-                                                    f'in custom_info')
-                                    pair_still_open = True
-                                    break
-
-                            # Remove old open_trade garbage
-                            if not pair_still_open:
-                                self.mgm_logger('info', garbage_collector,
-                                                f'No open trade found for pair ({stored_trade}), removing '
-                                                f'from custom_info')
-                                self.custom_info['open_trades'].pop(stored_trade)
-                                self.mgm_logger('debug', garbage_collector,
-                                                f'Successfully removed garbage_trade {str(garbage_trade)} '
-                                                f'from custom_info!')
-                                break
-
-=======
->>>>>>> feature/custom_sell_unclogger
                 # Check if everything in custom_storage is up to date with all_open_trades
                 if len(all_open_trades) > len(self.custom_info['open_trades']):
                     self.mgm_logger('warning', custom_information_storage,
                                     f'Open trades ({str(len(self.custom_info["open_trades"]))}) in custom_storage do '
                                     f'not match yet with trades in live open trades ({str(len(all_open_trades))}) '
                                     f'aborting unclogger for now!')
-<<<<<<< HEAD
-                    return -1  # By default we don't want a force sell to occur & just use the normal (trailing)stoploss
-
-                # Print all stored open trade info in custom_storage
-                self.mgm_logger('debug', custom_information_storage,
-                                f'Open trades ({str(len(self.custom_info["open_trades"]))}) in custom_info updated '
-                                f'successfully!')
-                self.mgm_logger('debug', custom_information_storage,
-                                f'custom_info["open_trades"] contents: {repr(self.custom_info["open_trades"])}')
-
-                # Open Trade Unclogger
-                # --------------------
-                self.mgm_logger('debug', open_trade_unclogger,
-                                f'Running trough all checks to see if unclogging is needed')
-=======
                 else:
                     # Open Trade Unclogger
                     # --------------------
                     self.mgm_logger('debug', open_trade_unclogger,
                                     f'Running trough all checks to see if unclogging is needed')
->>>>>>> feature/custom_sell_unclogger
 
                     # Check if there are enough losing trades open for unclogging to occur
                     self.mgm_logger('debug', open_trade_unclogger,
@@ -1976,12 +1835,7 @@ class MoniGoManiHyperStrategy(IStrategy):
                                 f'Following error has occurred in the Open Trade Unclogger:')
                 self.mgm_logger('error', open_trade_unclogger, str(e))
 
-<<<<<<< HEAD
-        # return self.stoploss <= This is not how we keep trailing/stoploss working normally ...
-        return -1  # By default we don't want a force sell to occur & just use the normal (trailing)stoploss
-=======
         return None  # By default we don't want a force sell to occur
->>>>>>> feature/custom_sell_unclogger
 
     def mgm_logger(self, message_type: str, code_section: str, message: str):
         """
