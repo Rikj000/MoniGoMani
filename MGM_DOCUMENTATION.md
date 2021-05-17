@@ -320,7 +320,7 @@ operate on the same `timeframe` that live would use (1h candles), while at the s
 (5m or 1m candles) will simulate price movement during that `timeframe` (1h candle), providing more realistic 
 trailing stoploss and ROI behaviour during backtesting/hyperopting.
 
-**<span style="color:darkorange">WARNING:</span> Since MoniGoMani v0.10.0 it appears TimeFrame-Zoom is not needed anymore and even lead to bad results!**
+**<span style="color:darkorange">WARNING:</span> Since MoniGoMani v0.10.0 it appears TimeFrame-Zoom is not needed anymore and even lead to bad results!**   
 **<span style="color:darkorange">WARNING:</span> To disable TimeFrame-Zoom just use the same candles for `timeframe` & `backtest_timeframe`**   
 **<span style="color:darkorange">WARNING:</span> Remove the `timeframe` line from your `config-btc.json` if it would still be there! Otherwise, TimeFrame-Zoom won't work properly in the current version!**   
 **<span style="color:darkorange">WARNING:</span> Candle data for both `timeframe` as `backtest_timeframe` will have to be downloaded before you will be able to backtest/hyperopt! (Since both will be used)**   
