@@ -643,23 +643,23 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # Buy Signal Weight Influence Table
     buy_sideways_trend_adx_strong_up_weight = \
-        IntParameter(56, int(76 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_bollinger_bands_weight = \
-        IntParameter(46, int(66 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_ema_long_golden_cross_weight = \
-        IntParameter(49, int(69 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_ema_short_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=100, space='buy', optimize=False, load=False)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_macd_weight = \
-        IntParameter(59, int(79 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_rsi_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=False, load=False)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_sma_long_golden_cross_weight = \
-        IntParameter(34, int(54 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_sma_short_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=100, space='buy', optimize=False, load=False)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
     buy_sideways_trend_vwap_cross_weight = \
-        IntParameter(62, int(82 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
 
     # Upwards Trend Buy
     # -----------------
