@@ -41,8 +41,10 @@ class MoniGoManiConfiguration(MGMStrategy):
     # Search space threshold: to reduce the search space with min / max around the first value found
     searchThreshold = 10
 
-    # Maximum weight value for an indicator
+    # Maximum value for weighted indicators
     weightMaxValue = 100
+    # Maximum value for trend lookback indicators
+    trendLookbackMaxValue = int(360 / timeframe_to_minutes(timeframe))
 
     # Number of weighted signals:
     # Fill in the total number of different weighted signals in use in the weighted tables
@@ -172,7 +174,7 @@ class MoniGoManiConfiguration(MGMStrategy):
     buy__downwards_trend_total_signal_needed = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
         default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
 
-    pInit = initVars(buy_params, "buy__downwards_trend_total_signal_needed_candles_lookback_window", 0, weightMaxValue, searchThreshold)
+    pInit = initVars(buy_params, "buy__downwards_trend_total_signal_needed_candles_lookback_window", 1, trendLookbackMaxValue, searchThreshold)
     buy__downwards_trend_total_signal_needed_candles_lookback_window = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
         default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
 
@@ -221,7 +223,7 @@ class MoniGoManiConfiguration(MGMStrategy):
     buy__sideways_trend_total_signal_needed = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
         default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
 
-    pInit = initVars(buy_params, "buy__sideways_trend_total_signal_needed_candles_lookback_window", 0, weightMaxValue, searchThreshold)
+    pInit = initVars(buy_params, "buy__sideways_trend_total_signal_needed_candles_lookback_window", 1, trendLookbackMaxValue, searchThreshold)
     buy__sideways_trend_total_signal_needed_candles_lookback_window = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
         default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
 
@@ -270,7 +272,7 @@ class MoniGoManiConfiguration(MGMStrategy):
     buy__upwards_trend_total_signal_needed = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
         default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
 
-    pInit = initVars(buy_params, "buy__upwards_trend_total_signal_needed_candles_lookback_window", 0, weightMaxValue, searchThreshold)
+    pInit = initVars(buy_params, "buy__upwards_trend_total_signal_needed_candles_lookback_window", 1, trendLookbackMaxValue, searchThreshold)
     buy__upwards_trend_total_signal_needed_candles_lookback_window = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
         default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
 
@@ -331,7 +333,7 @@ class MoniGoManiConfiguration(MGMStrategy):
     sell__downwards_trend_total_signal_needed = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
         default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
 
-    pInit = initVars(sell_params, "sell__downwards_trend_total_signal_needed_candles_lookback_window", 0, weightMaxValue, searchThreshold)
+    pInit = initVars(sell_params, "sell__downwards_trend_total_signal_needed_candles_lookback_window", 1, trendLookbackMaxValue, searchThreshold)
     sell__upwards_trend_total_signal_needed_candles_lookback_window = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
         default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
 
@@ -380,7 +382,7 @@ class MoniGoManiConfiguration(MGMStrategy):
     sell__sideways_trend_total_signal_needed = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
         default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
 
-    pInit = initVars(sell_params, "sell__sideways_trend_total_signal_needed_candles_lookback_window", 0, weightMaxValue, searchThreshold)
+    pInit = initVars(sell_params, "sell__sideways_trend_total_signal_needed_candles_lookback_window", 1, trendLookbackMaxValue, searchThreshold)
     sell__sideways_trend_total_signal_needed_candles_lookback_window = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
         default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
 
@@ -429,7 +431,7 @@ class MoniGoManiConfiguration(MGMStrategy):
     sell__upwards_trend_total_signal_needed = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
         default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
 
-    pInit = initVars(sell_params, "sell__upwards_trend_total_signal_needed_candles_lookback_window", 0, weightMaxValue, searchThreshold)
+    pInit = initVars(sell_params, "sell__upwards_trend_total_signal_needed_candles_lookback_window", 1, trendLookbackMaxValue, searchThreshold)
     sell__upwards_trend_total_signal_needed_candles_lookback_window = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
         default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
 
@@ -473,12 +475,12 @@ class MoniGoManiConfiguration(MGMStrategy):
     # ---------------------------------------------------------------- #
     #             Sell Unclogger HyperOpt Space Parameters             #
     # ---------------------------------------------------------------- #
-    sell___unclogger_minimal_losing_trade_duration_minutes = IntParameter(15, int(60 * precision), default=15, space='sell', optimize=True, load=True)
-    sell___unclogger_minimal_losing_trades_open = IntParameter(1, int(5 * precision), default=1, space='sell', optimize=True, load=True)
-    sell___unclogger_open_trades_losing_percentage_needed = IntParameter(1, int(100 * precision), default=1, space='sell', optimize=True, load=True)
-    sell___unclogger_trend_lookback_candles_window = IntParameter(10, int(100 * precision), default=10, space='sell', optimize=True, load=True)
-    sell___unclogger_trend_lookback_candles_window_percentage_needed = IntParameter(10, int(100 * precision), default=10, space='sell', optimize=True, load=True)
-    
+    sell___unclogger_minimal_losing_trade_duration_minutes = IntParameter(int(15 * precision), int(60 * precision), default=int(15 * precision), space='sell', optimize=True, load=True)
+    sell___unclogger_minimal_losing_trades_open = IntParameter(1, 5, default=1, space='sell', optimize=True, load=True)
+    sell___unclogger_open_trades_losing_percentage_needed = IntParameter(1, int(60 * precision), default=1, space='sell', optimize=True, load=True)
+    sell___unclogger_trend_lookback_candles_window = IntParameter(int(10 * precision), int(60 * precision), default=int(10 * precision), space='sell', optimize=True, load=True)
+    sell___unclogger_trend_lookback_candles_window_percentage_needed = IntParameter(int(10 * precision), int(40 * precision), default=int(10 * precision), space='sell', optimize=True, load=True)
+
     ####################################################################################################################
     ############################################   END OF OVERRIDES SECTION   ##########################################
     ####################################################################################################################
