@@ -1,50 +1,64 @@
-#################################################################################
-###   *** THIS IS A CHILD STRATEGY, REQUIRES IMPORT OF PARENT STRATEGY **     ###
-#################################################################################
+# --- Do not remove these libs ----------------------------------------------------------------------
+from MoniGoManiHyperStrategy import MoniGoManiHyperStrategy as MGMStrategy
 from freqtrade.strategy \
     import IStrategy, CategoricalParameter, IntParameter, RealParameter, merge_informative_pair, timeframe_to_minutes
-# Strategy specific imports, files must reside in same folder as strategy
 import sys
 from pathlib import Path
+
 sys.path.append(str(Path(__file__).parent))
 
-from MoniGoManiHyperStrategy import MoniGoManiHyperStrategy as MGMStrategy
 
-### function to initialize the parameters values without manual overriding
-def initVars(pDict, pParameter, pDefaultValue, pMaxValue, pThreshold):
-    pValue = pDict.get(pParameter)
+# Function to initialize the parameters values without manual overriding
+def init_vars(parameter_dictionary, parameter_name, parameter_default_value, parameter_max_value,
+              parameter_threshold, precision):
+    parameter_value = parameter_dictionary.get(parameter_name)
 
-    if pValue == None :
-        minValue = 0
-        maxValue = pMaxValue
+    if parameter_value is None:
+        min_value = 0
+        max_value = parameter_max_value
     else:
-        minValue = 0 if pValue <= (0 + pThreshold) else pValue - pThreshold
-        maxValue = pMaxValue if pValue >= (pMaxValue - pThreshold) else pValue + pThreshold
+        min_value = 0 if parameter_value <= (0 + parameter_threshold) else \
+            parameter_value - parameter_threshold
+        max_value = parameter_max_value if parameter_value >= (parameter_max_value - parameter_threshold) else \
+            parameter_value + parameter_threshold
 
-    dictReturnVars = {
-        "minValue": minValue,
-        "maxValue": maxValue,
-        "defValue": pDefaultValue if pValue == None else (pMaxValue if maxValue == pMaxValue else (0 if minValue == 0 else pValue )),
-        "opt&load": False if pValue != None and (minValue == 0 or maxValue == pMaxValue) else True
+    if parameter_value is None:
+        default_value = parameter_default_value
+    elif max_value == parameter_max_value:
+        default_value = parameter_max_value
+    elif min_value == 0:
+        default_value = 0
+    else:
+        default_value = parameter_value
+
+    return_vars_dictionary = {
+        "min_value": min_value * precision,
+        "max_value": max_value * precision,
+        "default_value": default_value * precision,
+        "opt_and_Load": False if parameter_value is not None and (
+                min_value == 0 or max_value == parameter_max_value) else True
     }
 
-    return dictReturnVars
+    return return_vars_dictionary
 
-### Sub-strategy with your own specific parameters
+
+#################################################################################
+#     *** THIS IS A CHILD STRATEGY, REQUIRES IMPORT OF PARENT STRATEGY ***      #
+#################################################################################
 class MoniGoManiConfiguration(MGMStrategy):
     ####################################################################################################################
-    ### Global parameters you want to override
+    # Global parameters you want to override
     ####################################################################################################################
     timeframe = '1h'
     precision = 1
-    
+
     # Search space threshold: to reduce the search space with min / max around the first value found
-    searchThreshold = 10
+    search_threshold = 10
 
     # Maximum value for weighted indicators
-    weightMaxValue = 100
+    max_weight_value = 100
     # Maximum value for trend lookback indicators
-    trendLookbackMaxValue = int(360 / timeframe_to_minutes(timeframe))
+    max_trend_lookback_value = int(360 / timeframe_to_minutes(timeframe))
 
     # Number of weighted signals:
     # Fill in the total number of different weighted signals in use in the weighted tables
@@ -58,9 +72,9 @@ class MoniGoManiConfiguration(MGMStrategy):
     roi_table_step_size = 5
 
     ####################################################################################################################
-    ##################################   START OF HYPEROPT RESULTS COPY-PASTE SECTION   ################################
-    ####################################################################################################################
-    #### COPY/PASTE hyperopt results after 1st iteration below #####
+    #                                    START OF HYPEROPT RESULTS COPY-PASTE SECTION                                  #
+    # ##################################################################################################################
+    # ### COPY/PASTE hyperopt results after 1st iteration below #####
     # Buy hyperspace params:
     buy_params = {
     }
@@ -75,26 +89,21 @@ class MoniGoManiConfiguration(MGMStrategy):
 
     # Trailing stop:
 
-
-    
-    ######################################################################
-    ####              DO NOT REMOVE / MODIFY THESE LINES             #####
+    # #####################################################################
+    # ###              DO NOT REMOVE / MODIFY THESE LINES             #####
     buy_param_final = buy_params
     sell_param_final = sell_params
-    ######################################################################
+    # ####################################################################
 
-    ######################################################################
-    #### COPY/PASTE hyperopt result of 2nd (or more) iteration below #####
-    ####################################################################################################################
-    
+    # ####################################################################
+    # ### COPY/PASTE hyperopt result of 2nd (or more) iteration below #####
+    # ##################################################################################################################
 
-    ###################################   END OF HYPEROPT RESULTS COPY-PASTE SECTION   #################################
-    ####################################################################################################################
+    # #################################   END OF HYPEROPT RESULTS COPY-PASTE SECTION   #################################
+    # ##################################################################################################################
 
-
-
-    ####################################################################################################################
-    #### DO NOT REMOVE / MODIFY THESE LINES --- CONCATENATION OF 1st AND 2nd result #####
+    # ##################################################################################################################
+    # ### DO NOT REMOVE / MODIFY THESE LINES --- CONCATENATION OF 1st AND 2nd result #####
     buy_param_final.update(buy_params)
     sell_param_final.update(sell_params)
 
@@ -102,38 +111,46 @@ class MoniGoManiConfiguration(MGMStrategy):
     sell_params = sell_param_final
     ####################################################################################################################
 
-
-
     ####################################################################################################################
-    ###########################################   START OF OVERRIDES SECTION   #########################################
+    #                                             START OF OVERRIDES SECTION                                           #
     ####################################################################################################################
-    
-    ################## 1st run --- initial overrides ###################
+
+    # ################ 1st run --- initial overrides ###################
     # ---------------------------------------------------------------- #
     #                  Buy HyperOpt Space Parameters                   #
     # ---------------------------------------------------------------- #
     # React to Buy Signals when certain trends are detected (False would disable trading in said trend)
-    buy___trades_when_downwards =  CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=False)
-    buy___trades_when_sideways  =  CategoricalParameter([True, False], default=False, space='buy', optimize=False, load=False)
-    buy___trades_when_upwards   =  CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=False)
+    buy___trades_when_downwards = \
+        CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=False)
+    buy___trades_when_sideways = \
+        CategoricalParameter([True, False], default=False, space='buy', optimize=False, load=False)
+    buy___trades_when_upwards = \
+        CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=False)
 
     # ---------------------------------------------------------------- #
     #                  Sell HyperOpt Space Parameters                  #
     # ---------------------------------------------------------------- #
     # React to Sell Signals when certain trends are detected (False would disable trading in said trend)
-    sell___trades_when_downwards = CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
-    sell___trades_when_sideways = CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
-    sell___trades_when_upwards = CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
+    sell___trades_when_downwards = \
+        CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
+    sell___trades_when_sideways = \
+        CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
+    sell___trades_when_upwards = \
+        CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
 
     # ---------------------------------------------------------------- #
     #             Sell Unclogger HyperOpt Space Parameters             #
     # ---------------------------------------------------------------- #
-    sell___unclogger_enabled = CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
-    sell___unclogger_trend_lookback_window_uses_downwards_candles = CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
-    sell___unclogger_trend_lookback_window_uses_sideways_candles = CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
-    sell___unclogger_trend_lookback_window_uses_upwards_candles = CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
+    sell___unclogger_enabled = \
+        CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
+    sell___unclogger_trend_lookback_window_uses_downwards_candles = \
+        CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
+    sell___unclogger_trend_lookback_window_uses_sideways_candles = \
+        CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
+    sell___unclogger_trend_lookback_window_uses_upwards_candles = \
+        CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
 
-    ################## 2nd run --- addtional overrides #################
+    # ################# 2nd run --- addtional overrides #################
     #
     #   !!!!!!!!!! Before going further make sure have set "optimize=False" for the parameters of section 1 !!!!!!!!!
     #
@@ -170,148 +187,209 @@ class MoniGoManiConfiguration(MGMStrategy):
     # -------------------
 
     # Total Buy Signal Percentage needed for a signal to be positive
-    pInit = initVars(buy_params, "buy__downwards_trend_total_signal_needed", 30, int(100 * number_of_weighted_signals), searchThreshold)
-    buy__downwards_trend_total_signal_needed = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy__downwards_trend_total_signal_needed", 30, int(100 * number_of_weighted_signals),
+                      search_threshold, precision)
+    buy__downwards_trend_total_signal_needed = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy__downwards_trend_total_signal_needed_candles_lookback_window", 1, trendLookbackMaxValue, searchThreshold)
-    buy__downwards_trend_total_signal_needed_candles_lookback_window = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy__downwards_trend_total_signal_needed_candles_lookback_window", 1,
+                      max_trend_lookback_value, search_threshold, precision)
+    buy__downwards_trend_total_signal_needed_candles_lookback_window = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
     # Buy Signal Weight Influence Table
-    pInit = initVars(buy_params, "buy_downwards_trend_adx_strong_up_weight", 0, weightMaxValue, searchThreshold)
-    buy_downwards_trend_adx_strong_up_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = \
+        init_vars(buy_params, "buy_downwards_trend_adx_strong_up_weight", 0, max_weight_value, search_threshold,
+                  precision)
+    buy_downwards_trend_adx_strong_up_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_downwards_trend_bollinger_bands_weight", 0, weightMaxValue, searchThreshold)
-    buy_downwards_trend_bollinger_bands_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_downwards_trend_bollinger_bands_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    buy_downwards_trend_bollinger_bands_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_downwards_trend_ema_long_golden_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_downwards_trend_ema_long_golden_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_downwards_trend_ema_long_golden_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    buy_downwards_trend_ema_long_golden_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_downwards_trend_ema_short_golden_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_downwards_trend_ema_short_golden_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_downwards_trend_ema_short_golden_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    buy_downwards_trend_ema_short_golden_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_downwards_trend_macd_weight", 0, weightMaxValue, searchThreshold)
-    buy_downwards_trend_macd_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_downwards_trend_macd_weight", 0, max_weight_value, search_threshold, precision)
+    buy_downwards_trend_macd_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_downwards_trend_rsi_weight", 0, weightMaxValue, searchThreshold)
-    buy_downwards_trend_rsi_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
-    
-    pInit = initVars(buy_params, "buy_downwards_trend_sma_long_golden_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_downwards_trend_sma_long_golden_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
-    
-    pInit = initVars(buy_params, "buy_downwards_trend_sma_short_golden_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_downwards_trend_sma_short_golden_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_downwards_trend_rsi_weight", 0, max_weight_value, search_threshold, precision)
+    buy_downwards_trend_rsi_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_downwards_trend_vwap_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_downwards_trend_vwap_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_downwards_trend_sma_long_golden_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    buy_downwards_trend_sma_long_golden_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
+
+    param = init_vars(buy_params, "buy_downwards_trend_sma_short_golden_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    buy_downwards_trend_sma_short_golden_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
+
+    param = init_vars(buy_params, "buy_downwards_trend_vwap_cross_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    buy_downwards_trend_vwap_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
     # Sideways Trend Buy
     # ------------------
 
     # Total Buy Signal Percentage needed for a signal to be positive
-    pInit = initVars(buy_params, "buy__sideways_trend_total_signal_needed", 30, int(100 * number_of_weighted_signals), searchThreshold)
-    buy__sideways_trend_total_signal_needed = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy__sideways_trend_total_signal_needed", 30, int(100 * number_of_weighted_signals),
+                      search_threshold, precision)
+    buy__sideways_trend_total_signal_needed = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy__sideways_trend_total_signal_needed_candles_lookback_window", 1, trendLookbackMaxValue, searchThreshold)
-    buy__sideways_trend_total_signal_needed_candles_lookback_window = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy__sideways_trend_total_signal_needed_candles_lookback_window", 1,
+                      max_trend_lookback_value, search_threshold, precision)
+    buy__sideways_trend_total_signal_needed_candles_lookback_window = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
     # Buy Signal Weight Influence Table
-    pInit = initVars(buy_params, "buy_sideways_trend_adx_strong_up_weight", 0, weightMaxValue, searchThreshold)
-    buy_sideways_trend_adx_strong_up_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_sideways_trend_adx_strong_up_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    buy_sideways_trend_adx_strong_up_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_sideways_trend_bollinger_bands_weight", 0, weightMaxValue, searchThreshold)
-    buy_sideways_trend_bollinger_bands_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_sideways_trend_bollinger_bands_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    buy_sideways_trend_bollinger_bands_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_sideways_trend_ema_long_golden_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_sideways_trend_ema_long_golden_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_sideways_trend_ema_long_golden_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    buy_sideways_trend_ema_long_golden_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_sideways_trend_ema_short_golden_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_sideways_trend_ema_short_golden_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_sideways_trend_ema_short_golden_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    buy_sideways_trend_ema_short_golden_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_sideways_trend_macd_weight", 0, weightMaxValue, searchThreshold)
-    buy_sideways_trend_macd_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_sideways_trend_macd_weight", 0, max_weight_value, search_threshold, precision)
+    buy_sideways_trend_macd_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_sideways_trend_rsi_weight", 0, weightMaxValue, searchThreshold)
-    buy_sideways_trend_rsi_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_sideways_trend_rsi_weight", 0, max_weight_value, search_threshold, precision)
+    buy_sideways_trend_rsi_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_sideways_trend_sma_long_golden_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_sideways_trend_sma_long_golden_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_sideways_trend_sma_long_golden_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    buy_sideways_trend_sma_long_golden_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_sideways_trend_sma_short_golden_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_sideways_trend_sma_short_golden_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_sideways_trend_sma_short_golden_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    buy_sideways_trend_sma_short_golden_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_sideways_trend_vwap_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_sideways_trend_vwap_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_sideways_trend_vwap_cross_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    buy_sideways_trend_vwap_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
     # Upwards Trend Buy
     # -----------------
 
     # Total Buy Signal Percentage needed for a signal to be positive
-    pInit = initVars(buy_params, "buy__upwards_trend_total_signal_needed", 30, int(100 * number_of_weighted_signals), searchThreshold)
-    buy__upwards_trend_total_signal_needed = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy__upwards_trend_total_signal_needed", 30, int(100 * number_of_weighted_signals),
+                      search_threshold, precision)
+    buy__upwards_trend_total_signal_needed = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy__upwards_trend_total_signal_needed_candles_lookback_window", 1, trendLookbackMaxValue, searchThreshold)
-    buy__upwards_trend_total_signal_needed_candles_lookback_window = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy__upwards_trend_total_signal_needed_candles_lookback_window", 1,
+                      max_trend_lookback_value, search_threshold, precision)
+    buy__upwards_trend_total_signal_needed_candles_lookback_window = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
     # Buy Signal Weight Influence Table
-    pInit = initVars(buy_params, "buy_upwards_trend_adx_strong_up_weight", 0, weightMaxValue, searchThreshold)
-    buy_upwards_trend_adx_strong_up_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_upwards_trend_adx_strong_up_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    buy_upwards_trend_adx_strong_up_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_upwards_trend_bollinger_bands_weight", 0, weightMaxValue, searchThreshold)
-    buy_upwards_trend_bollinger_bands_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_upwards_trend_bollinger_bands_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    buy_upwards_trend_bollinger_bands_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_upwards_trend_ema_short_golden_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_upwards_trend_ema_short_golden_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_upwards_trend_ema_short_golden_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    buy_upwards_trend_ema_short_golden_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_upwards_trend_ema_long_golden_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_upwards_trend_ema_long_golden_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_upwards_trend_ema_long_golden_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    buy_upwards_trend_ema_long_golden_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_upwards_trend_macd_weight", 0, weightMaxValue, searchThreshold)
-    buy_upwards_trend_macd_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_upwards_trend_macd_weight", 0, max_weight_value, search_threshold, precision)
+    buy_upwards_trend_macd_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_upwards_trend_rsi_weight", 0, weightMaxValue, searchThreshold)
-    buy_upwards_trend_rsi_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_upwards_trend_rsi_weight", 0, max_weight_value, search_threshold, precision)
+    buy_upwards_trend_rsi_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_upwards_trend_sma_long_golden_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_upwards_trend_sma_long_golden_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_upwards_trend_sma_long_golden_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    buy_upwards_trend_sma_long_golden_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_upwards_trend_sma_short_golden_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_upwards_trend_sma_short_golden_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_upwards_trend_sma_short_golden_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    buy_upwards_trend_sma_short_golden_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(buy_params, "buy_upwards_trend_vwap_cross_weight", 0, weightMaxValue, searchThreshold)
-    buy_upwards_trend_vwap_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='buy', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(buy_params, "buy_upwards_trend_vwap_cross_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    buy_upwards_trend_vwap_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='buy', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
     # ---------------------------------------------------------------- #
     #                  Sell HyperOpt Space Parameters                  #
@@ -329,159 +407,228 @@ class MoniGoManiConfiguration(MGMStrategy):
     # --------------------
 
     # Total Sell Signal Percentage needed for a signal to be positive
-    pInit = initVars(sell_params, "sell__downwards_trend_total_signal_needed", 30, int(100 * number_of_weighted_signals), searchThreshold)
-    sell__downwards_trend_total_signal_needed = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell__downwards_trend_total_signal_needed", 30,
+                      int(100 * number_of_weighted_signals), search_threshold, precision)
+    sell__downwards_trend_total_signal_needed = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell__downwards_trend_total_signal_needed_candles_lookback_window", 1, trendLookbackMaxValue, searchThreshold)
-    sell__upwards_trend_total_signal_needed_candles_lookback_window = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell__downwards_trend_total_signal_needed_candles_lookback_window", 1,
+                      max_trend_lookback_value, search_threshold, precision)
+    sell__downwards_trend_total_signal_needed_candles_lookback_window = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
     # Sell Signal Weight Influence Table
-    pInit = initVars(sell_params, "sell_downwards_trend_adx_strong_down_weight", 0, weightMaxValue, searchThreshold)
-    sell_downwards_trend_adx_strong_down_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_downwards_trend_adx_strong_down_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    sell_downwards_trend_adx_strong_down_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_downwards_trend_bollinger_bands_weight", 0, weightMaxValue, searchThreshold)
-    sell_downwards_trend_bollinger_bands_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_downwards_trend_bollinger_bands_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    sell_downwards_trend_bollinger_bands_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_downwards_trend_ema_long_death_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_downwards_trend_ema_long_death_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_downwards_trend_ema_long_death_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    sell_downwards_trend_ema_long_death_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_downwards_trend_ema_short_death_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_downwards_trend_ema_short_death_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_downwards_trend_ema_short_death_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    sell_downwards_trend_ema_short_death_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_downwards_trend_macd_weight", 0, weightMaxValue, searchThreshold)
-    sell_downwards_trend_macd_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_downwards_trend_macd_weight", 0, max_weight_value, search_threshold, precision)
+    sell_downwards_trend_macd_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_downwards_trend_rsi_weight", 0, weightMaxValue, searchThreshold)
-    sell_downwards_trend_rsi_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_downwards_trend_rsi_weight", 0, max_weight_value, search_threshold, precision)
+    sell_downwards_trend_rsi_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_downwards_trend_sma_long_death_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_downwards_trend_sma_long_death_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_downwards_trend_sma_long_death_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    sell_downwards_trend_sma_long_death_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_downwards_trend_sma_short_death_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_downwards_trend_sma_short_death_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_downwards_trend_sma_short_death_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    sell_downwards_trend_sma_short_death_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_downwards_trend_vwap_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_downwards_trend_vwap_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_downwards_trend_vwap_cross_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    sell_downwards_trend_vwap_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
     # Sideways Trend Sell
     # -------------------
 
     # Total Sell Signal Percentage needed for a signal to be positive
-    pInit = initVars(sell_params, "sell__sideways_trend_total_signal_needed", 30, int(100 * number_of_weighted_signals), searchThreshold)
-    sell__sideways_trend_total_signal_needed = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell__sideways_trend_total_signal_needed", 30,
+                      int(100 * number_of_weighted_signals), search_threshold, precision)
+    sell__sideways_trend_total_signal_needed = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell__sideways_trend_total_signal_needed_candles_lookback_window", 1, trendLookbackMaxValue, searchThreshold)
-    sell__sideways_trend_total_signal_needed_candles_lookback_window = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell__sideways_trend_total_signal_needed_candles_lookback_window", 1,
+                      max_trend_lookback_value, search_threshold, precision)
+    sell__sideways_trend_total_signal_needed_candles_lookback_window = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
     # Sell Signal Weight Influence Table
-    pInit = initVars(sell_params, "sell_sideways_trend_adx_strong_down_weight", 0, weightMaxValue, searchThreshold)
-    sell_sideways_trend_adx_strong_down_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_sideways_trend_adx_strong_down_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    sell_sideways_trend_adx_strong_down_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_sideways_trend_bollinger_bands_weight", 0, weightMaxValue, searchThreshold)
-    sell_sideways_trend_bollinger_bands_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_sideways_trend_bollinger_bands_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    sell_sideways_trend_bollinger_bands_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_sideways_trend_ema_long_death_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_sideways_trend_ema_long_death_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_sideways_trend_ema_long_death_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    sell_sideways_trend_ema_long_death_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_sideways_trend_ema_short_death_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_sideways_trend_ema_short_death_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_sideways_trend_ema_short_death_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    sell_sideways_trend_ema_short_death_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_sideways_trend_macd_weight", 0, weightMaxValue, searchThreshold)
-    sell_sideways_trend_macd_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_sideways_trend_macd_weight", 0, max_weight_value, search_threshold, precision)
+    sell_sideways_trend_macd_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_sideways_trend_rsi_weight", 0, weightMaxValue, searchThreshold)
-    sell_sideways_trend_rsi_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_sideways_trend_rsi_weight", 0, max_weight_value, search_threshold, precision)
+    sell_sideways_trend_rsi_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_sideways_trend_sma_long_death_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_sideways_trend_sma_long_death_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_sideways_trend_sma_long_death_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    sell_sideways_trend_sma_long_death_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_sideways_trend_sma_short_death_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_sideways_trend_sma_short_death_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_sideways_trend_sma_short_death_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    sell_sideways_trend_sma_short_death_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_sideways_trend_vwap_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_sideways_trend_vwap_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_sideways_trend_vwap_cross_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    sell_sideways_trend_vwap_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
     # Upwards Trend Sell
     # ------------------
 
     # Total Sell Signal Percentage needed for a signal to be positive
-    pInit = initVars(sell_params, "sell__upwards_trend_total_signal_needed", 30, int(100 * number_of_weighted_signals), searchThreshold)
-    sell__upwards_trend_total_signal_needed = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell__upwards_trend_total_signal_needed", 30, int(100 * number_of_weighted_signals),
+                      search_threshold, precision)
+    sell__upwards_trend_total_signal_needed = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell__upwards_trend_total_signal_needed_candles_lookback_window", 1, trendLookbackMaxValue, searchThreshold)
-    sell__upwards_trend_total_signal_needed_candles_lookback_window = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell__upwards_trend_total_signal_needed_candles_lookback_window", 1,
+                      max_trend_lookback_value, search_threshold, precision)
+    sell__upwards_trend_total_signal_needed_candles_lookback_window = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
     # Sell Signal Weight Influence Table
-    pInit = initVars(sell_params, "sell_upwards_trend_adx_strong_down_weight", 0, weightMaxValue, searchThreshold)
-    sell_upwards_trend_adx_strong_down_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_upwards_trend_adx_strong_down_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    sell_upwards_trend_adx_strong_down_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_upwards_trend_bollinger_bands_weight", 0, weightMaxValue, searchThreshold)
-    sell_upwards_trend_bollinger_bands_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_upwards_trend_bollinger_bands_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    sell_upwards_trend_bollinger_bands_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_upwards_trend_ema_long_death_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_upwards_trend_ema_long_death_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_upwards_trend_ema_long_death_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    sell_upwards_trend_ema_long_death_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_upwards_trend_ema_short_death_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_upwards_trend_ema_short_death_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_upwards_trend_ema_short_death_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    sell_upwards_trend_ema_short_death_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_upwards_trend_macd_weight", 0, weightMaxValue, searchThreshold)
-    sell_upwards_trend_macd_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_upwards_trend_macd_weight", 0, max_weight_value, search_threshold, precision)
+    sell_upwards_trend_macd_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_upwards_trend_rsi_weight", 0, weightMaxValue, searchThreshold)
-    sell_upwards_trend_rsi_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_upwards_trend_rsi_weight", 0, max_weight_value, search_threshold, precision)
+    sell_upwards_trend_rsi_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_upwards_trend_sma_long_death_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_upwards_trend_sma_long_death_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_upwards_trend_sma_long_death_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    sell_upwards_trend_sma_long_death_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_upwards_trend_sma_short_death_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_upwards_trend_sma_short_death_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_upwards_trend_sma_short_death_cross_weight", 0, max_weight_value,
+                      search_threshold, precision)
+    sell_upwards_trend_sma_short_death_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
-    pInit = initVars(sell_params, "sell_upwards_trend_vwap_cross_weight", 0, weightMaxValue, searchThreshold)
-    sell_upwards_trend_vwap_cross_weight = IntParameter(pInit["minValue"], int(pInit["maxValue"] * precision), \
-        default=pInit["defValue"], space='sell', optimize=pInit["opt&load"], load=pInit["opt&load"])
+    param = init_vars(sell_params, "sell_upwards_trend_vwap_cross_weight", 0, max_weight_value, search_threshold,
+                      precision)
+    sell_upwards_trend_vwap_cross_weight = \
+        IntParameter(param["min_value"], param["max_value"], default=param["default_value"],
+                     space='sell', optimize=param["opt_and_Load"], load=param["opt_and_Load"])
 
     # ---------------------------------------------------------------- #
     #             Sell Unclogger HyperOpt Space Parameters             #
     # ---------------------------------------------------------------- #
-    sell___unclogger_minimal_losing_trade_duration_minutes = IntParameter(int(15 * precision), int(60 * precision), default=int(15 * precision), space='sell', optimize=True, load=True)
-    sell___unclogger_minimal_losing_trades_open = IntParameter(1, 5, default=1, space='sell', optimize=True, load=True)
-    sell___unclogger_open_trades_losing_percentage_needed = IntParameter(1, int(60 * precision), default=1, space='sell', optimize=True, load=True)
-    sell___unclogger_trend_lookback_candles_window = IntParameter(int(10 * precision), int(60 * precision), default=int(10 * precision), space='sell', optimize=True, load=True)
-    sell___unclogger_trend_lookback_candles_window_percentage_needed = IntParameter(int(10 * precision), int(40 * precision), default=int(10 * precision), space='sell', optimize=True, load=True)
+    sell___unclogger_minimal_losing_trade_duration_minutes = \
+        IntParameter(int(15 * precision), int(60 * precision), default=int(15 * precision),
+                     space='sell', optimize=True, load=True)
+    sell___unclogger_minimal_losing_trades_open = \
+        IntParameter(int(1 * precision), int(5 * precision), default=int(1 * precision),
+                     space='sell', optimize=True, load=True)
+    sell___unclogger_open_trades_losing_percentage_needed = \
+        IntParameter(int(1 * precision), int(60 * precision), default=int(1 * precision),
+                     space='sell', optimize=True, load=True)
+    sell___unclogger_trend_lookback_candles_window = \
+        IntParameter(int(10 * precision), int(60 * precision), default=int(10 * precision),
+                     space='sell', optimize=True, load=True)
+    sell___unclogger_trend_lookback_candles_window_percentage_needed = \
+        IntParameter(int(10 * precision), int(40 * precision), default=int(10 * precision),
+                     space='sell', optimize=True, load=True)
 
     ####################################################################################################################
-    ############################################   END OF OVERRIDES SECTION   ##########################################
+    #                                              END OF OVERRIDES SECTION                                            #
     ####################################################################################################################
-

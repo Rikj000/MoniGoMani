@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 # Then change back to ta.<function_name> so IDE won't nag about accessing a protected member of TA-Lib
 # ----------------------------------------------------------------------------------------------------
 
-
+# ToDo: Fix 'precision', child strat will apply precision to all values, unclogger doesn't yet
 class MoniGoManiHyperStrategy(IStrategy):
     """
     ####################################################################################
