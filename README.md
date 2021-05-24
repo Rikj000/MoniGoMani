@@ -1,4 +1,4 @@
-# **Current `MoniGoMani` status @ `v0.10.0`**   
+# **Current `MoniGoMani` status @ `v0.11.0`**   
       
 <p align="left">
     <a href="https://discord.gg/xFZ9bB6vEz">
@@ -24,7 +24,7 @@
 ```
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.10.0 by Rikj000                        ###
+    ###                         MoniGoMani v0.11.0 by Rikj000                        ###
     ##                          -----------------------------                         ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -82,6 +82,7 @@ Further it will do various HyperOptable checks upon the open trades to see if th
 - Configurable Trading on Downwards/Sideways/Upwards trends for Buys/Sells ***(HyperOptable!)***
 - Settings to Enable/Disable HyperOpting for individual `buy_params` & `sell_params` and setting them to a static value through [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#hyperopt-setting-overrides)
 - Configurable [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#open-trade-unclogger), if enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades ***(HyperOptable!)*** :rocket:   
+- [TimeFrame-Zoom](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#timeframe-zoom) during backtesting/hyperopting to prevent profit exploitation! *(Read: [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/))*
 - Custom Long Continuously decreasing ROI Table generation with configurable `roi_table_step_size`
 - [Precision Setting](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#precision-setting) to alter the step-size used during HyperOpting
 - 2 [Custom HyperLoss Functions](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#custom-hyperloss-functions):
@@ -89,39 +90,37 @@ Further it will do various HyperOptable checks upon the open trades to see if th
   - [UncloggedWinRatioAndProfitRatioLoss](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/hyperopts/UncloggedWinRatioAndProfitRatioLoss.py): Same as WinRatioAndProfitRatioLoss but has a configurable Percentage of loss to ignore while HyperOpting (Small losses are a by-product of the Unclogger)
 - [Top Volume & All Tradable StaticPairList Downloading](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#download-staticpairlists) to easily fetch a good StaticPairList
 - [Total Overall Signal Importance Calculator](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#total-overall-signal-importance-calculator) for Total Average Signal Importance Calculation upon the HyperOpt Results (With some really handy subcommands)
-- \*\*[TimeFrame-Zoom](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#timeframe-zoom) during backtesting/hyperopting to prevent profit exploitation! *(Read: [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/))*
 - Pre-Configured Main/Sub Plot Configurations for visualisation of all indicators used in FreqUI
 - Turn On/Off **All** Individual Weighted Signal DataFrame entries for easy debugging in an IDE or better speed while dry/live running or hyperopting   
    
 *\*Support/Updates for Legacy versions stopped since Auto-HyperOptable Strategies are merged into the official Freqtrade Development Branch! Please switch to the new MoniGoManiHyperStrategy!*   
-*\*\*It's recommended to run **without** TimeFrame-Zoom since **v0.10.0**!*
 
 ## Need help getting started?
 Take a good read at the [**MGM_DOCUMENTATION.md**](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md), the current place where you can find all MoniGoMani Documentation!   
 
 ## Go-To Commands:
-For Hyper Opting *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py))*:
+For **Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) using the new [MoniGoManiConfiguration.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiConfiguration.py):
 ```powershell
-freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -s MoniGoManiHyperStrategy -e 1000 --timerange 20210101-20210316
+freqtrade hyperopt -s MoniGoManiConfiguration -c ./user_data/mgm-config-usdt.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 1000 --timerange 20210101-20210316
 ```
-For Back Testing *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) or legacy [MoniGoManiHyperOpted.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoManiHyperOpted.py) or legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py))*:
+For **Back Testing** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) using the new [MoniGoManiConfiguration.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiConfiguration.py)::
 ```powershell
-freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/config-btc.json -c ./user_data/config-private.json --timerange 20210101-20210316
+freqtrade backtesting -s MoniGoManiConfiguration -c ./user_data/mgm-config-usdt.json -c ./user_data/mgm-config-private.json --timerange 20210101-20210316
 ```
-For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
+For **Total Average Signal Importance Calculation** *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
 ```powershell
-python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc BTC
-```
-
-To retrieve a current **Binance-BTC-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*:
-```powershell
-freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json --quote BTC --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-BTC-Top-Volume-StaticPairList.json
-# Don't forget to open the downloaded '...-StaticPairList.json' and copy the PairList Data into your own 'config-private.json' file to start using it!
+python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc USDT
 ```
 
-For Hyper Opting *(the legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py) + legacy [MoniGoManiHyperOpt.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/hyperopts/MoniGoManiHyperOpt.py). Please use the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) instead though since support for Legacy versions stopped!)*:
+To retrieve a current **Binance-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*:
 ```powershell
-freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all --hyperopt MoniGoManiHyperOpt -s MoniGoMani -e 1000 --timerange 20210101-20210316
+freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json --quote USDT --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json
+# Don't forget to open the downloaded '...-StaticPairList.json' and copy the PairList Data into your own 'mgm-config-usdt.json' file to start using it!
+```
+
+To **Download Candle Data**:
+```powershell
+freqtrade download-data --timerange 20201201-20210316 -t 5m 1h -c ./user_data/mgm-config-usdt.json -c ./user_data/mgm-config-private.json
 ```
 
 ## **Got Test Results / Ideas / Config Improvements?**
@@ -141,6 +140,7 @@ More general chats for `Technical Analysis`, `Freqtrade`, `Iconomi` and `Random`
 - Extract all `MoniGoMani Settings` into a `config-mgm.json` that will require manual configuration + Extract the `HyperOpt Results Copy/Paste section` into a `config-mgm-hyperopt.json`, this last file will be extractable from HyperOpt Results using a command!
 - Implement Parent/Child Strategy format
 - Automate as much of the [optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) of MoniGoMani as possible  
+- More global/broader trend detection using zoomed out indicator data
 - **Other & Better indicators!** MoniGoMani has been designed so signals can easily be inserted / swapped out   
 Please use the `Total-Overall-Signal-Importance-Calculator.py` to find out which signals do best and report your results to the [Discord Server](https://discord.gg/xFZ9bB6vEz), so we can improve! :rocket:
 - [Sigmoid](https://en.wikipedia.org/wiki/Sigmoid_function) Buy/Sell Signals

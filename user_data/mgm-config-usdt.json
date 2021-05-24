@@ -1,0 +1,139 @@
+{
+    "dry_run": true,
+    "dry_run_wallet": 500,
+    "max_open_trades": -1,
+    "stake_currency": "USDT",
+    "stake_amount": 45,
+    "tradable_balance_ratio": 1.00,
+    "cancel_open_orders_on_exit": false,
+    "unfilledtimeout": {
+        "buy": 10,
+        "sell": 30
+    },
+    "bid_strategy": {
+        "price_side": "bid",
+        "ask_last_balance": 0.0,
+        "use_order_book": true,
+        "order_book_top": 1,
+        "check_depth_of_market": {
+            "enabled": false,
+            "bids_to_ask_delta": 0.95
+        }
+    },
+    "ask_strategy": {
+        "price_side": "ask",
+        "use_order_book": true,
+        "order_book_min": 1,
+        "order_book_max": 1,
+        "use_sell_signal": true,
+        "sell_profit_only": true,
+        "ignore_roi_if_buy_signal": true
+    },
+    "order_types": {
+        "buy": "limit",
+        "sell": "limit",
+        "stoploss": "market",
+        "stoploss_on_exchange": false
+    },
+    "order_time_in_force": {
+        "buy": "gtc",
+        "sell": "gtc"
+    },
+    "exchange": {
+        "ccxt_config": {"enableRateLimit": true},
+        "ccxt_async_config": {
+            "enableRateLimit": true,
+            "rateLimit": 200
+        },
+        "pair_whitelist": [
+            "BTC/USDT",
+            "ETH/USDT",
+            "XRP/USDT",
+            "ADA/USDT",
+            "DOGE/USDT",
+            "TRX/USDT",
+            "ICP/USDT",
+            "XLM/USDT",
+            "UNI/USDT",
+            "BTT/USDT",
+            "HOT/USDT",
+            "WIN/USDT",
+            "MKR/USDT",
+            "TFUEL/USDT",
+            "ALGO/USDT"
+        ],
+        "pair_blacklist": [
+            ".*DOWN/BTC",
+            ".*UP/BTC",
+            ".*DOWN/ETH",
+            ".*UP/ETH",
+            ".*DOWN/USDT",
+            ".*UP/USDT",
+            ".*DOWN/BNB",
+            ".*UP/BNB",
+            ".*/BNB",
+            "BNB/.*",
+            ".*_PREMIUM",
+            ".*PERP",
+            ".*BULL/.*",
+            ".*BEAR/.*",
+            ".*BULL2021/.*",
+            ".*BEAR2021/.*"
+        ]
+    },
+    "pairlists": [{
+        "method": "StaticPairList"
+    }],
+    "_pairlists": [
+        {
+            "method": "VolumePairList",
+            "number_assets": 200,
+            "sort_key": "quoteVolume",
+            "refresh_period": 1800
+        },
+        { 
+            "method": "AgeFilter", 
+            "min_days_listed": 3
+        },
+        { 
+            "method": "PerformanceFilter" 
+        },
+        { 
+            "method": "PrecisionFilter" 
+        },
+        { 
+            "method": "PriceFilter", 
+            "low_price_ratio": 0.10 
+        },
+        { 
+            "method": "ShuffleFilter" 
+        },
+        { 
+            "method": "SpreadFilter", 
+            "max_spread_ratio": 0.005 
+        },
+        {   
+            "method": "RangeStabilityFilter",
+            "lookback_days": 10, 
+            "min_rate_of_change": 0.01,
+            "refresh_period": 1440
+        },
+        {
+            "method": "VolatilityFilter",
+            "lookback_days": 5,
+            "min_volatility": 0.05,
+            "max_volatility": 0.50,
+            "refresh_period": 1440
+        },
+        {
+            "method": "VolumePairList",
+            "number_assets": 100,
+            "sort_key": "quoteVolume"
+        }
+    ],
+    "initial_state": "running",
+    "forcebuy_enable": false,
+    "internals": {
+        "process_throttle_secs": 5
+    }
+}

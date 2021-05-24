@@ -1,4 +1,6 @@
 {
+    "bot_name": "Freqtrade - MoniGoMani v0.11.0",
+    "fiat_display_currency": "EUR",
     "exchange": {
         "name": "binance",
         "key": "",

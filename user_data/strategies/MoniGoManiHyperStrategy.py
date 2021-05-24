@@ -24,12 +24,11 @@ logger = logging.getLogger(__name__)
 # Then change back to ta.<function_name> so IDE won't nag about accessing a protected member of TA-Lib
 # ----------------------------------------------------------------------------------------------------
 
-# ToDo: Fix 'precision', child strat will apply precision to all values, unclogger doesn't yet
 class MoniGoManiHyperStrategy(IStrategy):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.10.0 by Rikj000                        ###
+    ###                         MoniGoMani v0.11.0 by Rikj000                        ###
     ##                          -----------------------------                         ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -112,7 +111,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         "buy_upwards_trend_sma_short_golden_cross_weight": 97,
         "buy_upwards_trend_vwap_cross_weight": 53
     }
-
+    
     # Sell hyperspace params:
     sell_params = {
         "sell___trades_when_downwards": True,  # value loaded from strategy
@@ -161,7 +160,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         "sell_upwards_trend_sma_short_death_cross_weight": 99,
         "sell_upwards_trend_vwap_cross_weight": 37
     }
-
+    
     # ROI table:
     minimal_roi = {
         "0": 0.17,
@@ -429,16 +428,16 @@ class MoniGoManiHyperStrategy(IStrategy):
         "1310": 0.0001,
         "1315": 0
     }
-
+    
     # Stoploss:
     stoploss = -0.111
-
+    
     # Trailing stop:
     trailing_stop = True
     trailing_stop_positive = 0.01
     trailing_stop_positive_offset = 0.013
     trailing_only_offset_is_reached = True
-
+    
     ####################################################################################################################
     #                                     END OF HYPEROPT RESULTS COPY-PASTE SECTION                                   #
     ####################################################################################################################
@@ -475,22 +474,17 @@ class MoniGoManiHyperStrategy(IStrategy):
 
     # To disable TimeFrame-Zoom just use the same candles for 'timeframe' & 'backtest_timeframe'
     timeframe = '1h'  # Optimal TimeFrame for MoniGoMani (used during Dry/Live-Runs)
-    backtest_timeframe = '1h'  # Optimal TimeFrame-Zoom for MoniGoMani (used to zoom in during Backtesting/HyperOpting)
-    informative_timeframe = timeframe
+    backtest_timeframe = '5m'  # Optimal TimeFrame-Zoom for MoniGoMani (used to zoom in during Backtesting/HyperOpting)
 
-    # Run "populate_indicators()" only for new candle
-    process_only_new_candles = False
-
-    # These values can be overridden in the "ask_strategy" section in the config
-    use_sell_signal = True
-    sell_profit_only = True
-    ignore_roi_if_buy_signal = True
+    informative_timeframe = timeframe  # Gets set automatically
+    timeframe = backtest_timeframe
+    timeframe_multiplier = None  # Gets set automatically
 
     # Number of candles the strategy requires before producing valid signals.
     # In live and dry runs this ratio will be 1, so nothing changes there.
     # But we need `startup_candle_count` to be for the timeframe of 
     # `informative_timeframe` (1h) not `timeframe` (5m) for backtesting.
-    startup_candle_count: int = 400 * int(timeframe_to_minutes(informative_timeframe) / timeframe_to_minutes(timeframe))
+    startup_candle_count = 400
     # SMA200 needs 200 candles before producing valid signals
     # EMA200 needs an extra 200 candles of SMA200 before producing valid signals
 
@@ -511,20 +505,6 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Size of the steps in minutes to be used when calculating the long continuous ROI table
     # MGM generates a custom really long table so it will have less gaps in it and be more continuous in it's decrease
     roi_table_step_size = 5
-
-    # Optional order type mapping.
-    order_types = {
-        'buy': 'limit',
-        'sell': 'limit',
-        'stoploss': 'market',
-        'stoploss_on_exchange': False
-    }
-
-    # Optional order time in force.
-    order_time_in_force = {
-        'buy': 'gtc',
-        'sell': 'gtc'
-    }
 
     # Plot configuration to show all signals used in MoniGoMani in FreqUI (Use load from Strategy in FreqUI)
     plot_config = {
@@ -599,30 +579,40 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Total Buy Signal Weight needed for Downwards Trends, calculated over a small lookback window, 
     # to check if an actual buy should occur
     buy__downwards_trend_total_signal_needed = \
-        IntParameter(int(30 * precision), int(100 * number_of_weighted_signals * precision),
-                     default=int(30 * precision), space='buy', optimize=True, load=True)
+        IntParameter(int(30 * precision), int(100 * number_of_weighted_signals * precision), default=int(30 * precision), 
+                     space='buy', optimize=True, load=True)
     buy__downwards_trend_total_signal_needed_candles_lookback_window = \
-        IntParameter(1, 6, default=1, space='buy', optimize=True, load=True)
+        IntParameter(int(1 * precision), int(6 * precision), default=int(1 * precision), 
+                     space='buy', optimize=True, load=True)
 
     # Buy Signal Weight Influence Table
     buy_downwards_trend_adx_strong_up_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_downwards_trend_bollinger_bands_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_downwards_trend_ema_long_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_downwards_trend_ema_short_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_downwards_trend_macd_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_downwards_trend_rsi_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_downwards_trend_sma_long_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_downwards_trend_sma_short_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_downwards_trend_vwap_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
 
     # Sideways Trend Buy
     # ------------------
@@ -630,30 +620,40 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Total Buy Signal Weight needed for Sideways Trends, calculated over a small lookback window, 
     # to check if an actual buy should occur
     buy__sideways_trend_total_signal_needed = \
-        IntParameter(int(30 * precision), int(100 * number_of_weighted_signals * precision),
-                     default=int(30 * precision), space='buy', optimize=True, load=True)
+        IntParameter(int(30 * precision), int(100 * number_of_weighted_signals * precision), default=int(30 * precision), 
+                     space='buy', optimize=True, load=True)
     buy__sideways_trend_total_signal_needed_candles_lookback_window = \
-        IntParameter(1, 6, default=1, space='buy', optimize=True, load=True)
+        IntParameter(int(1 * precision), int(6 * precision), default=int(1 * precision), 
+                     space='buy', optimize=True, load=True)
 
     # Buy Signal Weight Influence Table
     buy_sideways_trend_adx_strong_up_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_sideways_trend_bollinger_bands_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_sideways_trend_ema_long_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_sideways_trend_ema_short_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_sideways_trend_macd_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_sideways_trend_rsi_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_sideways_trend_sma_long_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_sideways_trend_sma_short_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_sideways_trend_vwap_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
 
     # Upwards Trend Buy
     # -----------------
@@ -661,30 +661,40 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Total Buy Signal Weight needed for Upwards Trends, calculated over a small lookback window, 
     # to check if an actual buy should occur
     buy__upwards_trend_total_signal_needed = \
-        IntParameter(int(30 * precision), int(100 * number_of_weighted_signals * precision),
-                     default=int(30 * precision), space='buy', optimize=True, load=True)
+        IntParameter(int(30 * precision), int(100 * number_of_weighted_signals * precision), default=int(30 * precision), 
+                     space='buy', optimize=True, load=True)
     buy__upwards_trend_total_signal_needed_candles_lookback_window = \
-        IntParameter(1, 6, default=1, space='buy', optimize=True, load=True)
+        IntParameter(int(1 * precision), int(6 * precision), default=int(1 * precision), 
+                     space='buy', optimize=True, load=True)
 
     # Buy Signal Weight Influence Table
     buy_upwards_trend_adx_strong_up_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_upwards_trend_bollinger_bands_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_upwards_trend_ema_long_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_upwards_trend_ema_short_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_upwards_trend_macd_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_upwards_trend_rsi_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_upwards_trend_sma_long_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_upwards_trend_sma_short_golden_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
     buy_upwards_trend_vwap_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='buy', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='buy', optimize=True, load=True)
 
     # ---------------------------------------------------------------- #
     #                  Sell HyperOpt Space Parameters                  #
@@ -712,30 +722,40 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Total Sell Signal Weight needed for Downwards Trends, calculated over a small lookback window, 
     # to check if an actual sell should occur
     sell__downwards_trend_total_signal_needed = \
-        IntParameter(int(30 * precision), int(100 * number_of_weighted_signals * precision),
-                     default=int(30 * precision), space='sell', optimize=True, load=True)
+        IntParameter(int(30 * precision), int(100 * number_of_weighted_signals * precision), default=int(30 * precision), 
+                     space='sell', optimize=True, load=True)
     sell__downwards_trend_total_signal_needed_candles_lookback_window = \
-        IntParameter(1, 6, default=1, space='sell', optimize=True, load=True)
+        IntParameter(int(1 * precision), int(6 * precision), default=(1 * precision), 
+                     space='sell', optimize=True, load=True)
 
     # Sell Signal Weight Influence Table
     sell_downwards_trend_adx_strong_down_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_downwards_trend_bollinger_bands_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_downwards_trend_ema_long_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_downwards_trend_ema_short_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_downwards_trend_macd_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_downwards_trend_rsi_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_downwards_trend_sma_long_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_downwards_trend_sma_short_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_downwards_trend_vwap_cross_weight = \
-        IntParameter(5, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(5 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
 
     # Sideways Trend Sell
     # -------------------
@@ -743,30 +763,40 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Total Sell Signal Weight needed for Sideways Trends, calculated over a small lookback window, 
     # to check if an actual sell should occur
     sell__sideways_trend_total_signal_needed = \
-        IntParameter(int(30 * precision), int(100 * number_of_weighted_signals * precision),
-                     default=int(30 * precision), space='sell', optimize=True, load=True)
+        IntParameter(int(30 * precision), int(100 * number_of_weighted_signals * precision), default=int(30 * precision), 
+                     space='sell', optimize=True, load=True)
     sell__sideways_trend_total_signal_needed_candles_lookback_window = \
-        IntParameter(1, 6, default=1, space='sell', optimize=True, load=True)
+        IntParameter(int(1 * precision), (6 * precision), default=(1 * precision), 
+                     space='sell', optimize=True, load=True)
 
     # Sell Signal Weight Influence Table
     sell_sideways_trend_adx_strong_down_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_sideways_trend_bollinger_bands_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_sideways_trend_ema_long_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_sideways_trend_ema_short_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_sideways_trend_macd_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_sideways_trend_rsi_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_sideways_trend_sma_long_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_sideways_trend_sma_short_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_sideways_trend_vwap_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
 
     # Upwards Trend Sell
     # ------------------
@@ -774,30 +804,40 @@ class MoniGoManiHyperStrategy(IStrategy):
     # Total Sell Signal Weight needed for Sideways Trends, calculated over a small lookback window, 
     # to check if an actual sell should occur
     sell__upwards_trend_total_signal_needed = \
-        IntParameter(int(30 * precision), int(100 * number_of_weighted_signals * precision),
-                     default=int(30 * precision), space='sell', optimize=True, load=True)
+        IntParameter(int(30 * precision), int(100 * number_of_weighted_signals * precision), default=int(30 * precision), 
+                     space='sell', optimize=True, load=True)
     sell__upwards_trend_total_signal_needed_candles_lookback_window = \
-        IntParameter(1, 6, default=1, space='sell', optimize=True, load=True)
+        IntParameter(int(1 * precision), int(6 * precision), default=int(1 * precision), 
+                     space='sell', optimize=True, load=True)
 
     # Sell Signal Weight Influence Table
     sell_upwards_trend_adx_strong_down_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_upwards_trend_bollinger_bands_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_upwards_trend_ema_long_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_upwards_trend_ema_short_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_upwards_trend_macd_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_upwards_trend_rsi_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_upwards_trend_sma_long_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_upwards_trend_sma_short_death_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
     sell_upwards_trend_vwap_cross_weight = \
-        IntParameter(0, int(100 * precision), default=0, space='sell', optimize=True, load=True)
+        IntParameter(int(0 * precision), int(100 * precision), default=int(50 * precision), 
+                     space='sell', optimize=True, load=True)
 
     # ---------------------------------------------------------------- #
     #             Sell Unclogger HyperOpt Space Parameters             #
@@ -806,15 +846,20 @@ class MoniGoManiHyperStrategy(IStrategy):
     sell___unclogger_enabled = \
         CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
     sell___unclogger_minimal_losing_trade_duration_minutes = \
-        IntParameter(int(15 * precision), int(60 * precision), default=int(15 * precision), space='sell', optimize=True, load=True)
+        IntParameter(int(15 * precision), int(60 * precision), default=int(15 * precision), 
+                     space='sell', optimize=True, load=True)
     sell___unclogger_minimal_losing_trades_open = \
-        IntParameter(1, 5, default=1, space='sell', optimize=True, load=True)
+        IntParameter(int(1 * precision), int(5 * precision), default=int(1 * precision), 
+                     space='sell', optimize=True, load=True)
     sell___unclogger_open_trades_losing_percentage_needed = \
-        IntParameter(1, int(60 * precision), default=1, space='sell', optimize=True, load=True)
+        IntParameter(int(1 * precision), int(60 * precision), default=int(1 * precision), 
+                     space='sell', optimize=True, load=True)
     sell___unclogger_trend_lookback_candles_window = \
-        IntParameter(int(10 * precision), int(60 * precision), default=int(10 * precision), space='sell', optimize=True, load=True)
+        IntParameter(int(10 * precision), int(60 * precision), default=int(10 * precision), 
+                     space='sell', optimize=True, load=True)
     sell___unclogger_trend_lookback_candles_window_percentage_needed = \
-        IntParameter(int(10 * precision), int(40 * precision), default=int(10 * precision), space='sell', optimize=True, load=True)
+        IntParameter(int(10 * precision), int(40 * precision), default=int(10 * precision), 
+                     space='sell', optimize=True, load=True)
     sell___unclogger_trend_lookback_window_uses_downwards_candles = \
         CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
     sell___unclogger_trend_lookback_window_uses_sideways_candles = \
@@ -860,6 +905,16 @@ class MoniGoManiHyperStrategy(IStrategy):
             self.is_dry_live_run_detected = False
             self.mgm_logger('info', initialization, f'Current run mode detected as: HyperOpting/BackTesting. '
                                                     f'Auto updated is_dry_live_run_detected to: False')
+
+            self.mgm_logger('info', initialization, f'Calculating and storing "timeframe_multiplier" + Updating '
+                                                    f'"startup_candle_count"')
+            self.timeframe_multiplier = \
+                int(timeframe_to_minutes(self.informative_timeframe) / timeframe_to_minutes(self.timeframe))
+            if self.timeframe_multiplier < 1:
+                raise SystemExit(f'MoniGoManiHyperStrategy - ERROR - TimeFrame-Zoom - "timeframe" must be bigger than '
+                                 f'"backtest_timeframe"')
+            self.startup_candle_count *= self.timeframe_multiplier
+
         else:
             self.is_dry_live_run_detected = True
             self.mgm_logger('info', initialization, f'Current run mode detected as: Dry/Live-Run. '
@@ -1229,23 +1284,46 @@ class MoniGoManiHyperStrategy(IStrategy):
 
         # Check if buy signal should be sent depending on the current trend, using a lookback window to take signals
         # that fired during previous candles into consideration
-        dataframe.loc[
-            (
-                    (dataframe['trend'] == 'downwards') &
-                    (dataframe['total_buy_signal_strength']
-                     .rolling(self.buy__downwards_trend_total_signal_needed_candles_lookback_window.value).sum()
-                     >= self.buy__downwards_trend_total_signal_needed.value / self.precision)
-            ) | (
-                    (dataframe['trend'] == 'sideways') &
-                    (dataframe['total_buy_signal_strength']
-                     .rolling(self.buy__sideways_trend_total_signal_needed_candles_lookback_window.value).sum()
-                     >= self.buy__sideways_trend_total_signal_needed.value / self.precision)
-            ) | (
-                    (dataframe['trend'] == 'upwards') &
-                    (dataframe['total_buy_signal_strength']
-                     .rolling(self.buy__upwards_trend_total_signal_needed_candles_lookback_window.value).sum()
-                     >= self.buy__upwards_trend_total_signal_needed.value / self.precision)
-            ), 'buy'] = 1
+        if (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe):
+            # If TimeFrame-Zooming => Only use 'informative_timeframe' data
+            dataframe.loc[
+                (
+                        (dataframe['trend'] == 'downwards') &
+                        ((dataframe['total_buy_signal_strength']
+                          .rolling(self.buy__downwards_trend_total_signal_needed_candles_lookback_window.value *
+                                   self.timeframe_multiplier).sum() / self.timeframe_multiplier)
+                         >= self.buy__downwards_trend_total_signal_needed.value / self.precision)
+                ) | (
+                        (dataframe['trend'] == 'sideways') &
+                        ((dataframe['total_buy_signal_strength']
+                          .rolling(self.buy__sideways_trend_total_signal_needed_candles_lookback_window.value *
+                                   self.timeframe_multiplier).sum() / self.timeframe_multiplier)
+                         >= self.buy__sideways_trend_total_signal_needed.value / self.precision)
+                ) | (
+                        (dataframe['trend'] == 'upwards') &
+                        ((dataframe['total_buy_signal_strength']
+                          .rolling(self.buy__upwards_trend_total_signal_needed_candles_lookback_window.value *
+                                   self.timeframe_multiplier).sum() / self.timeframe_multiplier)
+                         >= self.buy__upwards_trend_total_signal_needed.value / self.precision)
+                ), 'buy'] = 1
+        else:
+            dataframe.loc[
+                (
+                        (dataframe['trend'] == 'downwards') &
+                        (dataframe['total_buy_signal_strength']
+                         .rolling(self.buy__downwards_trend_total_signal_needed_candles_lookback_window.value).sum()
+                         >= self.buy__downwards_trend_total_signal_needed.value / self.precision)
+                ) | (
+                        (dataframe['trend'] == 'sideways') &
+                        (dataframe['total_buy_signal_strength']
+                         .rolling(self.buy__sideways_trend_total_signal_needed_candles_lookback_window.value).sum()
+                         >= self.buy__sideways_trend_total_signal_needed.value / self.precision)
+                ) | (
+                        (dataframe['trend'] == 'upwards') &
+                        (dataframe['total_buy_signal_strength']
+                         .rolling(self.buy__upwards_trend_total_signal_needed_candles_lookback_window.value).sum()
+                         >= self.buy__upwards_trend_total_signal_needed.value / self.precision)
+                ), 'buy'] = 1
 
         # Override Buy Signal: When configured buy signals can be completely turned off for each kind of trend
         if not self.buy___trades_when_downwards.value / self.precision:
@@ -1468,23 +1546,46 @@ class MoniGoManiHyperStrategy(IStrategy):
 
         # Check if buy signal should be sent depending on the current trend, using a lookback window to take signals
         # that fired during previous candles into consideration
-        dataframe.loc[
-            (
-                    (dataframe['trend'] == 'downwards') &
-                    (dataframe['total_sell_signal_strength']
-                     .rolling(self.sell__downwards_trend_total_signal_needed_candles_lookback_window.value).sum()
-                     >= self.sell__downwards_trend_total_signal_needed.value / self.precision)
-            ) | (
-                    (dataframe['trend'] == 'sideways') &
-                    (dataframe['total_sell_signal_strength']
-                     .rolling(self.sell__sideways_trend_total_signal_needed_candles_lookback_window.value).sum()
-                     >= self.sell__sideways_trend_total_signal_needed.value / self.precision)
-            ) | (
-                    (dataframe['trend'] == 'upwards') &
-                    (dataframe['total_sell_signal_strength']
-                     .rolling(self.sell__upwards_trend_total_signal_needed_candles_lookback_window.value).sum()
-                     >= self.sell__upwards_trend_total_signal_needed.value / self.precision)
-            ), 'sell'] = 1
+        if (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe):
+            # If TimeFrame-Zooming => Only use 'informative_timeframe' data
+            dataframe.loc[
+                (
+                        (dataframe['trend'] == 'downwards') &
+                        ((dataframe['total_sell_signal_strength']
+                          .rolling(self.sell__downwards_trend_total_signal_needed_candles_lookback_window.value *
+                                   self.timeframe_multiplier).sum() / self.timeframe_multiplier)
+                         >= self.sell__downwards_trend_total_signal_needed.value / self.precision)
+                ) | (
+                        (dataframe['trend'] == 'sideways') &
+                        ((dataframe['total_sell_signal_strength']
+                          .rolling(self.sell__sideways_trend_total_signal_needed_candles_lookback_window.value *
+                                   self.timeframe_multiplier).sum() / self.timeframe_multiplier)
+                         >= self.sell__sideways_trend_total_signal_needed.value / self.precision)
+                ) | (
+                        (dataframe['trend'] == 'upwards') &
+                        ((dataframe['total_sell_signal_strength']
+                          .rolling(self.sell__upwards_trend_total_signal_needed_candles_lookback_window.value *
+                                   self.timeframe_multiplier).sum() / self.timeframe_multiplier)
+                         >= self.sell__upwards_trend_total_signal_needed.value / self.precision)
+                ), 'sell'] = 1
+        else:
+            dataframe.loc[
+                (
+                        (dataframe['trend'] == 'downwards') &
+                        (dataframe['total_sell_signal_strength']
+                         .rolling(self.sell__downwards_trend_total_signal_needed_candles_lookback_window.value).sum()
+                         >= self.sell__downwards_trend_total_signal_needed.value / self.precision)
+                ) | (
+                        (dataframe['trend'] == 'sideways') &
+                        (dataframe['total_sell_signal_strength']
+                         .rolling(self.sell__sideways_trend_total_signal_needed_candles_lookback_window.value).sum()
+                         >= self.sell__sideways_trend_total_signal_needed.value / self.precision)
+                ) | (
+                        (dataframe['trend'] == 'upwards') &
+                        (dataframe['total_sell_signal_strength']
+                         .rolling(self.sell__upwards_trend_total_signal_needed_candles_lookback_window.value).sum()
+                         >= self.sell__upwards_trend_total_signal_needed.value / self.precision)
+                ), 'sell'] = 1
 
         # Override Sell Signal: When configured sell signals can be completely turned off for each kind of trend
         if not self.sell___trades_when_downwards.value / self.precision:
@@ -1672,7 +1773,7 @@ class MoniGoManiHyperStrategy(IStrategy):
                                     f'Fetched losing_open_trades ({str(len(losing_open_trades))}) from custom '
                                     f'information storage!')
 
-                    if len(losing_open_trades) < self.sell___unclogger_minimal_losing_trades_open.value:
+                    if len(losing_open_trades) < (self.sell___unclogger_minimal_losing_trades_open.value / self.precision):
                         self.mgm_logger('debug', open_trade_unclogger,
                                         f'No unclogging needed! Not enough losing trades currently open!')
                     else:

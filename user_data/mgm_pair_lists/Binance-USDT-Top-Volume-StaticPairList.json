@@ -3,19 +3,19 @@
     "pair_whitelist": [
       "BTC/USDT",
       "ETH/USDT",
-      "XRP/USDT",
-      "MATIC/USDT",
       "DOGE/USDT",
+      "XRP/USDT",
       "ADA/USDT",
-      "BUSD/USDT",
-      "LTC/USDT",
-      "DOT/USDT",
-      "SOL/USDT",
-      "XVS/USDT",
-      "EOS/USDT",
       "ETC/USDT",
+      "LTC/USDT",
+      "ICP/USDT",
+      "TRX/USDT",
       "AAVE/USDT",
-      "LINK/USDT"
+      "XLM/USDT",
+      "UNI/USDT",
+      "BTT/USDT",
+      "AVAX/USDT",
+      "WIN/USDT"
     ]
   }
 }

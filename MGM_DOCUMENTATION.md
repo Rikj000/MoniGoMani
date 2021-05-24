@@ -334,28 +334,28 @@ trailing stoploss and ROI behaviour during backtesting/hyperopting.
 
 
 # Go-To Commands:
-For Hyper Opting *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py))*:
+For **Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) using the new [MoniGoManiConfiguration.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiConfiguration.py):
 ```powershell
-freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -s MoniGoManiHyperStrategy -e 1000 --timerange 20210101-20210316
+freqtrade hyperopt -s MoniGoManiConfiguration -c ./user_data/mgm-config-usdt.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 1000 --timerange 20210101-20210316
 ```
-For Back Testing *(the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) or legacy [MoniGoManiHyperOpted.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoManiHyperOpted.py) or legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py))*:
+For **Back Testing** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) using the new [MoniGoManiConfiguration.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiConfiguration.py)::
 ```powershell
-freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/config-btc.json -c ./user_data/config-private.json --timerange 20210101-20210316
+freqtrade backtesting -s MoniGoManiConfiguration -c ./user_data/mgm-config-usdt.json -c ./user_data/mgm-config-private.json --timerange 20210101-20210316
 ```
-For Total Average Signal Importance Calculation *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
+For **Total Average Signal Importance Calculation** *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
 ```powershell
-python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc BTC
-```
-
-To retrieve a current **Binance-BTC-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*:
-```powershell
-freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json --quote BTC --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-BTC-Top-Volume-StaticPairList.json
-# Don't forget to open the downloaded '...-StaticPairList.json' and copy the PairList Data into your own 'config-private.json' file to start using it!
+python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc USDT
 ```
 
-For Hyper Opting *(the legacy [MoniGoMani.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/strategies/MoniGoMani.py) + legacy [MoniGoManiHyperOpt.py](https://github.com/Rikj000/MoniGoMani/blob/main/Legacy%20MoniGoMani/user_data/hyperopts/MoniGoManiHyperOpt.py). Please use the new [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) instead though since support for Legacy versions stopped!)*:
+To retrieve a current **Binance-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*:
 ```powershell
-freqtrade hyperopt -c ./user_data/config-btc.json -c ./user_data/config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all --hyperopt MoniGoManiHyperOpt -s MoniGoMani -e 1000 --timerange 20210101-20210316
+freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json --quote USDT --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json
+# Don't forget to open the downloaded '...-StaticPairList.json' and copy the PairList Data into your own 'mgm-config-usdt.json' file to start using it!
+```
+
+To **Download Candle Data**:
+```powershell
+freqtrade download-data --timerange 20201201-20210316 -t 5m 1h -c ./user_data/mgm-config-usdt.json -c ./user_data/mgm-config-private.json
 ```
 
 # How to share your test results properly:
@@ -375,3 +375,6 @@ The epoch table being generated when hyperopting + the number of the epoch you u
 You likely are using a `Float` value where you should be using a `Integer` value. Hopefully your error will show more information about which Parameter.   
 - `Integer` = Whole number. Examples: 1, 3, 23
 - `Float` = Decimal number. Examples: 1.53, 4.2, 17.12   
+
+### -bash: jq: command not found
+[jq](https://stedolan.github.io/jq/) (command-line JSON processor) still needs to be installed.
