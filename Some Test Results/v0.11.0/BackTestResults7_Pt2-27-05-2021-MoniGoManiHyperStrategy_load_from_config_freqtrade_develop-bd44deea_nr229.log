@@ -1,0 +1,217 @@
+freqtrade hyperopt-show -n 229
+==============================
+Result for strategy MoniGoManiHyperStrategy
+=========================================================== BACKTESTING REPORT ==========================================================
+|       Pair |   Buys |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |   Avg Duration |   Win  Draw  Loss  Win% |
+|------------+--------+----------------+----------------+-------------------+----------------+----------------+-------------------------|
+|  DOGE/USDT |    280 |           2.43 |         681.31 |           306.894 |          61.38 |        5:25:00 |   269     3     8  96.1 |
+|   HOT/USDT |    211 |           1.67 |         352.64 |           158.845 |          31.77 |        6:34:00 |   200     7     4  94.8 |
+|   BTT/USDT |    176 |           1.69 |         297.17 |           133.861 |          26.77 |        7:47:00 |   161    11     4  91.5 |
+| TFUEL/USDT |    216 |           1.20 |         258.28 |           116.342 |          23.27 |        7:27:00 |   207     6     3  95.8 |
+|   WIN/USDT |    166 |           1.10 |         183.41 |            82.616 |          16.52 |        7:53:00 |   151    11     4  91.0 |
+|   XRP/USDT |    140 |           1.07 |         149.15 |            67.185 |          13.44 |        8:49:00 |   125    12     3  89.3 |
+|   UNI/USDT |    169 |           0.68 |         115.21 |            51.897 |          10.38 |        7:08:00 |   148    20     1  87.6 |
+|   MKR/USDT |    147 |           0.67 |          98.82 |            44.512 |           8.90 |       10:02:00 |   136     8     3  92.5 |
+|   XLM/USDT |    141 |           0.69 |          97.10 |            43.741 |           8.75 |       10:39:00 |   129     9     3  91.5 |
+|   ETH/USDT |     94 |           0.57 |          53.22 |            23.974 |           4.79 |       13:20:00 |    80    13     1  85.1 |
+|  ALGO/USDT |    120 |           0.44 |          52.94 |            23.848 |           4.77 |       13:13:00 |   105    13     2  87.5 |
+|   TRX/USDT |     82 |           0.58 |          47.26 |            21.287 |           4.26 |       18:03:00 |    73     7     2  89.0 |
+|   BTC/USDT |     74 |           0.53 |          39.18 |            17.651 |           3.53 |       18:10:00 |    62    11     1  83.8 |
+|   ADA/USDT |    116 |           0.24 |          27.59 |            12.426 |           2.49 |       13:33:00 |   105     9     2  90.5 |
+|      TOTAL |   2132 |           1.15 |        2453.28 |          1105.078 |         221.02 |        9:18:00 |  1951   140    41  91.5 |
+============================================================ SELL REASON STATS ============================================================
+|                 Sell Reason |   Sells |   Win  Draws  Loss  Win% |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |
+|-----------------------------+---------+--------------------------+----------------+----------------+-------------------+----------------|
+|          trailing_stop_loss |    1944 |   1944     0     0   100 |           1.85 |        3598.11 |          1620.77  |         257.01 |
+|                         roi |     145 |      5   140     0   100 |           0.02 |           2.39 |             1.077 |           0.17 |
+|                   stop_loss |      28 |      0     0    28     0 |         -33.93 |        -950.1  |          -427.974 |         -67.86 |
+|                  force_sell |      13 |      0     0    13     0 |         -15.2  |        -197.6  |           -89.01  |         -14.11 |
+| MGM_unclogging_losing_trade |       2 |      2     0     0   100 |           0.24 |           0.48 |             0.214 |           0.03 |
+========================================================= LEFT OPEN TRADES REPORT ==========================================================
+|       Pair |   Buys |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |      Avg Duration |   Win  Draw  Loss  Win% |
+|------------+--------+----------------+----------------+-------------------+----------------+-------------------+-------------------------|
+|   TRX/USDT |      1 |          -6.13 |          -6.13 |            -2.759 |          -0.55 |   2 days, 8:55:00 |     0     0     1     0 |
+|   ETH/USDT |      1 |          -7.14 |          -7.14 |            -3.218 |          -0.64 |   2 days, 2:50:00 |     0     0     1     0 |
+|   BTC/USDT |      1 |          -8.94 |          -8.94 |            -4.026 |          -0.81 |   2 days, 2:40:00 |     0     0     1     0 |
+|  DOGE/USDT |      1 |          -9.62 |          -9.62 |            -4.334 |          -0.87 |   7 days, 0:00:00 |     0     0     1     0 |
+|   XRP/USDT |      1 |         -10.01 |         -10.01 |            -4.508 |          -0.90 |   7 days, 6:25:00 |     0     0     1     0 |
+|  ALGO/USDT |      1 |         -10.98 |         -10.98 |            -4.945 |          -0.99 |           8:35:00 |     0     0     1     0 |
+|   MKR/USDT |      1 |         -14.51 |         -14.51 |            -6.535 |          -1.31 | 12 days, 12:55:00 |     0     0     1     0 |
+|   WIN/USDT |      1 |         -15.37 |         -15.37 |            -6.926 |          -1.39 |   1 day, 13:45:00 |     0     0     1     0 |
+|   XLM/USDT |      1 |         -17.65 |         -17.65 |            -7.950 |          -1.59 | 16 days, 11:05:00 |     0     0     1     0 |
+|   BTT/USDT |      1 |         -17.75 |         -17.75 |            -7.997 |          -1.60 |   2 days, 8:55:00 |     0     0     1     0 |
+| TFUEL/USDT |      1 |         -24.34 |         -24.34 |           -10.964 |          -2.19 |  3 days, 17:00:00 |     0     0     1     0 |
+|   HOT/USDT |      1 |         -25.07 |         -25.07 |           -11.291 |          -2.26 |          17:20:00 |     0     0     1     0 |
+|   ADA/USDT |      1 |         -30.10 |         -30.10 |           -13.557 |          -2.71 | 16 days, 14:25:00 |     0     0     1     0 |
+|      TOTAL |     13 |         -15.20 |        -197.60 |           -89.010 |         -17.80 |  5 days, 18:50:00 |     0     0    13     0 |
+=============== SUMMARY METRICS ===============
+| Metric                | Value               |
+|-----------------------+---------------------|
+| Backtesting from      | 2021-01-01 00:00:00 |
+| Backtesting to        | 2021-03-16 00:00:00 |
+| Max open trades       | 14                  |
+|                       |                     |
+| Total trades          | 2132                |
+| Starting balance      | 500.000 USDT        |
+| Final balance         | 1605.078 USDT       |
+| Absolute profit       | 1105.078 USDT       |
+| Total profit %        | 221.02%             |
+| Trades per day        | 28.81               |
+| Avg. stake amount     | 45.000 USDT         |
+| Total trade volume    | 95940.000 USDT      |
+|                       |                     |
+| Best Pair             | DOGE/USDT 681.31%   |
+| Worst Pair            | ADA/USDT 27.59%     |
+| Best trade            | BTT/USDT 42.44%     |
+| Worst trade           | DOGE/USDT -33.93%   |
+| Best day              | 214.904 USDT        |
+| Worst day             | -103.619 USDT       |
+| Days win/draw/lose    | 65 / 1 / 9          |
+| Avg. Duration Winners | 5:09:00             |
+| Avg. Duration Loser   | 4 days, 1:54:00     |
+| Zero Duration Trades  | 38.60% (823)        |
+| Rejected Buy signals  | 0                   |
+|                       |                     |
+| Min balance           | 500.339 USDT        |
+| Max balance           | 1694.088 USDT       |
+| Drawdown              | 302.89%             |
+| Drawdown              | 136.436 USDT        |
+| Drawdown high         | 1081.176 USDT       |
+| Drawdown low          | 944.740 USDT        |
+| Drawdown Start        | 2021-02-22 08:20:00 |
+| Drawdown End          | 2021-02-23 09:00:00 |
+| Market change         | 0%                  |
+===============================================
+
+
+Epoch details:
+
+   229/1000:   
+        2132 trades. 
+        1951/140/41 Wins/Draws/Losses. 
+        Avg profit   1.15%. 
+        Median profit   0.83%. 
+        Total profit  1105.07782826 USDT ( 221.02Σ%). 
+        Avg duration 9:18:00 min. 
+        Objective: -224499.99511
+
+
+    # Buy hyperspace params:
+    buy_params = {
+        "buy__downwards_trend_total_signal_needed": "123",
+        "buy__downwards_trend_total_signal_needed_candles_lookback_window": "4",
+        "buy__sideways_trend_total_signal_needed": "416",
+        "buy__sideways_trend_total_signal_needed_candles_lookback_window": "3",
+        "buy__upwards_trend_total_signal_needed": "239",
+        "buy__upwards_trend_total_signal_needed_candles_lookback_window": "6",
+        "buy_downwards_trend_adx_strong_up_weight": "25",
+        "buy_downwards_trend_bollinger_bands_weight": "18",
+        "buy_downwards_trend_ema_long_golden_cross_weight": "18",
+        "buy_downwards_trend_ema_short_golden_cross_weight": "54",
+        "buy_downwards_trend_macd_weight": "49",
+        "buy_downwards_trend_sma_long_golden_cross_weight": "73",
+        "buy_downwards_trend_sma_short_golden_cross_weight": "76",
+        "buy_sideways_trend_bollinger_bands_weight": "49",
+        "buy_sideways_trend_ema_long_golden_cross_weight": "91",
+        "buy_sideways_trend_ema_short_golden_cross_weight": "85",
+        "buy_sideways_trend_macd_weight": "77",
+        "buy_sideways_trend_rsi_weight": "91",
+        "buy_sideways_trend_sma_long_golden_cross_weight": "26",
+        "buy_sideways_trend_vwap_cross_weight": "93",
+        "buy_upwards_trend_bollinger_bands_weight": "31",
+        "buy_upwards_trend_ema_long_golden_cross_weight": "69",
+        "buy_upwards_trend_ema_short_golden_cross_weight": "26",
+        "buy_upwards_trend_macd_weight": "77",
+        "buy_upwards_trend_rsi_weight": "25",
+        "buy_upwards_trend_sma_long_golden_cross_weight": "56",
+        "buy_upwards_trend_sma_short_golden_cross_weight": "50",
+        "buy_upwards_trend_vwap_cross_weight": "41",
+        "buy___trades_when_downwards": True,  # value loaded from strategy
+        "buy___trades_when_sideways": False,  # value loaded from strategy
+        "buy___trades_when_upwards": True,  # value loaded from strategy
+        "buy_downwards_trend_rsi_weight": 100,  # value loaded from strategy
+        "buy_downwards_trend_vwap_cross_weight": 100,  # value loaded from strategy
+        "buy_sideways_trend_adx_strong_up_weight": 100,  # value loaded from strategy
+        "buy_sideways_trend_sma_short_golden_cross_weight": 0,  # value loaded from strategy
+        "buy_upwards_trend_adx_strong_up_weight": 100,  # value loaded from strategy
+    }
+
+    # Sell hyperspace params:
+    sell_params = {
+        "sell___unclogger_minimal_losing_trade_duration_minutes": "23",
+        "sell___unclogger_minimal_losing_trades_open": "5",
+        "sell___unclogger_open_trades_losing_percentage_needed": "58",
+        "sell___unclogger_trend_lookback_candles_window": "48",
+        "sell___unclogger_trend_lookback_candles_window_percentage_needed": "19",
+        "sell__downwards_trend_total_signal_needed": "112",
+        "sell__downwards_trend_total_signal_needed_candles_lookback_window": "5",
+        "sell__sideways_trend_total_signal_needed": "886",
+        "sell__sideways_trend_total_signal_needed_candles_lookback_window": "3",
+        "sell__upwards_trend_total_signal_needed": "600",
+        "sell__upwards_trend_total_signal_needed_candles_lookback_window": "3",
+        "sell_downwards_trend_adx_strong_down_weight": "46",
+        "sell_downwards_trend_bollinger_bands_weight": "55",
+        "sell_downwards_trend_ema_long_death_cross_weight": "85",
+        "sell_downwards_trend_ema_short_death_cross_weight": "91",
+        "sell_downwards_trend_macd_weight": "33",
+        "sell_downwards_trend_rsi_weight": "40",
+        "sell_downwards_trend_sma_long_death_cross_weight": "22",
+        "sell_downwards_trend_vwap_cross_weight": "75",
+        "sell_sideways_trend_ema_long_death_cross_weight": "44",
+        "sell_sideways_trend_ema_short_death_cross_weight": "13",
+        "sell_sideways_trend_macd_weight": "31",
+        "sell_sideways_trend_rsi_weight": "23",
+        "sell_sideways_trend_sma_long_death_cross_weight": "62",
+        "sell_sideways_trend_sma_short_death_cross_weight": "84",
+        "sell_sideways_trend_vwap_cross_weight": "41",
+        "sell_upwards_trend_adx_strong_down_weight": "30",
+        "sell_upwards_trend_bollinger_bands_weight": "56",
+        "sell_upwards_trend_ema_short_death_cross_weight": "40",
+        "sell_upwards_trend_rsi_weight": "65",
+        "sell_upwards_trend_sma_long_death_cross_weight": "15",
+        "sell_upwards_trend_sma_short_death_cross_weight": "61",
+        "sell_upwards_trend_vwap_cross_weight": "44",
+        "sell___trades_when_downwards": True,  # value loaded from strategy
+        "sell___trades_when_sideways": False,  # value loaded from strategy
+        "sell___trades_when_upwards": True,  # value loaded from strategy
+        "sell___unclogger_enabled": True,  # value loaded from strategy
+        "sell___unclogger_trend_lookback_window_uses_downwards_candles": True,  # value loaded from strategy
+        "sell___unclogger_trend_lookback_window_uses_sideways_candles": True,  # value loaded from strategy
+        "sell___unclogger_trend_lookback_window_uses_upwards_candles": False,  # value loaded from strategy
+        "sell_downwards_trend_sma_short_death_cross_weight": 100,  # value loaded from strategy
+        "sell_sideways_trend_adx_strong_down_weight": 0,  # value loaded from strategy
+        "sell_sideways_trend_bollinger_bands_weight": 0,  # value loaded from strategy
+        "sell_upwards_trend_ema_long_death_cross_weight": 100,  # value loaded from strategy
+        "sell_upwards_trend_macd_weight": 100,  # value loaded from strategy
+    }
+
+    # ROI table:
+    minimal_roi = {
+        "0": 0.177,
+        "5": 0.1591,
+        "10": 0.14119,
+        "15": 0.12329,
+        "20": 0.10539,
+        "25": 0.08748,
+        "30": 0.06958,
+        "35": 0.05912,
+        "40": 0.05052,
+        "45": 0.04192,
+        "50": 0.03332,
+        "55": 0.02472,
+        "60": 0.01932,
+        "65": 0.01472,
+        "70": 0.01012,
+        "75": 0.00552,
+        "80": 0.00092,
+        "85": 0
+    }
+
+    # Stoploss:
+    stoploss = -0.338
+
+    # Trailing stop:
+    trailing_stop = True
+    trailing_stop_positive = 0.01
+    trailing_stop_positive_offset = 0.011
+    trailing_only_offset_is_reached = False

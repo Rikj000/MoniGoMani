@@ -52,8 +52,8 @@
 **I strongly recommended to [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!**   
 
 ## The idea / Theory:   
-MoniGoMani aims to be more then just a conventional strategy, it's a framework to "easily" find a profitable strategy configuration in any market! Without the need to do any programming.   
-But you will need to know some Technical Analysis and be able to pull your own conclusions from your test-results, this is not just an easy copy/paste.   
+MoniGoMani aims to be more than just a conventional strategy, it's a framework to "easily" find a profitable strategy configuration in any market! Without the need to do any programming.   
+However, you will need to know some Technical Analysis and be able to pull your own conclusions from your test-results, this is not just an easy copy/paste.   
 
 MGM (MoniGoMani) derives itself from other strategies by its use of something I called "weighted signals".   
 Each signal has its own weight allocated to it & a total buy/sell signal needed is defined too.   
@@ -65,8 +65,8 @@ Also will it teach us what works where & what doesn't since MoniGoMani first det
 Further it will do various HyperOptable checks upon the open trades to see if there are "bad" ones to unclog while running.   
 
 ## Feature List:   
-- [Auto-HyperOptable Strategy](https://github.com/freqtrade/freqtrade/pull/4596)! \*No more need for legacy MoniGoMani, legacy MoniGoManiHyperOpt and MoniGoManiHyperOpted strategy classes!   
-- All HyperOptable settings are easily copy/paste-able from the HyperOpt Results
+- Partially [Automated Optimization Process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani)
+- All HyperOpt Results can easily be applied and removed with the use of some [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#go-to-commands)
 - Configurable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends, each table **currently** has 9 Buy & 9 Sell signals implemented ***(HyperOptable!)***:
   - [ADX](https://www.investopedia.com/terms/a/adx.asp) + Strong [Up](https://www.investopedia.com/terms/p/positivedirectionalindicator.asp)/Strong [Down](https://www.investopedia.com/terms/n/negativedirectionalindicator.asp)
   - [RSI](https://www.investopedia.com/terms/r/rsi.asp)
@@ -82,7 +82,7 @@ Further it will do various HyperOptable checks upon the open trades to see if th
 - Configurable Trading on Downwards/Sideways/Upwards trends for Buys/Sells ***(HyperOptable!)***
 - Settings to Enable/Disable HyperOpting for individual `buy_params` & `sell_params` and setting them to a static value through [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#hyperopt-setting-overrides)
 - Configurable [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#open-trade-unclogger), if enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades ***(HyperOptable!)*** :rocket:   
-- [TimeFrame-Zoom](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#timeframe-zoom) during backtesting/hyperopting to prevent profit exploitation! *(Read: [Backtesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/))*
+- [TimeFrame-Zoom](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#timeframe-zoom) during BackTesting/HyperOpting to prevent profit exploitation! *(Read: [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/BackTesting-traps/))*
 - Custom Long Continuously decreasing ROI Table generation with configurable `roi_table_step_size`
 - [Precision Setting](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#precision-setting) to alter the step-size used during HyperOpting
 - 2 [Custom HyperLoss Functions](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#custom-hyperloss-functions):
@@ -91,7 +91,7 @@ Further it will do various HyperOptable checks upon the open trades to see if th
 - [Top Volume & All Tradable StaticPairList Downloading](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#download-staticpairlists) to easily fetch a good StaticPairList
 - [Total Overall Signal Importance Calculator](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#total-overall-signal-importance-calculator) for Total Average Signal Importance Calculation upon the HyperOpt Results (With some really handy subcommands)
 - Pre-Configured Main/Sub Plot Configurations for visualisation of all indicators used in FreqUI
-- Turn On/Off **All** Individual Weighted Signal DataFrame entries for easy debugging in an IDE or better speed while dry/live running or hyperopting   
+- Turn On/Off **All** Individual Weighted Signal DataFrame entries for easy debugging in an IDE or better speed while dry/live running or HyperOpting   
    
 *\*Support/Updates for Legacy versions stopped since Auto-HyperOptable Strategies are merged into the official Freqtrade Development Branch! Please switch to the new MoniGoManiHyperStrategy!*   
 
@@ -99,28 +99,34 @@ Further it will do various HyperOptable checks upon the open trades to see if th
 Take a good read at the [**MGM_DOCUMENTATION.md**](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md), the current place where you can find all MoniGoMani Documentation!   
 
 ## Go-To Commands:
-For **Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) using the new [MoniGoManiConfiguration.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiConfiguration.py):
+**Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
 ```powershell
-freqtrade hyperopt -s MoniGoManiConfiguration -c ./user_data/mgm-config-usdt.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 1000 --timerange 20210101-20210316
+freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 1000 --timerange 20210101-20210316
 ```
-For **Back Testing** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) using the new [MoniGoManiConfiguration.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiConfiguration.py)::
+**Apply HyperOpt Results** from a `<epoch of choice>`:
 ```powershell
-freqtrade backtesting -s MoniGoManiConfiguration -c ./user_data/mgm-config-usdt.json -c ./user_data/mgm-config-private.json --timerange 20210101-20210316
+freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./user_data/mgm-config-hyperopt.json
 ```
-For **Total Average Signal Importance Calculation** *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
+**Reset HyperOpt Results**:
 ```powershell
-python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc USDT
+rm ./user_data/mgm-config-hyperopt.json
 ```
-
-To retrieve a current **Binance-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*:
+**Back Testing** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
+```powershell
+freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210101-20210316
+```
+**Total Average Signal Importance Calculation** *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
+```powershell
+python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc USDT -lf ./user_data/mgm-config-hyperopt.json -cf ./user_data/Total-Average-Signal-Importance-Report.log
+```
+Retrieve a current **Binance-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*:
 ```powershell
 freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json --quote USDT --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json
-# Don't forget to open the downloaded '...-StaticPairList.json' and copy the PairList Data into your own 'mgm-config-usdt.json' file to start using it!
+# Don't forget to open the downloaded '...-StaticPairList.json' and copy the PairList Data into your own 'mgm-config.json' file to start using it!
 ```
-
-To **Download Candle Data**:
+**Download Candle Data**:
 ```powershell
-freqtrade download-data --timerange 20201201-20210316 -t 5m 1h -c ./user_data/mgm-config-usdt.json -c ./user_data/mgm-config-private.json
+freqtrade download-data --timerange 20201201-20210316 -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
 ```
 
 ## **Got Test Results / Ideas / Config Improvements?**
@@ -137,20 +143,16 @@ More general chats for `Technical Analysis`, `Freqtrade`, `Iconomi` and `Random`
 
 ## **Planned**:   
 *Ordered by current schedule/priority*
-- Extract all `MoniGoMani Settings` into a `config-mgm.json` that will require manual configuration + Extract the `HyperOpt Results Copy/Paste section` into a `config-mgm-hyperopt.json`, this last file will be extractable from HyperOpt Results using a command!
-- Implement Parent/Child Strategy format
-- Automate as much of the [optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) of MoniGoMani as possible  
 - More global/broader trend detection using zoomed out indicator data
+- [Sigmoid](https://en.wikipedia.org/wiki/Sigmoid_function) Buy/Sell Signals
 - **Other & Better indicators!** MoniGoMani has been designed so signals can easily be inserted / swapped out   
 Please use the `Total-Overall-Signal-Importance-Calculator.py` to find out which signals do best and report your results to the [Discord Server](https://discord.gg/xFZ9bB6vEz), so we can improve! :rocket:
-- [Sigmoid](https://en.wikipedia.org/wiki/Sigmoid_function) Buy/Sell Signals
 - HyperOpt over 3 separate timeranges (one representing each individual kind of trend, downwards/sideways/upwards, a timeframe that represents a corresponding trend should be picked)
-- Individual `config-btc.json` & `config-usdt.json` files, as well as individual `MoniGoManiHyperOpted-btc.py` & `MoniGoManiHyperOpted.py` releases
-- A method to pull a `Static Averaged Volume PairList` (Calculated by summing up the top volume pairlists for each candle over the period of the timerange to hyperopt upon & then dividing by the total amount of candles in the timerange, to create an averaged "volume" pairlist that can be used during backtesting/hyperopting which should lead to a more "realistic" pairlist to test upon when using a VolumePairList when dry/live-running)
-- HyperOpt over a `timerange` through a few simple Telegram commands, review the results and choose if and which new epoch should be applied.   
+- A method to pull a `Static Averaged Volume PairList` (Calculated by summing up the top volume pairlists for each candle over the period of the timerange to hyperopt upon & then dividing by the total amount of candles in the timerange, to create an averaged "volume" pairlist that can be used during BackTesting/HyperOpting which should lead to a more "realistic" pairlist to test upon when using a VolumePairList when dry/live-running)
 - Improve upon bot loop speed (Try to improve code to reach reduction in HyperOpting time needed)
 - Huge refactor that should improve the codebase reducing a lot of duplicate code & making implementing new weighted signals even easier
 - [MultiProcessed DataFrame indicator checking](https://www.machinelearningplus.com/python/parallel-processing-python/) if possible for speed improvements
+- HyperOpt over a `timerange` through a few simple Telegram commands, review the results and choose if and which new epoch should be applied.   
 
 ## **ChangeLog**:  
 View the Legacy [ChangeLog](https://github.com/Rikj000/MoniGoMani/blob/main/CHANGELOG.md), newer changelogs are appended with each [Release](https://github.com/Rikj000/MoniGoMani/releases/)
@@ -161,20 +163,20 @@ It's completely free to use and alter and has many amazing features.
 Big thank you to **xmatthias** and everyone who helped on it!   
 - **[Official Freqtrade Website](https://www.freqtrade.io/en/latest/)**
 - **[Official Freqtrade GitHub Repository](https://github.com/freqtrade/freqtrade)**
-- **[Official Freqtrade Discord Server](https://discord.gg/j84KnP57kW)**
+- **[Official Freqtrade Discord Server](https://discord.gg/j84KnP57kW)**- [Sigmoid](https://en.wikipedia.org/wiki/Sigmoid_function) Buy/Sell Signals
 
 ## **ICONOMI**:   
 Can't wait until MoniGoMani is fully on point? Or is this all too technical for you? Check out **[ICONOMI](https://www.iconomi.com/register?ref=JdFzz)!**
 
 Instead of buying loose individual crypto manually like you usually do on exchanges, this platform has mostly been created to buy & hodl `Investment Strategies`.   
-ICONOMI strategies are owned by `Strategy Managers`, these often are day-trades / technical analysts by profession so in general they have quite a good idea what they are doing.   
+ICONOMI strategies are owned by `Strategy Managers`, these are often day-trades / technical analysts by profession so in general they have quite a good idea what they are doing.   
 Each investment strategy contains up to ±20 different coins with a percentage allocated to each one. The managers will often re-balance these percentages towards coins they'll think will be profitable.   
 
-There are fees tied to each strategy and it's up to the manager of each strategy to pick the percentages of fees for his/her strategy. Usually strategies that are re-balanced often (aka market being watched more actively) or larger strategies with a good reputation ask higher fees. However fees are only charged if **new** profits have been made, so they are quite in the benefit of the user.   
+There are fees tied to each strategy, and it's up to the manager of each strategy to pick the percentages of fees for his/her strategy. Usually strategies that are re-balanced often (aka market being watched more actively) or larger strategies with a good reputation ask higher fees. However, fees are only charged if **new** profits have been made, so they are quite in the benefit of the user.   
 More [info on fees in general can be found here](https://www.iconomi.com/fees-disclosure), and more [info on Performance fees can be found here](https://iconomi.zendesk.com/hc/en-us/articles/360026664834-Performance-fee-Crypto-Strategies).
    
 In general this is a good platform to invest into when you still need to start learning Technical Analysis, when you don't have time to monitor the status of the market or when you don't feel confident trading your own funds.   
-Since here you have strategy owners "doing the daytrading for you" by rebalancing the strategies and the percentages of coins in them.
+Since here you have strategy owners "doing the day-trading for you" by re-balancing the strategies & the percentages of coins in them.
 
 **If you join please use my referral link! => (https://www.iconomi.com/register?ref=JdFzz)** :pray:   
 *(Then a percentage of your fees that you have to pay anyways to the strategy owners and ICONOMI will go to me instead, which is a neat win-win way for us both to support me for my work on MGM!)*
@@ -182,5 +184,5 @@ Since here you have strategy owners "doing the daytrading for you" by rebalancin
 #### Recommended Iconomi Strategies
 - [**Crypto Knowledge Pool**](https://www.iconomi.com/asset/BTCETHTEST?ref=JdFzz) (CKP): A community influenced strategy   
 - [**CKP's Telegram Chat**](https://telegram.me/CKP_Robot?start=1684098549): If you want to vote if the coins will go up or down and hear about interesting news or ask questions. When I wrote this they we're right about 65% of the time. The manager will take the results into consideration when altering the strategy.    
-- [**Knepala**](https://www.iconomi.com/asset/KNEPALA?ref=JdFzz): The personal strategy of the owner of CKP, most of the time it does even better then CKP itself.   
+- [**Knepala**](https://www.iconomi.com/asset/KNEPALA?ref=JdFzz): The personal strategy of the owner of CKP, most of the time it does even better than CKP itself.   
 - Look on [ICONOMI](https://www.iconomi.com/register?ref=JdFzz) for more strategies you deem interesting :slight_smile:
