@@ -1,7 +1,0 @@
-FROM freqtradeorg/freqtrade:develop_plot
-
-
-RUN pip install jupyterlab --no-cache-dir
-
-# Empty the ENTRYPOINT to allow all commands
-ENTRYPOINT []
