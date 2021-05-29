@@ -20,8 +20,8 @@
 </p>
 
 **<span style="color:darkorange">WARNING:</span> I am in no way responsible for your Live results! This strategy is still experimental and under development!**   
-**<span style="color:darkorange">WARNING:</span> MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) unless you really know what you are doing when manually allocating parameters!**   
-**I strongly recommended to [re-optimize](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!**   
+**<span style="color:darkorange">WARNING:</span> MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) after doing manual changes!**   
+**You need to [optimize](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!**   
 
 # Freqtrade Installation:   
 This guide now assumes you have **Freqtrade** and **jq** already installed, if you haven't yet, then please see [VERYQUICKSTART_FREQTRADE.md](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART_FREQTRADE.md)
@@ -42,7 +42,7 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
     The 1st HyperOpt Run *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with:   
         - The Default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of `mgm-config.json`   
         - The [HYPEROPT PARAMETERS CONFIGURATION SECTION](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#HYPEROPT-PARAMETER-CONFIGURATION-SECTION)   
-5) **Reflect over your HyperOpt results!** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/BackTesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.   
+5) **Reflect over your HyperOpt results!** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.   
     You can check a certain epoch in the list of best results using:
     ```powershell
     freqtrade hyperopt-show -n <epoch of choice>
@@ -102,7 +102,7 @@ With this more realistic results should be found during BackTesting/HyperOpting.
 operate on the same `timeframe` that Live would use (1h candles), while at the same time `backtest_timeframe` 
 (5m or 1m candles) will simulate price movement during that `timeframe` (1h candle), providing more realistic 
 trailing stoploss and ROI behaviour during BackTesting/HyperOpting.   
-If you haven't yet please read: [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/BackTesting-traps/)
+If you haven't yet please read: [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)
 
 
 **<span style="color:darkorange">WARNING:</span> To disable TimeFrame-Zoom just use the same candles for `timeframe` & `backtest_timeframe`**   
@@ -145,8 +145,8 @@ These settings can be used to make MoniGoMani load config files with a custom fi
 This section can be used to configure the remaining MoniGoMani's HyperOpt Space Parameters at a more in depth level but also more advanced level.   
 
 It contains:
-- All the `buy/sell___trades_when_downwards/sideways/upwards` [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#HyperOpt-setting-overrides)   
-- The Sell Unclogger HyperOpt Space Params, configurable with [Initialize Variables](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#Initialize-variables) and [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#HyperOpt-setting-overrides)
+- All the `buy/sell___trades_when_downwards/sideways/upwards` [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#hyperopt-setting-overrides)   
+- The Sell Unclogger HyperOpt Space Params, configurable with [Initialize Variables](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#Initialize-variables) and [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#hyperopt-setting-overrides)
 
 
 #### HyperOpt Setting Overrides:
@@ -212,7 +212,7 @@ It will only unclog a losing trade when all following checks have been full-fill
 - Check if `sell___unclogger_open_trades_losing_percentage_needed` is fulfilled
 - Check if open_trade's trend changed negatively during past `sell___unclogger_trend_lookback_candles_window`:   
 For unclogging to occur `sell___unclogger_trend_lookback_candles_window_percentage_needed` should be fulfilled!   
-The trends used for the calculations in this check can be configured with `sell___unclogger_trend_lookback_window_uses_downwards/sideways/upwards_candles=True/False` (Its recommended setting these last 3 true/false values manually using [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#HyperOpt-setting-overrides)).   
+The trends used for the calculations in this check can be configured with `sell___unclogger_trend_lookback_window_uses_downwards/sideways/upwards_candles=True/False` (Its recommended setting these last 3 true/false values manually using [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#hyperopt-setting-overrides)).   
 Each candle fulfilling a trend set to `True` will be added in the sum used to calculate the value for `sell___unclogger_trend_lookback_candles_window_percentage_needed` if it is found in the lookback window.   
 
 
@@ -333,7 +333,7 @@ Of course all FreqUI / Telegram / config / HyperOpt results done on MGM **can be
 Try to **always include** a  `Total-Overall-Signal-Importance-Calculator` report or just your own MoniGoMani file with your HyperOpt results applied to it!   
 Since without knowing which signal weights or which on/off settings are applied we can't really truly learn much from your results!   
 
-The epoch table being generated when HyperOpting + the number of the epoch you used is also very helpful, so we can easily rule out if your test results are exploited. (See [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/BackTesting-traps/)!)   
+The epoch table being generated when HyperOpting + the number of the epoch you used is also very helpful, so we can easily rule out if your test results are exploited. (See [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)!)   
 
 # Common mistakes:
 
