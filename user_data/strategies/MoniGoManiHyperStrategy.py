@@ -725,7 +725,6 @@ class MoniGoManiHyperStrategy(IStrategy):
     use_custom_stoploss = True  # Leave this enabled (Needed for open_trade custom_information_storage)
     is_dry_live_run_detected = True  # Class level runmode detection, Gets set automatically
     informative_timeframe = timeframe  # Gets set automatically
-    timeframe = backtest_timeframe  # Gets set automatically
     timeframe_multiplier = None  # Gets set automatically
 
     # Plot configuration to show all signals used in MoniGoMani in FreqUI (Use load from Strategy in FreqUI)
