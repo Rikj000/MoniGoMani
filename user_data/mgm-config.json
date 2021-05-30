@@ -27,7 +27,7 @@
     "max_open_trades": -1,
     "stake_currency": "USDT",
     "stake_amount": 45,
-    "tradable_balance_ratio": 1.00,
+    "tradable_balance_ratio": 0.99,
     "cancel_open_orders_on_exit": false,
     "unfilledtimeout": {
         "buy": 10,
