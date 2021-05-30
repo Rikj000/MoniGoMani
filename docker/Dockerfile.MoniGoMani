@@ -6,4 +6,7 @@ USER root
 
 RUN apt-get install -y jq
 
+# Copy Rikj000's version of hyperopt_tools.py to use it instead of the freqtrades current one.
+COPY ../user_data/mgm_tools/hyperopt_tools.py freqtrade/optimize/hyperopt_tools.py
+
 USER ftuser
