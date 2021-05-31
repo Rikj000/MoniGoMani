@@ -194,7 +194,7 @@ param = init_vars(sell_params, "sell___unclogger_minimal_losing_trades_open",
 | Parameter | Description |
 | --- | --- |
 | *(parameter_min_value=)* 2 | Minimal search space value to use during the 1st HyperOpt Run and override value for weak signals on the 2nd HyperOpt Run |
-| *(parameter_max_value=)* 5 | Maximum search space value to use during the 1st HyperOpt Run and override value for weak signals on the 2nd HyperOpt Run |
+| *(parameter_max_value=)* 5 | Maximum search space value to use during the 1st HyperOpt Run and override value for strong signals on the 2nd HyperOpt Run |
 | *(parameter_threshold=)* 1 | Threshold to use for overriding weak/strong signals and setting up refined search spaces after the 1st HyperOpt Run |
 | *(overrideable=)* False | Allow value to be overrideable or not (defaults to `True`) |
 
