@@ -16,6 +16,8 @@ from freqtrade.state import RunMode
 from numpy import timedelta64
 from pandas import DataFrame
 import json
+from typing import List  # stoploss search space
+from freqtrade.optimize.space import Dimension, SKDecimal # stoploss search space
 
 logger = logging.getLogger(__name__)
 
@@ -141,6 +143,7 @@ class MoniGoManiHyperStrategy(IStrategy):
         mgm_config['search_threshold_trend_total_signal_needed_candles_lookback_window_value']
     number_of_weighted_signals = mgm_config['number_of_weighted_signals']
     roi_table_step_size = mgm_config['roi_table_step_size']
+    stoploss_max_value = -0.35 if mgm_config['stoploss_max_value'] == None else mgm_config['stoploss_max_value']
     debuggable_weighted_signal_dataframe = mgm_config['debuggable_weighted_signal_dataframe']
     use_mgm_logging = mgm_config['use_mgm_logging']
     mgm_log_levels_enabled = mgm_config['mgm_log_levels_enabled']
@@ -780,6 +783,18 @@ class MoniGoManiHyperStrategy(IStrategy):
                 y.append(0)
             return dict(zip(x, y))
 
+        #define custom stoploss search space with configurable parameter max value
+        @staticmethod
+        def stoploss_space() -> List[Dimension]:
+            """
+            Stoploss Value to search
+            Override it if you need some different range for the parameter in the
+            'stoploss' optimization hyperspace.
+            """
+            return [
+                SKDecimal(MoniGoManiHyperStrategy.stoploss_max_value, -0.02, decimals=3, name='stoploss'),
+            ]
+        
     def __init__(self, config: dict):
         """
         First method to be called once during the MoniGoMani class initialization process
