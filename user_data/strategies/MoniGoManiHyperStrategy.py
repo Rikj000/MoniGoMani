@@ -16,8 +16,8 @@ from freqtrade.state import RunMode
 from numpy import timedelta64
 from pandas import DataFrame
 import json
-from typing import List  # stoploss search space
-from freqtrade.optimize.space import Dimension, SKDecimal # stoploss search space
+from typing import List  # stoploss/trailing search space
+from freqtrade.optimize.space import Categorical, Dimension, SKDecimal # stoploss/trailing search space
 
 logger = logging.getLogger(__name__)
 
@@ -143,7 +143,13 @@ class MoniGoManiHyperStrategy(IStrategy):
         mgm_config['search_threshold_trend_total_signal_needed_candles_lookback_window_value']
     number_of_weighted_signals = mgm_config['number_of_weighted_signals']
     roi_table_step_size = mgm_config['roi_table_step_size']
-    stoploss_max_value = -0.35 if mgm_config['stoploss_max_value'] == None else mgm_config['stoploss_max_value']
+    stoploss_min_value = mgm_config['stoploss_min_value'] if 'stoploss_min_value' in mgm_config else -0.02
+    stoploss_max_value = mgm_config['stoploss_max_value'] if 'stoploss_max_value' in mgm_config else -0.35
+    trailing_stop_positive_min_value = mgm_config['trailing_stop_positive_min_value'] if 'trailing_stop_positive_min_value' in mgm_config else 0.01
+    trailing_stop_positive_max_value = mgm_config['trailing_stop_positive_max_value'] if 'trailing_stop_positive_max_value' in mgm_config else 0.35
+    trailing_stop_positive_offset_min_value = mgm_config['trailing_stop_positive_offset_min_value'] if 'trailing_stop_positive_offset_min_value' in mgm_config else 0.011
+    trailing_stop_positive_offset_max_value = mgm_config['trailing_stop_positive_offset_max_value'] if 'trailing_stop_positive_offset_max_value' in mgm_config else 0.1
+
     debuggable_weighted_signal_dataframe = mgm_config['debuggable_weighted_signal_dataframe']
     use_mgm_logging = mgm_config['use_mgm_logging']
     mgm_log_levels_enabled = mgm_config['mgm_log_levels_enabled']
@@ -783,7 +789,7 @@ class MoniGoManiHyperStrategy(IStrategy):
                 y.append(0)
             return dict(zip(x, y))
 
-        #define custom stoploss search space with configurable parameter max value
+        #define custom stoploss search space with configurable parameters
         @staticmethod
         def stoploss_space() -> List[Dimension]:
             """
@@ -792,9 +798,37 @@ class MoniGoManiHyperStrategy(IStrategy):
             'stoploss' optimization hyperspace.
             """
             return [
-                SKDecimal(MoniGoManiHyperStrategy.stoploss_max_value, -0.02, decimals=3, name='stoploss'),
+                SKDecimal(MoniGoManiHyperStrategy.stoploss_max_value, MoniGoManiHyperStrategy.stoploss_min_value, decimals=3, name='stoploss'),
             ]
-        
+
+        #define custom trailing search space with configurable parameters
+        @staticmethod
+        def trailing_space() -> List[Dimension]:
+            """
+            Create a trailing stoploss space.
+            You may override it in your custom Hyperopt class.
+            """
+            return [
+                # It was decided to always set trailing_stop is to True if the 'trailing' hyperspace
+                # is used. Otherwise hyperopt will vary other parameters that won't have effect if
+                # trailing_stop is set False.
+                # This parameter is included into the hyperspace dimensions rather than assigning
+                # it explicitly in the code in order to have it printed in the results along with
+                # other 'trailing' hyperspace parameters.
+                Categorical([True], name='trailing_stop'),
+
+                SKDecimal(MoniGoManiHyperStrategy.trailing_stop_positive_min_value, MoniGoManiHyperStrategy.trailing_stop_positive_max_value, decimals=3, name='trailing_stop_positive'),
+
+                # 'trailing_stop_positive_offset' should be greater than 'trailing_stop_positive',
+                # so this intermediate parameter is used as the value of the difference between
+                # them. The value of the 'trailing_stop_positive_offset' is constructed in the
+                # generate_trailing_params() method.
+                # This is similar to the hyperspace dimensions used for constructing the ROI tables.
+                SKDecimal(MoniGoManiHyperStrategy.trailing_stop_positive_offset_min_value, MoniGoManiHyperStrategy.trailing_stop_positive_offset_max_value, decimals=3, name='trailing_stop_positive_offset_p1'),
+
+                Categorical([True, False], name='trailing_only_offset_is_reached'),
+            ]
+
     def __init__(self, config: dict):
         """
         First method to be called once during the MoniGoMani class initialization process
