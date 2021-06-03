@@ -127,32 +127,36 @@ class MoniGoManiHyperStrategy(IStrategy):
                  f'"MoniGoManiHyperStrategy.py"')
 
     # Apply the loaded MoniGoMani Settings
-    timeframe = mgm_config['timeframe']
-    backtest_timeframe = mgm_config['backtest_timeframe']
-    startup_candle_count = mgm_config['startup_candle_count']
-    precision = mgm_config['precision']
-    min_weighted_signal_value = mgm_config['min_weighted_signal_value']
-    max_weighted_signal_value = mgm_config['max_weighted_signal_value']
-    min_trend_total_signal_needed_value = mgm_config['min_trend_total_signal_needed_value']
-    min_trend_total_signal_needed_candles_lookback_window_value = \
-        mgm_config['min_trend_total_signal_needed_candles_lookback_window_value']
-    max_trend_total_signal_needed_candles_lookback_window_value = \
-        mgm_config['max_trend_total_signal_needed_candles_lookback_window_value']
-    search_threshold_weighted_signal_values = mgm_config['search_threshold_weighted_signal_values']
-    search_threshold_trend_total_signal_needed_candles_lookback_window_value = \
-        mgm_config['search_threshold_trend_total_signal_needed_candles_lookback_window_value']
-    number_of_weighted_signals = mgm_config['number_of_weighted_signals']
-    roi_table_step_size = mgm_config['roi_table_step_size']
-    stoploss_min_value = mgm_config['stoploss_min_value'] if 'stoploss_min_value' in mgm_config else -0.02
-    stoploss_max_value = mgm_config['stoploss_max_value'] if 'stoploss_max_value' in mgm_config else -0.35
-    trailing_stop_positive_min_value = mgm_config['trailing_stop_positive_min_value'] if 'trailing_stop_positive_min_value' in mgm_config else 0.01
-    trailing_stop_positive_max_value = mgm_config['trailing_stop_positive_max_value'] if 'trailing_stop_positive_max_value' in mgm_config else 0.35
-    trailing_stop_positive_offset_min_value = mgm_config['trailing_stop_positive_offset_min_value'] if 'trailing_stop_positive_offset_min_value' in mgm_config else 0.011
-    trailing_stop_positive_offset_max_value = mgm_config['trailing_stop_positive_offset_max_value'] if 'trailing_stop_positive_offset_max_value' in mgm_config else 0.1
-
-    debuggable_weighted_signal_dataframe = mgm_config['debuggable_weighted_signal_dataframe']
-    use_mgm_logging = mgm_config['use_mgm_logging']
-    mgm_log_levels_enabled = mgm_config['mgm_log_levels_enabled']
+    try:
+        timeframe = mgm_config['timeframe']
+        backtest_timeframe = mgm_config['backtest_timeframe']
+        startup_candle_count = mgm_config['startup_candle_count']
+        precision = mgm_config['precision']
+        min_weighted_signal_value = mgm_config['min_weighted_signal_value']
+        max_weighted_signal_value = mgm_config['max_weighted_signal_value']
+        min_trend_total_signal_needed_value = mgm_config['min_trend_total_signal_needed_value']
+        min_trend_total_signal_needed_candles_lookback_window_value = \
+            mgm_config['min_trend_total_signal_needed_candles_lookback_window_value']
+        max_trend_total_signal_needed_candles_lookback_window_value = \
+            mgm_config['max_trend_total_signal_needed_candles_lookback_window_value']
+        search_threshold_weighted_signal_values = mgm_config['search_threshold_weighted_signal_values']
+        search_threshold_trend_total_signal_needed_candles_lookback_window_value = \
+            mgm_config['search_threshold_trend_total_signal_needed_candles_lookback_window_value']
+        number_of_weighted_signals = mgm_config['number_of_weighted_signals']
+        roi_table_step_size = mgm_config['roi_table_step_size']
+        stoploss_min_value = mgm_config['stoploss_min_value']
+        stoploss_max_value = mgm_config['stoploss_max_value']
+        trailing_stop_positive_min_value = mgm_config['trailing_stop_positive_min_value']
+        trailing_stop_positive_max_value = mgm_config['trailing_stop_positive_max_value']
+        trailing_stop_positive_offset_min_value = mgm_config['trailing_stop_positive_offset_min_value']
+        trailing_stop_positive_offset_max_value = mgm_config['trailing_stop_positive_offset_max_value']
+        debuggable_weighted_signal_dataframe = mgm_config['debuggable_weighted_signal_dataframe']
+        use_mgm_logging = mgm_config['use_mgm_logging']
+        mgm_log_levels_enabled = mgm_config['mgm_log_levels_enabled']
+    except KeyError as missing_setting:
+        sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file ({mgm_config_name}) is '
+                 f'missing some settings. Please make sure that all MoniGoMani related settings are existing inside '
+                 f'this file. {missing_setting} has been detected as missing from the file...')
 
     # Initialize empty buy/sell_params dictionaries and initial (trailing)stoploss values
     buy_params = {}
@@ -789,24 +793,24 @@ class MoniGoManiHyperStrategy(IStrategy):
                 y.append(0)
             return dict(zip(x, y))
 
-        #define custom stoploss search space with configurable parameters
         @staticmethod
         def stoploss_space() -> List[Dimension]:
             """
-            Stoploss Value to search
-            Override it if you need some different range for the parameter in the
-            'stoploss' optimization hyperspace.
+            Define custom stoploss search space with configurable parameters
+
+            Stoploss Value to search.
+            Override it if you need some different range for the parameter in the 'stoploss' optimization hyperspace.
             """
             return [
-                SKDecimal(MoniGoManiHyperStrategy.stoploss_max_value, MoniGoManiHyperStrategy.stoploss_min_value, decimals=3, name='stoploss'),
+                SKDecimal(MoniGoManiHyperStrategy.stoploss_max_value,
+                          MoniGoManiHyperStrategy.stoploss_min_value,
+                          decimals=3, name='stoploss')
             ]
 
-        #define custom trailing search space with configurable parameters
         @staticmethod
         def trailing_space() -> List[Dimension]:
             """
-            Create a trailing stoploss space.
-            You may override it in your custom Hyperopt class.
+            Define custom trailing search space with parameters configurable in 'mgm-config.json'
             """
             return [
                 # It was decided to always set trailing_stop is to True if the 'trailing' hyperspace
@@ -816,17 +820,18 @@ class MoniGoManiHyperStrategy(IStrategy):
                 # it explicitly in the code in order to have it printed in the results along with
                 # other 'trailing' hyperspace parameters.
                 Categorical([True], name='trailing_stop'),
-
-                SKDecimal(MoniGoManiHyperStrategy.trailing_stop_positive_min_value, MoniGoManiHyperStrategy.trailing_stop_positive_max_value, decimals=3, name='trailing_stop_positive'),
-
+                SKDecimal(MoniGoManiHyperStrategy.trailing_stop_positive_min_value,
+                          MoniGoManiHyperStrategy.trailing_stop_positive_max_value,
+                          decimals=3, name='trailing_stop_positive'),
                 # 'trailing_stop_positive_offset' should be greater than 'trailing_stop_positive',
                 # so this intermediate parameter is used as the value of the difference between
                 # them. The value of the 'trailing_stop_positive_offset' is constructed in the
                 # generate_trailing_params() method.
                 # This is similar to the hyperspace dimensions used for constructing the ROI tables.
-                SKDecimal(MoniGoManiHyperStrategy.trailing_stop_positive_offset_min_value, MoniGoManiHyperStrategy.trailing_stop_positive_offset_max_value, decimals=3, name='trailing_stop_positive_offset_p1'),
-
-                Categorical([True, False], name='trailing_only_offset_is_reached'),
+                SKDecimal(MoniGoManiHyperStrategy.trailing_stop_positive_offset_min_value,
+                          MoniGoManiHyperStrategy.trailing_stop_positive_offset_max_value,
+                          decimals=3, name='trailing_stop_positive_offset_p1'),
+                Categorical([True, False], name='trailing_only_offset_is_reached')
             ]
 
     def __init__(self, config: dict):

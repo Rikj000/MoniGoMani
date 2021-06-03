@@ -13,6 +13,12 @@
         "search_threshold_trend_total_signal_needed_candles_lookback_window_value": 1,
         "number_of_weighted_signals": 9,
         "roi_table_step_size": 5,
+        "stoploss_min_value": -0.02,
+        "stoploss_max_value": -0.35,
+        "trailing_stop_positive_min_value": 0.01,
+        "trailing_stop_positive_max_value": 0.35,
+        "trailing_stop_positive_offset_min_value": 0.011,
+        "trailing_stop_positive_offset_max_value": 0.1,
         "debuggable_weighted_signal_dataframe": false,
         "use_mgm_logging": false,
         "mgm_log_levels_enabled": {
