@@ -3,21 +3,18 @@ import json
 import logging
 import os
 import sys
+import numpy as np  # noqa
+import pandas as pd  # noqa
+import talib.abstract as ta
 from abc import ABC
 from datetime import datetime, timedelta
 from functools import reduce
 from typing import Any, List
-
-import numpy as np  # noqa
-import pandas as pd  # noqa
-import talib.abstract as ta
 from numpy import timedelta64
 from pandas import DataFrame
 from scipy.interpolate import interp1d
-from skopt.space import Dimension
-
 from freqtrade.exchange import timeframe_to_prev_date
-from freqtrade.optimize.space import SKDecimal
+from freqtrade.optimize.space import Categorical, Dimension, SKDecimal
 from freqtrade.persistence import Trade
 from freqtrade.state import RunMode
 from freqtrade.strategy \
@@ -265,7 +262,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 # This parameter is included into the hyperspace dimensions rather than assigning
                 # it explicitly in the code in order to have it printed in the results along with
                 # other 'trailing' hyperspace parameters.
-                CategoricalParameter([True], name='trailing_stop'),
+                Categorical([True], name='trailing_stop'),
                 SKDecimal(MasterMoniGoManiHyperStrategy.trailing_stop_positive_min_value,
                           MasterMoniGoManiHyperStrategy.trailing_stop_positive_max_value,
                           decimals=3, name='trailing_stop_positive'),
@@ -277,7 +274,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 SKDecimal(MasterMoniGoManiHyperStrategy.trailing_stop_positive_offset_min_value,
                           MasterMoniGoManiHyperStrategy.trailing_stop_positive_offset_max_value,
                           decimals=3, name='trailing_stop_positive_offset_p1'),
-                CategoricalParameter([True, False], name='trailing_only_offset_is_reached')
+                Categorical([True, False], name='trailing_only_offset_is_reached')
             ]
 
     def __init__(self, config: dict):
