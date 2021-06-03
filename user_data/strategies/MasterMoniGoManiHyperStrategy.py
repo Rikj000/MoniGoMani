@@ -393,6 +393,32 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return dataframe
 
+    def get_all_current_open_trades(self, trade: 'Trade') -> List:
+        """
+        Fetches all the trades currently open depending on the current RunMode of Freqtrade
+
+        :param trade: trade object.
+        :return List: List containing all current open trades
+        """
+        custom_information_storage = 'custom_stoploss - Custom Information Storage'
+        if self.is_dry_live_run_detected is True:
+            self.mgm_logger('debug', custom_information_storage,
+                            f'Fetching all currently open trades during Dry/Live Run')
+
+            all_open_trades = Trade.get_trades([Trade.is_open.is_(True)]).order_by(Trade.open_date).all()
+        # Fetch all open trade data during Back Testing & Hyper Opting
+        else:
+            self.mgm_logger('debug', custom_information_storage,
+                            f'Fetching all currently open trades during BackTesting/HyperOpting')
+            all_open_trades = trade.trades_open
+
+        self.mgm_logger('debug', custom_information_storage,
+                        f'Up-to-date open trades ({str(len(all_open_trades))}) fetched!')
+        self.mgm_logger('debug', custom_information_storage,
+                        f'all_open_trades contents: {repr(all_open_trades)}')
+
+        return all_open_trades
+
     def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
                         current_rate: float, current_profit: float, **kwargs) -> float:
         """
@@ -419,24 +445,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Open Trade Custom Information Storage
         # -------------------------------------
-        self.mgm_logger('debug', custom_information_storage, f'Fetching all currently open trades')
-
-        # Fetch all open trade data during Dry & Live Running
-        if self.is_dry_live_run_detected is True:
-            self.mgm_logger('debug', custom_information_storage,
-                            f'Fetching all currently open trades during Dry/Live Run')
-
-            all_open_trades = Trade.get_trades([Trade.is_open.is_(True)]).order_by(Trade.open_date).all()
-        # Fetch all open trade data during Back Testing & Hyper Opting
-        else:
-            self.mgm_logger('debug', custom_information_storage,
-                            f'Fetching all currently open trades during BackTesting/HyperOpting')
-            all_open_trades = trade.trades_open
-
-        self.mgm_logger('debug', custom_information_storage,
-                        f'Up-to-date open trades ({str(len(all_open_trades))}) fetched!')
-        self.mgm_logger('debug', custom_information_storage,
-                        f'all_open_trades contents: {repr(all_open_trades)}')
+        # Fetch all open trade data depending on RunMode
+        all_open_trades = self.get_all_current_open_trades(trade)
 
         # Store current pair's open_trade + it's current profit in custom_info
         for open_trade in all_open_trades:
@@ -526,17 +536,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             try:
                 # Open Trade Custom Information Storage
                 # -------------------------------------
-                # Fetch all open trade data during Dry & Live Running
-                if self.is_dry_live_run_detected is True:
-                    self.mgm_logger('debug', custom_information_storage,
-                                    f'Fetching all currently open trades during Dry/Live Run')
-
-                    all_open_trades = Trade.get_trades([Trade.is_open.is_(True)]).order_by(Trade.open_date).all()
-                # Fetch all open trade data during Back Testing & Hyper Opting
-                else:
-                    self.mgm_logger('debug', custom_information_storage,
-                                    f'Fetching all currently open trades during BackTesting/HyperOpting')
-                    all_open_trades = trade.trades_open
+                # Fetch all open trade data depending on RunMode
+                all_open_trades = self.get_all_current_open_trades(trade)
 
                 self.mgm_logger('debug', custom_information_storage,
                                 f'Up-to-date open trades ({str(len(all_open_trades))}) fetched!')
@@ -928,7 +929,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                cls.precision, False)
 
     @staticmethod
-    def _generate_mgm_attributes(buy_signals, sell_signals):
+    def generate_mgm_attributes(buy_signals, sell_signals):
         """
         Method used to generate the decorator, responsible for adding attributes at the class level
         :param buy_signals: Dictionary consisting of key as signal name and value containing the function that will generate the condition in the dataframe.
