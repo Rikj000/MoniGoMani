@@ -27,7 +27,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.11.0 by Rikj000                        ###
+    ###                         MoniGoMani v0.12.0 by Rikj000                        ###
     ##                          -----------------------------                         ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
@@ -942,12 +942,16 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     def generate_mgm_attributes(buy_signals, sell_signals):
         """
         Method used to generate the decorator, responsible for adding attributes at the class level
-        :param buy_signals: Dictionary consisting of key as signal name and value containing the function that will generate the condition in the dataframe.
-        :param sell_signals: Dictionary consisting of key as signal name and value containing the function that will generate the condition in the dataframe.
+
+        :param buy_signals: Dictionary consisting of key as signal name and value containing
+            the function that will generate the condition in the dataframe.
+        :param sell_signals: Dictionary consisting of key as signal name and value containing
+            the function that will generate the condition in the dataframe.
         :return: A function that will be used in the class that inherits the MGM to decorate it
         """
 
-        # The method responsible for decorating the base class, receives the class itself as a parameter. It will be set as the decorator of the base class
+        # The method responsible for decorating the base class, receives the class itself as a parameter.
+        # It will be set as the decorator of the base class
         def apply_attributes(base_cls):
 
             # Set all signs in the class for later use.

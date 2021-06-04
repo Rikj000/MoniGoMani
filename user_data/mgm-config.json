@@ -55,7 +55,7 @@
         "order_book_min": 1,
         "order_book_max": 1,
         "use_sell_signal": true,
-        "sell_profit_only": true,
+        "sell_profit_only": false,
         "ignore_roi_if_buy_signal": true
     },
     "order_types": {
@@ -118,7 +118,7 @@
             "method": "VolumePairList",
             "number_assets": 200,
             "sort_key": "quoteVolume",
-            "refresh_period": 1800
+            "refresh_period": 1440
         },
         { 
             "method": "AgeFilter", 
@@ -158,6 +158,40 @@
             "method": "VolumePairList",
             "number_assets": 100,
             "sort_key": "quoteVolume"
+        }
+    ],
+    "protections": [
+        {
+            "method": "StoplossGuard",
+            "lookback_period_minutes": 60,
+            "trade_limit": 3,
+            "stop_duration_minutes": 30,
+            "only_per_pair": false
+        },
+        {
+            "method": "StoplossGuard",
+            "lookback_period_minutes": 1440,
+            "trade_limit": 20,
+            "stop_duration_minutes": 720,
+            "only_per_pair": false
+        },
+        {
+            "method": "MaxDrawdown",
+            "lookback_period_minutes": 1440,
+            "trade_limit": 20,
+            "stop_duration_minutes": 720,
+            "max_allowed_drawdown": 0.2
+        },
+        {
+            "method": "LowProfitPairs",
+            "lookback_period_minutes": 360,
+            "trade_limit": 2,
+            "stop_duration": 360,
+            "required_profit": 0.02
+        },
+        {
+            "method": "CooldownPeriod",
+            "stop_duration_minutes": 60
         }
     ],
     "initial_state": "running",

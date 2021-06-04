@@ -1,16 +1,15 @@
 # pragma pylint: disable=missing-docstring, invalid-name, pointless-string-statement
 # flake8: noqa: F401
 # isort: skip_file
-# --- Do not remove these libs ---
+# --- Do not remove these libs ----
 import numpy as np  # noqa
 import pandas as pd  # noqa
-# --------------------------------
-# Add your lib to import here
 import talib.abstract as ta
 from pandas import DataFrame
-
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 from user_data.strategies.MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
+# -- Add your lib to import here --
+# ---------------------------------
 
 # Define your buy and sell signals
 buy_signals = {
@@ -31,9 +30,9 @@ buy_signals = {
     # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
     'sma_short_golden_cross': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
     # Weighted Sell Signal: VWAP crosses below current price
-    'vwap_cross': lambda df: (qtpylib.crossed_above(df['vwap'], df['close'])),
-
+    'vwap_cross': lambda df: (qtpylib.crossed_above(df['vwap'], df['close']))
 }
+
 sell_signals = {
     # Weighted Sell Signal: ADX above 25 & +DI below -DI (The trend has strength while moving down)
     'adx_strong_down': lambda df: (df['adx'] > 25),
@@ -53,7 +52,6 @@ sell_signals = {
     'sma_short_death_cross': lambda df: (qtpylib.crossed_below(df['sma9'], df['sma50'])),
     # Weighted Sell Signal: VWAP crosses below current price
     'vwap_cross': lambda df: (qtpylib.crossed_below(df['vwap'], df['close']))
-
 }
 
 # Returns the method responsible for decorating the current class with all the parameters of the MGM
@@ -65,7 +63,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.11.0 by Rikj000                        ###
+    ###                         MoniGoMani v0.12.0 by Rikj000                        ###
     ##                          -----------------------------                         ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
