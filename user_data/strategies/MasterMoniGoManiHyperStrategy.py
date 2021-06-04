@@ -314,6 +314,35 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         super().__init__(config)
 
+    def _populate_core_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        """
+        Adds the core indicators used to define trends to the strategy engine.
+
+        :param dataframe: Dataframe with data from the exchange
+        :param metadata: Additional information, like the currently traded pair
+        :return: a Dataframe with all core trend indicators for MoniGoMani
+        """
+
+        # Momentum Indicators (timeperiod is expressed in candles)
+        # -------------------
+        # ADX - Average Directional Index (The Trend Strength Indicator)
+        dataframe['adx'] = ta.ADX(dataframe, timeperiod=14)  # 14 timeperiods is usually used for ADX
+
+        # +DM (Positive Directional Indicator) = current high - previous high
+        dataframe['plus_di'] = ta.PLUS_DI(dataframe, timeperiod=25)
+        # -DM (Negative Directional Indicator) = previous low - current low
+        dataframe['minus_di'] = ta.MINUS_DI(dataframe, timeperiod=25)
+
+        # Trend Detection
+        # ---------------
+
+        # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
+        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
+        dataframe.loc[dataframe['adx'] <= 22, 'trend'] = 'sideways'
+        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
+
+        return dataframe
+
     def _populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Adds indicators based on Run-Mode & TimeFrame-Zoom:
@@ -344,21 +373,20 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             first_informative = dataframe["date"].min().floor("H")
             informative = informative[informative["date"] >= first_informative]
 
+            # Populate core trend indicators
+            informative = self._populate_core_trend(informative, metadata)
+
             # Populate indicators at a larger timeframe
             informative = self.do_populate_indicators(informative.copy(), metadata)
 
             # Merge indicators back in with, filling in missing values.
             dataframe = merge_informative_pair(dataframe, informative, self.timeframe, self.informative_timeframe,
                                                ffill=True)
-            
-            # Removes the old columns that will no longer be needed, as the informative pair will be used
-            dataframe.drop(['open', 'high', 'low', 'close', 'volume'], 
-                           axis='columns', inplace=True)
 
             # Rename columns, since merge_informative_pair adds `_<timeframe>` to the end of each name.
             # Skip over date etc..
             skip_columns = [(s + "_" + self.informative_timeframe) for s in
-                            ['date']]
+                            ['date', 'open', 'high', 'low', 'close', 'volume']]
             dataframe.rename(columns=lambda s: s.replace("_{}".format(self.informative_timeframe), "") if
             (not s in skip_columns) else s, inplace=True)
 
@@ -366,31 +394,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         else:
             self.mgm_logger('info', timeframe_zoom,
                             f'Dry/Live-running MoniGoMani with normal timeframe ({self.timeframe} candles)')
+            # Populate core trend indicators
+            dataframe = self._populate_core_trend(dataframe, metadata)
+
             # Just populate indicators.
             dataframe = self.do_populate_indicators(dataframe, metadata)
 
-        # BEGIN: Initializing base indicators for native MGM trend detection   
-
-        # Momentum Indicators (timeperiod is expressed in candles)
-        # -------------------
-
-        # ADX - Average Directional Index (The Trend Strength Indicator)
-        dataframe['adx'] = ta.ADX(dataframe, timeperiod=14)  # 14 timeperiods is usually used for ADX
-
-        # +DM (Positive Directional Indicator) = current high - previous high
-        dataframe['plus_di'] = ta.PLUS_DI(dataframe, timeperiod=25)
-        # -DM (Negative Directional Indicator) = previous low - current low
-        dataframe['minus_di'] = ta.MINUS_DI(dataframe, timeperiod=25)
-
-        # Trend Detection
-        # ---------------
-
-        # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
-        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
-        dataframe.loc[dataframe['adx'] <= 22, 'trend'] = 'sideways'
-        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
-
-        # END: Core indicators
 
         return dataframe
 
