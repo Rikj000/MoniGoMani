@@ -11,3 +11,5 @@ workspace.code-workspace
 .idea/
 # Ignore Logo Folder
 Logo/
+# Ignore VSC
+.vscode

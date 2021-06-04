@@ -314,6 +314,35 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         super().__init__(config)
 
+    def _populate_core_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        """
+        Adds the core indicators used to define trends to the strategy engine.
+
+        :param dataframe: Dataframe with data from the exchange
+        :param metadata: Additional information, like the currently traded pair
+        :return: a Dataframe with all core trend indicators for MoniGoMani
+        """
+
+        # Momentum Indicators (timeperiod is expressed in candles)
+        # -------------------
+        # ADX - Average Directional Index (The Trend Strength Indicator)
+        dataframe['adx'] = ta.ADX(dataframe, timeperiod=14)  # 14 timeperiods is usually used for ADX
+
+        # +DM (Positive Directional Indicator) = current high - previous high
+        dataframe['plus_di'] = ta.PLUS_DI(dataframe, timeperiod=25)
+        # -DM (Negative Directional Indicator) = previous low - current low
+        dataframe['minus_di'] = ta.MINUS_DI(dataframe, timeperiod=25)
+
+        # Trend Detection
+        # ---------------
+
+        # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
+        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
+        dataframe.loc[dataframe['adx'] <= 22, 'trend'] = 'sideways'
+        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
+
+        return dataframe
+
     def _populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Adds indicators based on Run-Mode & TimeFrame-Zoom:
@@ -344,6 +373,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             first_informative = dataframe["date"].min().floor("H")
             informative = informative[informative["date"] >= first_informative]
 
+            # Populate core trend indicators
+            informative = self._populate_core_trend(informative, metadata)
+
             # Populate indicators at a larger timeframe
             informative = self.do_populate_indicators(informative.copy(), metadata)
 
@@ -362,31 +394,11 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         else:
             self.mgm_logger('info', timeframe_zoom,
                             f'Dry/Live-running MoniGoMani with normal timeframe ({self.timeframe} candles)')
+            # Populate core trend indicators
+            dataframe = self._populate_core_trend(dataframe, metadata)
+
             # Just populate indicators.
             dataframe = self.do_populate_indicators(dataframe, metadata)
-
-        # BEGIN: Initializing base indicators for native MGM trend detection   
-
-        # Momentum Indicators (timeperiod is expressed in candles)
-        # -------------------
-
-        # ADX - Average Directional Index (The Trend Strength Indicator)
-        dataframe['adx'] = ta.ADX(dataframe, timeperiod=14)  # 14 timeperiods is usually used for ADX
-
-        # +DM (Positive Directional Indicator) = current high - previous high
-        dataframe['plus_di'] = ta.PLUS_DI(dataframe, timeperiod=25)
-        # -DM (Negative Directional Indicator) = previous low - current low
-        dataframe['minus_di'] = ta.MINUS_DI(dataframe, timeperiod=25)
-
-        # Trend Detection
-        # ---------------
-
-        # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
-        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
-        dataframe.loc[dataframe['adx'] <= 22, 'trend'] = 'sideways'
-        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
-
-        # END: Core indicators
 
         return dataframe
 
@@ -802,20 +814,21 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         if 'total_buy_signal_strength' not in dataframe.columns:
             dataframe['total_buy_signal_strength'] = dataframe['total_sell_signal_strength'] = 0
 
+        # Initialize weighted buy/sell signal variables if they are needed (should be 0 = false by default)   
+        df_key = f"{signal_name}_weighted_{space}_signal"    
+        if self.debuggable_weighted_signal_dataframe and df_key not in dataframe.columns:
+            dataframe[df_key] = 0
+
         for trend in self.mgm_trends:
-            # print(dir(self))
             signal_weight = getattr(self, f'{space}_{trend}_trend_{signal_name}_weight')
             if self.debuggable_weighted_signal_dataframe:
-                df_key = f"{signal_name}_weighted_{space}_signal"
-                # Initialize weighted buy/sell signal variables if they are needed (should be 0 = false by default)
-                dataframe[df_key] = 0
                 dataframe.loc[((dataframe['trend'] == trend) & condition),
-                              df_key] = signal_weight.value / self.precision
+                              df_key] += signal_weight.value / self.precision
 
             dataframe.loc[((dataframe['trend'] == trend) & condition),
                           f'total_{space}_signal_strength'] += signal_weight.value / self.precision
 
-            return dataframe
+        return dataframe
 
     @classmethod
     def _register_signal_attr(cls, base_cls, name: str, space: str = 'buy') -> None:
@@ -941,7 +954,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             setattr(base_cls, 'buy_signals', buy_signals)
             setattr(base_cls, 'sell_signals', sell_signals)
 
-            # Sets the useful parameters of the GMM, such as unclogger and etc
+            # Sets the useful parameters of the MGM, such as unclogger and etc
             MasterMoniGoManiHyperStrategy._init_util_params(base_cls)
 
             # Registering signals attributes on class
