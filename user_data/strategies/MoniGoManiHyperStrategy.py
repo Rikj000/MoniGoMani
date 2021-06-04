@@ -4,14 +4,15 @@
 # --- Do not remove these libs ---
 import numpy as np  # noqa
 import pandas as pd  # noqa
-from pandas import DataFrame
-
 # --------------------------------
 # Add your lib to import here
 import talib.abstract as ta
-import freqtrade.vendor.qtpylib.indicators as qtpylib
+from pandas import DataFrame
 
-###### Define your buy and sell signals   
+import freqtrade.vendor.qtpylib.indicators as qtpylib
+from user_data.strategies.MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
+
+# Define your buy and sell signals
 buy_signals = {
     # Weighted Buy Signal: ADX above 25 & +DI above -DI (The trend has strength while moving up)
     'adx_strong_up': lambda df: (df['adx'] > 25),
@@ -28,7 +29,7 @@ buy_signals = {
     # Weighted Buy Signal: SMA long term Golden Cross (Medium term SMA crosses above Long term SMA)
     'sma_long_golden_cross': lambda df: (qtpylib.crossed_above(df['sma50'], df['sma200'])),
     # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
-    'sma_short_golden_cross':  lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
+    'sma_short_golden_cross': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
     # Weighted Sell Signal: VWAP crosses below current price
     'vwap_cross': lambda df: (qtpylib.crossed_above(df['vwap'], df['close'])),
 
@@ -37,11 +38,11 @@ sell_signals = {
     # Weighted Sell Signal: ADX above 25 & +DI below -DI (The trend has strength while moving down)
     'adx_strong_down': lambda df: (df['adx'] > 25),
     # Weighted Sell Signal: Re-Entering Upper Bollinger Band after upward breakout
-    'bollinger_bands':  lambda df: (qtpylib.crossed_below(df['close'], df['bb_upperband'])),
+    'bollinger_bands': lambda df: (qtpylib.crossed_below(df['close'], df['bb_upperband'])),
     # Weighted Sell Signal: EMA long term Death Cross (Medium term EMA crosses below Long term EMA)
     'ema_long_death_cross': lambda df: (qtpylib.crossed_below(df['ema50'], df['ema200'])),
     # Weighted Sell Signal: EMA short term Death Cross (Short term EMA crosses below Medium term EMA)
-    'ema_short_death_cross': lambda df: (qtpylib.crossed_below(df['ema9'], df['ema50']))
+    'ema_short_death_cross': lambda df: (qtpylib.crossed_below(df['ema9'], df['ema50'])),
     # Weighted Sell Signal: MACD below Signal
     'macd': lambda df: (df['macd'] < df['macdsignal']),
     # Weighted Sell Signal: RSI crosses below 70 (Over-bought / high-price and dropping indication)
@@ -54,13 +55,13 @@ sell_signals = {
     'vwap_cross': lambda df: (qtpylib.crossed_below(df['vwap'], df['close']))
 
 }
-   
+
 # Returns the method responsible for decorating the current class with all the parameters of the MGM
-generate_mgm_attributes = MasterMoniGoManiHyperStrategy._generate_mgm_attributes(buy_signals, sell_signals)
+generate_mgm_attributes = MasterMoniGoManiHyperStrategy.generate_mgm_attributes(buy_signals, sell_signals)
+
+
 @generate_mgm_attributes
 class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
-    
-    
     """
     ####################################################################################
     ####                                                                            ####
@@ -90,8 +91,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
     # Strategy interface version - allow new iterations of the strategy interface.
     # Check the documentation or the Sample strategy to get the latest version.
     INTERFACE_VERSION = 2
-    
-    
+
     # Plot configuration to show all signals used in MoniGoMani in FreqUI (Use load from Strategy in FreqUI)
     plot_config = {
         'main_plot': {
@@ -123,8 +123,6 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         }
     }
 
-
-        
     def informative_pairs(self):
         """
         Defines additional informative pair/interval combinations to be cached from the exchange, these will be used
@@ -134,7 +132,6 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         pairs = self.dp.current_whitelist()
         informative_pairs = [(pair, self.informative_timeframe) for pair in pairs]
         return informative_pairs
-
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         # Adds base indicators based on Run-Mode & TimeFrame-Zoom
@@ -190,15 +187,13 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         return dataframe
 
     def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        
         # Keep this call to populate the conditions responsible for the weights of your signals
-        dataframe = self._populate_trend('buy', dataframe, metadata) 
+        dataframe = self._populate_trend('buy', dataframe, metadata)
 
         return dataframe
 
     def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        
         # Keep this call to populate the conditions responsible for the weights of your signals
-        dataframe = self._populate_trend('sell', dataframe, metadata) 
-     
+        dataframe = self._populate_trend('sell', dataframe, metadata)
+
         return dataframe

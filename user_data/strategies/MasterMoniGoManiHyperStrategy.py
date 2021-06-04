@@ -1,28 +1,29 @@
 # --- Do not remove these libs ----------------------------------------------------------------------
+import json
+import logging
 import os
 import sys
-from scipy.interpolate import interp1d
-import freqtrade.vendor.qtpylib.indicators as qtpylib
-import logging
 import numpy as np  # noqa
 import pandas as pd  # noqa
 import talib.abstract as ta
+from abc import ABC
 from datetime import datetime, timedelta
-from freqtrade.exchange import timeframe_to_prev_date
-from freqtrade.persistence import Trade
-from freqtrade.strategy \
-    import IStrategy, CategoricalParameter, IntParameter, merge_informative_pair, timeframe_to_minutes
-from freqtrade.state import RunMode
+from functools import reduce
+from typing import Any, List
 from numpy import timedelta64
 from pandas import DataFrame
-import json
-from typing import Any, List, Dict
-from functools import reduce
+from scipy.interpolate import interp1d
+from freqtrade.exchange import timeframe_to_prev_date
+from freqtrade.optimize.space import Categorical, Dimension, SKDecimal
+from freqtrade.persistence import Trade
+from freqtrade.state import RunMode
+from freqtrade.strategy \
+    import IStrategy, CategoricalParameter, IntParameter, merge_informative_pair, timeframe_to_minutes
 
 logger = logging.getLogger(__name__)
 
 
-class MasterMoniGoManiHyperStrategy(IStrategy):
+class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     """
     ####################################################################################
     ####                                                                            ####
@@ -57,10 +58,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
     ####################################################################################################################
     #                                            END OF CONFIG NAMES SECTION                                           #
     ####################################################################################################################
-    
+
     # MGM trend names
     mgm_trends = ['downwards', 'sideways', 'upwards']
- 
+
     # Load the MoniGoMani settings
     mgm_config_path = os.getcwd() + '/user_data/' + mgm_config_name
     if os.path.isfile(mgm_config_path) is True:
@@ -75,25 +76,36 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
                  f'"MoniGoManiHyperStrategy.py"')
 
     # Apply the loaded MoniGoMani Settings
-    timeframe = mgm_config['timeframe']
-    backtest_timeframe = mgm_config['backtest_timeframe']
-    startup_candle_count = mgm_config['startup_candle_count']
-    precision = mgm_config['precision']
-    min_weighted_signal_value = mgm_config['min_weighted_signal_value']
-    max_weighted_signal_value = mgm_config['max_weighted_signal_value']
-    min_trend_total_signal_needed_value = mgm_config['min_trend_total_signal_needed_value']
-    min_trend_total_signal_needed_candles_lookback_window_value = \
-        mgm_config['min_trend_total_signal_needed_candles_lookback_window_value']
-    max_trend_total_signal_needed_candles_lookback_window_value = \
-        mgm_config['max_trend_total_signal_needed_candles_lookback_window_value']
-    search_threshold_weighted_signal_values = mgm_config['search_threshold_weighted_signal_values']
-    search_threshold_trend_total_signal_needed_candles_lookback_window_value = \
-        mgm_config['search_threshold_trend_total_signal_needed_candles_lookback_window_value']
-    number_of_weighted_signals = mgm_config['number_of_weighted_signals']
-    roi_table_step_size = mgm_config['roi_table_step_size']
-    debuggable_weighted_signal_dataframe = mgm_config['debuggable_weighted_signal_dataframe']
-    use_mgm_logging = mgm_config['use_mgm_logging']
-    mgm_log_levels_enabled = mgm_config['mgm_log_levels_enabled']
+    try:
+        timeframe = mgm_config['timeframe']
+        backtest_timeframe = mgm_config['backtest_timeframe']
+        startup_candle_count = mgm_config['startup_candle_count']
+        precision = mgm_config['precision']
+        min_weighted_signal_value = mgm_config['min_weighted_signal_value']
+        max_weighted_signal_value = mgm_config['max_weighted_signal_value']
+        min_trend_total_signal_needed_value = mgm_config['min_trend_total_signal_needed_value']
+        min_trend_total_signal_needed_candles_lookback_window_value = \
+            mgm_config['min_trend_total_signal_needed_candles_lookback_window_value']
+        max_trend_total_signal_needed_candles_lookback_window_value = \
+            mgm_config['max_trend_total_signal_needed_candles_lookback_window_value']
+        search_threshold_weighted_signal_values = mgm_config['search_threshold_weighted_signal_values']
+        search_threshold_trend_total_signal_needed_candles_lookback_window_value = \
+            mgm_config['search_threshold_trend_total_signal_needed_candles_lookback_window_value']
+        number_of_weighted_signals = mgm_config['number_of_weighted_signals']
+        roi_table_step_size = mgm_config['roi_table_step_size']
+        stoploss_min_value = mgm_config['stoploss_min_value']
+        stoploss_max_value = mgm_config['stoploss_max_value']
+        trailing_stop_positive_min_value = mgm_config['trailing_stop_positive_min_value']
+        trailing_stop_positive_max_value = mgm_config['trailing_stop_positive_max_value']
+        trailing_stop_positive_offset_min_value = mgm_config['trailing_stop_positive_offset_min_value']
+        trailing_stop_positive_offset_max_value = mgm_config['trailing_stop_positive_offset_max_value']
+        debuggable_weighted_signal_dataframe = mgm_config['debuggable_weighted_signal_dataframe']
+        use_mgm_logging = mgm_config['use_mgm_logging']
+        mgm_log_levels_enabled = mgm_config['mgm_log_levels_enabled']
+    except KeyError as missing_setting:
+        sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file ({mgm_config_name}) is '
+                 f'missing some settings. Please make sure that all MoniGoMani related settings are existing inside '
+                 f'this file. {missing_setting} has been detected as missing from the file...')
 
     # Initialize empty buy/sell_params dictionaries and initial (trailing)stoploss values
     buy_params = {}
@@ -103,7 +115,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
     trailing_stop_positive = 0.01
     trailing_stop_positive_offset = 0.03
     trailing_only_offset_is_reached = True
-    
+
     # If results from a previous HyperOpt Run are found then continue the next HyperOpt Run upon them
     mgm_config_hyperopt_path = os.getcwd() + '/user_data/' + mgm_config_hyperopt_name
     if os.path.isfile(mgm_config_hyperopt_path) is True:
@@ -150,8 +162,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
         CategoricalParameter([True, False], default=False, space='buy', optimize=False, load=False)
     buy___trades_when_upwards = \
         CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=False)
-        
-   
+
     # ---------------------------------------------------------------- #
     #                  Sell HyperOpt Space Parameters                  #
     # ---------------------------------------------------------------- #
@@ -176,13 +187,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
         CategoricalParameter([True, False], default=True, space='sell', optimize=False, load=False)
     sell___unclogger_trend_lookback_window_uses_upwards_candles = \
         CategoricalParameter([True, False], default=False, space='sell', optimize=False, load=False)
-        
+
     # ---------------------------------------------------------------- #
     #    Parameters that will be merged with optimized json            #
     # ---------------------------------------------------------------- #    
     mgm_unclogger_add_params = {
         'unclogger_minimal_losing_trade_duration_minutes': {'min': 15, 'max': 60},
-        'unclogger_minimal_losing_trades_open': {'min': 1, 'max': 5, 'threshold':1},
+        'unclogger_minimal_losing_trades_open': {'min': 1, 'max': 5, 'threshold': 1},
         'unclogger_open_trades_losing_percentage_needed': {'min': 1, 'max': 60},
         'unclogger_trend_lookback_candles_window': {'min': 10, 'max': 60},
         'unclogger_trend_lookback_candles_window_percentage_needed': {'min': 10, 'max': 40},
@@ -202,7 +213,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
     is_dry_live_run_detected = True  # Class level runmode detection, Gets set automatically
     informative_timeframe = timeframe  # Gets set automatically
     timeframe_multiplier = None  # Gets set automatically
-
 
     class HyperOpt:
         # Generate a Custom Long Continuous ROI-Table with less gaps in it
@@ -226,13 +236,53 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
                 y.append(0)
             return dict(zip(x, y))
 
+        @staticmethod
+        def stoploss_space() -> List[Dimension]:
+            """
+            Define custom stoploss search space with configurable parameters
+
+            Stoploss Value to search.
+            Override it if you need some different range for the parameter in the 'stoploss' optimization hyperspace.
+            """
+            return [
+                SKDecimal(MasterMoniGoManiHyperStrategy.stoploss_max_value,
+                          MasterMoniGoManiHyperStrategy.stoploss_min_value,
+                          decimals=3, name='stoploss')
+            ]
+
+        @staticmethod
+        def trailing_space() -> List[Dimension]:
+            """
+            Define custom trailing search space with parameters configurable in 'mgm-config.json'
+            """
+            return [
+                # It was decided to always set trailing_stop is to True if the 'trailing' hyperspace
+                # is used. Otherwise hyperopt will vary other parameters that won't have effect if
+                # trailing_stop is set False.
+                # This parameter is included into the hyperspace dimensions rather than assigning
+                # it explicitly in the code in order to have it printed in the results along with
+                # other 'trailing' hyperspace parameters.
+                Categorical([True], name='trailing_stop'),
+                SKDecimal(MasterMoniGoManiHyperStrategy.trailing_stop_positive_min_value,
+                          MasterMoniGoManiHyperStrategy.trailing_stop_positive_max_value,
+                          decimals=3, name='trailing_stop_positive'),
+                # 'trailing_stop_positive_offset' should be greater than 'trailing_stop_positive',
+                # so this intermediate parameter is used as the value of the difference between
+                # them. The value of the 'trailing_stop_positive_offset' is constructed in the
+                # generate_trailing_params() method.
+                # This is similar to the hyperspace dimensions used for constructing the ROI tables.
+                SKDecimal(MasterMoniGoManiHyperStrategy.trailing_stop_positive_offset_min_value,
+                          MasterMoniGoManiHyperStrategy.trailing_stop_positive_offset_max_value,
+                          decimals=3, name='trailing_stop_positive_offset_p1'),
+                Categorical([True, False], name='trailing_only_offset_is_reached')
+            ]
+
     def __init__(self, config: dict):
         """
         First method to be called once during the MoniGoMani class initialization process
         :param config::
         """
 
-        
         initialization = 'Initialization'
         if RunMode(config.get('runmode', RunMode.OTHER)) in (RunMode.BACKTEST, RunMode.HYPEROPT):
             self.timeframe = self.backtest_timeframe
@@ -261,12 +311,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
             self.is_dry_live_run_detected = True
             self.mgm_logger('info', initialization, f'Current run mode detected as: Dry/Live-Run. '
                                                     f'Auto updated is_dry_live_run_detected to: True')
-            
-            
-     
-        super().__init__(config)
 
-   
+        super().__init__(config)
 
     def _populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
@@ -304,11 +350,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
             # Merge indicators back in with, filling in missing values.
             dataframe = merge_informative_pair(dataframe, informative, self.timeframe, self.informative_timeframe,
                                                ffill=True)
+            
+            # Removes the old columns that will no longer be needed, as the informative pair will be used
+            dataframe.drop(['open', 'high', 'low', 'close', 'volume'], 
+                           axis='columns', inplace=True)
 
             # Rename columns, since merge_informative_pair adds `_<timeframe>` to the end of each name.
             # Skip over date etc..
             skip_columns = [(s + "_" + self.informative_timeframe) for s in
-                            ['date', 'open', 'high', 'low', 'close', 'volume']]
+                            ['date']]
             dataframe.rename(columns=lambda s: s.replace("_{}".format(self.informative_timeframe), "") if
             (not s in skip_columns) else s, inplace=True)
 
@@ -318,14 +368,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
                             f'Dry/Live-running MoniGoMani with normal timeframe ({self.timeframe} candles)')
             # Just populate indicators.
             dataframe = self.do_populate_indicators(dataframe, metadata)
-            
-            
-          
+
         # BEGIN: Initializing base indicators for native MGM trend detection   
-        
+
         # Momentum Indicators (timeperiod is expressed in candles)
         # -------------------
-        
+
         # ADX - Average Directional Index (The Trend Strength Indicator)
         dataframe['adx'] = ta.ADX(dataframe, timeperiod=14)  # 14 timeperiods is usually used for ADX
 
@@ -333,7 +381,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
         dataframe['plus_di'] = ta.PLUS_DI(dataframe, timeperiod=25)
         # -DM (Negative Directional Indicator) = previous low - current low
         dataframe['minus_di'] = ta.MINUS_DI(dataframe, timeperiod=25)
-            
+
         # Trend Detection
         # ---------------
 
@@ -341,10 +389,36 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
         dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
         dataframe.loc[dataframe['adx'] <= 22, 'trend'] = 'sideways'
         dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
-        
+
         # END: Core indicators
 
         return dataframe
+
+    def get_all_current_open_trades(self, trade: 'Trade') -> List:
+        """
+        Fetches all the trades currently open depending on the current RunMode of Freqtrade
+
+        :param trade: trade object.
+        :return List: List containing all current open trades
+        """
+        custom_information_storage = 'custom_stoploss - Custom Information Storage'
+        if self.is_dry_live_run_detected is True:
+            self.mgm_logger('debug', custom_information_storage,
+                            f'Fetching all currently open trades during Dry/Live Run')
+
+            all_open_trades = Trade.get_trades([Trade.is_open.is_(True)]).order_by(Trade.open_date).all()
+        # Fetch all open trade data during Back Testing & Hyper Opting
+        else:
+            self.mgm_logger('debug', custom_information_storage,
+                            f'Fetching all currently open trades during BackTesting/HyperOpting')
+            all_open_trades = trade.trades_open
+
+        self.mgm_logger('debug', custom_information_storage,
+                        f'Up-to-date open trades ({str(len(all_open_trades))}) fetched!')
+        self.mgm_logger('debug', custom_information_storage,
+                        f'all_open_trades contents: {repr(all_open_trades)}')
+
+        return all_open_trades
 
     def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
                         current_rate: float, current_profit: float, **kwargs) -> float:
@@ -372,24 +446,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
 
         # Open Trade Custom Information Storage
         # -------------------------------------
-        self.mgm_logger('debug', custom_information_storage, f'Fetching all currently open trades')
-
-        # Fetch all open trade data during Dry & Live Running
-        if self.is_dry_live_run_detected is True:
-            self.mgm_logger('debug', custom_information_storage,
-                            f'Fetching all currently open trades during Dry/Live Run')
-
-            all_open_trades = Trade.get_trades([Trade.is_open.is_(True)]).order_by(Trade.open_date).all()
-        # Fetch all open trade data during Back Testing & Hyper Opting
-        else:
-            self.mgm_logger('debug', custom_information_storage,
-                            f'Fetching all currently open trades during BackTesting/HyperOpting')
-            all_open_trades = trade.trades_open
-
-        self.mgm_logger('debug', custom_information_storage,
-                        f'Up-to-date open trades ({str(len(all_open_trades))}) fetched!')
-        self.mgm_logger('debug', custom_information_storage,
-                        f'all_open_trades contents: {repr(all_open_trades)}')
+        # Fetch all open trade data depending on RunMode
+        all_open_trades = self.get_all_current_open_trades(trade)
 
         # Store current pair's open_trade + it's current profit in custom_info
         for open_trade in all_open_trades:
@@ -479,17 +537,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
             try:
                 # Open Trade Custom Information Storage
                 # -------------------------------------
-                # Fetch all open trade data during Dry & Live Running
-                if self.is_dry_live_run_detected is True:
-                    self.mgm_logger('debug', custom_information_storage,
-                                    f'Fetching all currently open trades during Dry/Live Run')
-
-                    all_open_trades = Trade.get_trades([Trade.is_open.is_(True)]).order_by(Trade.open_date).all()
-                # Fetch all open trade data during Back Testing & Hyper Opting
-                else:
-                    self.mgm_logger('debug', custom_information_storage,
-                                    f'Fetching all currently open trades during BackTesting/HyperOpting')
-                    all_open_trades = trade.trades_open
+                # Fetch all open trade data depending on RunMode
+                all_open_trades = self.get_all_current_open_trades(trade)
 
                 self.mgm_logger('debug', custom_information_storage,
                                 f'Up-to-date open trades ({str(len(all_open_trades))}) fetched!')
@@ -522,7 +571,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
                                     f'Fetched losing_open_trades ({str(len(losing_open_trades))}) from custom '
                                     f'information storage!')
 
-                    if len(losing_open_trades) < (self.sell___unclogger_minimal_losing_trades_open.value / self.precision):
+                    if len(losing_open_trades) < (
+                            self.sell___unclogger_minimal_losing_trades_open.value / self.precision):
                         self.mgm_logger('debug', open_trade_unclogger,
                                         f'No unclogging needed! Not enough losing trades currently open!')
                     else:
@@ -585,7 +635,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
                                     self.mgm_logger('debug', open_trade_unclogger,
                                                     f'Fetching all needed "trend" trade data')
 
-                                    for candle in range(1, round(self.sell___unclogger_trend_lookback_candles_window.value / self.precision) + 1):
+                                    for candle in range(1,
+                                                        round(
+                                                            self.sell___unclogger_trend_lookback_candles_window.value / self.precision) + 1):
                                         # Convert the candle time to the one being used by the
                                         # 'informative_timeframe'
                                         candle_multiplier = int(self.informative_timeframe.rstrip("mhdwM"))
@@ -597,7 +649,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
                                                 timeframe_to_prev_date(self.informative_timeframe, current_time) - \
                                                 timedelta(hours=int(candle * candle_multiplier))
                                         elif self.informative_timeframe.find('d') != -1:
-                                            candle_time =\
+                                            candle_time = \
                                                 timeframe_to_prev_date(self.informative_timeframe, current_time) - \
                                                 timedelta(days=int(candle * candle_multiplier))
                                         elif self.informative_timeframe.find('w') != -1:
@@ -707,7 +759,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
             elif (self.mgm_log_levels_enabled['error'] is True) and (message_type.upper() == 'ERROR'):
                 logger.setLevel(logging.ERROR)
                 logger.error(code_section + ' - ' + message)
-                         
 
     def _generate_weight_condition(self, dataframe: DataFrame, space: str) -> DataFrame:
         """
@@ -719,22 +770,22 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
         conditions_weight = []
         # If TimeFrame-Zooming => Only use 'informative_timeframe' data
         has_multiplier = (self.is_dry_live_run_detected is False) and (
-            self.informative_timeframe != self.backtest_timeframe)
+                self.informative_timeframe != self.backtest_timeframe)
         for trend in self.mgm_trends:
             signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
             rolling_needed = getattr(
                 self, f'{space}__{trend}_trend_total_signal_needed_candles_lookback_window')
 
-            rolling_needed_value = rolling_needed.value * \
-                self.timeframe_multiplier if has_multiplier else rolling_needed.value
+            rolling_needed_value = \
+                rolling_needed.value * self.timeframe_multiplier if has_multiplier else rolling_needed.value
             rolling_needed_div = self.timeframe_multiplier if has_multiplier else 1
 
             conditions_weight.append(
                 (
-                    (dataframe['trend'] == trend) &
-                    (dataframe[f'total_{space}_signal_strength']
-                     .rolling(rolling_needed_value).sum() / rolling_needed_div
-                     >= signal_needed.value / self.precision)
+                        (dataframe['trend'] == trend) &
+                        (dataframe[f'total_{space}_signal_strength']
+                         .rolling(rolling_needed_value).sum() / rolling_needed_div
+                         >= signal_needed.value / self.precision)
                 ))
 
         return reduce(lambda x, y: x | y, conditions_weight)
@@ -748,30 +799,29 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
         :param condition: A valid condition to evaluate the signal
         :return: DataFrame with debug signals 
         """
-        
+
         # Weighted Variables
         # ------------------
         # Initialize total signal variables (should be 0 = false by default)
         if 'total_buy_signal_strength' not in dataframe.columns:
             dataframe['total_buy_signal_strength'] = dataframe['total_sell_signal_strength'] = 0
-            
+        
+        # Initialize weighted buy/sell signal variables if they are needed (should be 0 = false by default)   
+        df_key = f"{signal_name}_weighted_{space}_signal"    
+        if(self.debuggable_weighted_signal_dataframe and df_key not in dataframe.columns):
+            dataframe[df_key] = 0
+
         for trend in self.mgm_trends:
-            #print(dir(self))
             signal_weight = getattr(self, f'{space}_{trend}_trend_{signal_name}_weight')
-            if(self.debuggable_weighted_signal_dataframe):
-                df_key = f"{signal_name}_weighted_{space}_signal"
-                # Initialize weighted buy/sell signal variables if they are needed (should be 0 = false by default)
-                dataframe[df_key] = 0
-                dataframe.loc[((dataframe['trend'] == trend) & (condition)),
-                              df_key] = signal_weight.value / self.precision
-                
-            
+            if self.debuggable_weighted_signal_dataframe:
+                dataframe.loc[((dataframe['trend'] == trend) & condition),
+                              df_key] += signal_weight.value / self.precision
 
-            dataframe.loc[((dataframe['trend'] == trend) & (condition)),
-                      f'total_{space}_signal_strength'] += signal_weight.value / self.precision
+            dataframe.loc[((dataframe['trend'] == trend) & condition),
+                          f'total_{space}_signal_strength'] += signal_weight.value / self.precision
 
-            return dataframe
-    
+        return dataframe
+
     @classmethod
     def _register_signal_attr(cls, base_cls, name: str, space: str = 'buy') -> None:
         """
@@ -781,26 +831,24 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
         :param name: Signal name 
         :return: None
         """
-  
+
         # Generating the attributes for each signal trend
-        for trend in cls.mgm_trends: 
+        for trend in cls.mgm_trends:
             parameter_name = f"{trend}_trend_{name}_weight"
-            cls._init_vars(base_cls, space=space, 
-                        parameter_name=parameter_name,
-                        parameter_min_value=cls.min_weighted_signal_value,
-                        parameter_max_value=cls.max_weighted_signal_value,
-                        parameter_threshold=cls.search_threshold_weighted_signal_values, 
-                        precision=cls.precision)
-            
-            
+            cls._init_vars(base_cls, space=space,
+                           parameter_name=parameter_name,
+                           parameter_min_value=cls.min_weighted_signal_value,
+                           parameter_max_value=cls.max_weighted_signal_value,
+                           parameter_threshold=cls.search_threshold_weighted_signal_values,
+                           precision=cls.precision)
+
     @classmethod
     def _init_vars(cls, base_cls, space: str, parameter_name: str, parameter_min_value: int,
-                   parameter_max_value: int,
-                   parameter_threshold: int, precision: float, overrideable: bool = True):
+                   parameter_max_value: int, parameter_threshold: int, precision: float, overrideable: bool = True):
         """
         Function to automatically initialize MoniGoMani's HyperOptable parameter values for both HyperOpt Runs.
         :param base_cls: The inheritor class of the MGM where the attributes will be added
-        :param parameter_dictionary: Buy or Sell params dictionary
+        :param space: Buy or Sell params dictionary
         :param parameter_name: Name of the signal in the dictionary
         :param parameter_min_value: Minimal search space value to use during the 1st HyperOpt Run and override value for weak signals on the 2nd HyperOpt Run 
         :param parameter_max_value: Maximum search space value to use during the 1st HyperOpt Run and override value for weak signals on the 2nd HyperOpt Run 
@@ -841,77 +889,77 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
             "default_value": int(default_value * precision),
             # 1st HyperOpt Run: No overrides, 2nd HyperOpt Run: Apply Overrides where needed
             "opt_and_Load": False if (parameter_value is not None) and (overrideable is True) and
-            (min_value == parameter_min_value or max_value == parameter_max_value) else True
+                                     (min_value == parameter_min_value or max_value == parameter_max_value) else True
         }
-        
-        param = IntParameter(param_config["min_value"], param_config["max_value"], default=param_config["default_value"],
-                                              space=space, optimize=param_config["opt_and_Load"], load=param_config["opt_and_Load"])
+
+        param = IntParameter(param_config["min_value"], param_config["max_value"],
+                             default=param_config["default_value"],
+                             space=space, optimize=param_config["opt_and_Load"], load=param_config["opt_and_Load"])
         setattr(base_cls, param_key, param)
 
     @classmethod
-    def _init_util_params(cls, base_cls):    
+    def _init_util_params(cls, base_cls):
         """
          Generates the parameters used by unclogger and weight control
          :param base_cls: The inheritor class of the MGM where the attributes will be added
         """
- 
+
         # Generates the utility attributes for unclogger
         for param_key in cls.mgm_unclogger_add_params:
             parameter_name = '__' + param_key
             param_config = cls.mgm_unclogger_add_params[param_key]
-            param_config['threshold'] = param_config['threshold'] if 'threshold' in param_config else cls.search_threshold_weighted_signal_values         
-            
+            param_config['threshold'] = param_config[
+                'threshold'] if 'threshold' in param_config else cls.search_threshold_weighted_signal_values
+
             cls._init_vars(base_cls, 'sell', parameter_name, param_config['min'],
-                            param_config['max'],
-                            param_config['threshold'], cls.precision, False)
+                           param_config['max'],
+                           param_config['threshold'], cls.precision, False)
 
         # Generate the utility attributes for the logic of the weights
         for trend in cls.mgm_trends:
             for space in ['buy', 'sell']:
-         
                 param_total_signal_needed = f'_{trend}_trend_total_signal_needed'
                 cls._init_vars(base_cls, space, param_total_signal_needed, cls.min_trend_total_signal_needed_value,
-                                int(cls.max_weighted_signal_value * cls.number_of_weighted_signals),
-                                cls.search_threshold_weighted_signal_values, cls.precision)
+                               int(cls.max_weighted_signal_value * cls.number_of_weighted_signals),
+                               cls.search_threshold_weighted_signal_values, cls.precision)
 
                 param_needed_candles_lookback_window = f'_{trend}_trend_total_signal_needed_candles_lookback_window'
                 cls._init_vars(base_cls, space, param_needed_candles_lookback_window,
-                                cls.min_trend_total_signal_needed_candles_lookback_window_value,
-                                cls.max_trend_total_signal_needed_candles_lookback_window_value,
-                                cls.search_threshold_trend_total_signal_needed_candles_lookback_window_value,
-                                cls.precision, False)
- 
-    
+                               cls.min_trend_total_signal_needed_candles_lookback_window_value,
+                               cls.max_trend_total_signal_needed_candles_lookback_window_value,
+                               cls.search_threshold_trend_total_signal_needed_candles_lookback_window_value,
+                               cls.precision, False)
+
     @staticmethod
-    def _generate_mgm_attributes(buy_signals, sell_signals):
+    def generate_mgm_attributes(buy_signals, sell_signals):
         """
         Method used to generate the decorator, responsible for adding attributes at the class level
         :param buy_signals: Dictionary consisting of key as signal name and value containing the function that will generate the condition in the dataframe.
         :param sell_signals: Dictionary consisting of key as signal name and value containing the function that will generate the condition in the dataframe.
         :return: A function that will be used in the class that inherits the MGM to decorate it
         """
-        
+
         # The method responsible for decorating the base class, receives the class itself as a parameter. It will be set as the decorator of the base class
         def apply_attributes(base_cls):
-            
+
             # Set all signs in the class for later use.
             setattr(base_cls, 'buy_signals', buy_signals)
             setattr(base_cls, 'sell_signals', sell_signals)
-            
-            # Sets the useful parameters of the GMM, such as unclogger and etc
-            MasterMoniGoManiHyperStrategy._init_util_params(base_cls) 
-            
+
+            # Sets the useful parameters of the MGM, such as unclogger and etc
+            MasterMoniGoManiHyperStrategy._init_util_params(base_cls)
+
             # Registering signals attributes on class
             for name in buy_signals:
                 MasterMoniGoManiHyperStrategy._register_signal_attr(base_cls, name, 'buy')
-                
+
             for name in sell_signals:
                 MasterMoniGoManiHyperStrategy._register_signal_attr(base_cls, name, 'sell')
-                
-            return base_cls   
+
+            return base_cls
+
         return apply_attributes
-    
-    
+
     def _populate_trend(self, space: str, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Populates the trend dataframe with the conditional that checks the weights
@@ -920,17 +968,17 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
         :param metadata: Additional information, like the currently traded pair
         :return: DataFrame with debug signals 
         """
-        
+
         signals = getattr(self, f'{space}_signals')
-        
+
         # Calculates the weight and/or generates the debug column for each signal
         for signal_name, condition_func in signals.items():
-           self._add_signal(signal_name, space,  dataframe, condition_func(dataframe))
-        
+            self._add_signal(signal_name, space, dataframe, condition_func(dataframe))
+
         # Generates the conditions responsible for searching and comparing the weights needed to activate a buy or sell,     
-        dataframe.loc[ 
+        dataframe.loc[
             (self._generate_weight_condition(dataframe=dataframe, space=space)),
-            space ] = 1
+            space] = 1
 
         # Override Signals: When configured sell/buy signals can be completely turned off for each kind of trend
         for trend in self.mgm_trends:
@@ -939,4 +987,3 @@ class MasterMoniGoManiHyperStrategy(IStrategy):
                 dataframe.loc[dataframe['trend'] == trend, space] = 0
 
         return dataframe
-            
