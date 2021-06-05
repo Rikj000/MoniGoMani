@@ -4,18 +4,18 @@
       "BTC/USDT",
       "ETH/USDT",
       "DOGE/USDT",
-      "XRP/USDT",
       "ADA/USDT",
-      "ETC/USDT",
-      "LTC/USDT",
-      "ICP/USDT",
-      "TRX/USDT",
-      "AAVE/USDT",
-      "XLM/USDT",
-      "UNI/USDT",
-      "BTT/USDT",
-      "AVAX/USDT",
-      "WIN/USDT"
+      "XRP/USDT",
+      "MATIC/USDT",
+      "DOT/USDT",
+      "VET/USDT",
+      "FIL/USDT",
+      "THETA/USDT",
+      "SOL/USDT",
+      "LINK/USDT",
+      "SHIB/USDT",
+      "TFUEL/USDT",
+      "LTC/USDT"
     ]
   }
 }

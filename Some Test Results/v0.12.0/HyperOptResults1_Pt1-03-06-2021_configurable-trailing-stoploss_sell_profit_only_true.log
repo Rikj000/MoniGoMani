@@ -1,5 +1,5 @@
- freqtrade hyperopt -c ./user_data/config-usdt.json -c ./user_data/config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -s MoniGoManiHyperStrategy -e 1000 --timerange 20210101-20210316
-===============================================================================================================================================================================================================
+freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 1000 --timerange 20210101-20210316
+=================================================================================================================================================================================================================
 INFO - No params for buy found, using default values.
 INFO - Strategy Parameter(default): buy___trades_when_downwards = True
 INFO - Strategy Parameter(default): buy___trades_when_sideways = False

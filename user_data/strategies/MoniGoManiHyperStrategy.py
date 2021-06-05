@@ -1,15 +1,15 @@
 # pragma pylint: disable=missing-docstring, invalid-name, pointless-string-statement
 # flake8: noqa: F401
 # isort: skip_file
-# --- Do not remove these libs ----
+# --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 import numpy as np  # noqa
 import pandas as pd  # noqa
 import talib.abstract as ta
 from pandas import DataFrame
+
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 from user_data.strategies.MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
-# -- Add your lib to import here --
-# ---------------------------------
+# ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
 # Define your buy and sell signals
 buy_signals = {
@@ -29,7 +29,7 @@ buy_signals = {
     'sma_long_golden_cross': lambda df: (qtpylib.crossed_above(df['sma50'], df['sma200'])),
     # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
     'sma_short_golden_cross': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
-    # Weighted Sell Signal: VWAP crosses below current price
+    # Weighted Sell Signal: VWAP crosses above current price
     'vwap_cross': lambda df: (qtpylib.crossed_above(df['vwap'], df['close']))
 }
 
@@ -87,7 +87,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
     """
 
     # Strategy interface version - allow new iterations of the strategy interface.
-    # Check the documentation or the Sample strategy to get the latest version.
+    # Check the Freqtrade documentation or it's Sample strategy to get the latest version.
     INTERFACE_VERSION = 2
 
     # Plot configuration to show all signals used in MoniGoMani in FreqUI (Use load from Strategy in FreqUI)
