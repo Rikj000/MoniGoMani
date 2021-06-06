@@ -282,13 +282,16 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # -DM (Negative Directional Indicator) = previous low - current low
         dataframe['minus_di'] = ta.MINUS_DI(dataframe, timeperiod=25)
 
+        # Parabolic SAR
+        dataframe['sar'] = ta.SAR(dataframe)
+
         # Trend Detection
         # ---------------
 
         # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
-        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
+        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] < dataframe['minus_di']) & (dataframe['sar'] > dataframe['close']), 'trend'] = 'downwards'
         dataframe.loc[dataframe['adx'] <= 22, 'trend'] = 'sideways'
-        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
+        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] > dataframe['minus_di']) & (dataframe['sar'] < dataframe['close']), 'trend'] = 'upwards'
 
         return dataframe
 
