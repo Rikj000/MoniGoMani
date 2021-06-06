@@ -43,6 +43,7 @@ class TotalOverallSignalImportanceCalculator:
         "buy_downwards_trend_sma_long_golden_cross_weight": 100,  # value loaded from strategy
         "buy_downwards_trend_sma_short_golden_cross_weight": 29,
         "buy_downwards_trend_vwap_cross_weight": 66,
+        "buy_downwards_trend_pvt_cross_weight": 88,
         "buy_sideways_trend_adx_strong_up_weight": 75,
         "buy_sideways_trend_bollinger_bands_weight": 64,
         "buy_sideways_trend_ema_long_golden_cross_weight": 50,
@@ -52,6 +53,7 @@ class TotalOverallSignalImportanceCalculator:
         "buy_sideways_trend_sma_long_golden_cross_weight": 37,
         "buy_sideways_trend_sma_short_golden_cross_weight": 100,  # value loaded from strategy
         "buy_sideways_trend_vwap_cross_weight": 81,
+        "buy_sideways_trend_pvt_cross_weight": 74,
         "buy_upwards_trend_adx_strong_up_weight": 73,
         "buy_upwards_trend_bollinger_bands_weight": 100,  # value loaded from strategy
         "buy_upwards_trend_ema_long_golden_cross_weight": 49,
@@ -60,7 +62,8 @@ class TotalOverallSignalImportanceCalculator:
         "buy_upwards_trend_rsi_weight": 61,
         "buy_upwards_trend_sma_long_golden_cross_weight": 80,
         "buy_upwards_trend_sma_short_golden_cross_weight": 100,  # value loaded from strategy
-        "buy_upwards_trend_vwap_cross_weight": 43
+        "buy_upwards_trend_vwap_cross_weight": 43,
+        "buy_upwards_trend_pvt_cross_weight": 26
     }
 
     # Sell hyperspace params:
@@ -92,6 +95,7 @@ class TotalOverallSignalImportanceCalculator:
         "sell_downwards_trend_sma_long_death_cross_weight": 44,
         "sell_downwards_trend_sma_short_death_cross_weight": 72,
         "sell_downwards_trend_vwap_cross_weight": 5,
+        "sell_downwards_trend_pvt_cross_weight": 87,
         "sell_sideways_trend_adx_strong_down_weight": 100,  # value loaded from strategy
         "sell_sideways_trend_bollinger_bands_weight": 0,  # value loaded from strategy
         "sell_sideways_trend_ema_long_death_cross_weight": 44,
@@ -101,6 +105,7 @@ class TotalOverallSignalImportanceCalculator:
         "sell_sideways_trend_sma_long_death_cross_weight": 100,  # value loaded from strategy
         "sell_sideways_trend_sma_short_death_cross_weight": 44,
         "sell_sideways_trend_vwap_cross_weight": 49,
+        "sell_sideways_trend_pvt_cross_weight": 67,
         "sell_upwards_trend_adx_strong_down_weight": 14,
         "sell_upwards_trend_bollinger_bands_weight": 19,
         "sell_upwards_trend_ema_long_death_cross_weight": 80,
@@ -109,7 +114,8 @@ class TotalOverallSignalImportanceCalculator:
         "sell_upwards_trend_rsi_weight": 62,
         "sell_upwards_trend_sma_long_death_cross_weight": 19,
         "sell_upwards_trend_sma_short_death_cross_weight": 18,
-        "sell_upwards_trend_vwap_cross_weight": 78
+        "sell_upwards_trend_vwap_cross_weight": 78,
+        "sell_upwards_trend_pvt_cross_weight": 27
     }
 
     ####################################################################################################################
@@ -270,6 +276,7 @@ def main():
         'sma_long_golden_cross',
         'sma_short_golden_cross',
         'vwap_cross',
+        'pvt_cross'
     ]
 
     sell_indicator_names = [
@@ -281,7 +288,8 @@ def main():
         'rsi',
         'sma_long_death_cross',
         'sma_short_death_cross',
-        'vwap_cross'
+        'vwap_cross',
+        'pvt_cross'
     ]
 
     combined_indicator_names = {
@@ -293,7 +301,8 @@ def main():
         'rsi': ['rsi'],
         'sma_long_golden_death_cross': ['sma_long_golden_cross', 'sma_long_death_cross'],
         'sma_short_golden_death_cross': ['sma_short_golden_cross', 'sma_short_death_cross'],
-        'vwap_cross': ['vwap_cross']
+        'vwap_cross': ['vwap_cross'],
+        'pvt_cross': ['pvt_cross']
     }
 
     # Check if loading parameters from a JSON file

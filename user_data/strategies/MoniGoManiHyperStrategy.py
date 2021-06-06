@@ -30,7 +30,9 @@ buy_signals = {
     # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
     'sma_short_golden_cross': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
     # Weighted Sell Signal: VWAP crosses above current price
-    'vwap_cross': lambda df: (qtpylib.crossed_above(df['vwap'], df['close']))
+    'vwap_cross': lambda df: (qtpylib.crossed_above(df['vwap'], df['close'])),
+   # Weighted Buy Signal: PVT crosses above PVT_SMA (Price and volume increase)
+    'pvt_cross': lambda df: (qtpylib.crossed_above(df['pvt'], df['pvt_sma']))
 }
 
 sell_signals = {
@@ -51,7 +53,9 @@ sell_signals = {
     # Weighted Sell Signal: SMA short term Death Cross (Short term SMA crosses below Medium term SMA)
     'sma_short_death_cross': lambda df: (qtpylib.crossed_below(df['sma9'], df['sma50'])),
     # Weighted Sell Signal: VWAP crosses below current price
-    'vwap_cross': lambda df: (qtpylib.crossed_below(df['vwap'], df['close']))
+    'vwap_cross': lambda df: (qtpylib.crossed_below(df['vwap'], df['close'])),
+    # Weighted Sell Signal: PVT crosses below PVT_SMA
+    'pvt_cross': lambda df: (qtpylib.crossed_below(df['pvt'], df['pvt_sma']))
 }
 
 # Returns the method responsible for decorating the current class with all the parameters of the MGM
@@ -117,6 +121,10 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             },
             'RSI (Relative Strength Index)': {
                 'rsi': {'color': '#7fba3c'}
+            },
+            'PVT (Price Volume Trend)': {
+                'pvt': {'color': '#19038a'},
+                'pvt_sma': {'color': '#ae231c'}
             }
         }
     }
@@ -181,6 +189,10 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
 
         # VWAP - Volume Weighted Average Price
         dataframe['vwap'] = qtpylib.vwap(dataframe)
+
+        # PVT - Price Volume Trend
+        dataframe['pvt'] = qtpylib.pvt(dataframe)
+        dataframe['pvt_sma'] = ta.SMA(qtpylib.pvt(dataframe), timeperiod=21)
 
         return dataframe
 
