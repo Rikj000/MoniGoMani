@@ -31,7 +31,7 @@ buy_signals = {
     'sma_short_golden_cross': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
     # Weighted Sell Signal: VWAP crosses above current price
     'vwap_cross': lambda df: (qtpylib.crossed_above(df['vwap'], df['close'])),
-   # Weighted Buy Signal: PVT crosses above PVT_SMA (Price and volume increase)
+    # Weighted Buy Signal: PVT crosses above PVT_SMA (Price and volume increase)
     'pvt_cross': lambda df: (qtpylib.crossed_above(df['pvt'], df['pvt_sma']))
 }
 
