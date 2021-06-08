@@ -68,7 +68,15 @@ If you like my work, feel free to donate or use one of my referral links, that w
 
 ## Contents
 
-[TOC]
+- [The Idea & Theory](#the-idea---theory)
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Go-To Commands](#go-to-commands)
+- [Contributing](#contributing)
+- [Planned](#planned)
+- [Changelog](#changelog)
+- [Freqtrade](#freqtrade)
+- [ICONOMI](#iconomi)
 
 ## The Idea & Theory
 
