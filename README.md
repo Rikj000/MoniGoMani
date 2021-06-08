@@ -1,7 +1,7 @@
 
 <br>
 <p align="center">
-<img src="https://cataas.com/cat?height=250" alt="MoniGoMani" height="250" />
+    <img src="https://repository-images.githubusercontent.com/352191040/43a50e00-ab61-11eb-92c9-fb91d458e8af" alt="MoniGoMani" height="250" />
 </a>
 </p>
 
@@ -204,7 +204,7 @@ Since here you have strategy owners "doing the day-trading for you" by re-balanc
 **If you join please use my referral link! => (https://www.iconomi.com/register?ref=JdFzz)** :pray:
 *(Then a percentage of your fees that you have to pay anyways to the strategy owners and ICONOMI will go to me instead, which is a neat win-win way for us both to support me for my work on MGM!)*
 
-### Recommended Iconomi Strategies
+### Recommended ICONOMI Strategies
 - [**Crypto Knowledge Pool**](https://www.iconomi.com/asset/BTCETHTEST?ref=JdFzz) (CKP): A community influenced strategy
 - [**CKP's Telegram Chat**](https://telegram.me/CKP_Robot?start=1684098549): If you want to vote if the coins will go up or down and hear about interesting news or ask questions. When I wrote this they we're right about 65% of the time. The manager will take the results into consideration when altering the strategy.
 - [**Knepala**](https://www.iconomi.com/asset/KNEPALA?ref=JdFzz): The personal strategy of the owner of CKP, most of the time it does even better than CKP itself.
