@@ -32,6 +32,7 @@
                 ⚠️ <b>Warning: Pre-release / Experimental ⚠️</b><br>
                 <sub>Please <b>do not</b> use this strategy <b>live</b> as it is under heavy development! <br>You may loose all your money.
                 <br>
+                    <img width=1000>
                 <br>
             </td>
         </tbody>
