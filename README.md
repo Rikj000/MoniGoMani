@@ -167,7 +167,7 @@ freqtrade download-data --timerange 20201201-20210316 -t 5m 1h -c ./user_data/mg
   - `#moni-go-mani-cluster-releases` *(Only available to the MoniGoMani Cluster Maintainer & MoniGoMani Developers, for now!)*
   - `#moni-go-mani-setup-releases`
 
-More general chats for `Technical Analysis`, `Freqtrade`, `Iconomi` and `Random` discussion are also available there :slight_smile:
+More general chats for `Technical Analysis`, `Freqtrade`, `Iconomi` and `Random` discussion are also available there 🙂
 
 ## Planned
 *Ordered by current schedule/priority*
