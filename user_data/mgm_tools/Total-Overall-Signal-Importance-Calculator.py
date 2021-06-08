@@ -7,9 +7,10 @@ import sys
 # --------------------------------
 
 
+# ToDo: Update Calculator, it still works but it's due for one
 class TotalOverallSignalImportanceCalculator:
     """
-    Total Overall Signal Importance Calculator for MoniGoMani v0.11.0
+    Total Overall Signal Importance Calculator for MoniGoMani v0.12.0
     -----------------------------------------------------------------
     Paste the results from your HyperOpt over below `buy_params` & `sell_params` arrays
     Then execute: `python ./user_data/Total-Overall-Signal-Importance-Calculator.py -sc USDT` from your favorite
