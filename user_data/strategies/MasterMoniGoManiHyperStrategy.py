@@ -61,6 +61,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     #                                            END OF CONFIG NAMES SECTION                                           #
     ####################################################################################################################
 
+    # Initialize empty buy/sell_params dictionaries and initial (trailing)stoploss values
+    buy_params = {}
+    sell_params = {}
+    stoploss = -0.25
+    trailing_stop = True
+    trailing_stop_positive = 0.01
+    trailing_stop_positive_offset = 0.03
+    trailing_only_offset_is_reached = True
+
     # MGM trend names
     mgm_trends = ['downwards', 'sideways', 'upwards']
 
@@ -114,15 +123,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file ({mgm_config_name}) is '
                  f'missing some settings. Please make sure that all MoniGoMani related settings are existing inside '
                  f'this file. {missing_setting} has been detected as missing from the file...')
-
-    # Initialize empty buy/sell_params dictionaries and initial (trailing)stoploss values
-    buy_params = {}
-    sell_params = {}
-    stoploss = -0.25
-    trailing_stop = True
-    trailing_stop_positive = 0.01
-    trailing_stop_positive_offset = 0.03
-    trailing_only_offset_is_reached = True
 
     # If results from a previous HyperOpt Run are found then continue the next HyperOpt Run upon them
     mgm_config_hyperopt_path = os.getcwd() + '/user_data/' + mgm_config_hyperopt_name
