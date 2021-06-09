@@ -208,9 +208,9 @@ class HyperoptTools():
                 f"Avg profit {results_metrics['profit_mean'] * 100: 6.2f}%. "
                 f"Median profit {results_metrics['profit_median'] * 100: 6.2f}%. "
                 f"Total profit {results_metrics['profit_total_abs']: 11.8f} {stake_currency} "
-                f"({results_metrics['profit_total'] * 100: 7.2f}%). "
+                f"({results_metrics['profit_total'] * 100: 7.2f}\N{GREEK CAPITAL LETTER SIGMA}%). "
                 f"Avg duration {results_metrics['holding_avg']} min."
-                )
+                ).encode(locale.getpreferredencoding(), 'replace').decode('utf-8')
 
     @staticmethod
     def _format_explanation_string(results, total_epochs) -> str:
@@ -389,11 +389,10 @@ class HyperoptTools():
         trials['Avg profit'] = trials['Avg profit'].apply(
             lambda x: f'{x * perc_multi:,.2f}%' if not isna(x) else ""
         )
-        if perc_multi == 1:
-            trials['Avg duration'] = trials['Avg duration'].apply(
-                lambda x: f'{x:,.1f} m' if isinstance(
-                    x, float) else f"{x.total_seconds() // 60:,.1f} m" if not isna(x) else ""
-            )
+        trials['Avg duration'] = trials['Avg duration'].apply(
+            lambda x: f'{x:,.1f} m' if isinstance(
+                x, float) else f"{x.total_seconds() // 60:,.1f} m" if not isna(x) else ""
+        )
         trials['Objective'] = trials['Objective'].apply(
             lambda x: f'{x:,.5f}' if x != 100000 else ""
         )
