@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-    <b>MoniGoMani</b> <br>a Freqtrade Hyper Strategy
+    <b>MoniGoMani</b> <br>a Freqtrade Framework & Strategy
 </p>
 
 <p align="center">
@@ -28,12 +28,12 @@
 <p align="center">
     <table>
         <tbody>
-            <td align="center"><br>
-                ⚠️ <b>Warning: Pre-release / Experimental ⚠️</b><br>
-                <sub>Please <b>do not</b> use this strategy <b>live</b> as it is under heavy development! <br>You may loose all your money.
-                <br>
-                    <img width=1000>
-                <br>
+            <td align="center">
+                <br><b>⚠️ Warning: Pre-release / Experimental ⚠️</b><br><sub>
+                It's <b>not recommended</b> to use this strategy <b>live</b> already, due to it still being under heavy development!<br>
+                If you'd like to see this project progress faster then please help out where you can 
+                <a href="https://github.com/Rikj000/MoniGoMani/issues">here</a>!    
+                <br><img width=1000><br>
             </td>
         </tbody>
     </table>
@@ -41,7 +41,7 @@
 
 ## Motivation
 
-Isn't that what we all want? Our money to go many? Well that's what this Freqtrade strategy hopes to do for you by enabling you to HyperOpt a lot of signals to alter the weight from.
+Isn't that what we all want? Our money to go many? Well that's what this Freqtrade framework/strategy hopes to do for you by enabling you to HyperOpt a lot of signals to alter the weight from.
 
 Big thank you to xmatthias and everyone who helped on MoniGoMani, Freqtrade Discord support was also really helpful, so thank you too!
 
@@ -54,6 +54,8 @@ If you like my work, feel free to donate or use one of my referral links, that w
         <img src="https://img.shields.io/badge/Join-BINANCE-yellow?logo=bitcoin&logoColor=white" alt="Binance - The world’s largest crypto exchange">
     </a> <a href="https://en.cryptobadges.io/donate/19LL2LCMZo4bHJgy15q1Z1bfe7mV4bfoWK">
         <img src="https://en.cryptobadges.io/badge/micro/19LL2LCMZo4bHJgy15q1Z1bfe7mV4bfoWK" alt="Donate Bitcoin">
+    </a> <a href="https://www.buymeacoffee.com/Rikj000">
+        <img src="https://img.shields.io/badge/-Buy%20me%20a%20Coffee!-FFDD00?logo=buy-me-a-coffee&logoColor=black" alt="Buy me a Coffee as a way to sponsor this project!">
     </a>
 </p>
 
@@ -68,7 +70,7 @@ If you like my work, feel free to donate or use one of my referral links, that w
 
 ## Contents
 
-- [The Idea & Theory](#the-idea---theory)
+- [The Idea & Theory](#the-idea--theory)
 - [Features](#features)
 - [Getting Started](#getting-started)
 - [Go-To Commands](#go-to-commands)
