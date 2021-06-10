@@ -51,7 +51,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     ####                                                                            ####
     ####################################################################################
     """
-
     ####################################################################################################################
     #                                           START OF CONFIG NAMES SECTION                                          #
     ####################################################################################################################
@@ -63,6 +62,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
     # MGM trend names
     mgm_trends = ['downwards', 'sideways', 'upwards']
+
+    # Initialize empty buy/sell_params dictionaries and initial (trailing)stoploss values
+    buy_params = {}
+    sell_params = {}
 
     # Load the MoniGoMani settings
     mgm_config_path = os.getcwd() + '/user_data/' + mgm_config_name
@@ -115,15 +118,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                  f'missing some settings. Please make sure that all MoniGoMani related settings are existing inside '
                  f'this file. {missing_setting} has been detected as missing from the file...')
 
-    # Initialize empty buy/sell_params dictionaries and initial (trailing)stoploss values
-    buy_params = {}
-    sell_params = {}
-    stoploss = -0.25
-    trailing_stop = True
-    trailing_stop_positive = 0.01
-    trailing_stop_positive_offset = 0.03
-    trailing_only_offset_is_reached = True
-
     # If results from a previous HyperOpt Run are found then continue the next HyperOpt Run upon them
     mgm_config_hyperopt_path = os.getcwd() + '/user_data/' + mgm_config_hyperopt_name
     if os.path.isfile(mgm_config_hyperopt_path) is True:
@@ -141,19 +135,35 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 buy_params[str(param)] = param_value
             else:
                 sell_params[str(param)] = param_value
+    else:
+        mgm_config_hyperopt = {}
 
-        minimal_roi = mgm_config_hyperopt['minimal_roi']
-        stoploss = mgm_config_hyperopt['stoploss']
+    # Load the rest of the values from 'mgm-config-hyperopt.json' if they are found
+    # Use some default stub values otherwise, parse them to the right type if needed
+    minimal_roi = mgm_config_hyperopt['minimal_roi'] if 'minimal_roi' in mgm_config_hyperopt else {"0": 10}
+
+    stoploss = mgm_config_hyperopt['stoploss'] if 'stoploss' in mgm_config_hyperopt else -0.25
+
+    if 'trailing_stop' in mgm_config_hyperopt:
         if isinstance(mgm_config_hyperopt['trailing_stop'], str) is True:
             trailing_stop = bool(mgm_config_hyperopt['trailing_stop'])
         else:
             trailing_stop = mgm_config_hyperopt['trailing_stop']
-        trailing_stop_positive = mgm_config_hyperopt['trailing_stop_positive']
-        trailing_stop_positive_offset = mgm_config_hyperopt['trailing_stop_positive_offset']
+    else:
+        trailing_stop = True
+
+    trailing_stop_positive = mgm_config_hyperopt['trailing_stop_positive'] if \
+        'trailing_stop_positive' in mgm_config_hyperopt else 0.01
+    trailing_stop_positive_offset = mgm_config_hyperopt['trailing_stop_positive_offset'] if \
+        'trailing_stop_positive_offset' in mgm_config_hyperopt else 0.03
+
+    if 'trailing_only_offset_is_reached' in mgm_config_hyperopt:
         if isinstance(mgm_config_hyperopt['trailing_only_offset_is_reached'], str) is True:
             trailing_only_offset_is_reached = bool(mgm_config_hyperopt['trailing_only_offset_is_reached'])
         else:
             trailing_only_offset_is_reached = mgm_config_hyperopt['trailing_only_offset_is_reached']
+    else:
+        trailing_only_offset_is_reached = True
 
     # Create dictionary to store custom information MoniGoMani will be using in RAM
     custom_info = {
