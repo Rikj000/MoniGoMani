@@ -186,28 +186,24 @@
     "protections": [
         {
             "method": "StoplossGuard",
-            "lookback_period_minutes": 180,
-            "trade_limit": 3,
-            "stop_duration_minutes": 180,
+            "lookback_period": 1440,
+            "trade_limit": 15,
+            "stop_duration": 720,
             "only_per_pair": true
         },
         {
             "method": "MaxDrawdown",
-            "lookback_period_minutes": 1440,
-            "trade_limit": 20,
-            "stop_duration_minutes": 720,
+            "lookback_period": 1440,
+            "trade_limit": 15,
+            "stop_duration": 720,
             "max_allowed_drawdown": 0.2
         },
         {
             "method": "LowProfitPairs",
-            "lookback_period_minutes": 360,
-            "trade_limit": 3,
+            "lookback_period": 360,
+            "trade_limit": 4,
             "stop_duration": 360,
             "required_profit": 0.02
-        },
-        {
-            "method": "CooldownPeriod",
-            "stop_duration_minutes": 120
         }
     ],
     "initial_state": "running",
