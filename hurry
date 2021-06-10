@@ -82,7 +82,7 @@ class Hurry(object):
     self._timerange = config['timerange']
     self._exchange = config['exchange']
 
-    if ( self._install_type == "vanilla" ):
+    if ( self._install_type == "source" ):
       self._ft_binary = f"source {self._basedir}/.env/bin/activate; freqtrade"
     else:
       self._ft_binary = "docker-compose run --rm freqtrade"
