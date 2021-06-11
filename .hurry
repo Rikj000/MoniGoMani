@@ -1,0 +1,10 @@
+config:
+  exchange: binance
+  hyperopt:
+    epochs: 100
+    loss: WinRatioAndProfitRatioLoss
+    quote: USDT
+    spaces: all
+    strategy: MoniGoManiHyperStrategy
+  install_type: docker
+  timerange: 20201201-20210316

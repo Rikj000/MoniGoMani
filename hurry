@@ -2,45 +2,32 @@
 
 hurry – 💨 Your command is my objective 💨
 
-Install dependencies:
-$ pip install fire logger pyaml
-
-Usage:
-$ python3 hurry --help
-$ python3 hurry [COMMAND] --help
-
-$ python3 hurry setup
-$ python3 hurry cleanup
-$ python3 hurry download_candle_data
-$ python3 hurry download_static_pairlist
-$ python3 hurry hyperopt
-$ python3 hurry hyperopt_show_results {epoch}
-$ python3 hurry hyperopt_apply_epoch {epoch}
-
-All in one a.k.a. Show me the money:
-$ python3 hurry cleanup \
-                download_candle_data \
-                download_static_pairlist \
-                hyperopt \
-                hyperopt_show_results 1 \
-                hyperopt_apply_epoch 1
-
-@todo implement setup method. should ask for settings and store in .hurry file
-
 """
 
-import argparse
+import glob
 import logging
 import os
 import subprocess
-import sys
 from builtins import hasattr
 
 import fire
 import yaml
+from PyInquirer import prompt, style_from_dict, Token
+from art import tprint
+import json
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+style = style_from_dict({
+    Token.Separator: '#cc5454',
+    Token.QuestionMark: '#673ab7 bold',
+    Token.Selected: '#cc5454',
+    Token.Pointer: '#673ab7 bold',
+    Token.Instruction: '',
+    Token.Answer: '#f44336 bold',
+    Token.Question: '',
+})
 
 
 class Hurry(object):
@@ -48,12 +35,295 @@ class Hurry(object):
   💨 Your command is my objective 💨
 
   CLI Tool for setting up a Freqtrade instance containing the MGM strategy
+
+  Install dependencies:
+  $ pip3 install art fire logger pyaml PyInquirer
+
+  Usage:
+  $ python3 hurry --help
+  $ python3 hurry [COMMAND] --help
+
+  $ python3 hurry setup
+
+  $ python3 hurry cleanup
+  $ python3 hurry download_candle_data
+  $ python3 hurry download_static_pairlist
+  $ python3 hurry hyperopt
+  $ python3 hurry hyperopt_show_results {epoch}
+  $ python3 hurry hyperopt_apply_epoch {epoch}
+
   """
 
-  def __init__(self):
 
+  def __init__(self):
+    tprint("hurry cli")
+
+    self._basedir = os.getcwd()
+
+    # Initialize config file
     if os.path.exists(".hurry") == False:
-      default_conf = {
+      config = None
+    else:
+      config = self._read_config()
+
+    if config == None:
+      print(" + No configuration found")
+      self.setup()
+      config = self._read_config()
+
+      if config == None: # still None
+        logger.error(" !! Could not parse .hurry config file. Please fix or delete it and try again.")
+        exit()
+
+    # Set config props / vals
+    self._install_type = config['install_type']
+    self._timerange = config['timerange']
+    self._exchange = config['exchange']
+
+    if ( self._install_type == "source" ):
+      self._ft_binary = f"source {self._basedir}/.env/bin/activate; freqtrade"
+    else:
+      self._ft_binary = "docker-compose run --rm freqtrade"
+
+    print(f" >> Freqtrade binary: `{self._ft_binary}`")
+
+    self._exchange = config['exchange']
+    self._ho_strategy = config['hyperopt']['strategy']
+    self._ho_loss = config['hyperopt']['loss']
+    self._ho_spaces = config['hyperopt']['spaces']
+    self._ho_quote = config['hyperopt']['quote']
+    self._ho_epochs = config['hyperopt']['epochs']
+
+
+  def setup(self):
+    """
+    Saves setup data based on your answers
+    """
+    print(" + Let's save some answers to make our lifes easier\n")
+
+    questions = [
+      {
+        'type': 'list',
+        'name': 'install_type',
+        'message': 'Which way you want to use Freqtrade?',
+        'choices': ['docker', 'source']
+      },
+      {
+        'type': 'input',
+        'name': 'timerange',
+        'message': 'Please enter the default timerange you want to use',
+        'default': '20201201-20210316'
+      },
+      {
+        'type': 'list',
+        'name': 'ho_strategy',
+        'message': 'Which HyperOpt Strategy do you want to use?',
+        'choices': map(lambda f : os.path.basename(f).replace(".py", ""), glob.glob(self._basedir + '/user_data/strategies/*.py'))
+      },
+      {
+        'type': 'list',
+        'name': 'ho_loss',
+        'message': 'Which HyperOpt Loss do you want to use?',
+        'choices': map(lambda f : os.path.basename(f).replace(".py", ""), glob.glob(self._basedir + '/user_data/hyperopts/*.py'))
+      },
+      {
+        'type': 'checkbox',
+        'name': 'ho_spaces',
+        'message': 'Which spaces do you want to HyperOpt?',
+        'choices': [
+          {'name': 'default', 'checked': True},
+          {'name': 'buy'},
+          {'name': 'sell'},
+          {'name': 'roi'},
+          {'name': 'stoploss'},
+          {'name': 'trailing'},
+          {'name': 'all'}
+        ],
+        'filter': lambda val : " ".join(val)
+      },
+      {
+        'type': 'input',
+        'name': 'ho_quotation',
+        'message': 'Please enter the default quotation you want to use',
+        'default': 'BTC'
+      },
+      {
+        'type': 'input',
+        'name': 'ho_epochs',
+        'message': 'Please enter the amount of epochs you want to HyperOpt',
+        'default': '1000',
+        'filter': lambda val : int(val)
+      },
+      {
+          'type': 'list',
+          'name': 'exchange',
+          'message': 'Which exchange do you want to use?',
+          'choices': ['binance', 'ftx', 'bittrex']
+      },
+      {
+          'type': 'password',
+          'name': 'api_key',
+          'message': 'Please enter the exchange API key'
+      },
+      {
+          'type': 'password',
+          'name': 'api_secret',
+          'message': 'Please enter the exchange API secret'
+      }
+    ]
+
+    answers = prompt(questions, style=style)
+
+    if ( answers == {} ):
+      exit()
+
+    config = {
+      'config': {
+        'install_type': answers.get('install_type'),
+        'timerange': answers.get('timerange'),
+        'exchange': answers.get('exchange'),
+        'hyperopt': {
+          'strategy': answers.get('ho_strategy'),
+          'loss': answers.get('ho_loss'),
+          'spaces': answers.get('ho_spaces'),
+          'quote': answers.get('ho_quotation'),
+          'epochs': answers.get('ho_epochs')
+        }
+      }
+    }
+
+    self._write_config(config)
+
+    cred = {
+        'exchange': answers.get('exchange'),
+        'api_key': answers.get('exchange'),
+        'api_secret': answers.get('api_secret'),
+    }
+    self._save_exchange_credentials(cred)
+
+
+  def _save_exchange_credentials(self, cred):
+    """
+    Save exchange credentials
+    """
+    f = open(self._basedir+'/user_data/mgm-config-private.json',)
+
+    data = json.load(f)
+
+    data['exchange'] = {
+      "name": cred['exchange'],
+      "key": cred['api_key'],
+      "secret": cred['api_secret']
+    }
+
+    with open(self._basedir+'/user_data/mgm-config-private.json', 'w') as outfile:
+      json.dump(data, outfile)
+
+    print(f" >> Exchange settings written to mgm-config-private.json\n")
+
+  def cleanup(self):
+    """
+    Deletes stored hyperopt config from previous run(s)
+    """
+    print(' >> Removing user_data/mgm-config-hyperopt.json')
+
+    ho_file = f"{self._basedir}/user_data/mgm-config-hyperopt.json"
+    if os.path.exists(ho_file):
+      os.remove(ho_file)
+
+
+  def download_candle_data(self, timerange = None):
+    """
+    Downloads candle data for the given timerange.
+    :param timerange = "20210301-20210601": timerange from/to in string format (start-end): yyyymmdd-yyyymmdd
+    """
+    if timerange is None:
+      timerange = self._timerange
+
+    print(' >> Downloading candle data for timerange ' + timerange)
+
+    dcd = f"{self._ft_binary} download-data --timerange {timerange} -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json"
+    self._exec_cmd(dcd)
+
+
+  def download_static_pairlist(self):
+    """
+    Downloads static pairlist and saves into mgm_pair_lists folder
+    """
+    print(' >> Computing Top Volume Static Pairlist')
+
+    target_file = f"{self._basedir}/user_data/mgm_pair_lists/{self._exchange}-{self._ho_quote}-Top-Volume-StaticPairList.json"
+    cmd_str = f"{self._ft_binary} test-pairlist -c ./user_data/mgm_tools/{self._exchange}-Retrieve-Top-Volume-StaticPairList.json --quote {self._ho_quote} --print-json | tail -n 1 | jq '.|{{ exchange: {{ pair_whitelist: .}}}}' > {target_file} "
+    self._exec_cmd(cmd_str)
+
+    print(" >>>>>>>>>>>>>>>>>>>>>>>>>")
+    print(" Don't forget to copy this pairlist to your own mgm-config.json file to start using it!")
+    print(" <<<<<<<<<<<<<<<<<<<<<<<<<")
+
+    if os.path.exists(target_file):
+      with open(target_file, 'r') as reader:
+        print(reader.read())
+    else:
+      logger.error("Something happened on the way to heaven 🌟🤦‍♀️")
+
+
+  def hyperopt(self, timerange = None):
+    """
+    HyperOpt Magic. Runs HyperOpt process to find out the most positive settings
+    :param timerange = "20210301-20210601": timerange from/to in string format (start-end): yyyymmdd-yyyymmdd
+    """
+    print(' >> Starting HyperOpt process. Keep calm while your computer burns 🔥')
+
+    if timerange is None:
+      timerange = self._timerange
+
+    self._exec_cmd(f"{self._ft_binary} hyperopt --print-all -s {self._ho_strategy} -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss {self._ho_loss} --spaces {self._ho_spaces} -e {self._ho_epochs} --timerange {timerange}")
+
+
+  def hyperopt_show_results(self, epoch : int):
+    """Shows the HyperOpt results for given epoch
+
+    Args:
+        epoch (int): The epoch number to show
+    """
+    print(' >> Showing HyperOpt results for epoch # {epoch}')
+
+    self._exec_cmd(f"{self._ft_binary} hyperopt-show -n {epoch}")
+
+
+  def hyperopt_apply_epoch(self, epoch : int):
+    """Apply HyperOpt results from given epoch
+
+    Args:
+        epoch (int): The epoch number to use
+    """
+    print(' >> Apply HyperOpt results of epoch # {epoch}')
+
+    self._exec_cmd(f"{self._ft_binary} hyperopt-show -n {epoch} -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./user_data/mgm-config-hyperopt.json")
+
+
+  """ Private methods """
+
+  def _exec_cmd(self, cmd: str):
+    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8')
+    output, err = p.communicate()
+    print(output)
+
+
+  def _read_config(self):
+    with open(".hurry", "r") as ymlfile:
+      cfg = yaml.full_load(ymlfile) or {}
+
+      if 'config' in cfg:
+        return cfg['config']
+
+    return None
+
+
+  def _write_config(self, config = None):
+
+    if config == None:
+      config = {
         'config': {
           'install_type': 'docker',
           'timerange': '20201201-20210316',
@@ -68,168 +338,14 @@ class Hurry(object):
         }
       }
 
-      with open(r'.hurry', 'w') as file:
-        config = yaml.dump(default_conf, file)
+    with open(r'.hurry', 'w') as file:
+      yaml.dump(config, file)
 
-    config = Hurry._read_config(self)
-
-    if ( config == False ):
-      logger.error(" !! Could not parse .hurry config file. Please fix or delete it and try again.")
-      exit()
-
-    self._basedir = os.getcwd()
-    self._install_type = config['install_type']
-    self._timerange = config['timerange']
-    self._exchange = config['exchange']
-
-    if ( self._install_type == "source" ):
-      self._ft_binary = f"source {self._basedir}/.env/bin/activate; freqtrade"
-    else:
-      self._ft_binary = "docker-compose run --rm freqtrade"
-
-    self._exchange = config['exchange']
-    self._ho_strategy = config['hyperopt']['strategy']
-    self._ho_loss = config['hyperopt']['loss']
-    self._ho_spaces = config['hyperopt']['spaces']
-    self._ho_quote = config['hyperopt']['quote']
-    self._ho_epochs = config['hyperopt']['epochs']
-
-    return None
-
-
-  def setup(self):
-    """
-    Saves setup data based on your answers
-
-    Asks for:
-      install_type: {docker,source}
-      timerange: 20201201-20210316
-      exchange: binance
-      hyperopt:
-        strategy: MoniGoManiHyperStrategy {./user_data/strategies/*.py}
-        loss: UncloggedWinRatioAndProfitRatioLoss {./user_data/hyperopts/*.py}
-        spaces: {all,buy,sell,roi,stoploss,trailing,default}
-        quote: USDT
-        epochs: 1000
-
-    """
-    logger.warning('>> Not implemented yet')
-
-    return self
-
-
-  def cleanup(self):
-    """
-    Deletes stored hyperopt config from previous run(s)
-    """
-    logger.info(' >> Removing user_data/mgm-config-hyperopt.json')
-
-    ho_file = f"{self._basedir}/user_data/mgm-config-hyperopt.json"
-    if os.path.exists(ho_file):
-      os.remove(ho_file)
-
-    return self
-
-
-  def download_candle_data(self, timerange = None):
-    """
-    Downloads candle data for the given timerange.
-    :param timerange = "20210301-20210601": timerange from/to in string format (start-end): yyyymmdd-yyyymmdd
-    """
-    if timerange is None:
-      timerange = self._timerange
-
-    logger.info(' >> Downloading candle data for timerange ' + timerange)
-
-    dcd = f"{self._ft_binary} download-data --timerange {timerange} -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json"
-    Hurry._exec_cmd(dcd)
-
-    return self
-
-
-  def download_static_pairlist(self):
-    """
-    Downloads static pairlist and saves into mgm_pair_lists folder
-    """
-    logger.info(' >> Computing Top Volume Static Pairlist')
-
-    target_file = f"{self._basedir}/user_data/mgm_pair_lists/{self._exchange}-{self._ho_quote}-Top-Volume-StaticPairList.json"
-    cmd_str = f"{self._ft_binary} test-pairlist -c ./user_data/mgm_tools/{self._exchange}-Retrieve-Top-Volume-StaticPairList.json --quote {self._ho_quote} --print-json | tail -n 1 | jq '.|{{ exchange: {{ pair_whitelist: .}}}}' > {target_file} "
-    Hurry._exec_cmd(cmd_str)
-
-    logger.warning(">>>>>>>>>>>>>>>>>>>>>>>>>")
-    logger.warning("Don't forget to copy this pairlist to your own mgm-config.json file to start using it!")
-    logger.warning("<<<<<<<<<<<<<<<<<<<<<<<<<")
-
-    if os.path.exists(target_file):
-      with open(target_file, 'r') as reader:
-        print(reader.read())
-    else:
-      logger.error("Something happened on the way to heaven 🌟🤦‍♀️")
-
-    return self
-
-
-  def hyperopt(self, timerange = None):
-    """
-    HyperOpt Magic. Runs HyperOpt process to find out the most positive settings
-    :param timerange = "20210301-20210601": timerange from/to in string format (start-end): yyyymmdd-yyyymmdd
-    """
-    logger.info(' >> Starting HyperOpt process. Keep calm while your computer burns 🔥')
-
-    if timerange is None:
-      timerange = self._timerange
-
-    Hurry._exec_cmd(f"{self._ft_binary} hyperopt --print-all -s {self._ho_strategy} -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss {self._ho_loss} --spaces {self._ho_spaces} -e {self._ho_epochs} --timerange {timerange}")
-
-    return self
-
-
-  def hyperopt_show_results(self, epoch : int):
-    """Shows the HyperOpt results for given epoch
-
-    Args:
-        epoch (int): The epoch number to show
-    """
-    logger.info(' >> Showing HyperOpt results for epoch # {epoch}')
-
-    Hurry._exec_cmd(f"{self._ft_binary} hyperopt-show -n {epoch}")
-
-    return self
-
-
-  def hyperopt_apply_epoch(self, epoch : int):
-    """Apply HyperOpt results from given epoch
-
-    Args:
-        epoch (int): The epoch number to use
-    """
-    logger.info(' >> Apply HyperOpt results of epoch # {epoch}')
-
-    Hurry._exec_cmd(f"{self._ft_binary} hyperopt-show -n {epoch} -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./user_data/mgm-config-hyperopt.json")
-
-    return self
-
-
-  """ Private methods """
-
-  def _exec_cmd(cmd: str):
-    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8')
-    output, err = p.communicate()
-    print(output)
-
-
-  def _read_config(self):
-    with open(".hurry", "r") as ymlfile:
-      cfg = yaml.full_load(ymlfile) or {}
-
-      if 'config' in cfg:
-        return cfg['config']
-
-    return False
-
+    print(" >> Configuration data written to .hurry file")
 
 
 
 if __name__ == "__main__":
     fire.Fire(Hurry)
+
+
