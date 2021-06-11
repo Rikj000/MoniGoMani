@@ -11,11 +11,17 @@
     <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
     </a>
+    <a href="https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md">
+        <img src="https://img.shields.io/badge/Docs-MGM_DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
+    </a>
     <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
     </a>
-        <a href="https://www.iconomi.com/register?ref=JdFzz">
+    <a href="https://www.iconomi.com/register?ref=JdFzz">
         <img src="https://img.shields.io/badge/Join-ICONOMI-blue?logo=bitcoin&logoColor=white" alt="ICONOMI - The world’s largest crypto strategy provider">
+    </a>
+    <a href="https://www.buymeacoffee.com/Rikj000">
+        <img src="https://img.shields.io/badge/-Buy%20me%20a%20Coffee!-FFDD00?logo=buy-me-a-coffee&logoColor=black" alt="Buy me a Coffee as a way to sponsor this project!">
     </a>
 </p>
 
@@ -41,11 +47,11 @@
 10) *(Type `./setup.sh -r` to hard reset the branch)*   
 11) [Download](https://github.com/Rikj000/MoniGoMani/releases) the latest `MoniGoMani` release and unzip it in the `Freqtrade` folder. Or clone the `main` branch through git & copy the files over.   
 12) Type `freqtrade install-ui` to install FreqUI   
-13) Follow step 3 from the *Very Quick Start (With Docker)* below   
+13) Follow all of `Step 3` from the *Very Quick Start (With Docker)* below   
 
 That's it you successfully set up Freqtrade natively, connected to Telegram, with FreqUI!   
-You can now start using `MoniGoManiHyperStrategy` for hyperopting/backtesting/dry/live-running! Congratulations :partying_face:   
-Please read the [MGM_DOCUMENTATION](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md) to learn how to use it properly!   
+You can now start using `MoniGoManiHyperStrategy` for HyperOpting/BackTesting/Dry/Live-running! Congratulations :tada:   
+But this is only the beginning, now please read the [MGM_DOCUMENTATION](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md) to learn how to use it properly!   
 
 # Very Quick Start (With Docker):   
 *Need a more detailed guide? Checkout the [**Official Freqtrade Docker Quickstart**](https://www.freqtrade.io/en/stable/docker_quickstart/)!*    
@@ -67,5 +73,5 @@ Please read the [MGM_DOCUMENTATION](https://github.com/Rikj000/MoniGoMani/blob/m
    login is possible using the `username` and `password` from step 3.D.
 
 That's it you successfully set up Freqtrade through Docker, connected to Telegram, with FreqUI!   
-You can now start using `MoniGoManiHyperStrategy` for hyperopting/backtesting/dry/live-running! Congratulations :partying_face:   
-Please read the [MGM_DOCUMENTATION](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md) to learn how to use it properly!   
+You can now start using `MoniGoManiHyperStrategy` for HyperOpting/BackTesting/Dry/Live-running! Congratulations! :tada:   
+But this is only the beginning, now please read the [MGM_DOCUMENTATION](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md) to learn how to use it properly!   

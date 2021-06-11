@@ -11,11 +11,17 @@
     <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
     </a>
+    <a href="https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md">
+        <img src="https://img.shields.io/badge/Docs-MGM_DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
+    </a>
     <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
     </a>
-        <a href="https://www.iconomi.com/register?ref=JdFzz">
+    <a href="https://www.iconomi.com/register?ref=JdFzz">
         <img src="https://img.shields.io/badge/Join-ICONOMI-blue?logo=bitcoin&logoColor=white" alt="ICONOMI - The world’s largest crypto strategy provider">
+    </a>
+    <a href="https://www.buymeacoffee.com/Rikj000">
+        <img src="https://img.shields.io/badge/-Buy%20me%20a%20Coffee!-FFDD00?logo=buy-me-a-coffee&logoColor=black" alt="Buy me a Coffee as a way to sponsor this project!">
     </a>
 </p>
 
@@ -101,7 +107,7 @@ the buy/sell signals.
 With this more realistic results should be found during BackTesting/HyperOpting. Since the buy/sell signals will 
 operate on the same `timeframe` that Live would use (1h candles), while at the same time `backtest_timeframe` 
 (5m or 1m candles) will simulate price movement during that `timeframe` (1h candle), providing more realistic 
-trailing stoploss and ROI behaviour during BackTesting/HyperOpting.   
+trailing stoploss and ROI behavior during BackTesting/HyperOpting.   
 If you haven't yet please read: [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)
 
 
@@ -296,11 +302,15 @@ freqtrade download-data --timerange 20201201-20210316 -t 5m 1h -c ./user_data/mg
 ## Go-To Commands:
 **Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
 ```powershell
-freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 1000 --timerange 20210101-20210316
+freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 1000 --timerange 20210101-20210316 --enable-protections
 ```
-**Apply HyperOpt Results** from a `<epoch of choice>`:
+**Apply HyperOpt Results after Run 1** from a `<epoch of choice>`:
 ```powershell
 freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./user_data/mgm-config-hyperopt.json
+```
+**Apply HyperOpt Results after Run 2** from a `<epoch of choice>`:
+```powershell
+freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./tmp.json && jq -s '.[0] * .[1]' ./user_data/mgm-config-hyperopt.json ./tmp.json > ./user_data/mgm-config-hyperopt.json && rm ./tmp.json
 ```
 **Reset HyperOpt Results**:
 ```powershell
@@ -308,7 +318,7 @@ rm ./user_data/mgm-config-hyperopt.json
 ```
 **Back Testing** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
 ```powershell
-freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210101-20210316
+freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210101-20210316 --enable-protections
 ```
 **Total Average Signal Importance Calculation** *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
 ```powershell
@@ -337,10 +347,15 @@ The epoch table being generated when HyperOpting + the number of the epoch you u
 
 # Common mistakes:
 
-### TypeError: integer argument expected, got float   
+### TypeError: integer argument expected, got float
 You likely are using a `Float` value where you should be using a `Integer` value. Hopefully your error will show more information about which Parameter.   
 - `Integer` = Whole number. Examples: 1, 3, 23
 - `Float` = Decimal number. Examples: 1.53, 4.2, 17.12   
 
 ### -bash: jq: command not found
 You still need to install [jq](https://stedolan.github.io/jq/)
+
+### ValueError: the lower bound X has to be less than the upper bound Y
+You probably ran with precision different from 1. If so then you need to run your 1st HO Run results through the calculator with `-pu` or `--precision-used` and then fix up your `mgm-config-hyperopt.json` with the adjusted results before firing up the 2nd HO Run.   
+
+Check out the documentation for the [Precision Setting](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#precision-setting) and the [Total Overall Signal Importance Calculator](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#total-overall-signal-importance-calculator)!
