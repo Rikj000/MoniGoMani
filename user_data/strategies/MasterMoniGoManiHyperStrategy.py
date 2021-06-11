@@ -60,6 +60,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     #                                            END OF CONFIG NAMES SECTION                                           #
     ####################################################################################################################
 
+    # Initialize empty buy/sell_params dictionaries and initial (trailing)stoploss values
+    buy_params = {}
+    sell_params = {}
+    stoploss = -0.25
+    trailing_stop = True
+    trailing_stop_positive = 0.01
+    trailing_stop_positive_offset = 0.03
+    trailing_only_offset_is_reached = True
+
     # MGM trend names
     mgm_trends = ['downwards', 'sideways', 'upwards']
 
