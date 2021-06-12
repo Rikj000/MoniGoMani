@@ -240,9 +240,51 @@ class Hurry(object):
     if timerange is None:
       timerange = self._timerange
 
-    print(' >> Downloading candle data for timerange ' + timerange)
+    questions = [
+      {
+        'type': 'input',
+        'name': 'timerange',
+        'message': 'Please enter the timerange you want to use',
+        'default': self._timerange
+      },
+      {
+        'type': 'checkbox',
+        'name': 'tickers',
+        'message': 'Specify which tickers to download',
+        'choices': [
+          {'name': '1m', 'checked': True},
+          {'name': '3m'},
+          {'name': '5m', 'checked': True},
+          {'name': '15m'},
+          {'name': '30m'},
+          {'name': '1h'},
+          {'name': '2h'},
+          {'name': '4h'},
+          {'name': '6h'},
+          {'name': '8h'},
+          {'name': '12h'},
+          {'name': '1d'},
+          {'name': '3d'},
+          {'name': '1w'},
+          {'name': '2w'},
+          {'name': '1M'},
+          {'name': '1y'},
+        ],
+        'filter': lambda val : " ".join(val)
+      }
+    ]
 
-    dcd = f"{self._ft_binary} download-data --timerange {timerange} -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json"
+    answers = prompt(questions, style=style)
+
+    if ( answers == {} ):
+      exit()
+
+    timerange = answers.get('timerange')
+    tickers = answers.get('tickers')
+
+    print(f" >> Downloading candle data ({tickers}) for timerange " + timerange)
+
+    dcd = f"{self._ft_binary} download-data --timerange {timerange} -t {tickers} -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json"
     self._exec_cmd(dcd)
 
 
