@@ -22,6 +22,8 @@ from freqtrade.state import RunMode
 from freqtrade.strategy import IStrategy, IntParameter, merge_informative_pair, timeframe_to_minutes
 
 logger = logging.getLogger(__name__)
+
+
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
 
@@ -757,7 +759,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             dataframe['total_buy_signal_strength'] = dataframe['total_sell_signal_strength'] = 0
 
         # Initialize weighted buy/sell signal variables if they are needed (should be 0 = false by default)   
-        df_key = f"{signal_name}_weighted_{space}_signal"    
+        df_key = f"{signal_name}_weighted_{space}_signal"
         if self.debuggable_weighted_signal_dataframe and df_key not in dataframe.columns:
             dataframe[df_key] = 0
 
@@ -811,8 +813,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: None
         """
         parameter_dictionary = getattr(cls, f'{space}_params')
-        param_key = f"{space}_{parameter_name}"
-        parameter_value = parameter_dictionary.get(param_key)
+        parameter_key = f"{space}_{parameter_name}"
+        parameter_value = parameter_dictionary.get(parameter_key)
         # 1st HyperOpt Run: Use provided min/max values for the search spaces
         if parameter_value is None:
             min_value = parameter_min_value
@@ -836,19 +838,20 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         else:
             default_value = parameter_value
 
-        param_config = {
+        parameter_config = {
             "min_value": int(min_value * precision),
             "max_value": int(max_value * precision),
             "default_value": int(default_value * precision),
             # 1st HyperOpt Run: No overrides, 2nd HyperOpt Run: Apply Overrides where needed
-            "opt_and_Load": False if (parameter_value is not None) and (overrideable is True) and
-                                     (min_value == parameter_min_value or max_value == parameter_max_value) else True
+            "optimize": False if (parameter_value is not None) and (overrideable is True) and
+                                 (min_value == parameter_min_value or max_value == parameter_max_value) else True
         }
 
-        param = IntParameter(param_config["min_value"], param_config["max_value"],
-                             default=param_config["default_value"], space=space,
-                             optimize=param_config["opt_and_Load"], load=param_config["opt_and_Load"])
-        setattr(base_cls, param_key, param)
+        parameter_dictionary[parameter_key] = parameter_config["default_value"]
+        param = IntParameter(parameter_config["min_value"], parameter_config["max_value"],
+                             default=parameter_config["default_value"], space=space,
+                             optimize=parameter_config["optimize"], load=True)
+        setattr(base_cls, parameter_key, param)
 
     @classmethod
     def _init_util_params(cls, base_cls):
