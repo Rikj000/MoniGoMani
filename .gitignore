@@ -13,3 +13,7 @@ workspace.code-workspace
 Logo/
 # Ignore VSC
 .vscode
+
+user_data/data/*
+!user_data/data/
+mgm-config*.json
