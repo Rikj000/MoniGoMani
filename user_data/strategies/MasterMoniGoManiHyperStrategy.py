@@ -112,6 +112,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         trailing_stop_positive_offset_max_value = \
             mgm_config['stoploss_spaces']['trailing_stop_positive_offset_max_value']
         mgm_unclogger_add_params = mgm_config['unclogger_spaces']
+        minimal_roi = mgm_config['default_stub_values']['minimal_roi']
+        stoploss = mgm_config['default_stub_values']['stoploss']
+        trailing_stop = mgm_config['default_stub_values']['trailing_stop']
+        trailing_stop_positive = mgm_config['default_stub_values']['trailing_stop_positive']
+        trailing_stop_positive_offset = mgm_config['default_stub_values']['trailing_stop_positive_offset']
+        trailing_only_offset_is_reached = mgm_config['default_stub_values']['trailing_only_offset_is_reached']
         debuggable_weighted_signal_dataframe = mgm_config['debuggable_weighted_signal_dataframe']
         use_mgm_logging = mgm_config['use_mgm_logging']
         mgm_log_levels_enabled = mgm_config['mgm_log_levels_enabled']
@@ -141,31 +147,30 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         mgm_config_hyperopt = {}
 
     # Load the rest of the values from 'mgm-config-hyperopt.json' if they are found
-    # Use some default stub values otherwise, parse them to the right type if needed
-    minimal_roi = mgm_config_hyperopt['minimal_roi'] if 'minimal_roi' in mgm_config_hyperopt else {"0": 10}
+    # Default stub values from 'mgm-config.json' are used otherwise. Also parses them to the right type if needed
+    if 'minimal_roi' in mgm_config_hyperopt:
+        minimal_roi = mgm_config_hyperopt['minimal_roi']
 
-    stoploss = mgm_config_hyperopt['stoploss'] if 'stoploss' in mgm_config_hyperopt else -0.25
+    if 'stoploss' in mgm_config_hyperopt:
+        stoploss = mgm_config_hyperopt['stoploss']
 
     if 'trailing_stop' in mgm_config_hyperopt:
         if isinstance(mgm_config_hyperopt['trailing_stop'], str) is True:
             trailing_stop = bool(mgm_config_hyperopt['trailing_stop'])
         else:
             trailing_stop = mgm_config_hyperopt['trailing_stop']
-    else:
-        trailing_stop = True
 
-    trailing_stop_positive = mgm_config_hyperopt['trailing_stop_positive'] if \
-        'trailing_stop_positive' in mgm_config_hyperopt else 0.01
-    trailing_stop_positive_offset = mgm_config_hyperopt['trailing_stop_positive_offset'] if \
-        'trailing_stop_positive_offset' in mgm_config_hyperopt else 0.03
+    if 'trailing_stop_positive' in mgm_config_hyperopt:
+        trailing_stop_positive = mgm_config_hyperopt['trailing_stop_positive']
+
+    if 'trailing_stop_positive_offset' in mgm_config_hyperopt:
+        trailing_stop_positive_offset = mgm_config_hyperopt['trailing_stop_positive_offset']
 
     if 'trailing_only_offset_is_reached' in mgm_config_hyperopt:
         if isinstance(mgm_config_hyperopt['trailing_only_offset_is_reached'], str) is True:
             trailing_only_offset_is_reached = bool(mgm_config_hyperopt['trailing_only_offset_is_reached'])
         else:
             trailing_only_offset_is_reached = mgm_config_hyperopt['trailing_only_offset_is_reached']
-    else:
-        trailing_only_offset_is_reached = True
 
     # Create dictionary to store custom information MoniGoMani will be using in RAM
     custom_info = {
@@ -721,7 +726,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: Lambda conditions 
         """
         conditions_weight = []
-        # ToDo - Move rolling check - Old place ------------------------------------------------------------------------
         # If TimeFrame-Zooming => Only use 'informative_timeframe' data
         for trend in self.mgm_trends:
             signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
@@ -731,8 +735,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                         (dataframe['trend'] == trend) & (dataframe[f'total_{space}_signal_strength']
                                                          >= signal_needed.value / self.precision)
                 ))
-
-            # ----------------------------------------------------------------------------------------------------------
 
         return reduce(lambda x, y: x | y, conditions_weight)
 
@@ -752,7 +754,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         if 'total_buy_signal_strength' not in dataframe.columns:
             dataframe['total_buy_signal_strength'] = dataframe['total_sell_signal_strength'] = 0
 
-        # ToDo - Move rolling check - New place ------------------------------------------------------------------------
         # If TimeFrame-Zooming => Only use 'informative_timeframe' data
         has_multiplier = \
             (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe)
@@ -775,8 +776,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             dataframe.loc[((dataframe['trend'] == trend) &
                            (condition.rolling(rolling_needed_value).sum() > 0)),
                           f'total_{space}_signal_strength'] += signal_weight.value / self.precision
-
-            # ----------------------------------------------------------------------------------------------------------
 
         return dataframe
 
