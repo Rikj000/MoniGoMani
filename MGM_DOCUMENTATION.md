@@ -304,20 +304,15 @@ sell_signals = {
 
 
 # Total Overall Signal Importance Calculator
-Execute: `python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc USDT -lf ./user_data/mgm-config-hyperopt.json -cf ./user_data/Total-Average-Signal-Importance-Report.log` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
-The higher the score of a signal the better! Now it will also export to a `Total-Average-Signal-Importance-Report.log` file for easy sharing!   
+Execute: `python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
+The higher the score of a signal the better! It will also export to a `./user_data/Total-Average-Signal-Importance-Report.log` file for easy sharing!   
 Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can improve the signals!   
 
 ### Handy Calculator Sub Commands
 - `-h` or `--help`: Print out information about the usage of all sub commands.
-- `-sc` or `--stake-currency` ***Mandatory***: Stake currency displayed in the report (Should match to what is under `stake_currency` in your `mgm-config.json`)
-- `-lf` or `--load-file` ***Optional (Unused by default)***: Path to `.json` file to load HyperOpt Results from which will be used in the Calculator.   
-`.json`'s should be extracted with the command provided in the [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#go-to-commands)
-**Warning** Make sure your calculator copy-paste section is complete before using this sub-command!   
+- `-pu` or `--precision-used` ***Optional (Defaults to `1` when not omitted)***: The precision value used during HyperOpt. Can be decimal (0.2) or fraction 1/5. Mostly useful after a running a HyperOpt with precision different from 1, used to patch the weights of the signals displayed in the report to what we would expect them to be for comparison with other results.
 - `-cf` or `--create-file` ***Optional (Unused by default)***: Save the Total-Average-Signal-Importance-Report as a `.log` file with a custom filename and file output location   
 - `-nf` or `--no-file` ***Optional (Defaults to `True` when not omitted)***: Do not output the Total-Average-Signal-Importance-Report as a `.log` file
-- `-fm` or `--fix-missing` ***Optional (Defaults to `True` when not omitted)***: Re-Include missing weighted buy/sell_params with **0 as their value** & re-print them as copy/paste-able results. Also keeps the tool from crashing when there are missing values.
-- `-pu` or `--precision-used` ***Optional (Defaults to `1` when not omitted)***: The precision value used during HyperOpt. Can be decimal (0.2) or fraction 1/5. Mostly useful after a running a HyperOpt with precision different from 1, used to patch the weights of the signals displayed in the report to what we would expect them to be for comparison with other results.
 
 
 # Custom HyperLoss Functions
@@ -400,7 +395,7 @@ freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json 
 ```
 **Total Average Signal Importance Calculation** *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
 ```powershell
-python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc USDT -lf ./user_data/mgm-config-hyperopt.json -cf ./user_data/Total-Average-Signal-Importance-Report.log
+python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py
 ```
 Retrieve and apply a current **Binance-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*:
 ```powershell
