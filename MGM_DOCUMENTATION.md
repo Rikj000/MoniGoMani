@@ -42,6 +42,7 @@
     - [Stoploss Spaces](#stoploss-spaces)
     - [Open Trade Unclogger](#open-trade-unclogger)
       - [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries)
+    - [Default Stub Values](#default-stub-values)
   - [MoniGoManiHyperStrategy](#monigomanihyperstrategy)
     - [Weighted Signal Interface](#weighted-signal-interface)
       - [Defining Indicators Examples](#defining-indicators-examples)
@@ -122,7 +123,7 @@ The main `MoniGoMani` settings can be found under `monigomani_settings`:
 | **weighted_signal_spaces** | The settings inside the `weighted_signal_spaces` section are used to control how MGM handles the HyperOpting of (Total) Weighted Signal Values during it's [optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani).<br> **Documentation:** [Weighted Signal Spaces](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#weighted-signal-spaces) <br> **Datatype:** Dictionary |
 | **stoploss_spaces** | The settings inside the `stoploss_spaces` section are used to refine the search spaces that MGM will use for the (trailing) stoploss during it's [optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani).<br> **Documentation:** [Stoploss Spaces](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#stoploss-spaces) <br> **Datatype:** Dictionary |
 | **unclogger_spaces** | The settings inside the `unclogger_spaces` section are used to refine the search spaces that MGM will use for the open trade unclogger during it's [optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani).<br> **Documentation:** [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#open-trade-unclogger) <br> **Datatype:** Dictionary |
-| **default_stub_values** | The settings inside the `default_stub_values` section are used to control some default startup values that MGM will use when no other values are found and/or used for them.<br> **Datatype:** Dictionary |
+| **default_stub_values** | The settings inside the `default_stub_values` section are **only used** to control some default startup values that MGM will use when no other values are found and/or used for them.<br> **Documentation:** [Default Stub Values](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#default-stub-values) <br> **Datatype:** Dictionary |
 | **debuggable_weighted_signal_dataframe** | If set to `True` all Weighted Signal results will be added to the dataframe for easy debugging with BreakPoints. <br> **<span style="color:darkorange">WARNING:</span> Disable this for anything else then debugging in an IDE! (Integrated Development Environment)** <br> **Datatype:** Boolean |
 | **use_mgm_logging** | If set to `True` MoniGoMani logging will be displayed to the console and be integrated in Freqtrades native logging, further logging configuration can be done by setting individual `mgm_log_levels_enabled`. <br> It's recommended to set this to `False` for HyperOpting/BackTesting unless you are testing with breakpoints. <br> **Datatype:** Boolean |
 | **mgm_log_levels_enabled** | It allows turning on/off individual `info`, `warning`, `error` and `debug` logging <br> For Live Runs it's recommended to disable at least `info` and `debug` logging, to keep MGM as lightweight as possible! <br> `debug` is very verbose! Always set it to `False` when BackTesting/HyperOpting! <br> **Datatype:** Dictionary |
@@ -240,6 +241,19 @@ The settings inside `mgm-config.json`'s `unclogger_spaces` section are used to c
 | **max** | **1st HyperOpt Run:** Maximum value used in the HyperOpt Space for the unclogger setting at hand. <br> **2nd HyperOpt Run:** Value remains unused and refined search spaces are applied based on the value loaded from `mgm-config-hyperopt.json`.<br> **Datatype:** Integer |
 | **threshold** | ***(Optional parameter)*** 2nd HyperOpt Run:** If this setting is found, then it's used to refine the search spaces based on the value found in the 1st run ± the threshold. If no custom `threshold` is provided then the `search_threshold_weighted_signal_values` is used instead.<br> **Datatype:** Integer |
 
+### Default Stub Values
+The settings inside `mgm-config.json`'s `default_stub_values` section are **only used** to control some default startup values that MGM will use when no other values are found and/or used for them.   
+*(These would be used when not HyperOpting `--spaces all` in one go and/or during the initialization of MGM's variables in the 1st HyperOpt Run)*
+| Parameter | Description |
+| --- | --- |
+| **minimal_roi** | **Official Freqtrade Documentation:** [Understand minimal_roi](https://www.freqtrade.io/en/latest/configuration/#understand-minimal_roi) <br> **Datatype:** Dictionary |
+| **stoploss** | **Official Freqtrade Documentation:** [Stop Loss](https://www.freqtrade.io/en/latest/stoploss/#stop-loss) <br> **Datatype:** Decimal |
+| **trailing_stop** | **Official Freqtrade Documentation:** [Trailing Stop Loss](https://www.freqtrade.io/en/latest/stoploss/#trailing-stop-loss) <br> **Datatype:** Boolean |
+| **trailing_stop_positive** | **Official Freqtrade Documentation:** [Trailing stop loss, custom positive loss](https://www.freqtrade.io/en/latest/stoploss/#trailing-stop-loss-custom-positive-loss) <br> **Datatype:** Decimal |
+| **trailing_stop_positive_offset** | **Official Freqtrade Documentation:** [Trailing stop loss only once the trade has reached a certain offset](https://www.freqtrade.io/en/latest/stoploss/#trailing-stop-loss-only-once-the-trade-has-reached-a-certain-offset) <br> **Datatype:** Decimal |
+| **trailing_only_offset_is_reached** | **Official Freqtrade Documentation:** [Trailing stop loss only once the trade has reached a certain offset](https://www.freqtrade.io/en/latest/stoploss/#trailing-stop-loss-only-once-the-trade-has-reached-a-certain-offset) <br> **Datatype:** Boolean |
+
+
 ## MoniGoManiHyperStrategy
 This is the main strategy file used by MoniGoMani, containing the [Weighted Signal Interface](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#weighted-signal-interface).
 
@@ -346,17 +360,17 @@ Switching between the PairList in use can easily be done by moving the `_` in fr
 ```
 
 ### Download StaticPairLists
-Retrieve a current **Binance-USDT-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))* (The amount of pairs in these top volume lists can be altered by opening up `Binance-Retrieve-Top-Volume-StaticPairList.json` and changing the `number_assets` value near the bottom of the file to the amount of pairs you'd like in your list):
+Retrieve and apply a current **Binance-USDT-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))* (The amount of pairs in these top volume lists can be altered by opening up `Binance-Retrieve-Top-Volume-StaticPairList.json` and changing the `number_assets` value near the bottom of the file to the amount of pairs you'd like in your list):
 ```powershell
-freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json --quote USDT --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json
+freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json --quote USDT --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json && jq 'del(.exchange.pair_whitelist )' ./user_data/mgm-config.json > ./tmp.json && jq -s '.[0] * .[1]' ./tmp.json ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json > ./user_data/mgm-config.json && rm ./tmp.json && jq '.' ./user_data/mgm-config.json
 ```
 
-Retrieve a current **Binance-USDT-All-Tradable-StaticPairList.json** file *(using [Binance-Retrieve-All-Tradable-StaticPairList.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-All-Tradable-StaticPairList.py))* (Beware, can be very high system requirements due to a lot of pairs!):
+Retrieve and apply a current **Binance-USDT-All-Tradable-StaticPairList.json** file *(using [Binance-Retrieve-All-Tradable-StaticPairList.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-All-Tradable-StaticPairList.py))* (Beware, can be very high system requirements due to a lot of pairs!):
 ```powershell
-python ./user_data/mgm_tools/Binance-Retrieve-All-Tradable-StaticPairList.py -q USDT > ./user_data/mgm_pair_lists/Binance-USDT-All-Tradable-StaticPairList.json
+python ./user_data/mgm_tools/Binance-Retrieve-All-Tradable-StaticPairList.py -q USDT | jq '.|{exchange: { pair_whitelist: . }}' > ./user_data/mgm_pair_lists/Binance-USDT-All-Tradable-StaticPairList.json && jq 'del(.exchange.pair_whitelist )' ./user_data/mgm-config.json > ./tmp.json && jq -s '.[0] * .[1]' ./tmp.json ./user_data/mgm_pair_lists/Binance-USDT-All-Tradable-StaticPairList.json > ./user_data/mgm-config.json && rm ./tmp.json && jq '.' ./user_data/mgm-config.json
 ```
 
-**After Downloading** the StaticPairList will be available under `./user_data/mgm_pair_lists/<<NAME_HERE>>-StaticPairList.json`, just open up the file and copy the PairList Data into your own `mgm-config.json` file under `pair_whitelist` section to start using it!   
+**After Downloading** the StaticPairList automatically applied to `./user_data/mgm-config.json`. There will also be a copy available under `./user_data/mgm_pair_lists/<<NAME_HERE>>-StaticPairList.json`!   
 
 Don't forget to **Download Candle Data** before HyperOpting or BackTesting (Example timerange):   
 ```powershell
@@ -388,10 +402,9 @@ freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json 
 ```powershell
 python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py -sc USDT -lf ./user_data/mgm-config-hyperopt.json -cf ./user_data/Total-Average-Signal-Importance-Report.log
 ```
-Retrieve a current **Binance-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*:
+Retrieve and apply a current **Binance-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*:
 ```powershell
-freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json --quote USDT --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json
-# Don't forget to open the downloaded '...-StaticPairList.json' and copy the PairList Data into your own 'mgm-config.json' file to start using it!
+freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json --quote USDT --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json && jq 'del(.exchange.pair_whitelist )' ./user_data/mgm-config.json > ./tmp.json && jq -s '.[0] * .[1]' ./tmp.json ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json > ./user_data/mgm-config.json && rm ./tmp.json && jq '.' ./user_data/mgm-config.json
 ```
 **Download Candle Data**:
 ```powershell
