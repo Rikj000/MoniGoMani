@@ -1,63 +1,83 @@
-# **Current `MoniGoMani` status @ `v0.12.0`**   
-      
-<p align="left">
+<p align="center">
+        <img src="https://repository-images.githubusercontent.com/352191040/43a50e00-ab61-11eb-92c9-fb91d458e8af" alt="MoniGoMani" height="250" />
+</p>
+
+<p align="center">
+    <b style="font-size: 2em;">MoniGoMani</b><br><i>Freqtrade Framework & Strategy</i>
+</p>
+
+<p align="center">
     <a href="https://discord.gg/xFZ9bB6vEz">
         <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join CryptoStonksShallRise on Discord">
-    </a>
-        <a href="https://github.com/Rikj000/MoniGoMani/releases">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/releases">
         <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
-    </a>
-    <a href="https://github.com/Rikj000/MoniGoMani/releases/latest">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/releases/latest">
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
-    </a>
-    <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
-    </a>
-    <a href="https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md">
-        <img src="https://img.shields.io/badge/Docs-MGM_DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
-    </a>
-    <a href="https://www.freqtrade.io/en/latest/">
+    </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
     </a>
+</p>
+
+<p align="center">
+    <table>
+        <tbody>
+            <td align="center">
+                <br><b>⚠️ Warning: Pre-release / Experimental ⚠️</b><br><sub>
+                It's <b>not recommended</b> to use this strategy <b>live</b> already, due to it still being under heavy development!<br>
+                If you'd like to see this project progress faster then please help out where you can 
+                <a href="https://github.com/Rikj000/MoniGoMani/issues">here</a>!    
+                <br><img width=1000><br>
+            </td>
+        </tbody>
+    </table>
+</p>
+
+## Motivation
+Isn't that what we all want? Our money to go many? Well that's what this Freqtrade framework/strategy hopes to do for you by enabling you to HyperOpt a lot of signals to alter the weight from.
+
+Big thank you to xmatthias and everyone who helped on MoniGoMani, Freqtrade Discord support was also really helpful, so thank you too!
+
+If you like my work, feel free to donate or use one of my referral links, that would also greatly be appreciated:
+
+<p align=center>
     <a href="https://www.iconomi.com/register?ref=JdFzz">
         <img src="https://img.shields.io/badge/Join-ICONOMI-blue?logo=bitcoin&logoColor=white" alt="ICONOMI - The world’s largest crypto strategy provider">
-    </a>
-    <a href="https://www.buymeacoffee.com/Rikj000">
+    </a> <a href="https://www.binance.com/en/register?ref=97611461">
+        <img src="https://img.shields.io/badge/Join-BINANCE-yellow?logo=bitcoin&logoColor=white" alt="Binance - The world’s largest crypto exchange">
+    </a> <a href="https://en.cryptobadges.io/donate/19LL2LCMZo4bHJgy15q1Z1bfe7mV4bfoWK">
+        <img src="https://en.cryptobadges.io/badge/micro/19LL2LCMZo4bHJgy15q1Z1bfe7mV4bfoWK" alt="Donate Bitcoin">
+    </a> <a href="https://www.buymeacoffee.com/Rikj000">
         <img src="https://img.shields.io/badge/-Buy%20me%20a%20Coffee!-FFDD00?logo=buy-me-a-coffee&logoColor=black" alt="Buy me a Coffee as a way to sponsor this project!">
     </a>
 </p>
 
-```
-    ####################################################################################
-    ####                                                                            ####
-    ###                         MoniGoMani v0.12.0 by Rikj000                        ###
-    ##                          -----------------------------                         ##
-    #               Isn't that what we all want? Our money to go many?                 #
-    #          Well that's what this Freqtrade strategy hopes to do for you!           #
-    ##       By giving you/HyperOpt a lot of signals to alter the weight from         ##
-    ###           ------------------------------------------------------             ###
-    ##        Big thank you to xmatthias and everyone who helped on MoniGoMani,       ##
-    ##      Freqtrade Discord support was also really helpful so thank you too!       ##
-    ###         -------------------------------------------------------              ###
-    ##              Disclaimer: This strategy is under development.                   ##
-    #      I do not recommend running it live until further development/testing.       #
-    ##                      TEST IT BEFORE USING IT!                                  ##
-    ###                                                              ▄▄█▀▀▀▀▀█▄▄     ###
-    ##               -------------------------------------         ▄█▀  ▄ ▄    ▀█▄    ##
-    ###   If you like my work, feel free to donate or use one of   █   ▀█▀▀▀▀▄   █   ###
-    ##   my referral links, that would also greatly be appreciated █    █▄▄▄▄▀   █    ##
-    #     ICONOMI: https://www.iconomi.com/register?ref=JdFzz      █    █    █   █     #
-    ##  Binance: https://www.binance.com/en/register?ref=97611461  ▀█▄ ▀▀█▀█▀  ▄█▀    ##
-    ###          BTC: 19LL2LCMZo4bHJgy15q1Z1bfe7mV4bfoWK             ▀▀█▄▄▄▄▄█▀▀     ###
-    ####                                                                            ####
-    ####################################################################################
-```
 
-**<span style="color:darkorange">WARNING:</span> I am in no way responsible for your live results! This strategy is still experimental and under development!**   
-**<span style="color:darkorange">WARNING:</span> MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) after doing manual changes!**   
-**You need to [optimize](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!**   
+## ⚠️ Disclaimer
+ - This strategy is under development. It is not recommended running it live at this moment.
+ - Always test this strategy before using it!
+ - I am in no way responsible for your live results! This strategy is still experimental and under heavy development!
+ - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) after doing manual changes!
+ - You need to [optimize](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
+<hr>
 
-## The idea / Theory:   
+
+# Table of Contents
+- [Table of Contents](#table-of-contents)
+  - [The Idea & Theory](#the-idea--theory)
+  - [Feature List](#feature-list)
+  - [Need help getting started?](#need-help-getting-started)
+  - [Go-To Commands](#go-to-commands)
+  - [Got Test Results - Ideas - Config Improvements?](#got-test-results---ideas---config-improvements)
+  - [Planned](#planned)
+  - [ChangeLog](#changelog)
+  - [Freqtrade](#freqtrade)
+  - [ICONOMI](#iconomi)
+      - [Recommended Iconomi Strategies](#recommended-iconomi-strategies)
+
+
+## The Idea & Theory
 **MoniGoMani** is more than just a conventional strategy, it's a **Framework** that aims to help you **"easily"** find a profitable strategy configuration in any market through our [partially automated optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani)!   
 Without the need to do any more real programming! :rocket:   
    
@@ -76,7 +96,7 @@ Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/Mon
    
 \****HyperOpting:** A form of machine learning where you [BackTest](https://www.freqtrade.io/en/latest/backtesting/) a lot of times to find the most ideal values)*
 
-## Feature List:   
+## Feature List
 - Partially [Automated Optimization Process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani)
 - All HyperOpt Results can easily be applied and removed with the use of some [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#go-to-commands)
 - Configurable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends, each table **currently** has 9 Buy & 9 Sell signals implemented ***(HyperOptable!)***:
@@ -92,11 +112,10 @@ Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/Mon
 - [Weighted Signal Interface](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#weighted-signal-interface) to easily change the weighted signals being used
 - Configurable Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends ***(HyperOptable!)***
 - Configurable LookBack Windows for Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends ***(HyperOptable!)***
-- Configurable Trading on Downwards/Sideways/Upwards trends for Buys/Sells
-- Settings to Enable/Disable HyperOpting for individual `buy_params` & `sell_params` and setting them to a static value through [HyperOpt Setting Overrides](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#hyperopt-setting-overrides)
+- Configurable [Trading During Trends](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#trading-during-trends) (Downwards/Sideways/Upwards) for Buys/Sells
 - Configurable [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#open-trade-unclogger), if enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades ***(HyperOptable!)*** :rocket:   
 - [TimeFrame-Zoom](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#timeframe-zoom) during BackTesting/HyperOpting to prevent profit exploitation! *(Read: [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/))*
-- [Configurable HyperOptable Stoploss](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#configurable-hyperoptable-stoploss) to fine-tune where HyperOpt should look
+- [Configurable HyperOptable Stoploss](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#stoploss-spaces) to fine-tune where HyperOpt should look
 - Custom Long Continuously decreasing ROI Table generation with configurable `roi_table_step_size`
 - [Precision Setting](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#precision-setting) to alter the step-size used during HyperOpting
 - 2 [Custom HyperLoss Functions](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#custom-hyperloss-functions):
@@ -106,13 +125,11 @@ Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/Mon
 - [Total Overall Signal Importance Calculator](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#total-overall-signal-importance-calculator) for Total Average Signal Importance Calculation upon the HyperOpt Results (With some really handy subcommands)
 - Pre-Configured Main/Sub Plot Configurations for visualization of all indicators used in FreqUI
 - Turn On/Off **All** Individual Weighted Signal DataFrame entries for easy debugging in an IDE or better speed while dry/live running or HyperOpting   
-   
-*\*Support/Updates for Legacy versions stopped since Auto-HyperOptable Strategies are merged into the official Freqtrade Development Branch! Please switch to the new MoniGoManiHyperStrategy!*   
 
 ## Need help getting started?
 Take a good read at the [**MGM_DOCUMENTATION.md**](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md), the current place where you can find all MoniGoMani Documentation!   
 
-## Go-To Commands:
+## Go-To Commands
 **Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
 ```powershell
 freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 1000 --timerange 20210101-20210316 --enable-protections
@@ -147,11 +164,12 @@ freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-Sta
 freqtrade download-data --timerange 20201201-20210316 -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
 ```
 
-## **Got Test Results / Ideas / Config Improvements?**
+## Got Test Results - Ideas - Config Improvements?
 - Feel free to join our community [**CryptoStonksShallRise**](https://discord.gg/xFZ9bB6vEz) on Discord, there you can follow/participate in the **Official MoniGoMani Channels**:
   - `#moni-go-mani-announcements`
-  - `#moni-go-mani-development` *(Only available to MoniGoMani Developers!)*
   - `#moni-go-mani-updates`
+  - `#moni-go-mani-github`
+  - `#moni-go-mani-development` *(Only available to MoniGoMani Developers!)*
   - `#moni-go-mani-testing`
   - `#moni-go-mani-help` *(Be sure to take your time to read the [Documentation](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md) thoroughly before asking questions though!)*
   - `#moni-go-mani-cluster-releases` *(Only available to the MoniGoMani Cluster Maintainer & MoniGoMani Developers, for now!)*
@@ -159,7 +177,7 @@ freqtrade download-data --timerange 20201201-20210316 -t 5m 1h -c ./user_data/mg
    
 More general chats for `Technical Analysis`, `Freqtrade`, `Iconomi` and `Random` discussion are also available there :slightly_smiling_face:    
 
-## **Planned**:   
+## Planned
 MoniGoMani's planned section lives under the [**Issues**](https://github.com/Rikj000/MoniGoMani/issues) section! 
 *(Don't be scared GitHub likes to pick bad names for things, but also don't abuse this for common questions though!)*
 This is where we'll keep track of all **New Feature, Feature Enhancements and BugFixes** and it should be the ideal place to follow the status of the project more in depth or to contribute more directly towards it! :handshake: 
@@ -170,11 +188,11 @@ This is where we'll keep track of all **New Feature, Feature Enhancements and Bu
 
 To keep track of what's exactly planned for the next release you can also check the [**Milestones**](https://github.com/Rikj000/MoniGoMani/milestones) section!
 
-## **ChangeLog**:  
+## ChangeLog
 MoniGoMani's ChangeLog can be read under the [**Releases**](https://github.com/Rikj000/MoniGoMani/releases/) section!   
 *(You can also check the [Older Legacy ChangeLog](https://github.com/Rikj000/MoniGoMani/blob/main/CHANGELOG.md) to see the very beginning of MGM)*
 
-## **Freqtrade**:   
+## Freqtrade
 **Freqtrade** is the well known `open source crypto day-trading bot` that makes this strategy possible!   
 It's completely free to use and alter and has many amazing features.   
 Big thank you to **xmatthias** and everyone who helped on it!   
@@ -182,7 +200,7 @@ Big thank you to **xmatthias** and everyone who helped on it!
 - **[Official Freqtrade GitHub Repository](https://github.com/freqtrade/freqtrade)**
 - **[Official Freqtrade Discord Server](https://discord.gg/j84KnP57kW)**- [Sigmoid](https://en.wikipedia.org/wiki/Sigmoid_function) Buy/Sell Signals
 
-## **ICONOMI**:   
+## ICONOMI
 Can't wait until MoniGoMani is fully on point? Or is this all too technical for you? Check out **[ICONOMI](https://www.iconomi.com/register?ref=JdFzz)!**
 
 Instead of buying loose individual crypto manually like you usually do on exchanges, this platform has mostly been created to buy & hodl `Investment Strategies`.   
@@ -202,4 +220,4 @@ Since here you have strategy owners "doing the day-trading for you" by re-balanc
 - [**Crypto Knowledge Pool**](https://www.iconomi.com/asset/BTCETHTEST?ref=JdFzz) (CKP): A community influenced strategy   
 - [**CKP's Telegram Chat**](https://telegram.me/CKP_Robot?start=1684098549): If you want to vote if the coins will go up or down and hear about interesting news or ask questions. When I wrote this they we're right about 65% of the time. The manager will take the results into consideration when altering the strategy.    
 - [**Knepala**](https://www.iconomi.com/asset/KNEPALA?ref=JdFzz): The personal strategy of the owner of CKP, most of the time it does even better than CKP itself.   
-- Look on [ICONOMI](https://www.iconomi.com/register?ref=JdFzz) for more strategies you deem interesting :slight_smile:
+- Look on [ICONOMI](https://www.iconomi.com/register?ref=JdFzz) for more strategies you deem interesting :slightly_smiling_face:
