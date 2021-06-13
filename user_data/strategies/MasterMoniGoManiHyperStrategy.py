@@ -721,24 +721,18 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: Lambda conditions 
         """
         conditions_weight = []
+        # ToDo - Move rolling check - Old place ------------------------------------------------------------------------
         # If TimeFrame-Zooming => Only use 'informative_timeframe' data
-        has_multiplier = \
-            (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe)
         for trend in self.mgm_trends:
             signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
-            rolling_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed_candles_lookback_window')
-
-            rolling_needed_value = \
-                rolling_needed.value * self.timeframe_multiplier if has_multiplier else rolling_needed.value
-            rolling_needed_div = self.timeframe_multiplier if has_multiplier else 1
 
             conditions_weight.append(
                 (
-                        (dataframe['trend'] == trend) &
-                        (dataframe[f'total_{space}_signal_strength']
-                         .rolling(rolling_needed_value).sum() / rolling_needed_div
-                         >= signal_needed.value / self.precision)
+                        (dataframe['trend'] == trend) & (dataframe[f'total_{space}_signal_strength']
+                                                         >= signal_needed.value / self.precision)
                 ))
+
+            # ----------------------------------------------------------------------------------------------------------
 
         return reduce(lambda x, y: x | y, conditions_weight)
 
@@ -758,19 +752,31 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         if 'total_buy_signal_strength' not in dataframe.columns:
             dataframe['total_buy_signal_strength'] = dataframe['total_sell_signal_strength'] = 0
 
-        # Initialize weighted buy/sell signal variables if they are needed (should be 0 = false by default)   
-        df_key = f"{signal_name}_weighted_{space}_signal"
-        if self.debuggable_weighted_signal_dataframe and df_key not in dataframe.columns:
-            dataframe[df_key] = 0
-
+        # ToDo - Move rolling check - New place ------------------------------------------------------------------------
+        # If TimeFrame-Zooming => Only use 'informative_timeframe' data
+        has_multiplier = \
+            (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe)
         for trend in self.mgm_trends:
-            signal_weight = getattr(self, f'{space}_{trend}_trend_{signal_name}_weight')
+            parameter_name = f'{space}_{trend}_trend_{signal_name}_weight'
+            signal_weight = getattr(self, parameter_name)
+
+            rolling_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed_candles_lookback_window')
+            rolling_needed_value = \
+                rolling_needed.value * self.timeframe_multiplier if has_multiplier else rolling_needed.value
+
             if self.debuggable_weighted_signal_dataframe:
-                dataframe.loc[((dataframe['trend'] == trend) & condition), df_key] += \
+                if parameter_name not in dataframe.columns:
+                    dataframe[parameter_name] = 0
+
+                dataframe.loc[((dataframe['trend'] == trend) &
+                               (condition.rolling(rolling_needed_value).sum() > 0)), parameter_name] = \
                     signal_weight.value / self.precision
 
-            dataframe.loc[((dataframe['trend'] == trend) & condition),
+            dataframe.loc[((dataframe['trend'] == trend) &
+                           (condition.rolling(rolling_needed_value).sum() > 0)),
                           f'total_{space}_signal_strength'] += signal_weight.value / self.precision
+
+            # ----------------------------------------------------------------------------------------------------------
 
         return dataframe
 
