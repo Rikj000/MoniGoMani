@@ -308,6 +308,10 @@ Execute: `python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculato
 The higher the score of a signal the better! It will also export to a `./user_data/Total-Average-Signal-Importance-Report.log` file for easy sharing!   
 Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can improve the signals!   
 
+The calculator file also has 2 settings you can configure marked under the `CONFIG NAMES SECTION` section inside the file:
+    - **mgm_config_name**: Provide a custom file name for `mgm-config.json`
+    -  **mgm_config_hyperopt_name**: Provide a custom file name for `mgm-config-hyperopt.json`
+
 ### Handy Calculator Sub Commands
 - `-h` or `--help`: Print out information about the usage of all sub commands.
 - `-pu` or `--precision-used` ***Optional (Defaults to `1` when not omitted)***: The precision value used during HyperOpt. Can be decimal (0.2) or fraction 1/5. Mostly useful after a running a HyperOpt with precision different from 1, used to patch the weights of the signals displayed in the report to what we would expect them to be for comparison with other results.
@@ -383,7 +387,9 @@ freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c .
 ```
 **Apply HyperOpt Results after Run 2** from a `<epoch of choice>`:
 ```powershell
-freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./tmp.json && jq -s '.[0] * .[1]' ./user_data/mgm-config-hyperopt.json ./tmp.json > ./user_data/mgm-config-hyperopt.json && rm ./tmp.json
+freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm
+-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./tmp.json && jq -s '.[0] * .[1]' ./user_data/mgm-config-hyperopt.json ./tmp.json > ./tmp2.json && rm ./tmp.json ./
+user_data/mgm-config-hyperopt.json && mv ./tmp2.json ./user_data/mgm-config-hyperopt.json
 ```
 **Reset HyperOpt Results**:
 ```powershell
