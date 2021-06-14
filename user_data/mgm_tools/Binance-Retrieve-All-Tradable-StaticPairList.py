@@ -31,7 +31,7 @@ def main():
                 if d['quoteAsset'] == currency
                 and d['status'] == 'TRADING'
                 and d['isSpotTradingAllowed'] is True
-                # and d['isMarginTradingAllowed'] is True
+                and d['isMarginTradingAllowed'] is True
                 ])
     print(json.dumps(pairs_with_given_quote, indent=4, sort_keys=True))
 
