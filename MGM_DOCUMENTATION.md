@@ -34,7 +34,7 @@
 - [How to Configure MoniGoMani](#how-to-configure-monigomani)
   - [mgm-config.json](#mgm-configjson)
     - [TimeFrame-Zoom](#timeframe-zoom)
-    - [TimeFrame-Zoom Examples](#timeframe-zoom-examples)
+      - [TimeFrame-Zoom Examples](#timeframe-zoom-examples)
     - [Precision Setting](#precision-setting)
       - [Precision Examples](#precision-examples)
     - [Trading During Trends](#trading-during-trends)
@@ -81,7 +81,7 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
 3) Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & pick a logical timeframe to do your HyperOpt upon (The timeframe in the go-to commands for example resembles some bullish rise/correction cycles & I believe 2021 will be a bullish year thus I think it's a good timeframe to test upon).   
 4) HyperOpt for a **1st HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)   
     The 1st HyperOpt Run *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with the default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of `mgm-config.json`
-5) **Reflect over your HyperOpt results!** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.   
+5) **[Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.   
     You can check a certain epoch in the list of best results using:
     ```powershell
     freqtrade hyperopt-show -n <epoch of choice>
@@ -149,7 +149,7 @@ If you haven't yet please read: [BackTesting-Traps](https://brookmiles.github.io
 **<span style="color:darkorange">WARNING:</span> Candle data for both `timeframe` as `backtest_timeframe` will have to be downloaded before you will be able to BackTest/HyperOpt! (Since both will be used)**   
 **<span style="color:darkorange">WARNING:</span> This will be slower than BackTesting at 1h and 1m is a CPU killer. If you plan on using trailing stoploss or ROI, you probably want to know that your BackTest results are not complete lies.**   
 
-### TimeFrame-Zoom Examples
+#### TimeFrame-Zoom Examples
 | Parameter | Description |
 | --- | --- |
 | **timeframe**='1h' | TimeFrame used during Dry/Live-runs |
