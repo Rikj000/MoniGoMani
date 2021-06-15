@@ -7,7 +7,7 @@
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md">
+    </a> <a href="">
         <img src="https://img.shields.io/badge/Docs-MGM_DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
     </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
@@ -22,8 +22,8 @@
  - This strategy is under development. It is not recommended running it live at this moment.
  - Always test this strategy before using it!
  - I am in no way responsible for your live results! This strategy is still experimental and under heavy development!
- - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) after doing manual changes!
- - You need to [optimize](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
+ - MoniGoMani should always be [re-optimized](#how-to-optimize-monigomani) after doing manual changes!
+ - You need to [optimize](#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
 <hr>
 
 
@@ -43,10 +43,14 @@
     - [Open Trade Unclogger](#open-trade-unclogger)
       - [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries)
     - [Default Stub Values](#default-stub-values)
+  - [mgm-config-hyperopt.json](#mgm-config-hyperoptjson)
+    - [Reflect over HyperOpt Results](#reflect-over-hyperopt-results)
+      - [Bad Weighted signal setup examples](#bad-weighted-signal-setup-examples)
   - [MoniGoManiHyperStrategy](#monigomanihyperstrategy)
     - [Weighted Signal Interface](#weighted-signal-interface)
       - [Defining Indicators Examples](#defining-indicators-examples)
       - [Defining Weighted Buy & Sell Signals Examples](#defining-weighted-buy--sell-signals-examples)
+      - [Visualize Weighted Signals in FreqUI](#visualize-weighted-signals-in-frequi)
 - [Total Overall Signal Importance Calculator](#total-overall-signal-importance-calculator)
     - [Handy Calculator Sub Commands](#handy-calculator-sub-commands)
 - [Custom HyperLoss Functions](#custom-hyperloss-functions)
@@ -65,17 +69,17 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
 
 # How to Optimize MoniGoMani
 *(These are just my ideas/theories, if you have other ideas, please test them & report your results to [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can learn and improve this flow!)*   
-**<span style="color:darkorange">WARNING:</span> It's strongly advised to not do any manual alterations to an already optimized MGM setup! The recommended way to do manual alterations is by [Configuring MoniGoMani](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-configure-monigomani), and then following this optimization process to apply them!**   
+**<span style="color:darkorange">WARNING:</span> It's strongly advised to not do any manual alterations to an already optimized MGM setup! The recommended way to do manual alterations is by [Configuring MoniGoMani](#how-to-configure-monigomani), and then following this optimization process to apply them!**   
    
 
 0) Delete the previous `mgm-config-hyperopt.json` if it exists using:
     ```powershell
     rm ./user_data/mgm-config-hyperopt.json
     ```
-1) Setup your `MoniGoMani` by following [How to Configure MoniGoMani](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-configure-monigomani)
-2) Download a good Top Volume StaticPairList and update this in your `mgm-config.json`. Instructions for how to do this are under [PairLists](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#pairlists).
+1) Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)
+2) Download a good Top Volume StaticPairList and update this in your `mgm-config.json`. Instructions for how to do this are under [PairLists](#pairlists).
 3) Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & pick a logical timeframe to do your HyperOpt upon (The timeframe in the go-to commands for example resembles some bullish rise/correction cycles & I believe 2021 will be a bullish year thus I think it's a good timeframe to test upon).   
-4) HyperOpt for a **1st HyperOpt Run** with the command provided in the [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#go-to-commands) (Free to alter the command if you have a good idea that you want to test)   
+4) HyperOpt for a **1st HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)   
     The 1st HyperOpt Run *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with the default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of `mgm-config.json`
 5) **Reflect over your HyperOpt results!** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.   
     You can check a certain epoch in the list of best results using:
@@ -86,7 +90,7 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
     ```powershell
     freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./user_data/mgm-config-hyperopt.json
     ```
-7) Repeat `Steps 4 and 5` at least for a **2nd HyperOpt Run** with the command provided in the [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#go-to-commands) (Free to alter the command if you have a good idea that you want to test)   
+7) Repeat `Steps 4 and 5` at least for a **2nd HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)   
     The 2nd HyperOpt Run *(When a `mgm-config-hyperopt.json` exists)* is automatically ran with:   
         - Refined search spaces ranging between the values found during the 1st Run (Loaded from `mgm-config-hyperopt.json`) plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json` (This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)   
         - Weak weighted signals weeded out by overriding them to their respective `min_` value (Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
@@ -95,17 +99,17 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
     ```powershell
     freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./tmp.json && jq -s '.[0] * .[1]' ./user_data/mgm-config-hyperopt.json ./tmp.json > ./user_data/mgm-config-hyperopt.json && rm ./tmp.json
     ```
-9) Load your results into the `Total-Overall-Signal-Importance-Calculator.py` and run it's [Go-To Command](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#go-to-commands) to receive a nice weighted signal report for sharing in the [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.  
+9) Load your results into the `Total-Overall-Signal-Importance-Calculator.py` and run it's [Go-To Command](#go-to-commands) to receive a nice weighted signal report for sharing in the [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.  
 
 
 # How to Configure MoniGoMani
-In total 5 files are used in the configuration of MoniGoMani:   
-- [`mgm-config.json`](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#mgm-config.json): This is the **main configuration file**, containing:   
+In total 5 files are used in the configuration of MoniGoMani, all can be found in the `user_data` & `user_data/strategies` folders:   
+- [`mgm-config.json`](#mgm-config.json): This is the **main configuration file**, containing:   
     - The main `MoniGoMani` settings   
     - The main `Freqtrade` settings (See [The Official Freqtrade Configuration Documentation](https://www.freqtrade.io/en/latest/configuration/) to learn how to configure these)   
 - [`mgm-config-private.json`](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm-config-private.json): This split configuration file contains some `Freqtrade` settings containing critical private information, **never** share this file! 
-- `mgm-config-hyperopt.json`: This file contains the optimized HyperOptable `MoniGoMani` and `Freqtrade` settings. It will be created when following the [How to Optimize MoniGoMani](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) process
-- [`MoniGoManiHyperStrategy.py`](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py): The **main strategy file**, containing the [Weighted Signal Interface](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#weighted-signal-interface) where you can implement new weighted signals & indicators in a nearly plug and play like fashion.
+- [`mgm-config-hyperopt.json`](#mgm-config-hyperopt.json): This file contains the optimized HyperOptable `MoniGoMani` and `Freqtrade` settings. It will be created when following the [How to Optimize MoniGoMani](#how-to-optimize-monigomani) process
+- [`MoniGoManiHyperStrategy.py`](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py): The **main strategy file**, containing the [Weighted Signal Interface](#weighted-signal-interface) where you can implement new weighted signals & indicators in a nearly plug and play like fashion.
 - [`MasterMoniGoManiHyperStrategy.py`](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MasterMoniGoManiHyperStrategy.py): The **main framework file** also has 2 settings you can configure marked under the `CONFIG NAMES SECTION` section inside the file:
     - **mgm_config_name**: Provide a custom file name for `mgm-config.json`
     -  **mgm_config_hyperopt_name**: Provide a custom file name for `mgm-config-hyperopt.json`
@@ -115,15 +119,15 @@ In total 5 files are used in the configuration of MoniGoMani:
 The main `MoniGoMani` settings can be found under `monigomani_settings`:
 | Parameter(s) | Description |
 | --- | --- |
-| **timeframe** <br> **backtest_timeframe** | These values configure the `timeframe`s used in MoniGoMani. <br> **Documentation:** [TimeFrame-Zoom](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#timeframe-zoom) <br> **Datatypes:** Integer |
+| **timeframe** <br> **backtest_timeframe** | These values configure the `timeframe`s used in MoniGoMani. <br> **Documentation:** [TimeFrame-Zoom](#timeframe-zoom) <br> **Datatypes:** Integer |
 | **startup_candle_count** | Number of candles the strategy requires before producing valid signals during BackTesting/HyperOpting. <br> By default this is set to `400` since MoniGoMani uses a 200EMA, which needs 400 candles worth of data to be calculated. <br> **Datatype:** Integer |
-| **precision** | This value can be used to control the precision of HyperOpting. Default is `1`. <br> **Documentation:** [Precision Setting](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#precision-setting) <br> **Datatype:** Integer |
+| **precision** | This value can be used to control the precision of HyperOpting. Default is `1`. <br> **Documentation:** [Precision Setting](#precision-setting) <br> **Datatype:** Integer |
 | **roi_table_step_size** | MoniGoMani generates a really long custom ROI-Table (Return of Interest), so it will have fewer gaps in it and be more continuous in it's decrease. <br> This setting alters the size of the steps (in minutes) to be used when calculating the long continuous ROI-Table. <br> **Datatype:** Integer |
-| **trading_during_trends** | The settings inside the `trading_during_trends` section are used to configure during which trends (Downwards/Sideways/Upwards) MGM will be allowed to trade (for Buys/Sells).<br> **Documentation:** [Trading During Trends](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#trading-during-trends) <br> **Datatype:** Dictionary |
-| **weighted_signal_spaces** | The settings inside the `weighted_signal_spaces` section are used to control how MGM handles the HyperOpting of (Total) Weighted Signal Values during it's [optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani).<br> **Documentation:** [Weighted Signal Spaces](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#weighted-signal-spaces) <br> **Datatype:** Dictionary |
-| **stoploss_spaces** | The settings inside the `stoploss_spaces` section are used to refine the search spaces that MGM will use for the (trailing) stoploss during it's [optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani).<br> **Documentation:** [Stoploss Spaces](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#stoploss-spaces) <br> **Datatype:** Dictionary |
-| **unclogger_spaces** | The settings inside the `unclogger_spaces` section are used to refine the search spaces that MGM will use for the open trade unclogger during it's [optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani).<br> **Documentation:** [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#open-trade-unclogger) <br> **Datatype:** Dictionary |
-| **default_stub_values** | The settings inside the `default_stub_values` section are **only used** to control some default startup values that MGM will use when no other values are found and/or used for them.<br> **Documentation:** [Default Stub Values](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#default-stub-values) <br> **Datatype:** Dictionary |
+| **trading_during_trends** | The settings inside the `trading_during_trends` section are used to configure during which trends (Downwards/Sideways/Upwards) MGM will be allowed to trade (for Buys/Sells).<br> **Documentation:** [Trading During Trends](#trading-during-trends) <br> **Datatype:** Dictionary |
+| **weighted_signal_spaces** | The settings inside the `weighted_signal_spaces` section are used to control how MGM handles the HyperOpting of (Total) Weighted Signal Values during it's [optimization process](#how-to-optimize-monigomani).<br> **Documentation:** [Weighted Signal Spaces](#weighted-signal-spaces) <br> **Datatype:** Dictionary |
+| **stoploss_spaces** | The settings inside the `stoploss_spaces` section are used to refine the search spaces that MGM will use for the (trailing) stoploss during it's [optimization process](#how-to-optimize-monigomani).<br> **Documentation:** [Stoploss Spaces](#stoploss-spaces) <br> **Datatype:** Dictionary |
+| **unclogger_spaces** | The settings inside the `unclogger_spaces` section are used to refine the search spaces that MGM will use for the open trade unclogger during it's [optimization process](#how-to-optimize-monigomani).<br> **Documentation:** [Open Trade Unclogger](#open-trade-unclogger) <br> **Datatype:** Dictionary |
+| **default_stub_values** | The settings inside the `default_stub_values` section are **only used** to control some default startup values that MGM will use when no other values are found and/or used for them.<br> **Documentation:** [Default Stub Values](#default-stub-values) <br> **Datatype:** Dictionary |
 | **debuggable_weighted_signal_dataframe** | If set to `True` all Weighted Signal results will be added to the dataframe for easy debugging with BreakPoints. <br> **<span style="color:darkorange">WARNING:</span> Disable this for anything else then debugging in an IDE! (Integrated Development Environment)** <br> **Datatype:** Boolean |
 | **use_mgm_logging** | If set to `True` MoniGoMani logging will be displayed to the console and be integrated in Freqtrades native logging, further logging configuration can be done by setting individual `mgm_log_levels_enabled`. <br> It's recommended to set this to `False` for HyperOpting/BackTesting unless you are testing with breakpoints. <br> **Datatype:** Boolean |
 | **mgm_log_levels_enabled** | It allows turning on/off individual `info`, `warning`, `error` and `debug` logging <br> For Live Runs it's recommended to disable at least `info` and `debug` logging, to keep MGM as lightweight as possible! <br> `debug` is very verbose! Always set it to `False` when BackTesting/HyperOpting! <br> **Datatype:** Dictionary |
@@ -179,7 +183,7 @@ The settings inside `mgm-config.json`'s `trading_during_trends` section are used
 | **sell_trades_when_upwards** | Enable or completely disable the selling of open trades (through normal sell signals) during upwards trends.<br> **Datatype:** Boolean |
 
 ### Weighted Signal Spaces
-The settings inside `mgm-config.json`'s `weighted_signal_spaces` section are used to control how MGM handles the HyperOpting of (Total) Weighted Signal Values during it's [optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani).   
+The settings inside `mgm-config.json`'s `weighted_signal_spaces` section are used to control how MGM handles the HyperOpting of (Total) Weighted Signal Values during it's [optimization process](#how-to-optimize-monigomani).   
 
 | Parameter | Description |
 | --- | --- |
@@ -193,7 +197,7 @@ The settings inside `mgm-config.json`'s `weighted_signal_spaces` section are use
 | **number_of_weighted_signals** | Set the `number_of_weighted_signals` setting to the total number of different weighted signals in use in the weighted tables. <br> `buy/sell__downwards/sideways/upwards_trend_total_signal_needed` settings will be multiplied with this value, so their search spaces will be larger, resulting in more equally divided total weighted signal scores when HyperOpting. <br> **Datatype:** Integer |
 
 ### Stoploss Spaces
-The settings inside `mgm-config.json`'s `stoploss_spaces` section are used to refine the search spaces that MGM will use for the (trailing) stoploss during it's [optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani).
+The settings inside `mgm-config.json`'s `stoploss_spaces` section are used to refine the search spaces that MGM will use for the (trailing) stoploss during it's [optimization process](#how-to-optimize-monigomani).
 
 | Parameter | Description |
 | --- | --- |
@@ -225,11 +229,11 @@ The settings inside `mgm-config.json`'s `unclogger_spaces` section are used to c
 | Parameter | Description |
 | --- | --- |
 | **unclogger_enabled** | Enable or completely disable the open trade unclogger.<br> **Datatype:** Boolean |
-| **unclogger_minimal_losing_trade_duration_minutes** | Settings to configure the HyperOpt Space for the minimal duration needed (in minutes) before the unclogger is allowed to attempt to unclog the open trade. <br> **Documentation:** [Unclogger Sub Dictionaries](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
-| **unclogger_minimal_losing_trades_open** | Settings to configure the HyperOpt Space for the minimal losing trades open before the unclogger is allowed to attempt to unclog the open trade.<br> **Documentation:** [Unclogger Sub Dictionaries](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
-| **unclogger_open_trades_losing_percentage_needed** | Settings to configure the HyperOpt Space for the minimal percentage of losing open trades before the unclogger is allowed to attempt to unclog the open trade.<br> **Documentation:** [Unclogger Sub Dictionaries](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
-| **unclogger_trend_lookback_candles_window** | Settings to configure the HyperOpt Space for the lookback window use by the `unclogger_trend_lookback_candles_window_percentage_needed` check.<br> **Documentation:** [Unclogger Sub Dictionaries](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
-| **unclogger_trend_lookback_candles_window_percentage_needed** | Settings to configure the HyperOpt Space for the minimal percentage of **bad** trends that needs to be detected inside the lookback window before the unclogger is allowed to attempt to unclog the open trade.<br> **Documentation:** [Unclogger Sub Dictionaries](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
+| **unclogger_minimal_losing_trade_duration_minutes** | Settings to configure the HyperOpt Space for the minimal duration needed (in minutes) before the unclogger is allowed to attempt to unclog the open trade. <br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
+| **unclogger_minimal_losing_trades_open** | Settings to configure the HyperOpt Space for the minimal losing trades open before the unclogger is allowed to attempt to unclog the open trade.<br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
+| **unclogger_open_trades_losing_percentage_needed** | Settings to configure the HyperOpt Space for the minimal percentage of losing open trades before the unclogger is allowed to attempt to unclog the open trade.<br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
+| **unclogger_trend_lookback_candles_window** | Settings to configure the HyperOpt Space for the lookback window use by the `unclogger_trend_lookback_candles_window_percentage_needed` check.<br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
+| **unclogger_trend_lookback_candles_window_percentage_needed** | Settings to configure the HyperOpt Space for the minimal percentage of **bad** trends that needs to be detected inside the lookback window before the unclogger is allowed to attempt to unclog the open trade.<br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
 | **unclogger_trend_lookback_window_uses_downwards_candles** | Enable or completely disable the open trade unclogger from seeing downwards trends as **bad** in it's lookback window.<br> **Datatype:** Boolean (true = bad) |
 | **unclogger_trend_lookback_window_uses_sideways_candles** | Enable or completely disable the open trade unclogger from seeing sideways trends as **bad** in it's lookback window.<br> **Datatype:** Boolean (true = bad) |
 | **unclogger_trend_lookback_window_uses_upwards_candles** | Enable or completely disable the open trade unclogger from seeing upwards trends as **bad** in it's lookback window.<br> **Datatype:** Boolean (true = bad) |
@@ -254,8 +258,70 @@ The settings inside `mgm-config.json`'s `default_stub_values` section are **only
 | **trailing_only_offset_is_reached** | **Official Freqtrade Documentation:** [Trailing stop loss only once the trade has reached a certain offset](https://www.freqtrade.io/en/latest/stoploss/#trailing-stop-loss-only-once-the-trade-has-reached-a-certain-offset) <br> **Datatype:** Boolean |
 
 
+## mgm-config-hyperopt.json
+This file contains the optimized HyperOptable `MoniGoMani` and `Freqtrade` settings. It will be created when following the [How to Optimize MoniGoMani](#how-to-optimize-monigomani) process and its one of the main files that will define your MGM configuration when moving to dry/live-run mode.   
+
+It's truly **important** that you reflect over these files in between HyperOpt Runs.
+
+### Reflect over HyperOpt Results
+Please read [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/) to learn about the common traps that can occur in your HyperOpt results.
+
+Further you want to confirm that your total signals needed are reasonable/possible.
+The sum of all weighted buy/sell signals found in a trend should always be bigger then the respective total signal needed!
+
+Following equation should always be true:
+
+#### Bad Weighted signal setup examples
+**Impossible to reach:**
+Imagine following configuration for `buy` on `upwards` trends:
+```json
+{
+    "buy__upwards_trend_total_signal_needed": 542,
+    "buy__upwards_trend_total_signal_needed_candles_lookback_window": 1,
+    "buy_upwards_trend_adx_strong_up_weight": 54,
+    "buy_upwards_trend_bollinger_bands_weight": 9,
+    "buy_upwards_trend_ema_long_golden_cross_weight": 70,
+    "buy_upwards_trend_ema_short_golden_cross_weight": 85,
+    "buy_upwards_trend_macd_weight": 67,
+    "buy_upwards_trend_rsi_weight": 7,
+    "buy_upwards_trend_sma_long_golden_cross_weight": 47,
+    "buy_upwards_trend_sma_short_golden_cross_weight": 19,
+    "buy_upwards_trend_vwap_cross_weight": 11
+}
+```
+Here we are working with a lookback window of only 1 candle, this means that all signals counting up for the total needed should occur in the current candle.
+
+If we calculate the sum of all weighted signals, we will see that even if all signals would trigger, that it still won't be enough to reach the total signal needed! Meaning that this MGM configuration will never be able to buy in this trend.
+
+Sum of all weighted signals:
+`54 + 9 + 70 + 85 + 67 + 7 + 47 + 19 + 11 = 369`
+
+**Way too low total needed:**
+Imagine following configuration for `buy` on `upwards` trends:
+```json
+{
+    "buy__upwards_trend_total_signal_needed": "33",
+    "buy__upwards_trend_total_signal_needed_candles_lookback_window": "2",
+    "buy_upwards_trend_adx_strong_up_weight": "79",
+    "buy_upwards_trend_bollinger_bands_weight": "97",
+    "buy_upwards_trend_ema_long_golden_cross_weight": "74",
+    "buy_upwards_trend_ema_short_golden_cross_weight": "91",
+    "buy_upwards_trend_macd_weight": "53",
+    "buy_upwards_trend_rsi_weight": "17",
+    "buy_upwards_trend_sma_long_golden_cross_weight": "32",
+    "buy_upwards_trend_sma_short_golden_cross_weight": "100",
+    "buy_upwards_trend_vwap_cross_weight": "58",
+}
+```
+Here we are working with a lookback window of 2 candles, this means that all signals counting up for the total needed may occur in the current candle and the candle before that, but each signal is only allowed to fire off once.
+
+If we calculate the sum of all weighted signals, we will see that its way above te total signal needed! Meaning that this MGM configuration will probably try to buy too much candles than need during this trend.
+
+Sum of all weighted signals:
+`79 + 97 + 74 + 91 + 53 + 17 + 32 + 100 + 58 = 601`
+
 ## MoniGoManiHyperStrategy
-This is the main strategy file used by MoniGoMani, containing the [Weighted Signal Interface](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#weighted-signal-interface).
+This is the main strategy file used by MoniGoMani, containing the [Weighted Signal Interface](#weighted-signal-interface).
 
 **Link to:** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py)
 
@@ -302,6 +368,36 @@ sell_signals = {
 }
 ```
 
+#### Visualize Weighted Signals in FreqUI
+Finally you can easily define your freshly implemented indicators inside the `plot_config` dictionary for visualization in FreqUI. Then you can easily read when which weighted signals triggered.
+```python
+plot_config = {
+        'main_plot': {
+            # Add indicators here which you'd like to see in the main graph
+        },
+        'subplots': {
+            # Subplots - Each dict defines one additional plot (MACD, ADX, Plus/Minus Direction, RSI)
+            'MACD (Moving Average Convergence Divergence)': {
+                'macd': {'color': '#19038a'},
+                'macdsignal': {'color': '#ae231c'}
+            },
+            'RSI (Relative Strength Index)': {
+                'rsi': {'color': '#7fba3c'}
+            }
+```
+For more documentation about defining these see the **Official Freqtrade Documentation:** [Advanced Plot Configuration](https://www.freqtrade.io/en/latest/plotting/#advanced-plot-configuration)
+
+
+Once you defined them you can load them in FreqUI as following:
+1) Click the cog-wheel at the right top
+   ![Click the cog-wheel at the right top](https://i.imgur.com/VDeCFDT.png)
+2) Click `Load from strategy`
+   ![Click Load from strategy](https://i.imgur.com/dOvHGdq.png)
+3) Give it a name (like `MoniGoManiPlot`) Click `Save`
+    ![Give it a name (like MoniGoManiPlot) Click Save](https://i.imgur.com/Rk30ARC.png)
+4) Now you will be able to select and view your saved plot in FreqUI! *(Individual indicators can be toggled on/off by clicking on them in the header on top)*
+   ![Final Result](https://i.imgur.com/Q5zfnk2.png)
+
 
 # Total Overall Signal Importance Calculator
 Execute: `python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
@@ -340,7 +436,7 @@ By default, MoniGoMani includes 2 pairlists in `mgm-config.json`:
   - Will automatically update to the current best top volume coin pairs available
 - A StaticPairList: 
   - Used for BackTesting / HyperOpting since a VolumePairList cannot be used here.
-  - When [optimizing](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) MoniGoMani for actual Dry/Live-running (instead of testing) it's truly recommended to [download a fresh top volume StaticPairList](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#download-staticpairlists) and HyperOpt upon that (Preferably as big as possible, but beware of the warning below)!   
+  - When [optimizing](#how-to-optimize-monigomani) MoniGoMani for actual Dry/Live-running (instead of testing) it's truly recommended to [download a fresh top volume StaticPairList](#download-staticpairlists) and HyperOpt upon that (Preferably as big as possible, but beware of the warning below)!   
   This should yield much better & more realistic results during HyperOpting/BackTesting!   
   This is due to giving a better reflection of the current market and being closer to the VolumePairList used during Dry/Live-run's.
 
@@ -436,4 +532,4 @@ You still need to install [jq](https://stedolan.github.io/jq/)
 ### ValueError: the lower bound X has to be less than the upper bound Y
 You probably ran with precision different from 1. If so then you need to run your 1st HO Run results through the calculator with `-pu` or `--precision-used` and then fix up your `mgm-config-hyperopt.json` with the adjusted results before firing up the 2nd HO Run.   
 
-Check out the documentation for the [Precision Setting](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#precision-setting) and the [Total Overall Signal Importance Calculator](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#total-overall-signal-importance-calculator)!
+Check out the documentation for the [Precision Setting](#precision-setting) and the [Total Overall Signal Importance Calculator](#total-overall-signal-importance-calculator)!
