@@ -33,7 +33,7 @@
                 It's <b>not recommended</b> to use this strategy <b>live</b> already, due to it still being under heavy development!<br>
                 If you'd like to see this project progress faster then please help out where you can 
                 <a href="https://github.com/Rikj000/MoniGoMani/issues">here</a>!    
-                <br>Needs a custom version of Freqtrade for now <a href="https://github.com/Rikj000/Freqtrade/tree/hyperopt-show-include-non-optimized-in-json">Rikj000/Freqtrade/hyperopt-show-include-non-optimized-in-json</a> at commit <b>bd44deea (latest)</b>!)
+                <br>Needs a custom version of Freqtrade for now <a href="https://github.com/Rikj000/freqtrade/tree/moni-go-mani/v0.11.0">Rikj000/Freqtrade/moni-go-mani/v0.11.0</a> at commit <b>bd44deea (latest)</b>!)
                 <br><img width=1000><br>
             </td>
         </tbody>
