@@ -1,0 +1,67 @@
+freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210101-20210316 --enable-protections
+=========================================================================================================================================================================
+Result for strategy MoniGoManiHyperStrategy
+=========================================================== BACKTESTING REPORT ==========================================================
+|       Pair |   Buys |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |   Avg Duration |   Win  Draw  Loss  Win% |
+|------------+--------+----------------+----------------+-------------------+----------------+----------------+-------------------------|
+|  DOGE/USDT |     44 |          12.69 |         558.14 |           251.416 |          50.28 |       19:52:00 |    28     9     7  63.6 |
+| MATIC/USDT |     44 |           5.59 |         246.06 |           110.839 |          22.17 |       19:05:00 |    29    10     5  65.9 |
+|   ADA/USDT |     39 |           2.04 |          79.62 |            35.863 |           7.17 |       23:18:00 |    21    13     5  53.8 |
+|   ETH/USDT |     55 |           1.00 |          55.23 |            24.879 |           4.98 |       17:43:00 |    33    15     7  60.0 |
+|   XRP/USDT |     35 |           1.46 |          50.94 |            22.948 |           4.59 | 1 day, 4:17:00 |    18    13     4  51.4 |
+|   BTC/USDT |     52 |           0.41 |          21.10 |             9.505 |           1.90 |       20:05:00 |    34    13     5  65.4 |
+|      TOTAL |    269 |           3.76 |        1011.10 |           455.450 |          91.09 |       20:56:00 |   163    73    33  60.6 |
+============================================================ SELL REASON STATS ============================================================
+|                 Sell Reason |   Sells |   Win  Draws  Loss  Win% |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |
+|-----------------------------+---------+--------------------------+----------------+----------------+-------------------+----------------|
+|                         roi |     230 |    157    73     0   100 |           4.26 |         980.56 |           441.692 |         163.43 |
+|                   stop_loss |      16 |      0     0    16     0 |         -20.46 |        -327.35 |          -147.454 |         -54.56 |
+| MGM_unclogging_losing_trade |      14 |      0     0    14     0 |          -5.43 |         -75.97 |           -34.223 |         -12.66 |
+|                  force_sell |       5 |      2     0     3  40.0 |          -4.21 |         -21.05 |            -9.481 |          -3.51 |
+|          trailing_stop_loss |       4 |      4     0     0   100 |         113.73 |         454.91 |           204.915 |          75.82 |
+======================================================== LEFT OPEN TRADES REPORT =========================================================
+|      Pair |   Buys |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |     Avg Duration |   Win  Draw  Loss  Win% |
+|-----------+--------+----------------+----------------+-------------------+----------------+------------------+-------------------------|
+| DOGE/USDT |      1 |           0.39 |           0.39 |             0.175 |           0.03 |         12:00:00 |     1     0     0   100 |
+|  ETH/USDT |      1 |           0.26 |           0.26 |             0.118 |           0.02 |          4:00:00 |     1     0     0   100 |
+|  BTC/USDT |      1 |          -2.15 |          -2.15 |            -0.968 |          -0.19 |          2:00:00 |     0     0     1     0 |
+|  ADA/USDT |      1 |          -9.23 |          -9.23 |            -4.158 |          -0.83 | 4 days, 10:00:00 |     0     0     1     0 |
+|  XRP/USDT |      1 |         -10.32 |         -10.32 |            -4.648 |          -0.93 |  6 days, 0:00:00 |     0     0     1     0 |
+|     TOTAL |      5 |          -4.21 |         -21.05 |            -9.481 |          -1.90 |  2 days, 5:36:00 |     2     0     3  40.0 |
+=============== SUMMARY METRICS ================
+| Metric                 | Value               |
+|------------------------+---------------------|
+| Backtesting from       | 2021-01-01 00:00:00 |
+| Backtesting to         | 2021-03-16 00:00:00 |
+| Max open trades        | 6                   |
+|                        |                     |
+| Total/Daily Avg Trades | 269 / 3.64          |
+| Starting balance       | 500.000 USDT        |
+| Final balance          | 955.450 USDT        |
+| Absolute profit        | 455.450 USDT        |
+| Total profit %         | 91.09%              |
+| Avg. stake amount      | 45.000 USDT         |
+| Total trade volume     | 12105.000 USDT      |
+|                        |                     |
+| Best Pair              | DOGE/USDT 558.14%   |
+| Worst Pair             | BTC/USDT 21.1%      |
+| Best trade             | DOGE/USDT 160.06%   |
+| Worst trade            | XRP/USDT -20.46%    |
+| Best day               | 79.809 USDT         |
+| Worst day              | -41.966 USDT        |
+| Days win/draw/lose     | 53 / 9 / 13         |
+| Avg. Duration Winners  | 17:05:00            |
+| Avg. Duration Loser    | 1 day, 13:46:00     |
+| Zero Duration Trades   | 0.00% (0)           |
+| Rejected Buy signals   | 0                   |
+|                        |                     |
+| Min balance            | 500.000 USDT        |
+| Max balance            | 973.781 USDT        |
+| Drawdown               | 96.02%              |
+| Drawdown               | 43.251 USDT         |
+| Drawdown high          | 130.596 USDT        |
+| Drawdown low           | 87.345 USDT         |
+| Drawdown Start         | 2021-01-09 13:55:00 |
+| Drawdown End           | 2021-01-11 15:45:00 |
+| Market change          | 762.27%             |
+================================================

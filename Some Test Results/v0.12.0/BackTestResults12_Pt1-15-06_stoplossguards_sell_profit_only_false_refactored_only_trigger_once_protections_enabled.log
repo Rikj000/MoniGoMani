@@ -1,0 +1,219 @@
+freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210101-20210316 --enable-protections
+=========================================================================================================================================================================
+freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json 
+-c ./user_data/mgm-config-private.json --timerange 20210101-20210316 --enable-protections
+^[[H2021-06-15 07:53:08,371 - freqtrade.configuration.configuration - INFO - Using config: ./user_data/mgm-config.json ...
+2021-06-15 07:53:08,371 - freqtrade.configuration.configuration - INFO - Using config: ./user_data/mgm-config-private.json ...
+2021-06-15 07:53:08,372 - freqtrade.loggers - INFO - Verbosity set to 0
+2021-06-15 07:53:08,372 - freqtrade.configuration.configuration - INFO - Parameter --enable-protections detected, enabling Protections. ...
+2021-06-15 07:53:08,372 - freqtrade.configuration.configuration - INFO - Using max_open_trades: -1 ...
+2021-06-15 07:53:08,372 - freqtrade.configuration.configuration - INFO - Parameter --timerange detected: 20210101-20210316 ...
+2021-06-15 07:53:08,372 - freqtrade.configuration.configuration - INFO - Using user-data directory: /mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade-Rikj000/user_data ...
+2021-06-15 07:53:08,372 - freqtrade.configuration.configuration - INFO - Using data directory: /mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade-Rikj000/user_data/data/binance ...
+2021-06-15 07:53:08,372 - freqtrade.configuration.check_exchange - INFO - Checking exchange...
+2021-06-15 07:53:08,406 - freqtrade.configuration.check_exchange - INFO - Exchange "binance" is officially supported by the Freqtrade development team.
+2021-06-15 07:53:08,406 - freqtrade.configuration.configuration - INFO - Using pairlist from configuration.
+2021-06-15 07:53:08,406 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2021-06-15 07:53:08,407 - freqtrade.commands.optimize_commands - INFO - Starting freqtrade in Backtesting mode
+2021-06-15 07:53:08,407 - freqtrade.exchange.exchange - INFO - Instance is running with dry_run enabled
+2021-06-15 07:53:08,407 - freqtrade.exchange.exchange - INFO - Using CCXT 1.49.30
+2021-06-15 07:53:08,407 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True}
+2021-06-15 07:53:08,410 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'rateLimit': 200}
+2021-06-15 07:53:08,414 - freqtrade.exchange.exchange - INFO - Using Exchange "Binance"
+2021-06-15 07:53:10,050 - freqtrade.resolvers.exchange_resolver - INFO - Using resolved exchange 'Binance'...
+2021-06-15 07:53:10,095 - freqtrade.resolvers.iresolver - INFO - Using resolved strategy MoniGoManiHyperStrategy from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/MoniGoMani/user_data/strategies/MoniGoManiHyperStrategy.py'...
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__downwards_trend_total_signal_needed = 43
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__downwards_trend_total_signal_needed_candles_lookback_window = 4
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__sideways_trend_total_signal_needed = 847
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__sideways_trend_total_signal_needed_candles_lookback_window = 2
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__upwards_trend_total_signal_needed = 30
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__upwards_trend_total_signal_needed_candles_lookback_window = 3
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_adx_strong_up_weight = 45
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_bollinger_bands_weight = 62
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_ema_long_golden_cross_weight = 100
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_ema_short_golden_cross_weight = 62
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_macd_weight = 63
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_rsi_weight = 62
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_sma_long_golden_cross_weight = 100
+2021-06-15 07:53:10,095 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_sma_short_golden_cross_weight = 56
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_vwap_cross_weight = 72
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_adx_strong_up_weight = 59
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_bollinger_bands_weight = 46
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_ema_long_golden_cross_weight = 33
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_ema_short_golden_cross_weight = 74
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_macd_weight = 100
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_rsi_weight = 57
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_sma_long_golden_cross_weight = 27
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_sma_short_golden_cross_weight = 70
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_vwap_cross_weight = 55
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_adx_strong_up_weight = 60
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_bollinger_bands_weight = 53
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_ema_long_golden_cross_weight = 51
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_ema_short_golden_cross_weight = 36
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_macd_weight = 100
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_rsi_weight = 78
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_sma_long_golden_cross_weight = 100
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_sma_short_golden_cross_weight = 46
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_vwap_cross_weight = 20
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell___unclogger_minimal_losing_trade_duration_minutes = 19
+2021-06-15 07:53:10,096 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell___unclogger_minimal_losing_trades_open = 4
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell___unclogger_open_trades_losing_percentage_needed = 1
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell___unclogger_trend_lookback_candles_window = 40
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell___unclogger_trend_lookback_candles_window_percentage_needed = 32
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__downwards_trend_total_signal_needed = 550
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__downwards_trend_total_signal_needed_candles_lookback_window = 1
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__sideways_trend_total_signal_needed = 131
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__sideways_trend_total_signal_needed_candles_lookback_window = 5
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__upwards_trend_total_signal_needed = 769
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__upwards_trend_total_signal_needed_candles_lookback_window = 3
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_adx_strong_down_weight = 0
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_bollinger_bands_weight = 46
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_ema_long_death_cross_weight = 73
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_ema_short_death_cross_weight = 82
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_macd_weight = 21
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_rsi_weight = 70
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_sma_long_death_cross_weight = 0
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_sma_short_death_cross_weight = 0
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_vwap_cross_weight = 12
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_adx_strong_down_weight = 23
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_bollinger_bands_weight = 86
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_ema_long_death_cross_weight = 15
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_ema_short_death_cross_weight = 41
+2021-06-15 07:53:10,097 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_macd_weight = 71
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_rsi_weight = 33
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_sma_long_death_cross_weight = 0
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_sma_short_death_cross_weight = 88
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_vwap_cross_weight = 0
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_adx_strong_down_weight = 51
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_bollinger_bands_weight = 100
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_ema_long_death_cross_weight = 69
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_ema_short_death_cross_weight = 59
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_macd_weight = 100
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_rsi_weight = 26
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_sma_long_death_cross_weight = 22
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_sma_short_death_cross_weight = 75
+2021-06-15 07:53:10,098 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_vwap_cross_weight = 100
+2021-06-15 07:53:10,098 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'order_types' with value in config file: {'buy': 'limit', 'sell': 'limit', 'stoploss': 'market', 'stoploss_on_exchange': False}.
+2021-06-15 07:53:10,098 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'order_time_in_force' with value in config file: {'buy': 'gtc', 'sell': 'gtc'}.
+2021-06-15 07:53:10,098 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_currency' with value in config file: USDT.
+2021-06-15 07:53:10,098 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_amount' with value in config file: 45.
+2021-06-15 07:53:10,098 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'protections' with value in config file: [{'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 10, 'stop_duration': 720, 'only_per_pair': False}, {'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 3, 'stop_duration': 720, 'only_per_pair': True}].
+2021-06-15 07:53:10,098 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'unfilledtimeout' with value in config file: {'buy': 10, 'sell': 30, 'unit': 'minutes'}.
+2021-06-15 07:53:10,098 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'use_sell_signal' with value in config file: True.
+2021-06-15 07:53:10,098 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'sell_profit_only' with value in config file: False.
+2021-06-15 07:53:10,098 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'ignore_roi_if_buy_signal' with value in config file: True.
+2021-06-15 07:53:10,098 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using minimal_roi: {'0': 0.229, '5': 0.196, '10': 0.163, '15': 0.13, '20': 0.097, '25': 0.064, '30': 0.031, '35': 0.023, '40': 0.015, '45': 0.01423469387755102, '50': 0.013469387755102041, '55': 0.012704081632653061, '60': 0.01193877551020408, '65': 0.0111734693877551, '70': 0.010408163265306122, '75': 0.009642857142857142, '80': 0.008877551020408162, '85': 0.008112244897959184, '90': 0.007346938775510204, '95': 0.006581632653061224, '100': 0.005816326530612245, '105': 0.005051020408163265, '110': 0.004285714285714285, '115': 0.0035204081632653067, '120': 0.0027551020408163266, '125': 0.0019897959183673465, '130': 0.0012244897959183682, '135': 0.00045918367346938806, '140': 0}
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using timeframe: 5m
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stoploss: -0.228
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop: True
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop_positive: 0.259
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop_positive_offset: 0.34400000000000003
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_only_offset_is_reached: True
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_custom_stoploss: True
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using process_only_new_candles: False
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_types: {'buy': 'limit', 'sell': 'limit', 'stoploss': 'market', 'stoploss_on_exchange': False}
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_time_in_force: {'buy': 'gtc', 'sell': 'gtc'}
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_currency: USDT
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_amount: 45
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using protections: [{'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 10, 'stop_duration': 720, 'only_per_pair': False}, {'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 3, 'stop_duration': 720, 'only_per_pair': True}]
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using startup_candle_count: 4800
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using unfilledtimeout: {'buy': 10, 'sell': 30, 'unit': 'minutes'}
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_sell_signal: True
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using sell_profit_only: False
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_roi_if_buy_signal: True
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using sell_profit_offset: 0.0
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using disable_dataframe_checks: False
+2021-06-15 07:53:10,099 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_buying_expired_candle_after: 0
+2021-06-15 07:53:10,099 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2021-06-15 07:53:10,105 - freqtrade.resolvers.iresolver - INFO - Using resolved pairlist StaticPairList from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade-Git/freqtrade/plugins/pairlist/StaticPairList.py'...
+2021-06-15 07:53:10,146 - freqtrade.data.history.history_utils - INFO - Using indicator startup period: 4800 ...
+2021-06-15 07:53:10,240 - numexpr.utils - INFO - Note: NumExpr detected 12 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2021-06-15 07:53:10,240 - numexpr.utils - INFO - NumExpr defaulting to 8 threads.
+2021-06-15 07:53:10,813 - freqtrade.data.history.idatahandler - WARNING - Missing data at start for pair ICP/USDT, data starts at 2021-05-11 01:00:00
+2021-06-15 07:53:10,814 - freqtrade.data.history.idatahandler - WARNING - No history data for pair: "ICP/USDT", timeframe: 5m. Use `freqtrade download-data` to download the data
+2021-06-15 07:53:11,587 - freqtrade.optimize.backtesting - INFO - Loading data from 2020-12-15 08:00:00 up to 2021-03-16 00:00:00 (90 days).
+2021-06-15 07:53:11,587 - freqtrade.optimize.backtesting - INFO - Dataload complete. Calculating indicators
+2021-06-15 07:53:11,587 - freqtrade.optimize.backtesting - INFO - Running backtesting for Strategy MoniGoManiHyperStrategy
+2021-06-15 07:53:11,597 - freqtrade.resolvers.iresolver - INFO - Using resolved protection StoplossGuard from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade-Git/freqtrade/plugins/protections/stoploss_guard.py'...
+2021-06-15 07:53:11,598 - freqtrade.resolvers.iresolver - INFO - Using resolved protection StoplossGuard from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade-Git/freqtrade/plugins/protections/stoploss_guard.py'...
+2021-06-15 07:53:12,224 - freqtrade.optimize.backtesting - INFO - Backtesting with data from 2021-01-01 00:00:00 up to 2021-03-16 00:00:00 (74 days).
+Result for strategy MoniGoManiHyperStrategy
+=========================================================== BACKTESTING REPORT ===========================================================
+|       Pair |   Buys |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |    Avg Duration |   Win  Draw  Loss  Win% |
+|------------+--------+----------------+----------------+-------------------+----------------+-----------------+-------------------------|
+|  DOGE/USDT |     47 |           9.01 |         423.41 |           190.724 |          38.14 |        20:37:00 |    27     5    15  57.4 |
+|   HOT/USDT |     42 |           7.00 |         294.11 |           132.484 |          26.50 |  1 day, 4:45:00 |    24     7    11  57.1 |
+| TFUEL/USDT |     27 |           9.64 |         260.24 |           117.227 |          23.45 | 1 day, 18:21:00 |    16     6     5  59.3 |
+|   BTT/USDT |     41 |           4.69 |         192.21 |            86.579 |          17.32 |  1 day, 4:23:00 |    21     4    16  51.2 |
+|   UNI/USDT |     44 |           3.69 |         162.42 |            73.163 |          14.63 |        22:54:00 |    25     4    15  56.8 |
+|   WIN/USDT |     35 |           4.54 |         159.03 |            71.635 |          14.33 | 1 day, 10:10:00 |    22     3    10  62.9 |
+|   XLM/USDT |     42 |           2.95 |         123.93 |            55.825 |          11.16 |  1 day, 0:45:00 |    23     5    14  54.8 |
+|   ADA/USDT |     38 |           2.27 |          86.21 |            38.835 |           7.77 |  1 day, 1:26:00 |    20     4    14  52.6 |
+|   MKR/USDT |     49 |           1.31 |          64.43 |            29.024 |           5.80 |        18:52:00 |    24     5    20  49.0 |
+|   ETH/USDT |     44 |           1.41 |          61.82 |            27.849 |           5.57 |  1 day, 1:22:00 |    25     4    15  56.8 |
+|   XRP/USDT |     40 |           1.48 |          59.35 |            26.736 |           5.35 |  1 day, 1:59:00 |    14     6    20  35.0 |
+|   TRX/USDT |     43 |           0.92 |          39.50 |            17.791 |           3.56 |  1 day, 1:35:00 |    21     9    13  48.8 |
+|  ALGO/USDT |     43 |           0.59 |          25.24 |            11.370 |           2.27 |  1 day, 0:24:00 |    23     4    16  53.5 |
+|   BTC/USDT |     35 |           0.62 |          21.69 |             9.771 |           1.95 |  1 day, 8:19:00 |    22     2    11  62.9 |
+|      TOTAL |    570 |           3.46 |        1973.61 |           889.013 |         177.80 |  1 day, 2:25:00 |   307    68   195  53.9 |
+============================================================ SELL REASON STATS ============================================================
+|                 Sell Reason |   Sells |   Win  Draws  Loss  Win% |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |
+|-----------------------------+---------+--------------------------+----------------+----------------+-------------------+----------------|
+|                         roi |     331 |    263    68     0   100 |           5.86 |        1939.8  |           873.784 |         138.56 |
+| MGM_unclogging_losing_trade |     164 |      8     0   156   4.9 |          -3.43 |        -561.89 |          -253.104 |         -40.14 |
+|          trailing_stop_loss |      33 |     33     0     0   100 |          40.41 |        1333.37 |           600.618 |          95.24 |
+|                   stop_loss |      31 |      0     0    31     0 |         -22.95 |        -711.58 |          -320.532 |         -50.83 |
+|                  force_sell |      11 |      3     0     8  27.3 |          -2.37 |         -26.09 |           -11.754 |          -1.86 |
+======================================================== LEFT OPEN TRADES REPORT =========================================================
+|      Pair |   Buys |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |     Avg Duration |   Win  Draw  Loss  Win% |
+|-----------+--------+----------------+----------------+-------------------+----------------+------------------+-------------------------|
+| DOGE/USDT |      1 |           1.75 |           1.75 |             0.789 |           0.16 |         14:00:00 |     1     0     0   100 |
+|  XLM/USDT |      1 |           1.57 |           1.57 |             0.705 |           0.14 |         15:00:00 |     1     0     0   100 |
+|  HOT/USDT |      1 |           1.06 |           1.06 |             0.475 |           0.10 |          1:30:00 |     1     0     0   100 |
+|  TRX/USDT |      1 |          -0.20 |          -0.20 |            -0.090 |          -0.02 |         18:00:00 |     0     0     1     0 |
+|  ADA/USDT |      1 |          -0.42 |          -0.42 |            -0.191 |          -0.04 |         17:00:00 |     0     0     1     0 |
+|  XRP/USDT |      1 |          -0.96 |          -0.96 |            -0.432 |          -0.09 |   1 day, 0:00:00 |     0     0     1     0 |
+|  UNI/USDT |      1 |          -2.30 |          -2.30 |            -1.038 |          -0.21 |         16:15:00 |     0     0     1     0 |
+|  ETH/USDT |      1 |          -5.02 |          -5.02 |            -2.260 |          -0.45 |         20:00:00 |     0     0     1     0 |
+|  MKR/USDT |      1 |          -5.69 |          -5.69 |            -2.561 |          -0.51 |   1 day, 3:00:00 |     0     0     1     0 |
+|  BTC/USDT |      1 |          -7.38 |          -7.38 |            -3.324 |          -0.66 | 2 days, 10:00:00 |     0     0     1     0 |
+| ALGO/USDT |      1 |          -8.50 |          -8.50 |            -3.828 |          -0.77 |         11:00:00 |     0     0     1     0 |
+|     TOTAL |     11 |          -2.37 |         -26.09 |           -11.754 |          -2.35 |         20:10:00 |     3     0     8  27.3 |
+=============== SUMMARY METRICS ===============
+| Metric                | Value               |
+|-----------------------+---------------------|
+| Backtesting from      | 2021-01-01 00:00:00 |
+| Backtesting to        | 2021-03-16 00:00:00 |
+| Max open trades       | 14                  |
+|                       |                     |
+| Total trades          | 570                 |
+| Starting balance      | 500.000 USDT        |
+| Final balance         | 1389.013 USDT       |
+| Absolute profit       | 889.013 USDT        |
+| Total profit %        | 177.8%              |
+| Trades per day        | 7.7                 |
+| Avg. stake amount     | 45.000 USDT         |
+| Total trade volume    | 25650.000 USDT      |
+|                       |                     |
+| Best Pair             | DOGE/USDT 423.41%   |
+| Worst Pair            | BTC/USDT 21.69%     |
+| Best trade            | TFUEL/USDT 138.82%  |
+| Worst trade           | DOGE/USDT -22.95%   |
+| Best day              | 95.553 USDT         |
+| Worst day             | -72.378 USDT        |
+| Days win/draw/lose    | 58 / 1 / 16         |
+| Avg. Duration Winners | 1 day, 6:26:00      |
+| Avg. Duration Loser   | 22:23:00            |
+| Zero Duration Trades  | 0.00% (0)           |
+| Rejected Buy signals  | 0                   |
+|                       |                     |
+| Min balance           | 495.655 USDT        |
+| Max balance           | 1400.767 USDT       |
+| Drawdown              | 185.2%              |
+| Drawdown              | 83.421 USDT         |
+| Drawdown high         | 722.106 USDT        |
+| Drawdown low          | 638.684 USDT        |
+| Drawdown Start        | 2021-02-22 14:10:00 |
+| Drawdown End          | 2021-02-23 09:00:00 |
+| Market change         | 565.56%             |
+===============================================
