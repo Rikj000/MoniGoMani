@@ -4,18 +4,9 @@
       "BTC/USDT",
       "ETH/USDT",
       "MATIC/USDT",
-      "ADA/USDT",
       "DOGE/USDT",
-      "TFUEL/USDT",
-      "XRP/USDT",
-      "LINK/USDT",
-      "DOT/USDT",
-      "VET/USDT",
-      "ICP/USDT",
-      "CHZ/USDT",
-      "ATA/USDT",
-      "SOL/USDT",
-      "SHIB/USDT"
+      "ADA/USDT",
+      "XRP/USDT"
     ]
   }
 }
