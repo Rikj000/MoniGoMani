@@ -57,7 +57,7 @@
 - [PairLists](#pairlists)
     - [Enabled StaticPairList / Disabled VolumePairList Example](#enabled-staticpairlist--disabled-volumepairlist-example)
     - [Download StaticPairLists](#download-staticpairlists)
-  - [Go-To Commands](#go-to-commands)
+- [Go-To Commands](#go-to-commands)
 - [How to share your test results properly](#how-to-share-your-test-results-properly)
 - [Common mistakes](#common-mistakes)
     - [TypeError: integer argument expected, got float](#typeerror-integer-argument-expected-got-float)
@@ -112,7 +112,7 @@ In total 5 files are used in the configuration of MoniGoMani, all can be found i
 - [`MoniGoManiHyperStrategy.py`](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py): The **main strategy file**, containing the [Weighted Signal Interface](#weighted-signal-interface) where you can implement new weighted signals & indicators in a nearly plug and play like fashion.
 - [`MasterMoniGoManiHyperStrategy.py`](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MasterMoniGoManiHyperStrategy.py): The **main framework file** also has 2 settings you can configure marked under the `CONFIG NAMES SECTION` section inside the file:
     - **mgm_config_name**: Provide a custom file name for `mgm-config.json`
-    -  **mgm_config_hyperopt_name**: Provide a custom file name for `mgm-config-hyperopt.json`
+    - **mgm_config_hyperopt_name**: Provide a custom file name for `mgm-config-hyperopt.json`
 
 ## mgm-config.json
 **Link to:** [mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm-config.json)   
@@ -474,10 +474,10 @@ Don't forget to **Download Candle Data** before HyperOpting or BackTesting (Exam
 freqtrade download-data --timerange 20201201-20210316 -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
 ```
 
-## Go-To Commands
+# Go-To Commands
 **Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
 ```powershell
-freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 1000 --timerange 20210101-20210316 --enable-protections
+freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 800 --timerange 20210101-20210316 --enable-protections
 ```
 **Apply HyperOpt Results after Run 1** from a `<epoch of choice>`:
 ```powershell

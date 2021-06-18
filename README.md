@@ -132,7 +132,7 @@ Take a good read at the [**MGM_DOCUMENTATION.md**](https://github.com/Rikj000/Mo
 ## Go-To Commands
 **Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
 ```powershell
-freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 1000 --timerange 20210101-20210316 --enable-protections
+freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 800 --timerange 20210101-20210316 --enable-protections
 ```
 **Apply HyperOpt Results after Run 1** from a `<epoch of choice>`:
 ```powershell
