@@ -18,7 +18,7 @@ from scipy.interpolate import interp1d
 from freqtrade.exchange import timeframe_to_prev_date
 from freqtrade.optimize.space import Categorical, Dimension, SKDecimal
 from freqtrade.persistence import Trade
-from freqtrade.state import RunMode
+from freqtrade.enums import RunMode
 from freqtrade.strategy import IStrategy, IntParameter, merge_informative_pair, timeframe_to_minutes
 
 logger = logging.getLogger(__name__)
