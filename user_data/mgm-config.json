@@ -1,222 +1,228 @@
 {
-    "monigomani_settings": {
-        "timeframe": "1h",
-        "backtest_timeframe": "5m",
-        "startup_candle_count": 400,
-        "precision": 1,
-        "roi_table_step_size": 5,
-        "trading_during_trends": {
-            "buy_trades_when_downwards": true,
-            "buy_trades_when_sideways": false,
-            "buy_trades_when_upwards": true,
-            "sell_trades_when_downwards": true,
-            "sell_trades_when_sideways": false,
-            "sell_trades_when_upwards": true
-        },
-        "weighted_signal_spaces": {
-            "min_weighted_signal_value": 0,
-            "max_weighted_signal_value": 100,
-            "min_trend_total_signal_needed_value": 30,
-            "min_trend_total_signal_needed_candles_lookback_window_value": 1,
-            "max_trend_total_signal_needed_candles_lookback_window_value": 6,
-            "search_threshold_weighted_signal_values": 10,
-            "search_threshold_trend_total_signal_needed_candles_lookback_window_value": 1,
-            "number_of_weighted_signals": 9
-        },
-        "stoploss_spaces": {
-            "stoploss_min_value": -0.02,
-            "stoploss_max_value": -0.35,
-            "trailing_stop_positive_min_value": 0.01,
-            "trailing_stop_positive_max_value": 0.35,
-            "trailing_stop_positive_offset_min_value": 0.011,
-            "trailing_stop_positive_offset_max_value": 0.1
-        },
-        "unclogger_spaces": {
-            "unclogger_enabled": true,
-            "unclogger_minimal_losing_trade_duration_minutes": { "min": 15, "max": 60 },
-            "unclogger_minimal_losing_trades_open": { "min": 1, "max": 5, "threshold": 1 },
-            "unclogger_open_trades_losing_percentage_needed": { "min": 1, "max": 60 },
-            "unclogger_trend_lookback_candles_window": { "min": 10, "max": 60 },
-            "unclogger_trend_lookback_candles_window_percentage_needed": { "min": 10, "max": 40 },
-            "unclogger_trend_lookback_window_uses_downwards_candles": true,
-            "unclogger_trend_lookback_window_uses_sideways_candles": true,
-            "unclogger_trend_lookback_window_uses_upwards_candles": false
-        },
-        "default_stub_values": {
-            "minimal_roi": {"0": 10},
-            "stoploss": -0.25,
-            "trailing_stop": true,
-            "trailing_stop_positive": 0.01,
-            "trailing_stop_positive_offset": 0.03,
-            "trailing_only_offset_is_reached": true
-        },
-        "debuggable_weighted_signal_dataframe": false,
-        "use_mgm_logging": false,
-        "mgm_log_levels_enabled": {
-            "info": true,
-            "warning": true,
-            "error": true,
-            "debug": true
-        }
+  "monigomani_settings": {
+    "timeframe": "1h",
+    "backtest_timeframe": "5m",
+    "startup_candle_count": 400,
+    "precision": 1,
+    "roi_table_step_size": 5,
+    "trading_during_trends": {
+      "buy_trades_when_downwards": true,
+      "buy_trades_when_sideways": false,
+      "buy_trades_when_upwards": true,
+      "sell_trades_when_downwards": true,
+      "sell_trades_when_sideways": false,
+      "sell_trades_when_upwards": true
     },
-    "dry_run": true,
-    "dry_run_wallet": 500,
-    "max_open_trades": -1,
-    "stake_currency": "USDT",
-    "stake_amount": 45,
-    "tradable_balance_ratio": 0.99,
-    "cancel_open_orders_on_exit": false,
-    "unfilledtimeout": {
-        "buy": 10,
-        "sell": 30
+    "weighted_signal_spaces": {
+      "min_weighted_signal_value": 0,
+      "max_weighted_signal_value": 100,
+      "min_trend_total_signal_needed_value": 30,
+      "min_trend_total_signal_needed_candles_lookback_window_value": 1,
+      "max_trend_total_signal_needed_candles_lookback_window_value": 6,
+      "search_threshold_weighted_signal_values": 10,
+      "search_threshold_trend_total_signal_needed_candles_lookback_window_value": 1,
+      "number_of_weighted_signals": 9
     },
-    "bid_strategy": {
-        "price_side": "bid",
-        "ask_last_balance": 0.0,
-        "use_order_book": true,
-        "order_book_top": 1,
-        "check_depth_of_market": {
-            "enabled": false,
-            "bids_to_ask_delta": 0.95
-        }
+    "stoploss_spaces": {
+      "stoploss_min_value": -0.02,
+      "stoploss_max_value": -0.35,
+      "trailing_stop_positive_min_value": 0.01,
+      "trailing_stop_positive_max_value": 0.35,
+      "trailing_stop_positive_offset_min_value": 0.011,
+      "trailing_stop_positive_offset_max_value": 0.1
     },
-    "ask_strategy": {
-        "price_side": "ask",
-        "use_order_book": true,
-        "order_book_min": 1,
-        "order_book_max": 1,
-        "use_sell_signal": true,
-        "sell_profit_only": false,
-        "ignore_roi_if_buy_signal": true
+    "unclogger_spaces": {
+      "unclogger_enabled": true,
+      "unclogger_minimal_losing_trade_duration_minutes": {
+        "min": 15,
+        "max": 60
+      },
+      "unclogger_minimal_losing_trades_open": {
+        "min": 1,
+        "max": 5,
+        "threshold": 1
+      },
+      "unclogger_open_trades_losing_percentage_needed": {
+        "min": 1,
+        "max": 60
+      },
+      "unclogger_trend_lookback_candles_window": {
+        "min": 10,
+        "max": 60
+      },
+      "unclogger_trend_lookback_candles_window_percentage_needed": {
+        "min": 10,
+        "max": 40
+      },
+      "unclogger_trend_lookback_window_uses_downwards_candles": true,
+      "unclogger_trend_lookback_window_uses_sideways_candles": true,
+      "unclogger_trend_lookback_window_uses_upwards_candles": false
     },
-    "order_types": {
-        "buy": "limit",
-        "sell": "limit",
-        "stoploss": "market",
-        "stoploss_on_exchange": false
+    "default_stub_values": {
+      "minimal_roi": {
+        "0": 10
+      },
+      "stoploss": -0.25,
+      "trailing_stop": true,
+      "trailing_stop_positive": 0.01,
+      "trailing_stop_positive_offset": 0.03,
+      "trailing_only_offset_is_reached": true
     },
-    "order_time_in_force": {
-        "buy": "gtc",
-        "sell": "gtc"
-    },
-    "exchange": {
-        "ccxt_config": {"enableRateLimit": true},
-        "ccxt_async_config": {
-            "enableRateLimit": true,
-            "rateLimit": 200
-        },
-        "pair_whitelist": [
-            "BTC/USDT",
-            "ETH/USDT",
-            "XRP/USDT",
-            "ADA/USDT",
-            "DOGE/USDT",
-            "TRX/USDT",
-            "ICP/USDT",
-            "XLM/USDT",
-            "UNI/USDT",
-            "BTT/USDT",
-            "HOT/USDT",
-            "WIN/USDT",
-            "MKR/USDT",
-            "TFUEL/USDT",
-            "ALGO/USDT"
-        ],
-        "pair_blacklist": [
-            ".*DOWN/BTC",
-            ".*UP/BTC",
-            ".*DOWN/ETH",
-            ".*UP/ETH",
-            ".*DOWN/USDT",
-            ".*UP/USDT",
-            ".*DOWN/BNB",
-            ".*UP/BNB",
-            ".*/BNB",
-            "BNB/.*",
-            ".*_PREMIUM",
-            ".*PERP",
-            ".*BULL/.*",
-            ".*BEAR/.*",
-            ".*BULL2021/.*",
-            ".*BEAR2021/.*"
-        ]
-    },
-    "pairlists": [{
-        "method": "StaticPairList"
-    }],
-    "_pairlists": [
-        {
-            "method": "VolumePairList",
-            "number_assets": 200,
-            "sort_key": "quoteVolume",
-            "refresh_period": 1440
-        },
-        { 
-            "method": "AgeFilter", 
-            "min_days_listed": 3
-        },
-        { 
-            "method": "PerformanceFilter" 
-        },
-        { 
-            "method": "PrecisionFilter" 
-        },
-        { 
-            "method": "PriceFilter", 
-            "low_price_ratio": 0.10 
-        },
-        { 
-            "method": "ShuffleFilter" 
-        },
-        { 
-            "method": "SpreadFilter", 
-            "max_spread_ratio": 0.005 
-        },
-        {   
-            "method": "RangeStabilityFilter",
-            "lookback_days": 10, 
-            "min_rate_of_change": 0.01,
-            "refresh_period": 1440
-        },
-        {
-            "method": "VolatilityFilter",
-            "lookback_days": 5,
-            "min_volatility": 0.05,
-            "max_volatility": 0.50,
-            "refresh_period": 1440
-        },
-        {
-            "method": "VolumePairList",
-            "number_assets": 100,
-            "sort_key": "quoteVolume"
-        }
-    ],
-    "protections": [
-        {
-            "method": "StoplossGuard",
-            "lookback_period": 1440,
-            "trade_limit": 15,
-            "stop_duration": 720,
-            "only_per_pair": true
-        },
-        {
-            "method": "MaxDrawdown",
-            "lookback_period": 1440,
-            "trade_limit": 15,
-            "stop_duration": 720,
-            "max_allowed_drawdown": 0.2
-        },
-        {
-            "method": "LowProfitPairs",
-            "lookback_period": 360,
-            "trade_limit": 4,
-            "stop_duration": 360,
-            "required_profit": 0.02
-        }
-    ],
-    "initial_state": "running",
-    "forcebuy_enable": false,
-    "internals": {
-        "process_throttle_secs": 5
+    "debuggable_weighted_signal_dataframe": false,
+    "use_mgm_logging": false,
+    "mgm_log_levels_enabled": {
+      "info": true,
+      "warning": true,
+      "error": true,
+      "debug": true
     }
+  },
+  "dry_run": true,
+  "dry_run_wallet": 500,
+  "max_open_trades": -1,
+  "stake_currency": "USDT",
+  "stake_amount": 45,
+  "tradable_balance_ratio": 0.99,
+  "cancel_open_orders_on_exit": false,
+  "unfilledtimeout": {
+    "buy": 10,
+    "sell": 30
+  },
+  "bid_strategy": {
+    "price_side": "bid",
+    "ask_last_balance": 0,
+    "use_order_book": true,
+    "order_book_top": 1,
+    "check_depth_of_market": {
+      "enabled": false,
+      "bids_to_ask_delta": 0.95
+    }
+  },
+  "ask_strategy": {
+    "price_side": "ask",
+    "use_order_book": true,
+    "order_book_min": 1,
+    "order_book_max": 1,
+    "use_sell_signal": true,
+    "sell_profit_only": false,
+    "ignore_roi_if_buy_signal": true
+  },
+  "order_types": {
+    "buy": "limit",
+    "sell": "limit",
+    "stoploss": "market",
+    "stoploss_on_exchange": false
+  },
+  "order_time_in_force": {
+    "buy": "gtc",
+    "sell": "gtc"
+  },
+  "exchange": {
+    "ccxt_config": {
+      "enableRateLimit": true
+    },
+    "ccxt_async_config": {
+      "enableRateLimit": true,
+      "rateLimit": 200
+    },
+    "pair_blacklist": [
+      ".*DOWN/BTC",
+      ".*UP/BTC",
+      ".*DOWN/ETH",
+      ".*UP/ETH",
+      ".*DOWN/USDT",
+      ".*UP/USDT",
+      ".*DOWN/BNB",
+      ".*UP/BNB",
+      ".*/BNB",
+      "BNB/.*",
+      ".*_PREMIUM",
+      ".*PERP",
+      ".*BULL/.*",
+      ".*BEAR/.*",
+      ".*BULL2021/.*",
+      ".*BEAR2021/.*"
+    ],
+    "pair_whitelist": [
+      "BTC/USDT",
+      "ETH/USDT",
+      "MATIC/USDT",
+      "DOGE/USDT",
+      "ADA/USDT",
+      "XRP/USDT"
+    ]
+  },
+  "pairlists": [
+    {
+      "method": "StaticPairList"
+    }
+  ],
+  "_pairlists": [
+    {
+      "method": "VolumePairList",
+      "number_assets": 200,
+      "sort_key": "quoteVolume",
+      "refresh_period": 1440
+    },
+    {
+      "method": "AgeFilter",
+      "min_days_listed": 3
+    },
+    {
+      "method": "PerformanceFilter"
+    },
+    {
+      "method": "PrecisionFilter"
+    },
+    {
+      "method": "PriceFilter",
+      "low_price_ratio": 0.1
+    },
+    {
+      "method": "ShuffleFilter"
+    },
+    {
+      "method": "SpreadFilter",
+      "max_spread_ratio": 0.005
+    },
+    {
+      "method": "RangeStabilityFilter",
+      "lookback_days": 10,
+      "min_rate_of_change": 0.01,
+      "refresh_period": 1440
+    },
+    {
+      "method": "VolatilityFilter",
+      "lookback_days": 5,
+      "min_volatility": 0.05,
+      "max_volatility": 0.5,
+      "refresh_period": 1440
+    },
+    {
+      "method": "VolumePairList",
+      "number_assets": 100,
+      "sort_key": "quoteVolume"
+    }
+  ],
+  "protections": [
+    {
+      "method": "StoplossGuard",
+      "lookback_period": 1440,
+      "trade_limit": 10,
+      "stop_duration": 1440,
+      "only_per_pair": false
+    },
+    {
+      "method": "StoplossGuard",
+      "lookback_period": 1440,
+      "trade_limit": 2,
+      "stop_duration": 1440,
+      "only_per_pair": true
+    }
+  ],
+  "initial_state": "running",
+  "forcebuy_enable": false,
+  "internals": {
+    "process_throttle_secs": 5
+  }
 }
