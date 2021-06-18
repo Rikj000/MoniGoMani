@@ -1,4 +1,5 @@
-FROM freqtradeorg/freqtrade:develop
+# Changed from develop to stable so MGM v0.11.0 works.
+FROM freqtradeorg/freqtrade:stable
 
 # Switch user to root if you must install something from apt
 # Don't forget to switch the user back below!
