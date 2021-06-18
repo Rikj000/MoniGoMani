@@ -73,32 +73,32 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
    
 
 0) Delete the previous `mgm-config-hyperopt.json` if it exists using:
-    ```powershell
-    rm ./user_data/mgm-config-hyperopt.json
-    ```
+   ```powershell
+   rm ./user_data/mgm-config-hyperopt.json
+   ```
 1) Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)
 2) Download a good Top Volume StaticPairList and update this in your `mgm-config.json`. Instructions for how to do this are under [PairLists](#pairlists).
 3) Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & pick a logical timeframe to do your HyperOpt upon (The timeframe in the go-to commands for example resembles some bullish rise/correction cycles & I believe 2021 will be a bullish year thus I think it's a good timeframe to test upon).   
 4) HyperOpt for a **1st HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)   
-    The 1st HyperOpt Run *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with the default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of `mgm-config.json`
+   The 1st HyperOpt Run *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with the default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of `mgm-config.json`
 5) **[Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.   
-    You can check a certain epoch in the list of best results using:
-    ```powershell
-    freqtrade hyperopt-show -n <epoch of choice>
-    ```
+   You can check a certain epoch in the list of best results using:
+   ```powershell
+   freqtrade hyperopt-show -n <epoch of choice>
+   ```
 6) Once you picked an `<epoch of choice>` of which you feel confident, then apply the HyperOpt results by extracting them into a new `mgm-config-hyperopt.json` using:
-    ```powershell
-    freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./user_data/mgm-config-hyperopt.json
-    ```
-7) Repeat `Steps 4 and 5` at least for a **2nd HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)   
-    The 2nd HyperOpt Run *(When a `mgm-config-hyperopt.json` exists)* is automatically ran with:   
-        - Refined search spaces ranging between the values found during the 1st Run (Loaded from `mgm-config-hyperopt.json`) plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json` (This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)   
-        - Weak weighted signals weeded out by overriding them to their respective `min_` value (Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
-        - Strong weighted signals are boosted by overriding them to their respective `max_` value (Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
+   ```powershell
+   freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./user_data/mgm-config-hyperopt.json
+   ```
+7) Repeat `Steps 4 and 5` at least for a **2nd HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)
+   The 2nd HyperOpt Run *(When a `mgm-config-hyperopt.json` exists)* is automatically ran with:   
+       - Refined search spaces ranging between the values found during the 1st Run (Loaded from `mgm-config-hyperopt.json`) plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json` (This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)   
+       - Weak weighted signals weeded out by overriding them to their respective `min_` value (Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
+       - Strong weighted signals are boosted by overriding them to their respective `max_` value (Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
 8) Once you picked an `<epoch of choice>` of which you feel confident, then apply the HyperOpt results by extracting them and combining them in the pre-existing `mgm-config-hyperopt.json` using:
-    ```powershell
-    freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./tmp.json && jq -s '.[0] * .[1]' ./user_data/mgm-config-hyperopt.json ./tmp.json > ./user_data/mgm-config-hyperopt.json && rm ./tmp.json
-    ```
+   ```powershell
+   freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./tmp.json && jq -s '.[0] * .[1]' ./user_data/mgm-config-hyperopt.json ./tmp.json > ./user_data/mgm-config-hyperopt.json && rm ./tmp.json
+   ```
 9) Load your results into the `Total-Overall-Signal-Importance-Calculator.py` and run it's [Go-To Command](#go-to-commands) to receive a nice weighted signal report for sharing in the [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.  
 
 
@@ -272,7 +272,7 @@ The sum of all weighted buy/sell signals found in a trend should always be bigge
 Following equation should always be true:
 
 #### Bad Weighted signal setup examples
-**Impossible to reach:**
+**Impossible to reach:**   
 Imagine following configuration for `buy` on `upwards` trends:
 ```json
 {
@@ -296,7 +296,7 @@ If we calculate the sum of all weighted signals, we will see that even if all si
 Sum of all weighted signals:
 `54 + 9 + 70 + 85 + 67 + 7 + 47 + 19 + 11 = 369`
 
-**Way too low total needed:**
+**Way too low total needed:**   
 Imagine following configuration for `buy` on `upwards` trends:
 ```json
 {
@@ -384,18 +384,20 @@ plot_config = {
             'RSI (Relative Strength Index)': {
                 'rsi': {'color': '#7fba3c'}
             }
+        }
+}
 ```
 For more documentation about defining these see the **Official Freqtrade Documentation:** [Advanced Plot Configuration](https://www.freqtrade.io/en/latest/plotting/#advanced-plot-configuration)
 
 
 Once you defined them you can load them in FreqUI as following:
-1) Click the cog-wheel at the right top
+1) Click the cog-wheel at the right top   
    ![Click the cog-wheel at the right top](https://i.imgur.com/VDeCFDT.png)
-2) Click `Load from strategy`
+2) Click `Load from strategy`   
    ![Click Load from strategy](https://i.imgur.com/dOvHGdq.png)
-3) Give it a name (like `MoniGoManiPlot`) Click `Save`
-    ![Give it a name (like MoniGoManiPlot) Click Save](https://i.imgur.com/Rk30ARC.png)
-4) Now you will be able to select and view your saved plot in FreqUI! *(Individual indicators can be toggled on/off by clicking on them in the header on top)*
+3) Give it a name (like `MoniGoManiPlot`) Click `Save`   
+   ![Give it a name (like MoniGoManiPlot) Click Save](https://i.imgur.com/Rk30ARC.png)
+4) Now you will be able to select and view your saved plot in FreqUI! *(Individual indicators can be toggled on/off by clicking on them in the header on top)*   
    ![Final Result](https://i.imgur.com/Q5zfnk2.png)
 
 
@@ -432,13 +434,13 @@ Following 2 Custom HyperLoss Functions ship with the MoniGoMani Framework:
 # PairLists
 By default, MoniGoMani includes 2 pairlists in `mgm-config.json`:   
 - A VolumePairList: 
-  - Best to use for Dry and Live Running
-  - Will automatically update to the current best top volume coin pairs available
+    - Best to use for Dry and Live Running
+    - Will automatically update to the current best top volume coin pairs available
 - A StaticPairList: 
-  - Used for BackTesting / HyperOpting since a VolumePairList cannot be used here.
-  - When [optimizing](#how-to-optimize-monigomani) MoniGoMani for actual Dry/Live-running (instead of testing) it's truly recommended to [download a fresh top volume StaticPairList](#download-staticpairlists) and HyperOpt upon that (Preferably as big as possible, but beware of the warning below)!   
-  This should yield much better & more realistic results during HyperOpting/BackTesting!   
-  This is due to giving a better reflection of the current market and being closer to the VolumePairList used during Dry/Live-run's.
+    - Used for BackTesting / HyperOpting since a VolumePairList cannot be used here.
+    - When [optimizing](#how-to-optimize-monigomani) MoniGoMani for actual Dry/Live-running (instead of testing) it's truly recommended to [download a fresh top volume StaticPairList](#download-staticpairlists) and HyperOpt upon that (Preferably as big as possible, but beware of the warning below)!   
+    This should yield much better & more realistic results during HyperOpting/BackTesting!   
+    This is due to giving a better reflection of the current market and being closer to the VolumePairList used during Dry/Live-run's.
 
 Switching between the PairList in use can easily be done by moving the `_` in front of the `pairlists` value inside `mgm-config.json` for the pairlist you wish to disable.
 
