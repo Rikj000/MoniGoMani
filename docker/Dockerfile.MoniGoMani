@@ -7,9 +7,6 @@ USER root
 # Install jq, a JSON Parser used by MGM
 RUN apt-get install -y jq
 
-# Copy Rikj000's version of hyperopt_tools.py to use it instead of the freqtrades current one.
-COPY ./user_data/mgm_tools/hyperopt_tools.py freqtrade/optimize/hyperopt_tools.py
-
 # Create an empty log file if non existing
 RUN mkdir ./user_data/logs/
 RUN touch ./user_data/logs/freqtrade.log
