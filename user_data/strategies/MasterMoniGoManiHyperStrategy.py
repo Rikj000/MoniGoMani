@@ -22,6 +22,8 @@ from freqtrade.state import RunMode
 from freqtrade.strategy import IStrategy, IntParameter, merge_informative_pair, timeframe_to_minutes
 
 logger = logging.getLogger(__name__)
+
+
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
 
@@ -51,7 +53,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     ####                                                                            ####
     ####################################################################################
     """
-
     ####################################################################################################################
     #                                           START OF CONFIG NAMES SECTION                                          #
     ####################################################################################################################
@@ -63,6 +64,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
     # MGM trend names
     mgm_trends = ['downwards', 'sideways', 'upwards']
+
+    # Initialize empty buy/sell_params dictionaries and initial (trailing)stoploss values
+    buy_params = {}
+    sell_params = {}
 
     # Load the MoniGoMani settings
     mgm_config_path = os.getcwd() + '/user_data/' + mgm_config_name
@@ -107,6 +112,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         trailing_stop_positive_offset_max_value = \
             mgm_config['stoploss_spaces']['trailing_stop_positive_offset_max_value']
         mgm_unclogger_add_params = mgm_config['unclogger_spaces']
+        minimal_roi = mgm_config['default_stub_values']['minimal_roi']
+        stoploss = mgm_config['default_stub_values']['stoploss']
+        trailing_stop = mgm_config['default_stub_values']['trailing_stop']
+        trailing_stop_positive = mgm_config['default_stub_values']['trailing_stop_positive']
+        trailing_stop_positive_offset = mgm_config['default_stub_values']['trailing_stop_positive_offset']
+        trailing_only_offset_is_reached = mgm_config['default_stub_values']['trailing_only_offset_is_reached']
         debuggable_weighted_signal_dataframe = mgm_config['debuggable_weighted_signal_dataframe']
         use_mgm_logging = mgm_config['use_mgm_logging']
         mgm_log_levels_enabled = mgm_config['mgm_log_levels_enabled']
@@ -114,15 +125,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file ({mgm_config_name}) is '
                  f'missing some settings. Please make sure that all MoniGoMani related settings are existing inside '
                  f'this file. {missing_setting} has been detected as missing from the file...')
-
-    # Initialize empty buy/sell_params dictionaries and initial (trailing)stoploss values
-    buy_params = {}
-    sell_params = {}
-    stoploss = -0.25
-    trailing_stop = True
-    trailing_stop_positive = 0.01
-    trailing_stop_positive_offset = 0.03
-    trailing_only_offset_is_reached = True
 
     # If results from a previous HyperOpt Run are found then continue the next HyperOpt Run upon them
     mgm_config_hyperopt_path = os.getcwd() + '/user_data/' + mgm_config_hyperopt_name
@@ -141,15 +143,30 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 buy_params[str(param)] = param_value
             else:
                 sell_params[str(param)] = param_value
+    else:
+        mgm_config_hyperopt = {}
 
+    # Load the rest of the values from 'mgm-config-hyperopt.json' if they are found
+    # Default stub values from 'mgm-config.json' are used otherwise. Also parses them to the right type if needed
+    if 'minimal_roi' in mgm_config_hyperopt:
         minimal_roi = mgm_config_hyperopt['minimal_roi']
+
+    if 'stoploss' in mgm_config_hyperopt:
         stoploss = mgm_config_hyperopt['stoploss']
+
+    if 'trailing_stop' in mgm_config_hyperopt:
         if isinstance(mgm_config_hyperopt['trailing_stop'], str) is True:
             trailing_stop = bool(mgm_config_hyperopt['trailing_stop'])
         else:
             trailing_stop = mgm_config_hyperopt['trailing_stop']
+
+    if 'trailing_stop_positive' in mgm_config_hyperopt:
         trailing_stop_positive = mgm_config_hyperopt['trailing_stop_positive']
+
+    if 'trailing_stop_positive_offset' in mgm_config_hyperopt:
         trailing_stop_positive_offset = mgm_config_hyperopt['trailing_stop_positive_offset']
+
+    if 'trailing_only_offset_is_reached' in mgm_config_hyperopt:
         if isinstance(mgm_config_hyperopt['trailing_only_offset_is_reached'], str) is True:
             trailing_only_offset_is_reached = bool(mgm_config_hyperopt['trailing_only_offset_is_reached'])
         else:
@@ -710,22 +727,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         """
         conditions_weight = []
         # If TimeFrame-Zooming => Only use 'informative_timeframe' data
-        has_multiplier = \
-            (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe)
         for trend in self.mgm_trends:
             signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
-            rolling_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed_candles_lookback_window')
-
-            rolling_needed_value = \
-                rolling_needed.value * self.timeframe_multiplier if has_multiplier else rolling_needed.value
-            rolling_needed_div = self.timeframe_multiplier if has_multiplier else 1
 
             conditions_weight.append(
                 (
-                        (dataframe['trend'] == trend) &
-                        (dataframe[f'total_{space}_signal_strength']
-                         .rolling(rolling_needed_value).sum() / rolling_needed_div
-                         >= signal_needed.value / self.precision)
+                        (dataframe['trend'] == trend) & (dataframe[f'total_{space}_signal_strength']
+                                                         >= signal_needed.value / self.precision)
                 ))
 
         return reduce(lambda x, y: x | y, conditions_weight)
@@ -746,18 +754,27 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         if 'total_buy_signal_strength' not in dataframe.columns:
             dataframe['total_buy_signal_strength'] = dataframe['total_sell_signal_strength'] = 0
 
-        # Initialize weighted buy/sell signal variables if they are needed (should be 0 = false by default)   
-        df_key = f"{signal_name}_weighted_{space}_signal"    
-        if self.debuggable_weighted_signal_dataframe and df_key not in dataframe.columns:
-            dataframe[df_key] = 0
-
+        # If TimeFrame-Zooming => Only use 'informative_timeframe' data
+        has_multiplier = \
+            (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe)
         for trend in self.mgm_trends:
-            signal_weight = getattr(self, f'{space}_{trend}_trend_{signal_name}_weight')
+            parameter_name = f'{space}_{trend}_trend_{signal_name}_weight'
+            signal_weight = getattr(self, parameter_name)
+
+            rolling_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed_candles_lookback_window')
+            rolling_needed_value = \
+                rolling_needed.value * self.timeframe_multiplier if has_multiplier else rolling_needed.value
+
             if self.debuggable_weighted_signal_dataframe:
-                dataframe.loc[((dataframe['trend'] == trend) & condition), df_key] += \
+                if parameter_name not in dataframe.columns:
+                    dataframe[parameter_name] = 0
+
+                dataframe.loc[((dataframe['trend'] == trend) &
+                               (condition.rolling(rolling_needed_value).sum() > 0)), parameter_name] = \
                     signal_weight.value / self.precision
 
-            dataframe.loc[((dataframe['trend'] == trend) & condition),
+            dataframe.loc[((dataframe['trend'] == trend) &
+                           (condition.rolling(rolling_needed_value).sum() > 0)),
                           f'total_{space}_signal_strength'] += signal_weight.value / self.precision
 
         return dataframe
@@ -801,8 +818,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: None
         """
         parameter_dictionary = getattr(cls, f'{space}_params')
-        param_key = f"{space}_{parameter_name}"
-        parameter_value = parameter_dictionary.get(param_key)
+        parameter_key = f"{space}_{parameter_name}"
+        parameter_value = parameter_dictionary.get(parameter_key)
         # 1st HyperOpt Run: Use provided min/max values for the search spaces
         if parameter_value is None:
             min_value = parameter_min_value
@@ -826,19 +843,20 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         else:
             default_value = parameter_value
 
-        param_config = {
+        parameter_config = {
             "min_value": int(min_value * precision),
             "max_value": int(max_value * precision),
             "default_value": int(default_value * precision),
             # 1st HyperOpt Run: No overrides, 2nd HyperOpt Run: Apply Overrides where needed
-            "opt_and_Load": False if (parameter_value is not None) and (overrideable is True) and
-                                     (min_value == parameter_min_value or max_value == parameter_max_value) else True
+            "optimize": False if (parameter_value is not None) and (overrideable is True) and
+                                 (min_value == parameter_min_value or max_value == parameter_max_value) else True
         }
 
-        param = IntParameter(param_config["min_value"], param_config["max_value"],
-                             default=param_config["default_value"], space=space,
-                             optimize=param_config["opt_and_Load"], load=param_config["opt_and_Load"])
-        setattr(base_cls, param_key, param)
+        parameter_dictionary[parameter_key] = parameter_config["default_value"]
+        param = IntParameter(parameter_config["min_value"], parameter_config["max_value"],
+                             default=parameter_config["default_value"], space=space,
+                             optimize=parameter_config["optimize"], load=True)
+        setattr(base_cls, parameter_key, param)
 
     @classmethod
     def _init_util_params(cls, base_cls):

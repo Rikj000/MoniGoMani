@@ -11,7 +11,7 @@ import freqtrade.vendor.qtpylib.indicators as qtpylib
 from user_data.strategies.MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
-# Define your buy and sell signals
+# Define the Weighted Buy Signals to be used by MGM
 buy_signals = {
     # Weighted Buy Signal: ADX above 25 & +DI above -DI (The trend has strength while moving up)
     'adx_strong_up': lambda df: (df['adx'] > 25),
@@ -35,6 +35,7 @@ buy_signals = {
     'pvt_cross': lambda df: (qtpylib.crossed_above(df['pvt'], df['pvt_sma']))
 }
 
+# Define the Weighted Sell Signals to be used by MGM
 sell_signals = {
     # Weighted Sell Signal: ADX above 25 & +DI below -DI (The trend has strength while moving down)
     'adx_strong_down': lambda df: (df['adx'] > 25),
@@ -145,11 +146,11 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
 
     def do_populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Adds several different TA indicators to the given DataFrame.
+        Adds several different TA indicators to MoniGoMani's DataFrame.
         Should be called with 'informative_pair' (1h candles) during backtesting/hyperopting with TimeFrame-Zoom!
 
         Performance Note: For the best performance be frugal on the number of indicators you are using.
-        Let uncomment only the indicator you are using in MoniGoMani or your hyperopt configuration,
+        Let uncomment only the indicator you are using in MGM or your hyperopt configuration,
         otherwise you will waste your memory and CPU usage.
         :param dataframe: Dataframe with data from the exchange
         :param metadata: Additional information, like the currently traded pair

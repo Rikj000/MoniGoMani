@@ -3,6 +3,10 @@ ReleaseTemplate.md
 # Ignore Python Caches
 user_data/hyperopts/__pycache__/
 user_data/strategies/__pycache__/
+user_data/data
+user_data/*_results/
+user_data/logs/
+user_data/*.lock
 Legacy MoniGoMani/user_data/hyperopts/__pycache__/
 Legacy MoniGoMani/user_data/strategies/__pycache__/
 # Ignore VSCodium Workspace
