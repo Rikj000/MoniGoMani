@@ -162,7 +162,7 @@
   "_pairlists": [
     {
       "method": "VolumePairList",
-      "number_assets": 200,
+      "number_assets": 120,
       "sort_key": "quoteVolume",
       "refresh_period": 1440
     },
@@ -202,7 +202,7 @@
     },
     {
       "method": "VolumePairList",
-      "number_assets": 100,
+      "number_assets": 60,
       "sort_key": "quoteVolume"
     }
   ],
