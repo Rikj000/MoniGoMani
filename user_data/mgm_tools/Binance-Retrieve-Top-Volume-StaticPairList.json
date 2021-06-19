@@ -2,13 +2,13 @@
     "pairlists": [
         {
             "method": "VolumePairList",
-            "number_assets": 200,
+            "number_assets": 30,
             "sort_key": "quoteVolume",
             "refresh_period": 1800
         },
         { 
             "method": "AgeFilter", 
-            "min_days_listed": 3
+            "min_days_listed": 200
         },
         { 
             "method": "PriceFilter", 
@@ -36,13 +36,15 @@
         },
         {
             "method": "VolumePairList",
-            "number_assets": 15,
+            "number_assets": 6,
             "sort_key": "quoteVolume"
         }
     ],
     "exchange": {
         "name": "binance",
         "pair_blacklist": [
+            ".*USD/USDT",
+            "USD.*/USDT",
             ".*DOWN/BTC",
             ".*UP/BTC",
             ".*DOWN/ETH",

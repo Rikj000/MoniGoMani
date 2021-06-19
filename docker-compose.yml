@@ -15,6 +15,8 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "./user_data:/freqtrade/user_data"
+      - "./user_data/logs/:/freqtrade/user_data/logs/"
+      - "./user_data/mgm_pair_lists/:/freqtrade/user_data/mgm_pair_lists/"
     # Expose api on port 8080 (localhost only)
     # Please read the https://www.freqtrade.io/en/latest/rest-api/ documentation
     # before enabling this.
@@ -24,7 +26,7 @@ services:
     command: >
       trade
       --logfile /freqtrade/user_data/logs/freqtrade.log
-      --db-url sqlite:////freqtrade/user_data/tradesv3-MoniGoMani_v0.11.0.sqlite
+      --db-url sqlite:////freqtrade/user_data/tradesv3-MoniGoMani_v0.12.0.sqlite
       --config /freqtrade/user_data/mgm-config.json
       --config /freqtrade/user_data/mgm-config-private.json
       --strategy MoniGoManiHyperStrategy
