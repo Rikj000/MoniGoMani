@@ -126,6 +126,8 @@
       "rateLimit": 200
     },
     "pair_blacklist": [
+      ".*USD/USDT",
+      "USD.*/USDT",
       ".*DOWN/BTC",
       ".*UP/BTC",
       ".*DOWN/ETH",

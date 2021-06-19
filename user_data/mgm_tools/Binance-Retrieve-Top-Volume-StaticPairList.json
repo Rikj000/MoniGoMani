@@ -8,7 +8,7 @@
         },
         { 
             "method": "AgeFilter", 
-            "min_days_listed": 3
+            "min_days_listed": 200
         },
         { 
             "method": "PriceFilter", 
@@ -43,6 +43,8 @@
     "exchange": {
         "name": "binance",
         "pair_blacklist": [
+            ".*USD/USDT",
+            "USD.*/USDT",
             ".*DOWN/BTC",
             ".*UP/BTC",
             ".*DOWN/ETH",
