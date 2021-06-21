@@ -2,11 +2,8 @@
 version: '3'
 services:
   freqtrade:
-    # image: freqtradeorg/freqtrade:stable
-    # image: freqtradeorg/freqtrade:develop
-    # Use plotting image
-    # image: freqtradeorg/freqtrade:develop_plot
-    # Build step - only needed when additional dependencies are needed
+    image: freqtradeorg/freqtrade:develop
+    # Add additional MGM dependencies
     build:
       context: .
       dockerfile: "./docker/Dockerfile.MoniGoMani"
