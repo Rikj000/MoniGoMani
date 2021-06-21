@@ -69,14 +69,14 @@ If you like my work, feel free to donate or use one of my referral links, that w
 - [Table of Contents](#table-of-contents)
   - [The Idea & Theory](#the-idea--theory)
   - [Feature List](#feature-list)
-  - [Need help getting started?](#need-help-getting-started)
+  - [Getting Started](#getting-started)
   - [Go-To Commands](#go-to-commands)
   - [Got Test Results - Ideas - Config Improvements?](#got-test-results---ideas---config-improvements)
   - [Planned](#planned)
   - [ChangeLog](#changelog)
   - [Freqtrade](#freqtrade)
   - [ICONOMI](#iconomi)
-      - [Recommended ICONOMI Strategies](#recommended-ICONOMI-strategies)
+      - [Recommended ICONOMI Strategies](#recommended-iconomi-strategies)
 
 
 ## The Idea & Theory
