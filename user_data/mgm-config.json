@@ -10,8 +10,8 @@
       "buy_trades_when_sideways": false,
       "buy_trades_when_upwards": true,
       "sell_trades_when_downwards": true,
-      "sell_trades_when_sideways": false,
-      "sell_trades_when_upwards": true
+      "sell_trades_when_sideways": true,
+      "sell_trades_when_upwards": false
     },
     "weighted_signal_spaces": {
       "min_weighted_signal_value": 0,
@@ -132,7 +132,6 @@
       ".*UP/BTC",
       ".*DOWN/ETH",
       ".*UP/ETH",
-      ".*DOWN/USDT",
       ".*UP/USDT",
       ".*DOWN/BNB",
       ".*UP/BNB",
@@ -148,9 +147,9 @@
     "pair_whitelist": [
       "BTC/USDT",
       "ETH/USDT",
-      "MATIC/USDT",
-      "DOGE/USDT",
+      "DOT/USDT",
       "ADA/USDT",
+      "MATIC/USDT",
       "XRP/USDT"
     ]
   },

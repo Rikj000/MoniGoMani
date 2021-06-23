@@ -23,8 +23,8 @@ buy_signals = {
     'ema_short_golden_cross': lambda df: (qtpylib.crossed_above(df['ema9'], df['ema50'])),
     # Weighted Buy Signal: MACD above Signal
     'macd': lambda df: (df['macd'] > df['macdsignal']),
-    # Weighted Buy Signal: RSI crosses above 30 (Under-bought / low-price and rising indication)
-    'rsi': lambda df: (qtpylib.crossed_above(df['rsi'], 30)),
+    # Weighted Buy Signal: MFI crosses above 30 (Under-bought / low-price and rising indication)
+    'mfi': lambda df: (qtpylib.crossed_above(df['mfi'], 30)),
     # Weighted Buy Signal: SMA long term Golden Cross (Medium term SMA crosses above Long term SMA)
     'sma_long_golden_cross': lambda df: (qtpylib.crossed_above(df['sma50'], df['sma200'])),
     # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
@@ -45,8 +45,8 @@ sell_signals = {
     'ema_short_death_cross': lambda df: (qtpylib.crossed_below(df['ema9'], df['ema50'])),
     # Weighted Sell Signal: MACD below Signal
     'macd': lambda df: (df['macd'] < df['macdsignal']),
-    # Weighted Sell Signal: RSI crosses below 70 (Over-bought / high-price and dropping indication)
-    'rsi': lambda df: (qtpylib.crossed_below(df['rsi'], 70)),
+    # Weighted Sell Signal: MFI crosses below 70 (Over-bought / high-price and dropping indication)
+    'mfi': lambda df: (qtpylib.crossed_below(df['mfi'], 70)),
     # Weighted Sell Signal: SMA long term Death Cross (Medium term SMA crosses below Long term SMA)
     'sma_long_death_cross': lambda df: (qtpylib.crossed_below(df['sma50'], df['sma200'])),
     # Weighted Sell Signal: SMA short term Death Cross (Short term SMA crosses below Medium term SMA)
@@ -106,7 +106,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             'vwap': {'color': '#727272'}
         },
         'subplots': {
-            # Subplots - Each dict defines one additional plot (MACD, ADX, Plus/Minus Direction, RSI)
+            # Subplots - Each dict defines one additional plot (MACD, ADX, Plus/Minus Direction, MFI, RSI)
             'MACD (Moving Average Convergence Divergence)': {
                 'macd': {'color': '#19038a'},
                 'macdsignal': {'color': '#ae231c'}
@@ -116,8 +116,8 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
                 'plus_di': {'color': '#0ad628'},
                 'minus_di': {'color': '#ae231c'}
             },
-            'RSI (Relative Strength Index)': {
-                'rsi': {'color': '#7fba3c'}
+            'MFI (Money Flow Index)': {
+                'mfi': {'color': '#7fba3c'}
             }
         }
     }
@@ -149,8 +149,8 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         :return: a Dataframe with all mandatory indicators for MoniGoMani
         """
 
-        # RSI - Relative Strength Index (Under bought / Over sold & Over bought / Under sold indicator Indicator)
-        dataframe['rsi'] = ta.RSI(dataframe)
+        # MFI - Money Flow Index (Under bought / Over sold & Over bought / Under sold / volume Indicator)
+        dataframe['mfi'] = ta.MFI(dataframe)
 
         # MACD - Moving Average Convergence Divergence
         macd = ta.MACD(dataframe)
