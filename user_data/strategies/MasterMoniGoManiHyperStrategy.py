@@ -758,24 +758,28 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         has_multiplier = \
             (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe)
         for trend in self.mgm_trends:
-            parameter_name = f'{space}_{trend}_trend_{signal_name}_weight'
-            signal_weight = getattr(self, parameter_name)
+            if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}']:
+                parameter_name = f'{space}_{trend}_trend_{signal_name}_weight'
+                signal_weight = getattr(self, parameter_name)
 
-            rolling_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed_candles_lookback_window')
-            rolling_needed_value = \
-                rolling_needed.value * self.timeframe_multiplier if has_multiplier else rolling_needed.value
+                rolling_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed_candles_lookback_window')
+                rolling_needed_value = \
+                    rolling_needed.value * self.timeframe_multiplier if has_multiplier else rolling_needed.value
 
-            if self.debuggable_weighted_signal_dataframe:
-                if parameter_name not in dataframe.columns:
-                    dataframe[parameter_name] = 0
+                if self.debuggable_weighted_signal_dataframe:
+                    if parameter_name not in dataframe.columns:
+                        dataframe[parameter_name] = 0
+
+                    dataframe.loc[((dataframe['trend'] == trend) &
+                                   (condition.rolling(rolling_needed_value).sum() > 0)), parameter_name] = \
+                        signal_weight.value / self.precision
 
                 dataframe.loc[((dataframe['trend'] == trend) &
-                               (condition.rolling(rolling_needed_value).sum() > 0)), parameter_name] = \
-                    signal_weight.value / self.precision
-
-            dataframe.loc[((dataframe['trend'] == trend) &
-                           (condition.rolling(rolling_needed_value).sum() > 0)),
-                          f'total_{space}_signal_strength'] += signal_weight.value / self.precision
+                               (condition.rolling(rolling_needed_value).sum() > 0)),
+                              f'total_{space}_signal_strength'] += signal_weight.value / self.precision
+            # Override Signals: When configured sell/buy signals can be completely turned off for each 47401kind of trend
+            else:
+                dataframe.loc[dataframe['trend'] == trend, space] = 0
 
         return dataframe
 
@@ -792,12 +796,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # Generating the attributes for each signal trend
         for trend in cls.mgm_trends:
             parameter_name = f"{trend}_trend_{name}_weight"
-            cls._init_vars(base_cls, space=space,
-                           parameter_name=parameter_name,
-                           parameter_min_value=cls.min_weighted_signal_value,
-                           parameter_max_value=cls.max_weighted_signal_value,
-                           parameter_threshold=cls.search_threshold_weighted_signal_values,
-                           precision=cls.precision)
+            if cls.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}']:
+                cls._init_vars(base_cls, space=space,
+                               parameter_name=parameter_name,
+                               parameter_min_value=cls.min_weighted_signal_value,
+                               parameter_max_value=cls.max_weighted_signal_value,
+                               parameter_threshold=cls.search_threshold_weighted_signal_values,
+                               precision=cls.precision)
 
     @classmethod
     def _init_vars(cls, base_cls, space: str, parameter_name: str, parameter_min_value: int,
@@ -945,10 +950,5 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Generates the conditions responsible for searching and comparing the weights needed to activate a buy or sell
         dataframe.loc[(self._generate_weight_condition(dataframe=dataframe, space=space)), space] = 1
-
-        # Override Signals: When configured sell/buy signals can be completely turned off for each kind of trend
-        for trend in self.mgm_trends:
-            if not self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}']:
-                dataframe.loc[dataframe['trend'] == trend, space] = 0
 
         return dataframe
