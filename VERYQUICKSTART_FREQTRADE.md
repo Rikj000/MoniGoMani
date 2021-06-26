@@ -8,7 +8,7 @@
     </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md">
-        <img src="https://img.shields.io/badge/Docs-MGM_DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
+        <img src="https://img.shields.io/badge/Docs-MGM__DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
     </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
     </a> <a href="https://www.iconomi.com/register?ref=JdFzz">
@@ -43,8 +43,10 @@
 9) *(Type `./setup.sh -u` to update freqtrade with git pull)*   
 10) *(Type `./setup.sh -r` to hard reset the branch)*   
 11) [Download](https://github.com/Rikj000/MoniGoMani/releases) the latest `MoniGoMani` release and unzip it in the `Freqtrade` folder. Or clone the `main` branch through git & copy the files over.   
-12) Type `freqtrade install-ui` to install FreqUI   
-13) Follow all of `Step 3` from the *Very Quick Start (With Docker)* below   
+12) Type `cp ./user_data/mgm-config.example.json ./user_data/mgm-config.json && cp ./user_data/mgm-config-private.example.json ./user_data/mgm-config-private.json
+` to setup your initial config files
+13) Type `freqtrade install-ui` to install FreqUI   
+14) Follow all of `Step 3` from the *Very Quick Start (With Docker)* below   
 
 That's it you successfully set up Freqtrade natively, connected to Telegram, with FreqUI!   
 You can now start using `MoniGoManiHyperStrategy` for HyperOpting/BackTesting/Dry/Live-running! Congratulations :tada:   
@@ -54,8 +56,10 @@ But this is only the beginning, now please read the [MGM_DOCUMENTATION](https://
 *Need a more detailed guide? Checkout the [**Official Freqtrade Docker Quickstart**](https://www.freqtrade.io/en/stable/docker_quickstart/)!*    
 
 1) [Download](https://github.com/Rikj000/MoniGoMani/releases) the latest `MoniGoMani` release and unzip it somewhere. Or clone the `main` branch through git.
-2) Install [Docker Desktop](https://www.docker.com/get-started)
-3) Open and edit `MoniGoMani/user_data/mgm-config-private.json` & `MoniGoMani/user_data/mgm-config.json`   
+2) Type `cp ./user_data/mgm-config.example.json ./user_data/mgm-config.json && cp ./user_data/mgm-config-private.example.json ./user_data/mgm-config-private.json
+` to setup your initial config files
+3) Install [Docker Desktop](https://www.docker.com/get-started)
+4) Open and edit `MoniGoMani/user_data/mgm-config-private.json` & `MoniGoMani/user_data/mgm-config.json`   
 ([VSCodium](https://vscodium.com/) is open source and comes pre-installed with good color codes to make it easier to read `.json` or `.log` files, and many more too)   
     3.A. Follow [these 4 easy steps](https://www.siteguarding.com/en/how-to-get-telegram-bot-api-token) to create your own Telegram bot and fetch it's api-token, fill `token` under `telegram` up in `mgm-config-private.json` with this. Make sure to start a conversation with your bot before continuing!   
     3.B. Say `/start` to `@userinfobot` on Telegram to get your Chat ID, fill `chat_id` under `telegram` up in `mgm-config-private.json` with this.   
