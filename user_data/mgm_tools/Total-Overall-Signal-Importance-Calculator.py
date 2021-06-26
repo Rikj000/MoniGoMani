@@ -9,7 +9,7 @@ import sys
 
 class TotalOverallSignalImportanceCalculator:
     """
-    Total Overall Signal Importance Calculator for MoniGoMani v0.12.0
+    Total Overall Signal Importance Calculator for MoniGoMani v0.13.0
     -----------------------------------------------------------------
     First do 1 or 2 HyperOpt Runs and extract your results to a 'mgm-config-hyperopt.json'
 
