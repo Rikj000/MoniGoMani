@@ -183,6 +183,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     informative_timeframe = timeframe  # Gets set automatically
     timeframe_multiplier = None  # Gets set automatically
 
+    # Initialize comparison values to check if total signals utilized by HyperOpt are possible
+    total_signals_possible = {}
+    for trend in mgm_trends:
+        for space in ['buy', 'sell']:
+            total_signals_possible[f'{space}_{trend}'] = 0
+
     class HyperOpt:
         # Generate a Custom Long Continuous ROI-Table with less gaps in it
         @staticmethod
@@ -778,6 +784,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 dataframe.loc[((dataframe['trend'] == trend) &
                                (condition.rolling(rolling_needed_value).sum() > 0)),
                               f'total_{space}_signal_strength'] += signal_weight.value / self.precision
+
+                # Add found weights to comparison values to check if total signals utilized by HyperOpt are possible
+                self.total_signals_possible[f'{space}_{trend}'] += signal_weight.value
+
             # Override Signals: When configured sell/buy signals can be completely turned off for each kind of trend
             else:
                 dataframe.loc[dataframe['trend'] == trend, space] = 0
@@ -944,6 +954,11 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: DataFrame with debug signals 
         """
 
+        # Reset the total signals possible when a new BackTest starts (during HyperOpting)
+        if self.is_dry_live_run_detected is False:
+            for total_signal_possible in self.total_signals_possible:
+                self.total_signals_possible[total_signal_possible] = 0
+
         signals = getattr(self, f'{space}_signals')
 
         # Calculates the weight and/or generates the debug column for each signal
@@ -953,16 +968,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # Generates the conditions responsible for searching and comparing the weights needed to activate a buy or sell
         dataframe.loc[(self._generate_weight_condition(dataframe=dataframe, space=space)), space] = 1
 
-        # Override Signals: When configured sell/buy signals can be completely turned off for each kind of trend
-        # if self.is_dry_live_run_detected is False:
-        #    for trend in self.mgm_trends:
+        # Check if total signals needed are possible, if not force the bot to do nothing
+        if self.is_dry_live_run_detected is False:
+            for trend in self.mgm_trends:
+                if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
+                    total_signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
 
-        #     if not self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
-        #         dataframe.loc[dataframe['trend'] == trend, space] = 0
+                    if self.total_signals_possible[f'{space}_{trend}'] < total_signal_needed.value:
+                        dataframe['buy'] = dataframe['sell'] = 0
 
         return dataframe
-
-    # def _evaluate_total_signal_possibility(self, space: str) -> bool:
-    #     if self.is_dry_live_run_detected is False:
-    #         for trend in self.mgm_trends:
-    #             print()
