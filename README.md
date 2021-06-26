@@ -134,7 +134,7 @@ Take a good read at the [**MGM_DOCUMENTATION.md**](https://github.com/Rikj000/Mo
 ## Go-To Commands
 **Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
 ```powershell
-freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 800 --timerange 20210101-20210316 --enable-protections
+freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 800 --timerange 20210501-20210616 --enable-protections
 ```
 **Apply HyperOpt Results after Run 1** from a `<epoch of choice>`:
 ```powershell
@@ -150,7 +150,7 @@ rm ./user_data/mgm-config-hyperopt.json
 ```
 **Back Testing** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
 ```powershell
-freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210101-20210316 --enable-protections
+freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210501-20210616 --enable-protections
 ```
 **Total Average Signal Importance Calculation** *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
 ```powershell
@@ -163,7 +163,7 @@ freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-Sta
 
 **Download Candle Data**:
 ```powershell
-freqtrade download-data --timerange 20201201-20210316 -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
+freqtrade download-data --timerange 20210414-20210618 -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
 ```
 
 ## Got Test Results - Ideas - Config Improvements?
