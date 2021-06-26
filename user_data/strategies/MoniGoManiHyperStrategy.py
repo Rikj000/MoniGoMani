@@ -118,6 +118,9 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             },
             'RSI (Relative Strength Index)': {
                 'rsi': {'color': '#7fba3c'}
+            },
+            'Hilbert Transform (Trend vs Cycle)': {
+                'HT_TRENDMODE': {'color': '#6f1a7b'}
             }
         }
     }
