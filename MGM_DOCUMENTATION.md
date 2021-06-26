@@ -7,8 +7,8 @@
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
-    </a> <a href="">
-        <img src="https://img.shields.io/badge/Docs-MGM_DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md">
+        <img src="https://img.shields.io/badge/Docs-MGM__DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
     </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
     </a> <a href="https://www.iconomi.com/register?ref=JdFzz">
@@ -45,7 +45,7 @@
     - [Default Stub Values](#default-stub-values)
   - [mgm-config-hyperopt.json](#mgm-config-hyperoptjson)
     - [Reflect over HyperOpt Results](#reflect-over-hyperopt-results)
-      - [Bad Weighted signal setup examples](#bad-weighted-signal-setup-examples)
+      - [Bad Weighted signal setup example](#bad-weighted-signal-setup-example)
   - [MoniGoManiHyperStrategy](#monigomanihyperstrategy)
     - [Weighted Signal Interface](#weighted-signal-interface)
       - [Defining Indicators Examples](#defining-indicators-examples)
@@ -76,9 +76,9 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
    ```powershell
    rm ./user_data/mgm-config-hyperopt.json
    ```
-1) Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)
+**1) Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)**
 2) Download a good Top Volume StaticPairList and update this in your `mgm-config.json`. Instructions for how to do this are under [PairLists](#pairlists).
-3) Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & pick a logical timeframe to do your HyperOpt upon (The timeframe in the go-to commands for example resembles some bullish rise/correction cycles & I believe 2021 will be a bullish year thus I think it's a good timeframe to test upon).   
+3) Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & pick a logical timeframe to do your HyperOpt upon *(The timeframe in the [Go-To Commands](#go-to-commands) for example resembles some bullish, some bearish and some sideways market behavior, with the idea to give MGM all trends to train upon).*   
 4) HyperOpt for a **1st HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)   
    The 1st HyperOpt Run *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with the default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of `mgm-config.json`
 5) **[Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.   
@@ -88,7 +88,7 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
    ```
 6) Once you picked an `<epoch of choice>` of which you feel confident, then apply the HyperOpt results by extracting them into a new `mgm-config-hyperopt.json` using:
    ```powershell
-   freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./user_data/mgm-config-hyperopt.json
+   freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./user_data/mgm-config-hyperopt.json && jq '.' ./user_data/mgm-config-hyperopt.json
    ```
 7) Repeat `Steps 4 and 5` at least for a **2nd HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)
    The 2nd HyperOpt Run *(When a `mgm-config-hyperopt.json` exists)* is automatically ran with:   
@@ -97,7 +97,7 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
        - Strong weighted signals are boosted by overriding them to their respective `max_` value (Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
 8) Once you picked an `<epoch of choice>` of which you feel confident, then apply the HyperOpt results by extracting them and combining them in the pre-existing `mgm-config-hyperopt.json` using:
    ```powershell
-   freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./tmp.json && jq -s '.[0] * .[1]' ./user_data/mgm-config-hyperopt.json ./tmp.json > ./user_data/mgm-config-hyperopt.json && rm ./tmp.json
+   freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./tmp.json && jq -s '.[0] * .[1]' ./user_data/mgm-config-hyperopt.json ./tmp.json > ./tmp2.json && rm ./tmp.json ./user_data/mgm-config-hyperopt.json && mv ./tmp2.json ./user_data/mgm-config-hyperopt.json && jq '.' ./user_data/mgm-config-hyperopt.json
    ```
 9) Load your results into the `Total-Overall-Signal-Importance-Calculator.py` and run it's [Go-To Command](#go-to-commands) to receive a nice weighted signal report for sharing in the [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.  
 
@@ -192,8 +192,10 @@ The settings inside `mgm-config.json`'s `weighted_signal_spaces` section are use
 | **min_trend_total_signal_needed_value** | **1st HyperOpt Run:** Minimal value used in the HyperOpt Space for total weighted signals needed. <br> **Datatype:** Integer |
 | **min_trend_total_signal_needed_candles_lookback_window_value** | **1st HyperOpt Run:** Minimal value used in the HyperOpt Space for the candle lookback window for total signals needed. <br> **Datatype:** Integer |
 | **max_trend_total_signal_needed_candles_lookback_window_value** | **1st HyperOpt Run:** Minimal value used in the HyperOpt Space for the candle lookback window for total signals needed. <br> **Datatype:** Integer |
+| **min_trend_signal_triggers_needed** | **1st HyperOpt Run:** Minimal value used in the HyperOpt Space for the amount of signals that need to trigger in it's respective (trend depending) candle lookback window.<br> **Datatype:** Integer |
 | **search_threshold_weighted_signal_values** | **2nd HyperOpt Run:** Used to refine the search spaces for remaining weighted signals with the value found in the 1st run +- the threshold. <br> **Datatype:** Integer |
 | **search_threshold_trend_total_signal_needed_candles_lookback_window_value** | **2nd HyperOpt Run:** Used to refine the search spaces for the candle lookback window for total signals needed with the values found in the 1st run +- the threshold. <br> **Datatype:** Integer |
+| **search_threshold_trend_signal_triggers_needed** | **2nd HyperOpt Run:** Used to refine the search spaces for the amount of signals that need to trigger in it's respective (trend depending) candle lookback window. with the value found in the 1st run +- the threshold. <br> **Datatype:** Integer |
 | **number_of_weighted_signals** | Set the `number_of_weighted_signals` setting to the total number of different weighted signals in use in the weighted tables. <br> `buy/sell__downwards/sideways/upwards_trend_total_signal_needed` settings will be multiplied with this value, so their search spaces will be larger, resulting in more equally divided total weighted signal scores when HyperOpting. <br> **Datatype:** Integer |
 
 ### Stoploss Spaces
@@ -271,31 +273,7 @@ The sum of all weighted buy/sell signals found in a trend should always be bigge
 
 Following equation should always be true:
 
-#### Bad Weighted signal setup examples
-**Impossible to reach:**   
-Imagine following configuration for `buy` on `upwards` trends:
-```json
-{
-    "buy__upwards_trend_total_signal_needed": 542,
-    "buy__upwards_trend_total_signal_needed_candles_lookback_window": 1,
-    "buy_upwards_trend_adx_strong_up_weight": 54,
-    "buy_upwards_trend_bollinger_bands_weight": 9,
-    "buy_upwards_trend_ema_long_golden_cross_weight": 70,
-    "buy_upwards_trend_ema_short_golden_cross_weight": 85,
-    "buy_upwards_trend_macd_weight": 67,
-    "buy_upwards_trend_rsi_weight": 7,
-    "buy_upwards_trend_sma_long_golden_cross_weight": 47,
-    "buy_upwards_trend_sma_short_golden_cross_weight": 19,
-    "buy_upwards_trend_vwap_cross_weight": 11
-}
-```
-Here we are working with a lookback window of only 1 candle, this means that all signals counting up for the total needed should occur in the current candle.
-
-If we calculate the sum of all weighted signals, we will see that even if all signals would trigger, that it still won't be enough to reach the total signal needed! Meaning that this MGM configuration will never be able to buy in this trend.
-
-Sum of all weighted signals:
-`54 + 9 + 70 + 85 + 67 + 7 + 47 + 19 + 11 = 369`
-
+#### Bad Weighted signal setup example
 **Way too low total needed:**   
 Imagine following configuration for `buy` on `upwards` trends:
 ```json
