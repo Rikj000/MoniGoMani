@@ -299,13 +299,16 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # -DM (Negative Directional Indicator) = previous low - current low
         dataframe['minus_di'] = ta.MINUS_DI(dataframe, timeperiod=25)
 
+        # Hilbert Transform - TrendvsCycle
+        dataframe['HT_TRENDMODE'] = ta.HT_TRENDMODE(dataframe)  
+        
         # Trend Detection
         # ---------------
 
         # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
-        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] < dataframe['minus_di']), 'trend'] = 'downwards'
-        dataframe.loc[dataframe['adx'] <= 22, 'trend'] = 'sideways'
-        dataframe.loc[(dataframe['adx'] > 22) & (dataframe['plus_di'] > dataframe['minus_di']), 'trend'] = 'upwards'
+        dataframe.loc[(dataframe['HT_TRENDMODE'] == 1) & ((dataframe['plus_di'] - dataframe['minus_di']) <= -1), 'trend'] = 'downwards'
+        dataframe.loc[(dataframe['HT_TRENDMODE'] == 0) | (((dataframe['plus_di'] - dataframe['minus_di']) > -1) & ((dataframe['plus_di'] - dataframe['minus_di']) < 1)), 'trend'] = 'sideways'
+        dataframe.loc[(dataframe['HT_TRENDMODE'] == 1) & ((dataframe['plus_di'] - dataframe['minus_di']) >= -1), 'trend'] = 'upwards'
 
         return dataframe
 
