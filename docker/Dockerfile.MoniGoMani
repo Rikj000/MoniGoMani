@@ -8,11 +8,11 @@ USER root
 RUN apt-get install -y jq
 
 # Create an empty log file if non existing
-RUN mkdir ./user_data/logs/
-RUN touch ./user_data/logs/freqtrade.log
+RUN mkdir -p ./user_data/logs/
+RUN touch -m ./user_data/logs/freqtrade.log
 
 # Create an empty directory for downloaded StaticPairLists
-RUN mkdir ./user_data/mgm_pair_lists/
+RUN mkdir -p ./user_data/mgm_pair_lists/
 
 # Switch back to the normal Freqtrade User
 USER ftuser
