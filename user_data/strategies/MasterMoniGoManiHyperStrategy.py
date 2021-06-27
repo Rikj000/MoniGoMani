@@ -793,9 +793,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
                               f'total_{space}_signal_strength'] += signal_weight.value / self.precision
 
-                # If the weighted signal triggered => Add up the amount of signals that triggered
-                dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
-                              f'{space}_signals_triggered'] += 1
+                # If the weighted signal is bigger then 0 and triggered => Add up the amount of signals that triggered
+                if signal_weight.value > 0:
+                    dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
+                                  f'{space}_signals_triggered'] += 1
 
                 # Add found weights to comparison values to check if total signals utilized by HyperOpt are possible
                 self.total_signals_possible[f'{space}_{trend}'] += signal_weight.value
