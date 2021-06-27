@@ -1,6 +1,6 @@
 {
   "monigomani_settings": {
-    "timeframe": "1h",
+    "timeframe": "30m",
     "backtest_timeframe": "5m",
     "startup_candle_count": 400,
     "precision": 1,
@@ -138,12 +138,9 @@
       ".*PERP.*/.*",
       ".*/BNB",
       "BNB/.*",
-      ".*_PREMIUM",
-      ".*PERP",
-      ".*BULL/.*",
-      ".*BEAR/.*",
-      ".*BULL2021/.*",
-      ".*BEAR2021/.*"
+      "EPS/.*",
+      "EUR/.*",
+      "GBP/.*"
     ],
     "pair_whitelist": [
       "BTC/USDT",
