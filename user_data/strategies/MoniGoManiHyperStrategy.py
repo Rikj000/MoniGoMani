@@ -118,6 +118,19 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             },
             'RSI (Relative Strength Index)': {
                 'rsi': {'color': '#7fba3c'}
+            },
+            # Subplots - For Buy - Sell Signals specifically
+            'Total Buy + Sell Signal Strength': {
+                'total_buy_signal_strength': {'color': '#09d528'},
+                'total_sell_signal_strength': {'color': '#d19e28'}
+            },
+            'Weighted Buy + Sell Signals Firing': {
+                'buy_signals_triggered': {'color': '#09d528'},
+                'sell_signals_triggered': {'color': '#d19e28'}
+            },
+            'Buy + Sell Signals Firing': {
+                'buy': {'color': '#09d528'},
+                'sell': {'color': '#d19e28'}
             }
         }
     }
