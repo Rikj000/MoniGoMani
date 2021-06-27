@@ -43,24 +43,19 @@
     "exchange": {
         "name": "binance",
         "pair_blacklist": [
-            ".*USD/USDT",
-            "USD.*/USDT",
-            ".*DOWN/BTC",
-            ".*UP/BTC",
-            ".*DOWN/ETH",
-            ".*UP/ETH",
-            ".*DOWN/USDT",
-            ".*UP/USDT",
-            ".*DOWN/BNB",
-            ".*UP/BNB",
+            ".*USD.*/.*",
+            ".*BULL.*/.*",
+            ".*BEAR.*/.*",
+            ".*UP.*/.*",
+            ".*DOWN.*/.*",
+            ".*HEDGE.*/.*",
+            ".*PREMIUM.*/.*",
+            ".*PERP.*/.*",
             ".*/BNB",
             "BNB/.*",
-            ".*_PREMIUM",
-            ".*PERP",
-            ".*BULL/.*",
-            ".*BEAR/.*",
-            ".*BULL2021/.*",
-            ".*BEAR2021/.*"
+            "EPS/.*",
+            "EUR/.*",
+            "GBP/.*"
         ],
         "ccxt_config": {
             "enableRateLimit": true
