@@ -116,6 +116,7 @@ Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/Mon
 - [Weighted Signal Interface](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#weighted-signal-interface) to easily change the weighted signals being used
 - Configurable Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends ***(HyperOptable!)***
 - Configurable LookBack Windows for Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends ***(HyperOptable!)***
+- Configurable Signal Triggers Needed within their respective LookBack Windows for Downwards/Sideways/Upwards trends ***(HyperOptable!)***
 - Configurable [Trading During Trends](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#trading-during-trends) (Downwards/Sideways/Upwards) for Buys/Sells
 - Configurable [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#open-trade-unclogger), if enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades ***(HyperOptable!)*** :rocket:   
 - [TimeFrame-Zoom](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#timeframe-zoom) during BackTesting/HyperOpting to prevent profit exploitation! *(Read: [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/))*
@@ -166,6 +167,11 @@ freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-Sta
 **Download Candle Data**:
 ```powershell
 freqtrade download-data --timerange 20210414-20210618 -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
+```
+
+**Plot-Profits**:
+```powershell
+freqtrade plot-profit --export-filename user_data/backtest_results/<results-filename-here>.json -c ./user_data/mgm-config.json --timerange 20210501-20210616 --timeframe 1h
 ```
 
 ## Got Test Results - Ideas - Config Improvements?

@@ -486,6 +486,11 @@ freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-Sta
 freqtrade download-data --timerange 20210414-20210618 -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
 ```
 
+**Plot-Profits**:
+```powershell
+freqtrade plot-profit --export-filename ./user_data/backtest_results/<results-filename-here>.json -c ./user_data/mgm-config.json --timerange 20210501-20210616 --timeframe 1h
+```
+
 # How to share your test results properly
 The easiest way to share how your MGM setup has been doing would be by posting a screenshot in the [Discord Server](https://discord.gg/xFZ9bB6vEz) with the output of the `/status table` and `/profit` commands (Using the Telegram connection of the bot) + The complete output of the log being printed while HyperOpting (See [Some Test Results]() for examples).   
    
