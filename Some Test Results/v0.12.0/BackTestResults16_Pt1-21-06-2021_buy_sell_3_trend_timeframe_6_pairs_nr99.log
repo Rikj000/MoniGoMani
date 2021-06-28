@@ -1,0 +1,157 @@
+freqtrade hyperopt-show -n 99 -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
+===================================================================================================
+Result for strategy MoniGoManiHyperStrategy
+============================================================ BACKTESTING REPORT ===========================================================
+|       Pair |   Buys |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |     Avg Duration |   Win  Draw  Loss  Win% |
+|------------+--------+----------------+----------------+-------------------+----------------+------------------+-------------------------|
+| MATIC/USDT |     13 |          10.50 |         136.53 |            61.499 |          12.30 | 2 days, 15:37:00 |     9     0     4  69.2 |
+|  DOGE/USDT |     12 |           5.64 |          67.65 |            30.471 |           6.09 | 2 days, 11:17:00 |     5     0     7  41.7 |
+|   ADA/USDT |     16 |           2.35 |          37.62 |            16.944 |           3.39 |  1 day, 16:21:00 |    12     0     4  75.0 |
+|   ETH/USDT |     11 |           2.90 |          31.93 |            14.384 |           2.88 |  2 days, 8:38:00 |     7     0     4  63.6 |
+|   BTC/USDT |     14 |          -0.70 |          -9.82 |            -4.423 |          -0.88 |  1 day, 22:29:00 |     5     0     9  35.7 |
+|   XRP/USDT |     17 |          -3.10 |         -52.72 |           -23.749 |          -4.75 |  1 day, 22:03:00 |     3     0    14  17.6 |
+|      TOTAL |     83 |           2.54 |         211.18 |            95.126 |          19.03 |  2 days, 3:05:00 |    41     0    42  49.4 |
+===================================================== SELL REASON STATS =====================================================
+|   Sell Reason |   Sells |   Win  Draws  Loss  Win% |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |
+|---------------+---------+--------------------------+----------------+----------------+-------------------+----------------|
+|   sell_signal |      77 |     37     0    40  48.1 |           2.39 |         184    |            82.881 |          30.67 |
+|    force_sell |       6 |      4     0     2  66.7 |           4.53 |          27.18 |            12.245 |           4.53 |
+========================================================= LEFT OPEN TRADES REPORT =========================================================
+|       Pair |   Buys |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |     Avg Duration |   Win  Draw  Loss  Win% |
+|------------+--------+----------------+----------------+-------------------+----------------+------------------+-------------------------|
+|   BTC/USDT |      1 |          16.20 |          16.20 |             7.299 |           1.46 | 6 days, 13:00:00 |     1     0     0   100 |
+| MATIC/USDT |      1 |           9.34 |           9.34 |             4.209 |           0.84 |  2 days, 3:00:00 |     1     0     0   100 |
+|   ADA/USDT |      1 |           4.20 |           4.20 |             1.893 |           0.38 |  2 days, 5:00:00 |     1     0     0   100 |
+|   ETH/USDT |      1 |           0.57 |           0.57 |             0.258 |           0.05 |  2 days, 3:00:00 |     1     0     0   100 |
+|   XRP/USDT |      1 |          -1.28 |          -1.28 |            -0.578 |          -0.12 |          6:00:00 |     0     0     1     0 |
+|  DOGE/USDT |      1 |          -1.86 |          -1.86 |            -0.837 |          -0.17 |  2 days, 2:00:00 |     0     0     1     0 |
+|      TOTAL |      6 |           4.53 |          27.18 |            12.245 |           2.45 | 2 days, 13:20:00 |     4     0     2  66.7 |
+=============== SUMMARY METRICS ================
+| Metric                 | Value               |
+|------------------------+---------------------|
+| Backtesting from       | 2021-05-01 00:00:00 |
+| Backtesting to         | 2021-06-16 00:00:00 |
+| Max open trades        | 6                   |
+|                        |                     |
+| Total/Daily Avg Trades | 83 / 1.8            |
+| Starting balance       | 500.000 USDT        |
+| Final balance          | 595.126 USDT        |
+| Absolute profit        | 95.126 USDT         |
+| Total profit %         | 19.03%              |
+| Avg. stake amount      | 45.000 USDT         |
+| Total trade volume     | 3735.000 USDT       |
+|                        |                     |
+| Best Pair              | MATIC/USDT 136.53%  |
+| Worst Pair             | XRP/USDT -52.72%    |
+| Best trade             | DOGE/USDT 81.35%    |
+| Worst trade            | ADA/USDT -27.9%     |
+| Best day               | 35.510 USDT         |
+| Worst day              | -15.211 USDT        |
+| Days win/draw/lose     | 20 / 10 / 16        |
+| Avg. Duration Winners  | 2 days, 17:00:00    |
+| Avg. Duration Loser    | 1 day, 13:31:00     |
+| Zero Duration Trades   | 0.00% (0)           |
+| Rejected Buy signals   | 0                   |
+|                        |                     |
+| Min balance            | 493.396 USDT        |
+| Max balance            | 595.704 USDT        |
+| Drawdown               | 87.2%               |
+| Drawdown               | 39.279 USDT         |
+| Drawdown high          | 61.038 USDT         |
+| Drawdown low           | 21.759 USDT         |
+| Drawdown Start         | 2021-05-19 18:00:00 |
+| Drawdown End           | 2021-05-23 01:05:00 |
+| Market change          | 0%                  |
+================================================
+
+
+Epoch details:
+
+    99/800:     
+        83 trades. 
+        41/0/42 Wins/Draws/Losses. 
+        Avg profit   2.54%. 
+        Median profit  -0.28%. 
+        Total profit  95.12617698 USDT (  19.03%). 
+        Avg duration 2 days, 3:05:00 min. 
+        Objective: -10431.79746
+
+
+    # Buy hyperspace params:
+    buy_params = {
+        "buy__downwards_trend_total_signal_needed": 249,
+        "buy__downwards_trend_total_signal_needed_candles_lookback_window": 5,
+        "buy__sideways_trend_total_signal_needed": 544,
+        "buy__sideways_trend_total_signal_needed_candles_lookback_window": 3,
+        "buy__upwards_trend_total_signal_needed": 61,
+        "buy__upwards_trend_total_signal_needed_candles_lookback_window": 2,
+        "buy_downwards_trend_adx_strong_up_weight": 75,
+        "buy_downwards_trend_bollinger_bands_weight": 100,
+        "buy_downwards_trend_ema_long_golden_cross_weight": 64,
+        "buy_downwards_trend_ema_short_golden_cross_weight": 74,
+        "buy_downwards_trend_macd_weight": 67,
+        "buy_downwards_trend_rsi_weight": 19,
+        "buy_downwards_trend_sma_long_golden_cross_weight": 15,
+        "buy_downwards_trend_sma_short_golden_cross_weight": 97,
+        "buy_downwards_trend_vwap_cross_weight": 31,
+        "buy_sideways_trend_adx_strong_up_weight": 98,
+        "buy_sideways_trend_bollinger_bands_weight": 38,
+        "buy_sideways_trend_ema_long_golden_cross_weight": 100,
+        "buy_sideways_trend_ema_short_golden_cross_weight": 15,
+        "buy_sideways_trend_macd_weight": 11,
+        "buy_sideways_trend_rsi_weight": 43,
+        "buy_sideways_trend_sma_long_golden_cross_weight": 16,
+        "buy_sideways_trend_sma_short_golden_cross_weight": 67,
+        "buy_sideways_trend_vwap_cross_weight": 52,
+        "buy_upwards_trend_adx_strong_up_weight": 72,
+        "buy_upwards_trend_bollinger_bands_weight": 90,
+        "buy_upwards_trend_ema_long_golden_cross_weight": 65,
+        "buy_upwards_trend_ema_short_golden_cross_weight": 47,
+        "buy_upwards_trend_macd_weight": 90,
+        "buy_upwards_trend_rsi_weight": 39,
+        "buy_upwards_trend_sma_long_golden_cross_weight": 93,
+        "buy_upwards_trend_sma_short_golden_cross_weight": 2,
+        "buy_upwards_trend_vwap_cross_weight": 81,
+    }
+
+    # Sell hyperspace params:
+    sell_params = {
+        "sell___unclogger_minimal_losing_trade_duration_minutes": 31,
+        "sell___unclogger_minimal_losing_trades_open": 1,
+        "sell___unclogger_open_trades_losing_percentage_needed": 42,
+        "sell___unclogger_trend_lookback_candles_window": 43,
+        "sell___unclogger_trend_lookback_candles_window_percentage_needed": 15,
+        "sell__downwards_trend_total_signal_needed": 37,
+        "sell__downwards_trend_total_signal_needed_candles_lookback_window": 3,
+        "sell__sideways_trend_total_signal_needed": 323,
+        "sell__sideways_trend_total_signal_needed_candles_lookback_window": 3,
+        "sell__upwards_trend_total_signal_needed": 444,
+        "sell__upwards_trend_total_signal_needed_candles_lookback_window": 6,
+        "sell_downwards_trend_adx_strong_down_weight": 13,
+        "sell_downwards_trend_bollinger_bands_weight": 79,
+        "sell_downwards_trend_ema_long_death_cross_weight": 34,
+        "sell_downwards_trend_ema_short_death_cross_weight": 73,
+        "sell_downwards_trend_macd_weight": 22,
+        "sell_downwards_trend_rsi_weight": 100,
+        "sell_downwards_trend_sma_long_death_cross_weight": 10,
+        "sell_downwards_trend_sma_short_death_cross_weight": 40,
+        "sell_downwards_trend_vwap_cross_weight": 30,
+        "sell_sideways_trend_adx_strong_down_weight": 82,
+        "sell_sideways_trend_bollinger_bands_weight": 3,
+        "sell_sideways_trend_ema_long_death_cross_weight": 96,
+        "sell_sideways_trend_ema_short_death_cross_weight": 11,
+        "sell_sideways_trend_macd_weight": 47,
+        "sell_sideways_trend_rsi_weight": 99,
+        "sell_sideways_trend_sma_long_death_cross_weight": 95,
+        "sell_sideways_trend_sma_short_death_cross_weight": 31,
+        "sell_sideways_trend_vwap_cross_weight": 28,
+        "sell_upwards_trend_adx_strong_down_weight": 63,
+        "sell_upwards_trend_bollinger_bands_weight": 8,
+        "sell_upwards_trend_ema_long_death_cross_weight": 18,
+        "sell_upwards_trend_ema_short_death_cross_weight": 0,
+        "sell_upwards_trend_macd_weight": 84,
+        "sell_upwards_trend_rsi_weight": 63,
+        "sell_upwards_trend_sma_long_death_cross_weight": 74,
+        "sell_upwards_trend_sma_short_death_cross_weight": 19,
+        "sell_upwards_trend_vwap_cross_weight": 68,
+    }
