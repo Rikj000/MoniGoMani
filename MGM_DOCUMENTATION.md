@@ -488,7 +488,7 @@ freqtrade download-data --timerange 20210414-20210618 -t 5m 1h -c ./user_data/mg
 
 **Plot-Profits**:
 ```powershell
-freqtrade plot-profit --export-filename ./user_data/backtest_results/<results-filename-here>.json -c ./user_data/mgm-config.json --timerange 20210501-20210616 --timeframe 1h
+freqtrade plot-profit --export-filename ./user_data/backtest_results/<results-filename-here>.json -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210501-20210616 --timeframe 1h
 ```
 
 # How to share your test results properly
