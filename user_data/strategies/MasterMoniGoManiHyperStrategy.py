@@ -1,12 +1,13 @@
 # --- ↓ Do not remove these libs ↓ -------------------------------------------------------------------------------------
 import json
 import logging
+import math
 import os
 import sys
 from abc import ABC
 from datetime import datetime, timedelta
 from functools import reduce
-from typing import Any, List
+from typing import Any,Dict, List
 
 import numpy as np  # noqa
 import pandas as pd  # noqa
@@ -15,10 +16,11 @@ from numpy import timedelta64
 from pandas import DataFrame
 from scipy.interpolate import interp1d
 
-from freqtrade.exchange import timeframe_to_prev_date
-from freqtrade.optimize.space import Categorical, Dimension, SKDecimal
-from freqtrade.persistence import Trade
 from freqtrade.enums import RunMode
+from freqtrade.exchange import timeframe_to_prev_date
+from freqtrade.misc import round_dict
+from freqtrade.optimize.space import Categorical, Dimension, Integer, SKDecimal
+from freqtrade.persistence import Trade
 from freqtrade.strategy import IStrategy, IntParameter, merge_informative_pair, timeframe_to_minutes
 
 logger = logging.getLogger(__name__)
@@ -194,10 +196,16 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             total_signals_possible[f'{space}_{trend}'] = 0
 
     class HyperOpt:
-        # Generate a Custom Long Continuous ROI-Table with less gaps in it
         @staticmethod
-        def generate_roi_table(params):
+        def generate_roi_table(params: Dict) -> Dict[int, float]:
+            """
+            Generates a Custom Long Continuous ROI-Table with less gaps in it.
+            Configurable step_size is loaded in from the Master MGM Framework.
+            :param params: Base Parameters used for the ROI Table calculation
+            :return: ROI Table
+            """
             step = MasterMoniGoManiHyperStrategy.roi_table_step_size
+
             minimal_roi = {0: params['roi_p1'] + params['roi_p2'] + params['roi_p3'],
                            params['roi_t3']: params['roi_p1'] + params['roi_p2'],
                            params['roi_t3'] + params['roi_t2']: params['roi_p1'],
@@ -213,11 +221,76 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             return dict(zip(x, y))
 
         @staticmethod
+        def roi_space() -> List[Dimension]:
+            """
+            Create a ROI space. Defines values to search for each ROI steps.
+            This method implements adaptive roi hyperspace with varied ranges for parameters which automatically adapts
+            to the un-zoomed informative_timeframe used by the MGM Framework during BackTesting & HyperOpting.
+            """
+
+            # Default scaling coefficients for the roi hyperspace. Can be changed to adjust resulting ranges of the ROI
+            # tables. Increase if you need wider ranges in the roi hyperspace, decrease if shorter ranges are needed:
+            # roi_t_alpha: Limits for the time intervals in the ROI tables. Components are scaled linearly.
+            roi_t_alpha = 1.0
+            # roi_p_alpha: Limits for the ROI value steps. Components are scaled logarithmically.
+            roi_p_alpha = 1.0
+
+            # Load in the un-zoomed timeframe size from the Master MGM Framework
+            timeframe_min = timeframe_to_minutes(MasterMoniGoManiHyperStrategy.informative_timeframe)
+
+            # The scaling is designed so that it maps exactly to the legacy Freqtrade roi_space()
+            # method for the 5m timeframe.
+            roi_t_scale = timeframe_min / 5
+            roi_p_scale = math.log1p(timeframe_min) / math.log1p(5)
+            roi_limits = {
+                'roi_t1_min': int(10 * roi_t_scale * roi_t_alpha),
+                'roi_t1_max': int(120 * roi_t_scale * roi_t_alpha),
+                'roi_t2_min': int(10 * roi_t_scale * roi_t_alpha),
+                'roi_t2_max': int(60 * roi_t_scale * roi_t_alpha),
+                'roi_t3_min': int(10 * roi_t_scale * roi_t_alpha),
+                'roi_t3_max': int(40 * roi_t_scale * roi_t_alpha),
+                'roi_p1_min': 0.01 * roi_p_scale * roi_p_alpha,
+                'roi_p1_max': 0.04 * roi_p_scale * roi_p_alpha,
+                'roi_p2_min': 0.01 * roi_p_scale * roi_p_alpha,
+                'roi_p2_max': 0.07 * roi_p_scale * roi_p_alpha,
+                'roi_p3_min': 0.01 * roi_p_scale * roi_p_alpha,
+                'roi_p3_max': 0.20 * roi_p_scale * roi_p_alpha
+            }
+
+            # Generate MGM's custom long continuous ROI table
+            logger.debug(f'Using roi space limits: {roi_limits}')
+            p = {
+                'roi_t1': roi_limits['roi_t1_min'],
+                'roi_t2': roi_limits['roi_t2_min'],
+                'roi_t3': roi_limits['roi_t3_min'],
+                'roi_p1': roi_limits['roi_p1_min'],
+                'roi_p2': roi_limits['roi_p2_min'],
+                'roi_p3': roi_limits['roi_p3_min']
+            }
+            logger.info(f'Min roi table: {round_dict(MasterMoniGoManiHyperStrategy.HyperOpt.generate_roi_table(p), 3)}')
+            p = {
+                'roi_t1': roi_limits['roi_t1_max'],
+                'roi_t2': roi_limits['roi_t2_max'],
+                'roi_t3': roi_limits['roi_t3_max'],
+                'roi_p1': roi_limits['roi_p1_max'],
+                'roi_p2': roi_limits['roi_p2_max'],
+                'roi_p3': roi_limits['roi_p3_max']
+            }
+            logger.info(f'Max roi table: {round_dict(MasterMoniGoManiHyperStrategy.HyperOpt.generate_roi_table(p), 3)}')
+
+            return [
+                Integer(roi_limits['roi_t1_min'], roi_limits['roi_t1_max'], name='roi_t1'),
+                Integer(roi_limits['roi_t2_min'], roi_limits['roi_t2_max'], name='roi_t2'),
+                Integer(roi_limits['roi_t3_min'], roi_limits['roi_t3_max'], name='roi_t3'),
+                SKDecimal(roi_limits['roi_p1_min'], roi_limits['roi_p1_max'], decimals=3, name='roi_p1'),
+                SKDecimal(roi_limits['roi_p2_min'], roi_limits['roi_p2_max'], decimals=3, name='roi_p2'),
+                SKDecimal(roi_limits['roi_p3_min'], roi_limits['roi_p3_max'], decimals=3, name='roi_p3')
+            ]
+
+        @staticmethod
         def stoploss_space() -> List[Dimension]:
             """
-            Define custom stoploss search space with configurable parameters
-
-            Stoploss Value to search.
+            Define custom stoploss search space with configurable parameters for the Stoploss Value to search.
             Override it if you need some different range for the parameter in the 'stoploss' optimization hyperspace.
             """
             return [
