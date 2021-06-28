@@ -145,9 +145,9 @@
     "pair_whitelist": [
       "BTC/USDT",
       "ETH/USDT",
-      "MATIC/USDT",
-      "DOGE/USDT",
+      "DOT/USDT",
       "ADA/USDT",
+      "MATIC/USDT",
       "XRP/USDT"
     ]
   },
