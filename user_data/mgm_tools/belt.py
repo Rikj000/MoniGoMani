@@ -5,7 +5,7 @@
     belt.py / [MGM-Belt]
     Shorthand for To-Go commands
     
-    Current compatibility: freqtrade 2021.05, MoniGoMani v0.12 (development)
+    Current compatibility: freqtrade 2021.06, MoniGoMani v0.13 (development)
     
     usage: belt.py [command] parameters, -h for help
 
@@ -60,6 +60,7 @@ BACKTESTING = f'{FREQTRADE} backtesting'
 HYPEROPT = f'{FREQTRADE} hyperopt'
 HYPEROPT_SHOW = f'{HYPEROPT}-show'
 DOWNLOAD = f'{FREQTRADE} download-data'
+PLOT = f'{FREQTRADE} plot-profit'
 
 COMMON_CONFIG = f'-c ./user_data/{mgm_config_name} -c ./user_data/{mgm_config_private_name}'
 
@@ -68,12 +69,12 @@ def parse_args():
     parser = argparse.ArgumentParser(prog="belt.py", usage='%(prog)s [command] parameters, -h for help',
                                      description=f'{__belt__} Shorthand for To-Go commands')
     parser.add_argument('command', help=f'Shorthand for Download-Data / Hyperopt / Backtesting / Hyperopt-Show',
-                        choices=['download', 'hyperopt', 'backtesting', 'show'])
+                        choices=['download', 'hyperopt', 'backtesting', 'show', 'plot'])
     # parser.add_argument('-q', '--quote',
     #                     help=f'<Optional> Quote of the Binance pairs to retrieve (example, use "BTC" to retrieve all '
     #                          f'pairs like ADA/BTC, ETH/BTC, etc..); default is USDT', required=False, default='USDT')
     parser.add_argument('-e', '--epoch', metavar='NUMBER', type=int,
-                        help=f'Epoch number', required=False)
+                        help=f'Epoch number', default='800', required=False)
     parser.add_argument(
         '-a', '--apply', metavar='NUMBER', help=f'Export HyperOpt Run # to {mgm_config_hyperopt_name}', choices=['1', '2'])
     # parser.add_argument(
@@ -81,7 +82,7 @@ def parse_args():
     parser.add_argument('-s', '--strategy', metavar="NAME", help=f'Strategy name',
                         default='MoniGoManiHyperStrategy')
     parser.add_argument('-t', '--timerange',
-                        help=f'Time range', default='20210101-')
+                        help=f'Time range', default='20210501-20210616')
     parser.add_argument('--spaces',
                         help=f'Spaces', choices=['roi', 'buy', 'sell', 'stoploss', 'trailing', 'all', 'default'], default='default', nargs='+', required=False)
     parser.add_argument('--loss', help=f'Loss Function',
@@ -200,6 +201,15 @@ def backtesting(args):
     # subprocess.run(cmd)
 
 
+def plot(args):
+    # TODO: Stub / not working
+    print(f'{__belt__} Plotting...')
+
+    cmd = [f'{PLOT} {COMMON_CONFIG} --timerange {args.timerange} --timeframe 1h --export-filename {mgm_user_data}backtest_results/{args.timerange}.json']
+
+    subprocess.run(cmd, shell=True)
+
+
 def main():
     # Instantiate the parser
     args = parse_args()
@@ -218,6 +228,9 @@ def main():
 
     if ('show' in args.command):
         hyperopt_show(args)
+
+    if ('plot' in args.command):
+        plot(args)
     # currency = args.quote
 
     # resp = requests.get(url=url)
