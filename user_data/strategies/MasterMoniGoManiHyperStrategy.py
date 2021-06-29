@@ -308,7 +308,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
         dataframe.loc[(dataframe['HT_TRENDMODE'] == 1) & ((dataframe['plus_di'] - dataframe['minus_di']) <= -1), 'trend'] = 'downwards'
         dataframe.loc[(dataframe['HT_TRENDMODE'] == 0) | (((dataframe['plus_di'] - dataframe['minus_di']) > -1) & ((dataframe['plus_di'] - dataframe['minus_di']) < 1)), 'trend'] = 'sideways'
-        dataframe.loc[(dataframe['HT_TRENDMODE'] == 1) & ((dataframe['plus_di'] - dataframe['minus_di']) >= -1), 'trend'] = 'upwards'
+        dataframe.loc[(dataframe['HT_TRENDMODE'] == 1) & ((dataframe['plus_di'] - dataframe['minus_di']) >= 1), 'trend'] = 'upwards'
 
         return dataframe
 
