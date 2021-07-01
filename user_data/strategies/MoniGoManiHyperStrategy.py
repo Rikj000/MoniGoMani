@@ -107,6 +107,9 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         },
         'subplots': {
             # Subplots - Each dict defines one additional plot (MACD, ADX, Plus/Minus Direction, RSI)
+            'MGM Trend': {
+                'MGM_Trend': {'color': '#7fba3c'}
+            },
             'MACD (Moving Average Convergence Divergence)': {
                 'macd': {'color': '#19038a'},
                 'macdsignal': {'color': '#ae231c'}
