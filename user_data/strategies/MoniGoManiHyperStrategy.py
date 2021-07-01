@@ -104,7 +104,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             'bb_upperband': {'color': '#6f1a7b'},
             'bb_lowerband': {'color': '#6f1a7b'},
             'vwap': {'color': '#727272'},
-			'sar': {'color': '#2c05f6'}
+            'sar': {'color': '#2c05f6'}
         },
         'subplots': {
             # Subplots - Each dict defines one additional plot (MACD, ADX, Plus/Minus Direction, RSI)
