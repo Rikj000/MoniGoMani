@@ -103,10 +103,14 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             'ema200': {'color': '#074b36'},
             'bb_upperband': {'color': '#6f1a7b'},
             'bb_lowerband': {'color': '#6f1a7b'},
-            'vwap': {'color': '#727272'}
+            'vwap': {'color': '#727272'},
+			'sar': {'color': '#2c05f6'}
         },
         'subplots': {
             # Subplots - Each dict defines one additional plot (MACD, ADX, Plus/Minus Direction, RSI)
+            'MGM Trend': {
+                'MGM_Trend': {'color': '#7fba3c'}
+            },
             'MACD (Moving Average Convergence Divergence)': {
                 'macd': {'color': '#19038a'},
                 'macdsignal': {'color': '#ae231c'}

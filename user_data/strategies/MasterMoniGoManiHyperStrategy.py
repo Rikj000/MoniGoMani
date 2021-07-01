@@ -302,13 +302,18 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # Hilbert Transform - TrendvsCycle
         dataframe['HT_TRENDMODE'] = ta.HT_TRENDMODE(dataframe)  
         
+        # Parabolic SAR
+        dataframe['sar'] = ta.SAR(dataframe)
+
         # Trend Detection
         # ---------------
+        dataframe.loc[(dataframe['HT_TRENDMODE'] == 1) & (dataframe['sar'] > dataframe['close']), 'trend'] = 'downwards'
+        dataframe.loc[(dataframe['HT_TRENDMODE'] == 0) | (dataframe['sar'] == dataframe['close']), 'trend'] = 'sideways'
+        dataframe.loc[(dataframe['HT_TRENDMODE'] == 1) & (dataframe['sar'] < dataframe['close']), 'trend'] = 'upwards'
 
-        # Detect if current trend going Downwards / Sideways / Upwards, strategy will respond accordingly
-        dataframe.loc[(dataframe['HT_TRENDMODE'] == 1) & ((dataframe['plus_di'] - dataframe['minus_di']) <= -1), 'trend'] = 'downwards'
-        dataframe.loc[(dataframe['HT_TRENDMODE'] == 0) | (((dataframe['plus_di'] - dataframe['minus_di']) > -1) & ((dataframe['plus_di'] - dataframe['minus_di']) < 1)), 'trend'] = 'sideways'
-        dataframe.loc[(dataframe['HT_TRENDMODE'] == 1) & ((dataframe['plus_di'] - dataframe['minus_di']) >= 1), 'trend'] = 'upwards'
+        dataframe.loc[(dataframe['trend'] == "downwards"), 'MGM_Trend'] = -1
+        dataframe.loc[(dataframe['trend'] == "sideways"), 'MGM_Trend'] = 0
+        dataframe.loc[(dataframe['trend'] == "upwards"), 'MGM_Trend'] = 1
 
         return dataframe
 
