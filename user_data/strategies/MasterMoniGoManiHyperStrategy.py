@@ -985,7 +985,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             for space in ['buy', 'sell']:
                 if cls.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                     param_total_signal_needed = f'_{trend}_trend_total_signal_needed'
-                    number_of_weighted_signals = int(cls[f'number_of_weighted_{trend}_signals'])
+                    number_of_weighted_signals = int(getattr(cls, f'number_of_weighted_{space}_signals'))
                     cls._init_vars(base_cls, space, param_total_signal_needed, cls.min_trend_total_signal_needed_value,
                                    int(cls.max_weighted_signal_value *
                                        number_of_weighted_signals),
@@ -1022,8 +1022,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             # Set all signs in the class for later use.
             setattr(base_cls, 'buy_signals', buy_signals)
             setattr(base_cls, 'sell_signals', sell_signals)
-            setattr(base_cls, 'number_of_weighted_buy_signals', len(buy_signals))
-            setattr(base_cls, 'number_of_weighted_sell_signals', len(sell_signals))
+
+            # Set number of weighted buy/sell signals for later use.
+            setattr(MasterMoniGoManiHyperStrategy, 'number_of_weighted_buy_signals', len(buy_signals))
+            setattr(MasterMoniGoManiHyperStrategy, 'number_of_weighted_sell_signals', len(sell_signals))
 
             # Sets the useful parameters of the MGM, such as unclogger and etc
             MasterMoniGoManiHyperStrategy._init_util_params(base_cls)
