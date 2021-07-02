@@ -107,7 +107,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 'search_threshold_trend_total_signal_needed_candles_lookback_window_value']
         search_threshold_trend_signal_triggers_needed = \
             mgm_config['weighted_signal_spaces']['search_threshold_trend_signal_triggers_needed']
-        number_of_weighted_signals = mgm_config['weighted_signal_spaces']['number_of_weighted_signals']
         roi_table_step_size = mgm_config['roi_table_step_size']
         stoploss_min_value = mgm_config['stoploss_spaces']['stoploss_min_value']
         stoploss_max_value = mgm_config['stoploss_spaces']['stoploss_max_value']
@@ -781,7 +780,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         When passing a type and a message to this function it will log:
         - The timestamp of logging + the message_type provided + the message provided
         - To the console & To "./user_data/logs/freqtrade.log"
-    
+
         :param message_type: The type of the message (INFO, DEBUG, WARNING, ERROR)
         :param code_section: The section in the code where the message occurred
         :param message: The log message to be displayed
@@ -806,7 +805,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         Generates the final condition that checks the weights per trend
         :param dataframe: DataFrame populated with indicators
         :param space: buy or sell space
-        :return: Lambda conditions 
+        :return: Lambda conditions
         """
         conditions_weight = []
         # If TimeFrame-Zooming => Only use 'informative_timeframe' data
@@ -831,7 +830,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param space: buy or sell
         :param dataframe: DataFrame populated with indicators
         :param condition: A valid condition to evaluate the signal
-        :return: DataFrame with debug signals 
+        :return: DataFrame with debug signals
         """
 
         # Weighted Variables
@@ -886,7 +885,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         Defines the optimizable parameters of each signal
         :param base_cls: The inheritor class of the MGM where the attributes will be added
         :param space: buy or sell
-        :param name: Signal name 
+        :param name: Signal name
         :return: None
         """
 
@@ -986,8 +985,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             for space in ['buy', 'sell']:
                 if cls.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                     param_total_signal_needed = f'_{trend}_trend_total_signal_needed'
+                    number_of_weighted_signals = int(cls[f'number_of_weighted_{trend}_signals'])
                     cls._init_vars(base_cls, space, param_total_signal_needed, cls.min_trend_total_signal_needed_value,
-                                   int(cls.max_weighted_signal_value * cls.number_of_weighted_signals),
+                                   int(cls.max_weighted_signal_value *
+                                       number_of_weighted_signals),
                                    cls.search_threshold_weighted_signal_values, cls.precision)
 
                     param_needed_candles_lookback_window = f'_{trend}_trend_total_signal_needed_candles_lookback_window'
@@ -999,7 +1000,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
                     param_signal_triggers_needed = f'_{trend}_trend_signal_triggers_needed'
                     cls._init_vars(base_cls, space, param_signal_triggers_needed,
-                                   cls.min_trend_signal_triggers_needed_value, int(cls.number_of_weighted_signals),
+                                   cls.min_trend_signal_triggers_needed_value, number_of_weighted_signals,
                                    cls.search_threshold_trend_signal_triggers_needed, cls.precision)
 
     @staticmethod
@@ -1021,6 +1022,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             # Set all signs in the class for later use.
             setattr(base_cls, 'buy_signals', buy_signals)
             setattr(base_cls, 'sell_signals', sell_signals)
+            setattr(base_cls, 'number_of_weighted_buy_signals', len(buy_signals))
+            setattr(base_cls, 'number_of_weighted_sell_signals', len(sell_signals))
 
             # Sets the useful parameters of the MGM, such as unclogger and etc
             MasterMoniGoManiHyperStrategy._init_util_params(base_cls)
@@ -1042,7 +1045,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param space: buy or sell
         :param dataframe: DataFrame populated with indicators
         :param metadata: Additional information, like the currently traded pair
-        :return: DataFrame with debug signals 
+        :return: DataFrame with debug signals
         """
 
         # Reset the total signals possible when a new BackTest starts (during HyperOpting)
