@@ -72,9 +72,9 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
 **<span style="color:darkorange">WARNING:</span> It's strongly advised to not do any manual alterations to an already optimized MGM setup! The recommended way to do manual alterations is by [Configuring MoniGoMani](#how-to-configure-monigomani), and then following this optimization process to apply them!**   
    
 
-0) Delete the previous `mgm-config-hyperopt.json` if it exists using:
+0) Delete the previous `mgm-config-hyperopt.json` and/or `MoniGoManiHyperStrategy.json` files if they exist, by using:
    ```powershell
-   rm ./user_data/mgm-config-hyperopt.json
+   rm ./user_data/mgm-config-hyperopt.json ./user_data/strategies/MoniGoManiHyperStrategy.json
    ```
 **1) Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)**
 2) Download a good Top Volume StaticPairList and update this in your `mgm-config.json`. Instructions for how to do this are under [PairLists](#pairlists).
@@ -82,24 +82,16 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
 4) HyperOpt for a **1st HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)   
    The 1st HyperOpt Run *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with the default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of `mgm-config.json`
 5) **[Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.   
-   You can check a certain epoch in the list of best results using:
+   You can check and automatically apply an `<epoch of choice>` of which you feel confident, in the list of best results using:
    ```powershell
-   freqtrade hyperopt-show -n <epoch of choice>
+   freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json && mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json
    ```
-6) Once you picked an `<epoch of choice>` of which you feel confident, then apply the HyperOpt results by extracting them into a new `mgm-config-hyperopt.json` using:
-   ```powershell
-   freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./user_data/mgm-config-hyperopt.json && jq '.' ./user_data/mgm-config-hyperopt.json
-   ```
-7) Repeat `Steps 4 and 5` at least for a **2nd HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)
+6) Repeat `Steps 4 and 5` at least for a **2nd HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)
    The 2nd HyperOpt Run *(When a `mgm-config-hyperopt.json` exists)* is automatically ran with:   
        - Refined search spaces ranging between the values found during the 1st Run (Loaded from `mgm-config-hyperopt.json`) plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json` (This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)   
        - Weak weighted signals weeded out by overriding them to their respective `min_` value (Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
        - Strong weighted signals are boosted by overriding them to their respective `max_` value (Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
-8) Once you picked an `<epoch of choice>` of which you feel confident, then apply the HyperOpt results by extracting them and combining them in the pre-existing `mgm-config-hyperopt.json` using:
-   ```powershell
-   freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./tmp.json && jq -s '.[0] * .[1]' ./user_data/mgm-config-hyperopt.json ./tmp.json > ./tmp2.json && rm ./tmp.json ./user_data/mgm-config-hyperopt.json && mv ./tmp2.json ./user_data/mgm-config-hyperopt.json && jq '.' ./user_data/mgm-config-hyperopt.json
-   ```
-9) Load your results into the `Total-Overall-Signal-Importance-Calculator.py` and run it's [Go-To Command](#go-to-commands) to receive a nice weighted signal report for sharing in the [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.  
+7) Load your results into the `Total-Overall-Signal-Importance-Calculator.py` and run it's [Go-To Command](#go-to-commands) to receive a nice weighted signal report for sharing in the [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.  
 
 
 # How to Configure MoniGoMani
@@ -453,21 +445,17 @@ freqtrade download-data --timerange 20201201-20210316 -t 5m 1h -c ./user_data/mg
 ```
 
 # Go-To Commands
-**Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
+**Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) and apply the *"best"* results:
 ```powershell
-freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 800 --timerange 20210501-20210616 --enable-protections
+freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 800 --timerange 20210501-20210616 --enable-protections && mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json
 ```
-**Apply HyperOpt Results after Run 1** from a `<epoch of choice>`:
+**Apply HyperOpt Results** from a `<epoch of choice>`:
 ```powershell
-freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./user_data/mgm-config-hyperopt.json && jq '.' ./user_data/mgm-config-hyperopt.json
-```
-**Apply HyperOpt Results after Run 2** from a `<epoch of choice>`:
-```powershell
-freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --no-header --print-json | tail -n 1 | jq '.' > ./tmp.json && jq -s '.[0] * .[1]' ./user_data/mgm-config-hyperopt.json ./tmp.json > ./tmp2.json && rm ./tmp.json ./user_data/mgm-config-hyperopt.json && mv ./tmp2.json ./user_data/mgm-config-hyperopt.json && jq '.' ./user_data/mgm-config-hyperopt.json
+freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json  && mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json
 ```
 **Reset HyperOpt Results**:
 ```powershell
-rm ./user_data/mgm-config-hyperopt.json
+rm ./user_data/mgm-config-hyperopt.json ./user_data/strategies/MoniGoManiHyperStrategy.json
 ```
 **Back Testing** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
 ```powershell
