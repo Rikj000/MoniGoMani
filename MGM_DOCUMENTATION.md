@@ -72,26 +72,26 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
 **<span style="color:darkorange">WARNING:</span> It's strongly advised to not do any manual alterations to an already optimized MGM setup! The recommended way to do manual alterations is by [Configuring MoniGoMani](#how-to-configure-monigomani), and then following this optimization process to apply them!**   
    
 
-0) Delete the previous `mgm-config-hyperopt.json` and/or `MoniGoManiHyperStrategy.json` files if they exist, by using:
+**0)** Delete the previous `mgm-config-hyperopt.json` and/or `MoniGoManiHyperStrategy.json` files if they exist, by using:
    ```powershell
    rm ./user_data/mgm-config-hyperopt.json ./user_data/strategies/MoniGoManiHyperStrategy.json
    ```
 **1) Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)**
-2) Download a good Top Volume StaticPairList and update this in your `mgm-config.json`. Instructions for how to do this are under [PairLists](#pairlists).
-3) Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & pick a logical timeframe to do your HyperOpt upon *(The timeframe in the [Go-To Commands](#go-to-commands) for example resembles some bullish, some bearish and some sideways market behavior, with the idea to give MGM all trends to train upon).*   
-4) HyperOpt for a **1st HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)   
+**2)** Download a good Top Volume StaticPairList and update this in your `mgm-config.json`. Instructions for how to do this are under [PairLists](#pairlists).
+**3)** Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & pick a logical timeframe to do your HyperOpt upon *(The timeframe in the [Go-To Commands](#go-to-commands) for example resembles some bullish, some bearish and some sideways market behavior, with the idea to give MGM all trends to train upon).*   
+**4)** HyperOpt for a **1st HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)   
    The 1st HyperOpt Run *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with the default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of `mgm-config.json`
-5) **[Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.   
+**5) [Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.   
    You can check and automatically apply an `<epoch of choice>` of which you feel confident, in the list of best results using:
    ```powershell
    freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json && mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json
    ```
-6) Repeat `Steps 4 and 5` at least for a **2nd HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)
+**6)** Repeat `Steps 4 and 5` at least for a **2nd HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)
    The 2nd HyperOpt Run *(When a `mgm-config-hyperopt.json` exists)* is automatically ran with:   
        - Refined search spaces ranging between the values found during the 1st Run (Loaded from `mgm-config-hyperopt.json`) plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json` (This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)   
        - Weak weighted signals weeded out by overriding them to their respective `min_` value (Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
        - Strong weighted signals are boosted by overriding them to their respective `max_` value (Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
-7) Load your results into the `Total-Overall-Signal-Importance-Calculator.py` and run it's [Go-To Command](#go-to-commands) to receive a nice weighted signal report for sharing in the [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.  
+**7)** Load your results into the `Total-Overall-Signal-Importance-Calculator.py` and run it's [Go-To Command](#go-to-commands) to receive a nice weighted signal report for sharing in the [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.  
 
 
 # How to Configure MoniGoMani
