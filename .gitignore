@@ -1,5 +1,8 @@
 # Ignore the Private Config to prevent accidental pushing
 user_data/mgm-config-private.json
+# Ignore the HyperOpt Result Files that are used by Default
+user_data/mgm-config-hyperopt.json
+user_data/strategies/MoniGoManiHyperStrategy.json
 # Ignore Release Template
 ReleaseTemplate.md
 # Ignore Python Caches

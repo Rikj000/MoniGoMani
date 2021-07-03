@@ -1,0 +1,59 @@
+=========================================================== BACKTESTING REPORT ==========================================================
+|       Pair |   Buys |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |   Avg Duration |   Win  Draw  Loss  Win% |
+|------------+--------+----------------+----------------+-------------------+----------------+----------------+-------------------------|
+| MATIC/USDT |    102 |           2.75 |         280.25 |           126.237 |          25.25 |       16:27:00 |    55    33    14  53.9 |
+|   DOT/USDT |     65 |           1.27 |          82.65 |            37.228 |           7.45 |       18:48:00 |    25    28    12  38.5 |
+|   XRP/USDT |     69 |           1.04 |          71.53 |            32.221 |           6.44 |       19:53:00 |    31    22    16  44.9 |
+|   ETH/USDT |     65 |           0.68 |          44.04 |            19.837 |           3.97 |       21:11:00 |    27    25    13  41.5 |
+|   ADA/USDT |     63 |           0.70 |          43.80 |            19.729 |           3.95 |       19:48:00 |    24    30     9  38.1 |
+|   BTC/USDT |     68 |           0.47 |          32.21 |            14.510 |           2.90 |       17:05:00 |    32    27     9  47.1 |
+|      TOTAL |    432 |           1.28 |         554.47 |           249.762 |          49.95 |       18:39:00 |   194   165    73  44.9 |
+============================================================ SELL REASON STATS ============================================================
+|                 Sell Reason |   Sells |   Win  Draws  Loss  Win% |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |
+|-----------------------------+---------+--------------------------+----------------+----------------+-------------------+----------------|
+|                         roi |     313 |    148   165     0   100 |           1.71 |         535.34 |           241.145 |          89.22 |
+|                 sell_signal |      59 |      0     0    59     0 |          -6.52 |        -384.42 |          -173.16  |         -64.07 |
+|          trailing_stop_loss |      46 |     46     0     0   100 |          13.12 |         603.5  |           271.849 |         100.58 |
+| MGM_unclogging_losing_trade |       8 |      0     0     8     0 |          -5.61 |         -44.87 |           -20.211 |          -7.48 |
+|                   stop_loss |       6 |      0     0     6     0 |         -25.85 |        -155.09 |           -69.861 |         -25.85 |
+====================================================== LEFT OPEN TRADES REPORT ======================================================
+|   Pair |   Buys |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |   Avg Duration |   Win  Draw  Loss  Win% |
+|--------+--------+----------------+----------------+-------------------+----------------+----------------+-------------------------|
+|  TOTAL |      0 |           0.00 |           0.00 |             0.000 |           0.00 |           0:00 |     0     0     0     0 |
+=============== SUMMARY METRICS ================
+| Metric                 | Value               |
+|------------------------+---------------------|
+| Backtesting from       | 2021-01-01 00:00:00 |
+| Backtesting to         | 2021-06-20 00:00:00 |
+| Max open trades        | 6                   |
+|                        |                     |
+| Total/Daily Avg Trades | 432 / 2.54          |
+| Starting balance       | 500.000 USDT        |
+| Final balance          | 749.762 USDT        |
+| Absolute profit        | 249.762 USDT        |
+| Total profit %         | 49.95%              |
+| Avg. stake amount      | 45.000 USDT         |
+| Total trade volume     | 19440.000 USDT      |
+|                        |                     |
+| Best Pair              | MATIC/USDT 280.25%  |
+| Worst Pair             | BTC/USDT 32.21%     |
+| Best trade             | DOT/USDT 58.84%     |
+| Worst trade            | XRP/USDT -25.85%    |
+| Best day               | 30.229 USDT         |
+| Worst day              | -23.287 USDT        |
+| Days win/draw/lose     | 79 / 48 / 39        |
+| Avg. Duration Winners  | 16:06:00            |
+| Avg. Duration Loser    | 1 day, 7:50:00      |
+| Zero Duration Trades   | 0.23% (1)           |
+| Rejected Buy signals   | 0                   |
+|                        |                     |
+| Min balance            | 497.560 USDT        |
+| Max balance            | 752.684 USDT        |
+| Drawdown               | 79.81%              |
+| Drawdown               | 35.951 USDT         |
+| Drawdown high          | 180.127 USDT        |
+| Drawdown low           | 144.176 USDT        |
+| Drawdown Start         | 2021-03-14 09:55:00 |
+| Drawdown End           | 2021-03-28 21:00:00 |
+| Market change          | 1396.45%            |
+================================================

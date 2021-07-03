@@ -7,7 +7,7 @@ import sys
 from abc import ABC
 from datetime import datetime, timedelta
 from functools import reduce
-from typing import Any,Dict, List
+from typing import Any, Dict, List
 
 import numpy as np  # noqa
 import pandas as pd  # noqa
@@ -72,7 +72,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     sell_params = {}
 
     # Load the MoniGoMani settings
-    mgm_config_path = os.getcwd() + '/user_data/' + mgm_config_name
+    mgm_config_path = f'{os.getcwd()}/user_data/{mgm_config_name}'
     if os.path.isfile(mgm_config_path) is True:
         # Load the 'mgm-config.json' file as an object and parse it as a dictionary
         file_object = open(mgm_config_path, )
@@ -133,50 +133,36 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                  f'this file. {missing_setting} has been detected as missing from the file...')
 
     # If results from a previous HyperOpt Run are found then continue the next HyperOpt Run upon them
-    mgm_config_hyperopt_path = os.getcwd() + '/user_data/' + mgm_config_hyperopt_name
+    mgm_config_hyperopt_path = f'{os.getcwd()}/user_data/{mgm_config_hyperopt_name}'
     if os.path.isfile(mgm_config_hyperopt_path) is True:
         # Load the previous 'mgm-config-hyperopt.json' file as an object and parse it as a dictionary
         file_object = open(mgm_config_hyperopt_path, )
         mgm_config_hyperopt = json.load(file_object)
 
-        # Convert the loaded 'mgm-config-hyperopt.json' data to the needed HyperOpt Results format
-        for param in mgm_config_hyperopt['params']:
-            param_value = mgm_config_hyperopt['params'][str(param)]
-            if (isinstance(param_value, str) is True) and (str.isdigit(param_value) is True):
-                param_value = int(param_value)
+        # Convert the loaded 'mgm-config-hyperopt.json' data to the needed HyperOpt Results format if it's found
+        # Default stub values from 'mgm-config.json' are used otherwise.
+        for space in mgm_config_hyperopt['params']:
+            if space in ['buy', 'sell']:
+                for param, param_value in mgm_config_hyperopt['params'][space].items():
+                    if param.startswith('buy'):
+                        buy_params[param] = param_value
+                    else:
+                        sell_params[param] = param_value
 
-            if str(param).startswith('buy'):
-                buy_params[str(param)] = param_value
-            else:
-                sell_params[str(param)] = param_value
+            if space == 'roi':
+                minimal_roi = mgm_config_hyperopt['params'][space]
+
+            if space == 'stoploss':
+                stoploss = mgm_config_hyperopt['params'][space][space]
+
+            if space == 'trailing':
+                trailing_stop = mgm_config_hyperopt['params'][space]['trailing_stop']
+                trailing_stop_positive = mgm_config_hyperopt['params'][space]['trailing_stop_positive']
+                trailing_stop_positive_offset = mgm_config_hyperopt['params'][space]['trailing_stop_positive_offset']
+                trailing_only_offset_is_reached = \
+                    mgm_config_hyperopt['params'][space]['trailing_only_offset_is_reached']
     else:
         mgm_config_hyperopt = {}
-
-    # Load the rest of the values from 'mgm-config-hyperopt.json' if they are found
-    # Default stub values from 'mgm-config.json' are used otherwise. Also parses them to the right type if needed
-    if 'minimal_roi' in mgm_config_hyperopt:
-        minimal_roi = mgm_config_hyperopt['minimal_roi']
-
-    if 'stoploss' in mgm_config_hyperopt:
-        stoploss = mgm_config_hyperopt['stoploss']
-
-    if 'trailing_stop' in mgm_config_hyperopt:
-        if isinstance(mgm_config_hyperopt['trailing_stop'], str) is True:
-            trailing_stop = bool(mgm_config_hyperopt['trailing_stop'])
-        else:
-            trailing_stop = mgm_config_hyperopt['trailing_stop']
-
-    if 'trailing_stop_positive' in mgm_config_hyperopt:
-        trailing_stop_positive = mgm_config_hyperopt['trailing_stop_positive']
-
-    if 'trailing_stop_positive_offset' in mgm_config_hyperopt:
-        trailing_stop_positive_offset = mgm_config_hyperopt['trailing_stop_positive_offset']
-
-    if 'trailing_only_offset_is_reached' in mgm_config_hyperopt:
-        if isinstance(mgm_config_hyperopt['trailing_only_offset_is_reached'], str) is True:
-            trailing_only_offset_is_reached = bool(mgm_config_hyperopt['trailing_only_offset_is_reached'])
-        else:
-            trailing_only_offset_is_reached = mgm_config_hyperopt['trailing_only_offset_is_reached']
 
     # Create dictionary to store custom information MoniGoMani will be using in RAM
     custom_info = {
