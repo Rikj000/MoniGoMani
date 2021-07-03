@@ -188,7 +188,6 @@ The settings inside `mgm-config.json`'s `weighted_signal_spaces` section are use
 | **search_threshold_weighted_signal_values** | **2nd HyperOpt Run:** Used to refine the search spaces for remaining weighted signals with the value found in the 1st run +- the threshold. <br> **Datatype:** Integer |
 | **search_threshold_trend_total_signal_needed_candles_lookback_window_value** | **2nd HyperOpt Run:** Used to refine the search spaces for the candle lookback window for total signals needed with the values found in the 1st run +- the threshold. <br> **Datatype:** Integer |
 | **search_threshold_trend_signal_triggers_needed** | **2nd HyperOpt Run:** Used to refine the search spaces for the amount of signals that need to trigger in it's respective (trend depending) candle lookback window. with the value found in the 1st run +- the threshold. <br> **Datatype:** Integer |
-| **number_of_weighted_signals** | Set the `number_of_weighted_signals` setting to the total number of different weighted signals in use in the weighted tables. <br> `buy/sell__downwards/sideways/upwards_trend_total_signal_needed` settings will be multiplied with this value, so their search spaces will be larger, resulting in more equally divided total weighted signal scores when HyperOpting. <br> **Datatype:** Integer |
 
 ### Stoploss Spaces
 The settings inside `mgm-config.json`'s `stoploss_spaces` section are used to refine the search spaces that MGM will use for the (trailing) stoploss during it's [optimization process](#how-to-optimize-monigomani).

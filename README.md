@@ -103,10 +103,11 @@ Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/Mon
 ## Feature List
 - Partially [Automated Optimization Process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani)
 - All HyperOpt Results can easily be applied and removed with the use of some [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#go-to-commands)
-- Configurable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends, each table **currently** has 9 Buy & 9 Sell signals implemented ***(HyperOptable!)***:
-  - [ADX](https://www.investopedia.com/terms/a/adx.asp) + Strong [Up](https://www.investopedia.com/terms/p/positivedirectionalindicator.asp)/Strong [Down](https://www.investopedia.com/terms/n/negativedirectionalindicator.asp)
+- Configurable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends, each table **currently** has 10 Buy & 10 Sell signals implemented ***(HyperOptable!)***:
+  - [ADX](https://www.investopedia.com/terms/a/adx.asp)
   - [MACD](https://www.investopedia.com/terms/m/macd.asp)  
   - [MFI](https://www.investopedia.com/terms/m/mfi.asp)
+  - [RSI](https://www.investopedia.com/terms/r/rsi.asp)
   - [SMA](https://www.investopedia.com/terms/s/sma.asp) Short [Death](https://www.investopedia.com/terms/d/deathcross.asp)/[Golden](https://www.investopedia.com/terms/g/goldencross.asp) Cross
   - [EMA](https://www.investopedia.com/terms/e/ema.asp) Short [Death](https://www.investopedia.com/terms/d/deathcross.asp)/[Golden](https://www.investopedia.com/terms/g/goldencross.asp) Cross
   - [SMA](https://www.investopedia.com/terms/s/sma.asp) Long [Death](https://www.investopedia.com/terms/d/deathcross.asp)/[Golden](https://www.investopedia.com/terms/g/goldencross.asp) Cross
@@ -172,16 +173,16 @@ freqtrade plot-profit --export-filename user_data/backtest_results/<results-file
 
 ## Got Test Results - Ideas - Config Improvements?
 - Feel free to join our community [**CryptoStonksShallRise**](https://discord.gg/xFZ9bB6vEz) on Discord, there you can follow/participate in the **Official MoniGoMani Channels**:
-  - `#moni-go-mani-announcements`
-  - `#moni-go-mani-updates`
-  - `#moni-go-mani-github`
-  - `#moni-go-mani-development` *(Only available to MoniGoMani Developers!)*
-  - `#moni-go-mani-testing`
-  - `#moni-go-mani-help` *(Be sure to take your time to read the [Documentation](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md) thoroughly before asking questions though!)*
-  - `#moni-go-mani-cluster-releases` *(Only available to the MoniGoMani Cluster Maintainer & MoniGoMani Developers, for now!)*
-  - `#moni-go-mani-setup-releases`
-   
-More general chats for `Technical Analysis`, `Freqtrade`, `Iconomi` and `Random` discussion are also available there :slightly_smiling_face:    
+  - `📢︱moni-go-mani`
+  - `✨︱git-updates`
+  - `🗞︱github-discussions`
+  - `🖥︱development` *(Exclusive to MoniGoMani Developers & Sponsors!)*
+  - `🛠︱testing`
+  - `❔︱help` *(Be sure to take your time to read the [Documentation](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md) thoroughly before asking questions though!)*
+  - `🎉︱setup-releases`
+  - `🗄︱cluster-results` *(Exclusive to the MoniGoMani Cluster Maintainer & MoniGoMani Developers, for now!)*
+
+More general chats for `📈︱technical-analysis`, `🤖︱freqtrade`, `📊︱iconomi` and `🍉︱random` discussion are also available there :slightly_smiling_face:    
 
 ## Planned
 MoniGoMani's planned section lives under the [**Issues**](https://github.com/Rikj000/MoniGoMani/issues) section! 

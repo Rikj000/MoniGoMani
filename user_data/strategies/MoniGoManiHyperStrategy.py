@@ -114,7 +114,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         'subplots': {
             # Sub Plots - Individual Weighted Signals/Indicators
             'ADX (Average Directional Index)': {
-                'adx': {'color': '#6f1a7b'},
+                'adx': {'color': '#6f1a7b'}
             },
             'MACD (Moving Average Convergence Divergence)': {
                 'macd': {'color': '#19038a'},
