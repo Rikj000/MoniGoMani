@@ -241,7 +241,7 @@ def main():
     avg_trend_weights = {}
 
     # Load the MoniGoMani settings
-    mgm_config_path = os.getcwd() + '/user_data/' + calculator_data.mgm_config_name
+    mgm_config_path = f'{os.getcwd()}/user_data/{calculator_data.mgm_config_name}'
     if os.path.isfile(mgm_config_path) is True:
         # Load the 'mgm-config.json' file as an object and parse it as a dictionary
         file_object = open(mgm_config_path, )
@@ -254,7 +254,7 @@ def main():
                  f'correct file and/or alter "mgm_config_name" in "Total-Overall-Signal-Importance-Calculator.py"')
 
     # If results from a previous HyperOpt Run are found then continue the next HyperOpt Run upon them
-    mgm_config_hyperopt_path = os.getcwd() + '/user_data/' + calculator_data.mgm_config_hyperopt_name
+    mgm_config_hyperopt_path = f'{os.getcwd()}/user_data/{calculator_data.mgm_config_hyperopt_name}'
     if os.path.isfile(mgm_config_hyperopt_path) is True:
         # Load the provided 'mgm-config-hyperopt.json' file as an object
         file_object = open(mgm_config_hyperopt_path, )
@@ -271,16 +271,16 @@ def main():
                         # Convert the Weighted Buy & Sell Signal Data
                         for indicator in indicator_names:
                             dictionary_key = f'{space}_{trend}_trend_{indicator}_weight'
-                            params[dictionary_key] = mgm_config_hyperopt_json_data['params'][dictionary_key]
+                            params[dictionary_key] = mgm_config_hyperopt_json_data['params'][space][dictionary_key]
                         # Convert the Total Signals Needed
                         dictionary_key = f'{space}__{trend}_trend_total_signal_needed'
-                        params[dictionary_key] = mgm_config_hyperopt_json_data['params'][dictionary_key]
+                        params[dictionary_key] = mgm_config_hyperopt_json_data['params'][space][dictionary_key]
                         # Convert the Lookback Windows
                         dictionary_key += '_candles_lookback_window'
-                        params[dictionary_key] = mgm_config_hyperopt_json_data['params'][dictionary_key]
+                        params[dictionary_key] = mgm_config_hyperopt_json_data['params'][space][dictionary_key]
                         # Convert the Signal Triggers Needed
                         dictionary_key = f'{space}__{trend}_trend_signal_triggers_needed'
-                        params[dictionary_key] = mgm_config_hyperopt_json_data['params'][dictionary_key]
+                        params[dictionary_key] = mgm_config_hyperopt_json_data['params'][space][dictionary_key]
 
                     # Generate default 0 values if not trading in this trend
                     else:
@@ -302,9 +302,9 @@ def main():
             for unclogger_check_name in unclogger_check_names:
                 dictionary_key = f'sell___unclogger_{unclogger_check_name}'
                 config_dictionary_key = f'unclogger_{unclogger_check_name}'
-                if dictionary_key in mgm_config_hyperopt_json_data['params']:
+                if dictionary_key in mgm_config_hyperopt_json_data['params']['sell']:
                     calculator_data.unclogger_params[unclogger_check_name] = \
-                        mgm_config_hyperopt_json_data['params'][dictionary_key]
+                        mgm_config_hyperopt_json_data['params']['sell'][dictionary_key]
                 elif (config_dictionary_key in mgm_config['unclogger_spaces']) and \
                         (isinstance(mgm_config['unclogger_spaces'][config_dictionary_key], bool) is True):
                     calculator_data.unclogger_params[unclogger_check_name] = \
