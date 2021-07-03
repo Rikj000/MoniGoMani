@@ -416,9 +416,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Add DataFrame column for visualization in FreqUI when Dry/Live RunMode is detected
         if self.is_dry_live_run_detected is True:
-            dataframe.loc[(dataframe['trend'] == "downwards"), 'mgm_trend'] = -1
-            dataframe.loc[(dataframe['trend'] == "sideways"), 'mgm_trend'] = 0
-            dataframe.loc[(dataframe['trend'] == "upwards"), 'mgm_trend'] = 1
+            dataframe.loc[(dataframe['trend'] == 'downwards'), 'mgm_trend'] = -1
+            dataframe.loc[(dataframe['trend'] == 'sideways'), 'mgm_trend'] = 0
+            dataframe.loc[(dataframe['trend'] == 'upwards'), 'mgm_trend'] = 1
 
         return dataframe
 
@@ -449,8 +449,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             informative = self.dp.get_pair_dataframe(pair=metadata['pair'], timeframe=self.informative_timeframe)
 
             # Throw away older data that isn't needed.
-            first_informative = dataframe["date"].min().floor("H")
-            informative = informative[informative["date"] >= first_informative]
+            first_informative = dataframe['date'].min().floor('H')
+            informative = informative[informative['date'] >= first_informative]
 
             # Populate core trend indicators
             informative = self._populate_core_trend(informative, metadata)
@@ -464,10 +464,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
             # Rename columns, since merge_informative_pair adds `_<timeframe>` to the end of each name.
             # Skip over date etc..
-            skip_columns = [(s + "_" + self.informative_timeframe) for s in
+            skip_columns = [f'{s}_{self.informative_timeframe}' for s in
                             ['date', 'open', 'high', 'low', 'close', 'volume']]
-            dataframe.rename(columns=lambda s: s.replace("_{}".format(self.informative_timeframe), "") if
-            (not s in skip_columns) else s, inplace=True)
+            dataframe.rename(columns=lambda s: s.replace('_{}'.format(self.informative_timeframe),
+                                                         '') if (s not in skip_columns) else s, inplace=True)
 
         # Compute indicator data normally during Dry & Live Running or when not using TimeFrame-Zoom
         else:
@@ -720,7 +720,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                     for candle in range(1, round(temp / self.precision) + 1):
                                         # Convert the candle time to the one being used by the
                                         # 'informative_timeframe'
-                                        candle_multiplier = int(self.informative_timeframe.rstrip("mhdwM"))
+                                        candle_multiplier = int(self.informative_timeframe.rstrip('mhdwM'))
                                         candle_time = \
                                             timeframe_to_prev_date(self.informative_timeframe, current_time) - \
                                             timedelta(minutes=int(candle * candle_multiplier))
@@ -922,7 +922,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Generating the attributes for each signal trend
         for trend in cls.mgm_trends:
-            parameter_name = f"{trend}_trend_{name}_weight"
+            parameter_name = f'{trend}_trend_{name}_weight'
             if cls.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                 cls._init_vars(base_cls, space=space,
                                parameter_name=parameter_name,
@@ -976,18 +976,18 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             default_value = parameter_value
 
         parameter_config = {
-            "min_value": int(min_value * precision),
-            "max_value": int(max_value * precision),
-            "default_value": int(default_value * precision),
+            'min_value': int(min_value * precision),
+            'max_value': int(max_value * precision),
+            'default_value': int(default_value * precision),
             # 1st HyperOpt Run: No overrides, 2nd HyperOpt Run: Apply Overrides where needed
-            "optimize": False if (parameter_value is not None) and (overrideable is True) and
+            'optimize': False if (parameter_value is not None) and (overrideable is True) and
                                  (min_value == parameter_min_value or max_value == parameter_max_value) else True
         }
 
-        parameter_dictionary[parameter_key] = parameter_config["default_value"]
-        param = IntParameter(parameter_config["min_value"], parameter_config["max_value"],
-                             default=parameter_config["default_value"], space=space,
-                             optimize=parameter_config["optimize"], load=True)
+        parameter_dictionary[parameter_key] = parameter_config['default_value']
+        param = IntParameter(parameter_config['min_value'], parameter_config['max_value'],
+                             default=parameter_config['default_value'], space=space,
+                             optimize=parameter_config['optimize'], load=True)
         setattr(base_cls, parameter_key, param)
 
     @classmethod
@@ -1018,8 +1018,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                     param_total_signal_needed = f'_{trend}_trend_total_signal_needed'
                     number_of_weighted_signals = int(getattr(cls, f'number_of_weighted_{space}_signals'))
                     cls._init_vars(base_cls, space, param_total_signal_needed, cls.min_trend_total_signal_needed_value,
-                                   int(cls.max_weighted_signal_value *
-                                       number_of_weighted_signals),
+                                   int(cls.max_weighted_signal_value * number_of_weighted_signals),
                                    cls.search_threshold_weighted_signal_values, cls.precision)
 
                     param_needed_candles_lookback_window = f'_{trend}_trend_total_signal_needed_candles_lookback_window'
