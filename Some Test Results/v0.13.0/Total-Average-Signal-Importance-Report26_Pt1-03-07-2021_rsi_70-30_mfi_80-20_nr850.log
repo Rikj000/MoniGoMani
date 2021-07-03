@@ -1,0 +1,67 @@
+====================================================================
+#                MoniGoMani - Signal Importance Report             #
+====================================================================
+
+Stake currency:                                                 USDT
+--------------------------------------------------------------------
+
+Total Signals Needed:
+--------------------------------------------------------------------
+                                          |   down |   side |     up
+total buy signals needed                  |  71.0% | 115.0% | 326.0%
+total buy signals lookback windows        |      5 |      6 |      5
+buy signal triggers needed                |      5 |      4 |      8
+total sell signals needed                 | 328.0% | 242.0% | 197.0%
+total sell signals lookback windows       |      1 |      5 |      3
+sell signal triggers needed               |      7 |      5 |      3
+
+Total Overall Signal Importance:
+--------------------------------------------------------------------
+                                      avg |   down |   side |     up
+adx_strong_up_down:                48.33% |  74.5% |  42.0% |  28.5%
+bollinger_bands:                   38.67% |  34.0% |  36.5% |  45.5%
+ema_long_golden_death_cross:       64.67% |  91.0% |  53.0% |  50.0%
+ema_short_golden_death_cross:      70.33% |  77.0% |  63.5% |  70.5%
+macd:                              55.67% |  62.5% |  59.5% |  45.0%
+rsi:                                30.5% |  39.0% |  14.0% |  38.5%
+sma_long_golden_death_cross:       34.33% |  61.5% |   4.0% |  37.5%
+sma_short_golden_death_cross:      47.83% |  36.0% |  45.5% |  62.0%
+vwap_cross:                        65.83% |  50.5% |  49.0% |  98.0%
+
+Total Overall Buy Signal Importance:
+--------------------------------------------------------------------
+                                      avg |   down |   side |     up
+adx_strong_up:                     50.67% |  81.0% |  15.0% |  56.0%
+bollinger_bands:                   16.33% |  20.0% |  29.0% |      X
+ema_long_golden_cross:             75.33% |  99.0% |  91.0% |  36.0%
+ema_short_golden_cross:             64.0% |  76.0% |  60.0% |  56.0%
+macd:                              56.67% |  60.0% |  43.0% |  67.0%
+rsi:                               36.33% |  21.0% |  15.0% |  73.0%
+sma_long_golden_cross:             41.67% |  64.0% |   7.0% |  54.0%
+sma_short_golden_cross:             36.0% |  37.0% |   5.0% |  66.0%
+vwap_cross:                        85.33% |  75.0% |  85.0% |  96.0%
+
+Total Overall Sell Signal Importance:
+--------------------------------------------------------------------
+                                      avg |   down |   side |     up
+adx_strong_down:                    46.0% |  68.0% |  69.0% |   1.0%
+bollinger_bands:                    61.0% |  48.0% |  44.0% |  91.0%
+ema_long_death_cross:               54.0% |  83.0% |  15.0% |  64.0%
+ema_short_death_cross:             76.67% |  78.0% |  67.0% |  85.0%
+macd:                              54.67% |  65.0% |  76.0% |  23.0%
+rsi:                               24.67% |  57.0% |  13.0% |   4.0%
+sma_long_death_cross:               27.0% |  59.0% |   1.0% |  21.0%
+sma_short_death_cross:             59.67% |  35.0% |  86.0% |  58.0%
+vwap_cross:                        46.33% |  26.0% |  13.0% | 100.0%
+
+Losing Open Trade Sell Unclogger:
+--------------------------------------------------------------------
+enabled:                                                        True
+minimal_losing_trade_duration_minutes:                            23
+minimal_losing_trades_open:                                        3
+open_trades_losing_percentage_needed:                             56
+trend_lookback_candles_window:                                    45
+trend_lookback_candles_window_percentage_needed:                  34
+trend_lookback_window_uses_downwards_candles:                   True
+trend_lookback_window_uses_sideways_candles:                    True
+trend_lookback_window_uses_upwards_candles:                    False
