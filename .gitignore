@@ -24,3 +24,6 @@ workspace.code-workspace
 .vscode/
 # Ignore Logo Folder
 Logo/
+# Ignore fthypt and legacy pickle Files
+*.fthypt
+*.pickle
