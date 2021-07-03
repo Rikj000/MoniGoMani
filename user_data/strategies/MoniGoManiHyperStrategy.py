@@ -25,6 +25,8 @@ buy_signals = {
     'macd': lambda df: (df['macd'] > df['macdsignal']),
     # Weighted Buy Signal: MFI crosses above 20 (Under-bought / low-price and rising indication)
     'mfi': lambda df: (qtpylib.crossed_above(df['mfi'], 20)),
+    # Weighted Buy Signal: RSI crosses above 30 (Under-bought / low-price and rising indication)
+    'rsi': lambda df: (qtpylib.crossed_above(df['rsi'], 30)),
     # Weighted Buy Signal: SMA long term Golden Cross (Medium term SMA crosses above Long term SMA)
     'sma_long_golden_cross': lambda df: (qtpylib.crossed_above(df['sma50'], df['sma200'])),
     # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
@@ -47,6 +49,8 @@ sell_signals = {
     'macd': lambda df: (df['macd'] < df['macdsignal']),
     # Weighted Sell Signal: MFI crosses below 80 (Over-bought / high-price and dropping indication)
     'mfi': lambda df: (qtpylib.crossed_below(df['mfi'], 80)),
+    # Weighted Sell Signal: RSI crosses below 70 (Over-bought / high-price and dropping indication)
+    'rsi': lambda df: (qtpylib.crossed_below(df['rsi'], 70)),
     # Weighted Sell Signal: SMA long term Death Cross (Medium term SMA crosses below Long term SMA)
     'sma_long_death_cross': lambda df: (qtpylib.crossed_below(df['sma50'], df['sma200'])),
     # Weighted Sell Signal: SMA short term Death Cross (Short term SMA crosses below Medium term SMA)
@@ -119,6 +123,9 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             'MFI (Money Flow Index)': {
                 'mfi': {'color': '#7fba3c'}
             },
+            'RSI (Relative Strength Index)': {
+                'rsi': {'color': '#7fb92a'}
+            },
             # Subplots - For Buy - Sell Signals specifically
             'Buy + Sell Signals Firing': {
                 'buy': {'color': '#09d528'},
@@ -169,6 +176,9 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
 
         # MFI - Money Flow Index (Under bought / Over sold & Over bought / Under sold / volume Indicator)
         dataframe['mfi'] = ta.MFI(dataframe)
+
+        # RSI - Relative Strength Index (Under bought / Over sold & Over bought / Under sold indicator Indicator)
+        dataframe['rsi'] = ta.RSI(dataframe)
 
         # Overlap Studies
         # ---------------
