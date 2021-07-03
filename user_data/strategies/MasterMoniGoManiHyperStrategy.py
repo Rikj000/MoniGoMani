@@ -18,7 +18,7 @@ from scipy.interpolate import interp1d
 
 from freqtrade.enums import RunMode
 from freqtrade.exchange import timeframe_to_prev_date
-from freqtrade.misc import round_dict
+from freqtrade.misc import deep_merge_dicts, round_dict
 from freqtrade.optimize.space import Categorical, Dimension, Integer, SKDecimal
 from freqtrade.persistence import Trade
 from freqtrade.strategy import IStrategy, IntParameter, merge_informative_pair, timeframe_to_minutes
@@ -341,13 +341,56 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 sys.exit(f'MoniGoManiHyperStrategy - ERROR - The MoniGoMani HyperOpt Results configuration file '
                          f'({self.mgm_config_hyperopt_name}) can\'t be found at: {self.mgm_config_hyperopt_path}... '
                          f'Please Optimize your MoniGoMani before Dry/Live running! Once optimized provide the correct '
-                         f'file and/or alter "mgm_config_hyperopt_name" in "MoniGoManiHyperStrategy.py"')
+                         f'file and/or alter "mgm_config_hyperopt_name" in "MasterMoniGoManiHyperStrategy.py"')
 
             self.is_dry_live_run_detected = True
             self.mgm_logger('info', initialization, f'Current run mode detected as: Dry/Live-Run. '
                                                     f'Auto updated is_dry_live_run_detected to: True')
 
         super().__init__(config)
+
+    @staticmethod
+    def populate_frequi_plots(weighted_signal_plots: dict) -> dict:
+        """
+        Merges the Weighted Signal Plots together with the Buy/Sell Signal Plots and the Trend Detection Plots for
+        a nice visualization in FreqUI
+
+        :param weighted_signal_plots: FreqUI plotting data used for weighted signals (and their indicators)
+        :return: Complete FreqUI plotting data containing weighted signal + other MGM framework plotting
+        """
+        # Plot configuration to show all signals used in MoniGoMani in FreqUI (Use load from Strategy in FreqUI)
+        framework_plots = {
+            # Main Plots - Trend Indicator (SAR)
+            'main_plot': {
+                'sar': {'color': '#2c05f6'}
+            },
+            # Sub Plots - Each dict defines one additional plot
+            'subplots': {
+                # Sub Plots - Trend Detection
+                'MoniGoMani Core Trend': {
+                    'mgm_trend': {'color': '#7fba3c'}
+                },
+                'Hilbert Transform (Trend vs Cycle)': {
+                    'ht_trendmode': {'color': '#6f1a7b'}
+                },
+                # Sub Plots - Final Buy + Sell Signals
+                'Buy + Sell Signals Firing': {
+                    'buy': {'color': '#09d528'},
+                    'sell': {'color': '#d19e28'}
+                },
+                'Total Buy + Sell Signal Strength': {
+                    'total_buy_signal_strength': {'color': '#09d528'},
+                    'total_sell_signal_strength': {'color': '#d19e28'}
+                },
+                'Weighted Buy + Sell Signals Firing': {
+                    'buy_signals_triggered': {'color': '#09d528'},
+                    'sell_signals_triggered': {'color': '#d19e28'}
+                }
+            }
+        }
+
+        return deep_merge_dicts(framework_plots, weighted_signal_plots)
+
 
     def _populate_core_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
@@ -358,31 +401,25 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: a Dataframe with all core trend indicators for MoniGoMani
         """
 
-        # Momentum Indicators (timeperiod is expressed in candles)
+        # Momentum Indicators
         # -------------------
-        # ADX - Average Directional Index (The Trend Strength Indicator)
-        dataframe['adx'] = ta.ADX(dataframe, timeperiod=14)  # 14 timeperiods is usually used for ADX
-
-        # +DM (Positive Directional Indicator) = current high - previous high
-        dataframe['plus_di'] = ta.PLUS_DI(dataframe, timeperiod=25)
-        # -DM (Negative Directional Indicator) = previous low - current low
-        dataframe['minus_di'] = ta.MINUS_DI(dataframe, timeperiod=25)
-
-        # Hilbert Transform - TrendvsCycle
-        dataframe['HT_TRENDMODE'] = ta.HT_TRENDMODE(dataframe)  
+        # Hilbert Transform - Trend vs Cycle
+        dataframe['ht_trendmode'] = ta.HT_TRENDMODE(dataframe)
         
         # Parabolic SAR
         dataframe['sar'] = ta.SAR(dataframe)
 
-        # Trend Detection
-        # ---------------
-        dataframe.loc[(dataframe['HT_TRENDMODE'] == 1) & (dataframe['sar'] > dataframe['close']), 'trend'] = 'downwards'
-        dataframe.loc[(dataframe['HT_TRENDMODE'] == 0) | (dataframe['sar'] == dataframe['close']), 'trend'] = 'sideways'
-        dataframe.loc[(dataframe['HT_TRENDMODE'] == 1) & (dataframe['sar'] < dataframe['close']), 'trend'] = 'upwards'
+        # Core Trend Detection
+        # --------------------
+        dataframe.loc[(dataframe['ht_trendmode'] == 1) & (dataframe['sar'] > dataframe['close']), 'trend'] = 'downwards'
+        dataframe.loc[(dataframe['ht_trendmode'] == 0) | (dataframe['sar'] == dataframe['close']), 'trend'] = 'sideways'
+        dataframe.loc[(dataframe['ht_trendmode'] == 1) & (dataframe['sar'] < dataframe['close']), 'trend'] = 'upwards'
 
-        dataframe.loc[(dataframe['trend'] == "downwards"), 'MGM_Trend'] = -1
-        dataframe.loc[(dataframe['trend'] == "sideways"), 'MGM_Trend'] = 0
-        dataframe.loc[(dataframe['trend'] == "upwards"), 'MGM_Trend'] = 1
+        # Add DataFrame column for visualization in FreqUI when Dry/Live RunMode is detected
+        if self.is_dry_live_run_detected is True:
+            dataframe.loc[(dataframe['trend'] == "downwards"), 'mgm_trend'] = -1
+            dataframe.loc[(dataframe['trend'] == "sideways"), 'mgm_trend'] = 0
+            dataframe.loc[(dataframe['trend'] == "upwards"), 'mgm_trend'] = 1
 
         return dataframe
 
