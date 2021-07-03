@@ -95,10 +95,11 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
     # Check the Freqtrade documentation or it's Sample strategy to get the latest version.
     INTERFACE_VERSION = 2
 
-    # Plot configuration to show all signals used in MoniGoMani in FreqUI (Use load from Strategy in FreqUI)
-    plot_config = {
+    # Plot configuration to show all Weighted Signals/Indicators used by MoniGoMani in FreqUI.
+    # Also loads in MGM Framework Plots for Buy/Sell Signals/Indicators and Trend Detection.
+    plot_config = MasterMoniGoManiHyperStrategy.populate_frequi_plots({
+        # Main Plots Signals/Indicators (SMAs, EMAs, Bollinger Bands, VWAP)
         'main_plot': {
-            # Main Plot Indicators (SMAs, EMAs, Bollinger Bands, VWAP)
             'sma9': {'color': '#2c05f6'},
             'sma50': {'color': '#19038a'},
             'sma200': {'color': '#0d043b'},
@@ -109,12 +110,11 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             'bb_lowerband': {'color': '#6f1a7b'},
             'vwap': {'color': '#727272'}
         },
+        # Sub Plots - Each dict defines one additional plot
         'subplots': {
-            # Subplots - Each dict defines one additional plot (MACD, ADX, Plus/Minus Direction, MFI, RSI)
-            'ADX (Average Directional Index) + Plus & Minus Directions': {
+            # Sub Plots - Individual Weighted Signals/Indicators
+            'ADX (Average Directional Index)': {
                 'adx': {'color': '#6f1a7b'},
-                'plus_di': {'color': '#0ad628'},
-                'minus_di': {'color': '#ae231c'}
             },
             'MACD (Moving Average Convergence Divergence)': {
                 'macd': {'color': '#19038a'},
@@ -125,22 +125,9 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             },
             'RSI (Relative Strength Index)': {
                 'rsi': {'color': '#7fb92a'}
-            },
-            # Subplots - For Buy - Sell Signals specifically
-            'Buy + Sell Signals Firing': {
-                'buy': {'color': '#09d528'},
-                'sell': {'color': '#d19e28'}
-            },
-            'Total Buy + Sell Signal Strength': {
-                'total_buy_signal_strength': {'color': '#09d528'},
-                'total_sell_signal_strength': {'color': '#d19e28'}
-            },
-            'Weighted Buy + Sell Signals Firing': {
-                'buy_signals_triggered': {'color': '#09d528'},
-                'sell_signals_triggered': {'color': '#d19e28'}
             }
         }
-    }
+    })
 
     def informative_pairs(self):
         """
@@ -168,6 +155,12 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         :param metadata: Additional information, like the currently traded pair
         :return: a Dataframe with all mandatory indicators for MoniGoMani
         """
+
+        # Momentum Indicators (timeperiod is expressed in candles)
+        # -------------------
+
+        # ADX - Average Directional Index (The Trend Strength Indicator)
+        dataframe['adx'] = ta.ADX(dataframe, timeperiod=14)  # 14 timeperiods is usually used for ADX
 
         # MACD - Moving Average Convergence Divergence
         macd = ta.MACD(dataframe)
