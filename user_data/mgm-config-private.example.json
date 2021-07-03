@@ -1,5 +1,6 @@
 {
     "bot_name": "Freqtrade - MoniGoMani v0.13.0",
+    "db_url": "sqlite:///MoniGoMani_v0.13.0.tradesv3.sqlite",
     "fiat_display_currency": "EUR",
     "exchange": {
         "name": "binance",
@@ -9,7 +10,29 @@
     "telegram": {
         "enabled": false,
         "token": "",
-        "chat_id": ""
+        "chat_id": "",
+        "notification_settings": {
+            "status": "on",
+            "warning": "on",
+            "startup": "on",
+            "buy": "on",
+            "buy_fill": "on",
+            "sell": {
+                "roi": "on",
+                "emergency_sell": "on",
+                "force_sell": "on",
+                "sell_signal": "on",
+                "trailing_stop_loss": "on",
+                "stop_loss": "on",
+                "stoploss_on_exchange": "on",
+                "custom_sell": "on"
+            },
+            "sell_fill": "on",
+            "buy_cancel": "on",
+            "sell_cancel": "on"
+        },
+        "reload": true,
+        "balance_dust_level": 0.01
     },
     "api_server": {
         "enabled": true,
