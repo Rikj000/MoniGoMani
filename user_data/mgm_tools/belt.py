@@ -1,3 +1,4 @@
+mgm_user_data = './user_data/'
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
