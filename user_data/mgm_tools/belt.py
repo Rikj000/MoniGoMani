@@ -44,7 +44,16 @@ __status__ = "Prototype"
 
 ### end of meta ###
 
+### default parameters ###
 __belt__ = '[MGM-Belt]'
+
+__default_strategy = 'MoniGoManiHyperStrategy'
+__default_hyperopt_loss = 'WinRatioAndProfitRatioLoss'
+__default_timerange = '20210501-20210616'
+__default_timeframes = '5m 30m 1h'
+__default_epoch = '800'
+
+### end of default parameters ###
 
 mgm_user_data = './user_data/'
 
@@ -68,26 +77,29 @@ COMMON_CONFIG = f'-c ./user_data/{mgm_config_name} -c ./user_data/{mgm_config_pr
 def parse_args():
     parser = argparse.ArgumentParser(prog="belt.py", usage='%(prog)s [command] parameters, -h for help',
                                      description=f'{__belt__} Shorthand for To-Go commands')
-    parser.add_argument('command', help=f'Shorthand for Download-Data / Hyperopt / Backtesting / Hyperopt-Show',
+    parser.add_argument('command', help=f'Shorthand for Download-Data / Hyperopt / Backtesting / Hyperopt-Show / Plot',
                         choices=['download', 'hyperopt', 'backtesting', 'show', 'plot'])
     # parser.add_argument('-q', '--quote',
     #                     help=f'<Optional> Quote of the Binance pairs to retrieve (example, use "BTC" to retrieve all '
     #                          f'pairs like ADA/BTC, ETH/BTC, etc..); default is USDT', required=False, default='USDT')
     parser.add_argument('-e', '--epoch', metavar='NUMBER', type=int,
-                        help=f'Epoch number', default='800', required=False)
+                        help=f'Epoch number', default=__default_epoch, required=False)
     parser.add_argument(
         '-a', '--apply', metavar='NUMBER', help=f'Export HyperOpt Run # to {mgm_config_hyperopt_name}', choices=['1', '2'])
     # parser.add_argument(
     #     '-r', '--run', help=f'Hyperopt Run', choices=['1', '2'], default='1')
     parser.add_argument('-s', '--strategy', metavar="NAME", help=f'Strategy name',
-                        default='MoniGoManiHyperStrategy')
-    parser.add_argument('-t', '--timerange',
-                        help=f'Time range', default='20210501-20210616')
+                        default=__default_strategy, required=False)
+    parser.add_argument('--timerange',
+                        help=f'Time range', default=__default_timerange, required=False)
+    parser.add_argument('-t', '--timeframes',
+                        help=f'Time frames', default=__default_timeframes, required=False)
     parser.add_argument('--spaces',
                         help=f'Spaces', choices=['roi', 'buy', 'sell', 'stoploss', 'trailing', 'all', 'default'], default='default', nargs='+', required=False)
     parser.add_argument('--loss', help=f'Loss Function',
-                        choices=['WinRatioAndProfitRatioLoss', 'UncloggedWinRatioAndProfitRatioLoss'], default='WinRatioAndProfitRatioLoss', required=False)
-    parser.add_argument('--state', help=f'Random State', required=False)
+                        choices=[__default_hyperopt_loss, 'UncloggedWinRatioAndProfitRatioLoss'], default=__default_hyperopt_loss, required=False)
+    # TODO: Should there be a "recommended default random state?"
+    parser.add_argument('--state', type=int, help=f'Random State', required=False)
 
     args = parser.parse_args()
     return args
@@ -95,7 +107,7 @@ def parse_args():
 
 def download_data(args):
     print(f'{__belt__} Downloading 5m and 1h quotes for timerange {args.timerange}...')
-    _cmd = f'{DOWNLOAD} {COMMON_CONFIG} --timerange {args.timerange} -t 5m 1h'
+    _cmd = f'{DOWNLOAD} {COMMON_CONFIG} --timerange {args.timerange} --timeframes {args.timeframes}'
     subprocess.run([_cmd], shell=True)
 
 
@@ -119,7 +131,8 @@ def hyperopt_apply(args, tmp=False):
         print(f'{__belt__} Creating empty {mgm_config_hyperopt_name}')
         subprocess.run(
             ['echo "{}" > ./user_data/mgm-config-hyperopt.json'], shell=True)
-
+        
+    # TODO: Epoch should not be default 800 here
     _cmd = f"{HYPEROPT_SHOW} -n {args.epoch} {COMMON_CONFIG} --no-header --print-json | tail -n 1 | jq '.' > "
 
     if (tmp is True):
@@ -202,7 +215,7 @@ def backtesting(args):
 
 
 def plot(args):
-    # TODO: Stub / not working
+    # TODO: Stub / nothing happens here now
     print(f'{__belt__} Plotting...')
 
     cmd = [f'{PLOT} {COMMON_CONFIG} --timerange {args.timerange} --timeframe 1h --export-filename {mgm_user_data}backtest_results/{args.timerange}.json']
