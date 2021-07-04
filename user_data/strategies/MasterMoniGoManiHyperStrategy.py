@@ -688,8 +688,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                                 f'Trade has been open for long enough! Proceeding to the next check!')
 
                                 # Check if total open trades losing % is met
-                                percentage_open_trades_losing = \
-                                    int((len(losing_open_trades) / len(all_open_trades)) * 100)
+                                percentage_open_trades_losing = int(
+                                    (len(losing_open_trades) / len(all_open_trades)) * 100)
                                 self.mgm_logger('debug', open_trade_unclogger,
                                                 f'percentage_open_trades_losing: {str(percentage_open_trades_losing)}%')
                                 temp = self.sell___unclogger_open_trades_losing_percentage_needed.value
@@ -764,38 +764,53 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                                         f'stored_trend_dataframe contents: '
                                                         f'{repr(stored_trend_dataframe)}')
 
-                                        # Check if open_trade's trend changed negatively during past X candles
-                                        self.mgm_logger('debug', open_trade_unclogger,
-                                                        f'Calculating amount of unclogger_trend_lookback_candles_window'
-                                                        f' "satisfied" for pair: {pair}')
-                                        unclogger_candles_satisfied = 0
-                                        temp = self.sell___unclogger_trend_lookback_candles_window.value
-                                        for lookback_candle in range(1, round(temp / self.precision) + 1):
-                                            for trend in self.mgm_trends:
-                                                if self.mgm_config['unclogger_spaces'][
-                                                    f'unclogger_trend_lookback_window_uses_{trend}_candles'] \
-                                                        & (stored_trend_dataframe[lookback_candle] == trend):
-                                                    unclogger_candles_satisfied += 1
-                                        self.mgm_logger('debug', open_trade_unclogger,
-                                                        f'Amount of unclogger_trend_lookback_candles_window '
-                                                        f'"satisfied": {str(unclogger_candles_satisfied)} '
-                                                        f'for pair: {pair}')
+                                        # Check if the currently detected trend is positive
+                                        negative_trend = True
+                                        for trend in self.mgm_trends:
+                                            if (self.mgm_config['unclogger_spaces'][
+                                                    f'unclogger_trend_lookback_window_uses_{trend}_candles'] is False) \
+                                                    & (stored_trend_dataframe[1] == trend):
+                                                negative_trend = False
+                                                break
 
-                                        # Calculate the percentage of the lookback window currently satisfied
-                                        temp = self.sell___unclogger_trend_lookback_candles_window.value
-                                        unclogger_candles_percentage_satisfied = \
-                                            (unclogger_candles_satisfied / round(temp / self.precision)) * 100
-
-                                        # Override Sell Signal: Unclog trade by forcing a sell & attempt to continue
-                                        # the profit climb with the "freed up trading slot"
-                                        temp = \
-                                            self.sell___unclogger_trend_lookback_candles_window_percentage_needed.value
-                                        if unclogger_candles_percentage_satisfied >= round(temp / self.precision):
-                                            self.mgm_logger('info', open_trade_unclogger, f'Unclogging losing trade...')
-                                            return "MGM_unclogging_losing_trade"
+                                        if negative_trend is False:
+                                            self.mgm_logger('debug', open_trade_unclogger,
+                                                            f'No unclogging needed! Positive trend currently detected!')
                                         else:
-                                            self.mgm_logger('info', open_trade_unclogger,
-                                                            f'No need to unclog open trade...')
+
+                                            # Check if open_trade's trend changed negatively during past X candles
+                                            self.mgm_logger('debug', open_trade_unclogger,
+                                                            f'Calculating amount of '
+                                                            f'unclogger_trend_lookback_candles_window'
+                                                            f' "satisfied" for pair: {pair}')
+                                            unclogger_candles_satisfied = 0
+                                            temp = self.sell___unclogger_trend_lookback_candles_window.value
+                                            for lookback_candle in range(1, round(temp / self.precision) + 1):
+                                                for trend in self.mgm_trends:
+                                                    if self.mgm_config['unclogger_spaces'][
+                                                        f'unclogger_trend_lookback_window_uses_{trend}_candles'] \
+                                                            & (stored_trend_dataframe[lookback_candle] == trend):
+                                                        unclogger_candles_satisfied += 1
+                                            self.mgm_logger('debug', open_trade_unclogger,
+                                                            f'Amount of unclogger_trend_lookback_candles_window '
+                                                            f'"satisfied": {str(unclogger_candles_satisfied)} '
+                                                            f'for pair: {pair}')
+
+                                            # Calculate the percentage of the lookback window currently satisfied
+                                            temp = self.sell___unclogger_trend_lookback_candles_window.value
+                                            unclogger_candles_percentage_satisfied = \
+                                                (unclogger_candles_satisfied / round(temp / self.precision)) * 100
+
+                                            # Override Sell Signal: Unclog trade by forcing a sell & attempt to continue
+                                            # the profit climb with the "freed up trading slot"
+                                            temp = self.sell___unclogger_trend_lookback_candles_window_percentage_needed.value
+                                            if unclogger_candles_percentage_satisfied >= round(temp / self.precision):
+                                                self.mgm_logger('info', open_trade_unclogger,
+                                                                f'Unclogging losing trade...')
+                                                return "MGM_unclogging_losing_trade"
+                                            else:
+                                                self.mgm_logger('info', open_trade_unclogger,
+                                                                f'No need to unclog open trade...')
 
             except Exception as e:
                 self.mgm_logger('error', open_trade_unclogger,

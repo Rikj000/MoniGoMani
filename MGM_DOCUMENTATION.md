@@ -213,6 +213,7 @@ It will only unclog a losing trade when all following checks have been full-fill
 - Check if there is a losing trade open for the pair currently being run through the MoniGoMani loop
 - Check if trade has been open for `sell___unclogger_minimal_losing_trade_duration_minutes` (long enough to give it a recovery chance)
 - Check if `sell___unclogger_open_trades_losing_percentage_needed` is fulfilled
+- Check if the current detected trend is flagged as "bad" (aka `sell___unclogger_trend_lookback_window_uses_downwards/sideways/upwards_candles=True`)
 - Check if open_trade's trend changed negatively during past `sell___unclogger_trend_lookback_candles_window`:   
 For unclogging to occur `sell___unclogger_trend_lookback_candles_window_percentage_needed` should be fulfilled!   
 The trends used for the calculations in this check can be configured with `sell___unclogger_trend_lookback_window_uses_downwards/sideways/upwards_candles=True/False`).   
