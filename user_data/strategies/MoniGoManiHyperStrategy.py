@@ -149,7 +149,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         Should be called with 'informative_pair' (1h candles) during backtesting/hyperopting with TimeFrame-Zoom!
 
         Performance Note: For the best performance be frugal on the number of indicators you are using.
-        Let uncomment only the indicator you are using in MGM or your hyperopt configuration,
+        Only add in indicators that you are using in your weighted signal configuration for MoniGoMani,
         otherwise you will waste your memory and CPU usage.
         :param dataframe: Dataframe with data from the exchange
         :param metadata: Additional information, like the currently traded pair
