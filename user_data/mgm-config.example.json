@@ -90,7 +90,7 @@
   "cancel_open_orders_on_exit": false,
   "use_sell_signal": true,
   "sell_profit_only": false,
-  "sell_profit_offset": 0.0,
+  "sell_profit_offset": 0,
   "ignore_roi_if_buy_signal": true,
   "unfilledtimeout": {
     "buy": 10,
@@ -100,7 +100,7 @@
   "bid_strategy": {
     "price_side": "bid",
     "use_order_book": true,
-    "ask_last_balance": 0.0,
+    "ask_last_balance": 0,
     "order_book_top": 1,
     "check_depth_of_market": {
       "enabled": false,
@@ -151,16 +151,20 @@
       "EUR/.*",
       "GBP/.*"
     ],
+    "outdated_offset": 5,
+    "markets_refresh_interval": 60,
     "pair_whitelist": [
       "BTC/USDT",
       "ETH/USDT",
-      "DOT/USDT",
       "ADA/USDT",
+      "XRP/USDT",
+      "DOGE/USDT",
+      "ETC/USDT",
       "MATIC/USDT",
-      "XRP/USDT"
-    ],
-    "outdated_offset": 5,
-    "markets_refresh_interval": 60
+      "DOT/USDT",
+      "SOL/USDT",
+      "AXS/USDT"
+    ]
   },
   "pairlists": [
     {

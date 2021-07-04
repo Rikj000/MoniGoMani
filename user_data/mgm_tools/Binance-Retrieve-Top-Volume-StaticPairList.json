@@ -36,7 +36,7 @@
         },
         {
             "method": "VolumePairList",
-            "number_assets": 60,
+            "number_assets": 10,
             "sort_key": "quoteVolume"
         }
     ],
