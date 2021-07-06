@@ -162,7 +162,7 @@ freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-Sta
 ```
 **Download Candle Data**:
 ```powershell
-freqtrade download-data --timerange 20210414-20210618 -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
+freqtrade download-data --timerange 20210414-20210618 -t 5m 30m -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
 ```
 
 **Plot-Profits** from a `<backtest-results-file>`:

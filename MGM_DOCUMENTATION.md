@@ -60,6 +60,7 @@
 - [Go-To Commands](#go-to-commands)
 - [How to share your test results properly](#how-to-share-your-test-results-properly)
 - [Common mistakes](#common-mistakes)
+    - [HyperOpting: +300 epochs, no results yet](#hyperopting-300-epochs-no-results-yet)
     - [TypeError: integer argument expected, got float](#typeerror-integer-argument-expected-got-float)
     - [-bash: jq: command not found](#-bash-jq-command-not-found)
     - [ValueError: the lower bound X has to be less than the upper bound Y](#valueerror-the-lower-bound-x-has-to-be-less-than-the-upper-bound-y)
@@ -472,7 +473,7 @@ freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-Sta
 ```
 **Download Candle Data**:
 ```powershell
-freqtrade download-data --timerange 20210414-20210618 -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
+freqtrade download-data --timerange 20210414-20210618 -t 5m 30m -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
 ```
 
 **Plot-Profits** from a `<backtest-results-file>`:
@@ -492,6 +493,14 @@ Since without knowing which signal weights or which on/off settings are applied 
 The epoch table being generated when HyperOpting + the number of the epoch you used is also very helpful, so we can easily rule out if your test results are exploited. (See [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)!)   
 
 # Common mistakes
+
+### HyperOpting: +300 epochs, no results yet
+Make sure you have [downloaded the candle data](#download-staticpairlists) needed for your HyperOpt.
+
+This is also possible because of how MoniGoMani handles the automatic filtering of total signals needed that would be impossible too reach during HyperOpt. If MGM detects impossible too reach signals then it forces the bot to do nothing for that epoch.
+
+Because of this reason it's normal that you can have 200-300 epochs without a result.
+However if after 300-400 epochs you still get nothing, then its recommended to stop your HyperOpt and start a clean new one on another random state.
 
 ### TypeError: integer argument expected, got float
 You likely are using a `Float` value where you should be using a `Integer` value. Hopefully your error will show more information about which Parameter.   
