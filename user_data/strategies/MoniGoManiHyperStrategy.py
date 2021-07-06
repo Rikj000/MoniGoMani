@@ -1,14 +1,19 @@
 # pragma pylint: disable=missing-docstring, invalid-name, pointless-string-statement
 # flake8: noqa: F401
-# isort: skip_file
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
+import sys
+from pathlib import Path
+
 import numpy as np  # noqa
 import pandas as pd  # noqa
 import talib.abstract as ta
 from pandas import DataFrame
 
 import freqtrade.vendor.qtpylib.indicators as qtpylib
-from user_data.strategies.MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
+
+# Master Framework file must reside in same folder as Strategy file
+sys.path.append(str(Path(__file__).parent))
+from MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
 # Define the Weighted Buy Signals to be used by MGM
