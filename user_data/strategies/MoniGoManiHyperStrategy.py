@@ -8,7 +8,13 @@ import talib.abstract as ta
 from pandas import DataFrame
 
 import freqtrade.vendor.qtpylib.indicators as qtpylib
-from user_data.strategies.MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
+
+# Strategy specific imports, files must reside in same folder as strategy
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent))
+
+from MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
 # Define the Weighted Buy Signals to be used by MGM
