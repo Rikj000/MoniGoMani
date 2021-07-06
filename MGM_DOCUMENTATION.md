@@ -209,6 +209,8 @@ This `custom_sell()` function should be able to work in tandem with `Trailing st
 It will only unclog a losing trade when all following checks have been full-filled (If a check is set to `0` it will be taken out of the equation, thus the unclogger will continue checking further without it):    
 - Check if there is no `buy` or `sell` signal already occurring on the current candle.
 - Check if `sell___unclogger_enabled` is `True`, otherwise abort further unclogger logic.
+- Check if there are any open trades
+- Check if the current pair isn't cooling down under it's `sell___unclogger_buy_cooldown_minutes_window`
 - Check if everything in custom_storage is up to date with all_open_trades
 - Check if there are enough losing trades open to fulfil `sell___unclogger_minimal_losing_trades_open`
 - Check if there is a losing trade open for the pair currently being run through the MoniGoMani loop
@@ -224,6 +226,7 @@ The settings inside `mgm-config.json`'s `unclogger_spaces` section are used to c
 | Parameter | Description |
 | --- | --- |
 | **unclogger_enabled** | Enable or completely disable the open trade unclogger.<br> **Datatype:** Boolean |
+| **unclogger_buy_cooldown_minutes_window** | Settings to configure the HyperOpt Space for the minimal duration needed (in minutes) before MGM is allowed to buy recently unclogged pairs again.<br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
 | **unclogger_minimal_losing_trade_duration_minutes** | Settings to configure the HyperOpt Space for the minimal duration needed (in minutes) before the unclogger is allowed to attempt to unclog the open trade. <br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
 | **unclogger_minimal_losing_trades_open** | Settings to configure the HyperOpt Space for the minimal losing trades open before the unclogger is allowed to attempt to unclog the open trade.<br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
 | **unclogger_open_trades_losing_percentage_needed** | Settings to configure the HyperOpt Space for the minimal percentage of losing open trades before the unclogger is allowed to attempt to unclog the open trade.<br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
@@ -231,7 +234,7 @@ The settings inside `mgm-config.json`'s `unclogger_spaces` section are used to c
 | **unclogger_trend_lookback_candles_window_percentage_needed** | Settings to configure the HyperOpt Space for the minimal percentage of **bad** trends that needs to be detected inside the lookback window before the unclogger is allowed to attempt to unclog the open trade.<br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
 | **unclogger_trend_lookback_window_uses_downwards_candles** | Enable or completely disable the open trade unclogger from seeing downwards trends as **bad** in it's lookback window.<br> **Datatype:** Boolean (true = bad) |
 | **unclogger_trend_lookback_window_uses_sideways_candles** | Enable or completely disable the open trade unclogger from seeing sideways trends as **bad** in it's lookback window.<br> **Datatype:** Boolean (true = bad) |
-| **unclogger_trend_lookback_window_uses_upwards_candles** | Enable or completely disable the open trade unclogger from seeing upwards trends as **bad** in it's lookback window.<br> **Datatype:** Boolean (true = bad) |
+| **unclogger_trend_lookback_window_uses_upwards_candles** | Enable or completely :sparkles: Added hyperoptable unclogger_buy_cooldown_minutes_windowdisable the open trade unclogger from seeing upwards trends as **bad** in it's lookback window.<br> **Datatype:** Boolean (true = bad) |
 
 #### Unclogger Sub Dictionaries
 | Parameter | Description |
