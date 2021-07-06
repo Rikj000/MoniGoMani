@@ -165,7 +165,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
     # Create dictionary to store custom information MoniGoMani will be using in RAM
     custom_info = {
-        'open_trades': {}
+        'open_trades': {},
+        'unclogger_cooldown_pairs': {}
     }
 
     # Initialize some parameters which will be automatically configured/used by MoniGoMani
@@ -404,7 +405,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # -------------------
         # Hilbert Transform - Trend vs Cycle
         dataframe['ht_trendmode'] = ta.HT_TRENDMODE(dataframe)
-        
+
         # Parabolic SAR
         dataframe['sar'] = ta.SAR(dataframe)
 
@@ -573,12 +574,39 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                         f'Successfully removed garbage_trade {str(garbage_trade)} from custom_info!')
                         break
 
+        # Check if any old unclogger_cooldown_pairs data needs to be removed
+        if len(self.custom_info['unclogger_cooldown_pairs']) > 0:
+            for stored_cooldown_pair, start_cooldown_time in self.custom_info['unclogger_cooldown_pairs'].copy().items():
+                self.mgm_logger('debug', garbage_collector, f'Checking if cooldown period for unclogged pair '
+                                                            f'({stored_cooldown_pair}) has expired...')
+
+                minimal_cooldown_time = current_time.replace(tzinfo=None) - timedelta(minutes=round(
+                    self.sell___unclogger_buy_cooldown_minutes_window.value / self.precision))
+
+                self.mgm_logger('debug', garbage_collector, f' Minimal cooldown time currently needed: '
+                                                            f'{str(minimal_cooldown_time)}')
+                self.mgm_logger('debug', garbage_collector, f' Start of cooldown period for pair '
+                                                            f'({stored_cooldown_pair}): {str(start_cooldown_time)}')
+
+                if start_cooldown_time < minimal_cooldown_time:
+                    self.mgm_logger('debug', garbage_collector,
+                                    f'Cooldown period for unclogged pair ({stored_cooldown_pair}) has expired, '
+                                    f'removing from custom_info!')
+                    self.custom_info['unclogger_cooldown_pairs'].pop(stored_cooldown_pair)
+
         # Print all stored open trade info in custom_storage
         self.mgm_logger('debug', custom_information_storage,
                         f'Open trades ({str(len(self.custom_info["open_trades"]))}) in custom_info updated '
                         f'successfully!')
         self.mgm_logger('debug', custom_information_storage,
                         f'custom_info["open_trades"] contents: {repr(self.custom_info["open_trades"])}')
+
+        # Print all unclogger cooldown pair info in custom_storage
+        self.mgm_logger('debug', custom_information_storage,
+                        f'Unclogger cooldown pairs ({str(len(self.custom_info["unclogger_cooldown_pairs"]))}) in '
+                        f'custom_info updated successfully!')
+        self.mgm_logger('debug', custom_information_storage, f'custom_info["unclogger_cooldown_pairs"] contents: '
+                                                             f'{repr(self.custom_info["unclogger_cooldown_pairs"])}')
 
         # Always return a value bigger than the initial stoploss to keep using the initial stoploss.
         # Since we (currently) only want to use this function for custom information storage!
@@ -615,7 +643,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         open_trade_unclogger = 'Open Trade Unclogger'
         custom_information_storage = 'custom_sell - Custom Information Storage'
 
-        if self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True:
+        if (self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True) and \
+                (pair not in self.custom_info['unclogger_cooldown_pairs']) and \
+                (len(self.custom_info['open_trades']) > 0):
             try:
                 # Open Trade Custom Information Storage
                 # -------------------------------------
@@ -670,8 +700,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                             self.mgm_logger('debug', open_trade_unclogger,
                                             f'Currently checked pair ({pair}) is losing! Proceeding to the next check!')
 
-                            self.mgm_logger('debug', open_trade_unclogger,
-                                            f'Trade open time: {str(trade.open_date_utc.replace(tzinfo=None))}')
+                            trade_open_time = trade.open_date_utc.replace(tzinfo=None)
+                            self.mgm_logger('debug', open_trade_unclogger, f'Trade open time: {str(trade_open_time)}')
 
                             minimal_open_time = current_time.replace(tzinfo=None) - timedelta(minutes=round(
                                 self.sell___unclogger_minimal_losing_trade_duration_minutes.value / self.precision))
@@ -679,7 +709,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                             self.mgm_logger('debug', open_trade_unclogger,
                                             f'Minimal open time: {str(minimal_open_time)}')
 
-                            if trade.open_date_utc.replace(tzinfo=None) > minimal_open_time:
+                            if trade_open_time > minimal_open_time:
                                 self.mgm_logger('debug', open_trade_unclogger,
                                                 f'No unclogging needed! Currently checked pair ({pair}) has not been '
                                                 f'open been open for long enough!')
@@ -805,6 +835,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                             # the profit climb with the "freed up trading slot"
                                             temp = self.sell___unclogger_trend_lookback_candles_window_percentage_needed.value
                                             if unclogger_candles_percentage_satisfied >= round(temp / self.precision):
+                                                # Buy Cooldown Window Custom Information Storage
+                                                self.custom_info['unclogger_cooldown_pairs'][pair] = \
+                                                    current_time.replace(tzinfo=None)
+
                                                 self.mgm_logger('info', open_trade_unclogger,
                                                                 f'Unclogging losing trade...')
                                                 return "MGM_unclogging_losing_trade"
@@ -819,10 +853,36 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return None  # By default we don't want a force sell to occur
 
+    def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float, time_in_force: str,
+                            **kwargs) -> bool:
+        """
+        Open Trade Unclogger Buy Cooldown Window
+        ----------------------------------------
+        Override Buy Signal - Cancels out a buy order when all of the following are fulfilled:
+            - The Open Trade Unclogger is enabled
+            - The Buy Cooldown Window set into place after unclogging said losing pair has not expired yet
+
+        Timing for this function is critical, it's needed to avoid doing heavy tasks or network requests in this method.
+
+        :param pair: Pair that's about to be bought.
+        :param order_type: Order type (as configured in order_types). usually limit or market.
+        :param amount: Amount in target (quote) currency that's going to be traded.
+        :param rate: Rate that's going to be used when using limit orders
+        :param time_in_force: Time in force. Defaults to GTC (Good-til-cancelled).
+        :param **kwargs: Ensure to keep this here so updates to this won't break MoniGoMani.
+        :return bool: When True is returned, then the buy-order is placed on the exchange. False aborts the process
+        """
+
+        if (self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True) and \
+                (pair in self.custom_info['unclogger_cooldown_pairs']):
+            return False
+
+        return True  # By default we want the buy signal to go through
+
     def mgm_logger(self, message_type: str, code_section: str, message: str):
         """
-        MoniGoMani Logger:
-        ---------------------
+        MoniGoMani Logger
+        -----------------
         When passing a type and a message to this function it will log:
         - The timestamp of logging + the message_type provided + the message provided
         - To the console & To "./user_data/logs/freqtrade.log"
@@ -965,7 +1025,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: None
         """
         parameter_dictionary = getattr(cls, f'{space}_params')
-        parameter_key = f"{space}_{parameter_name}"
+        parameter_key = f'{space}_{parameter_name}'
         parameter_value = parameter_dictionary.get(parameter_key)
         # 1st HyperOpt Run: Use provided min/max values for the search spaces
         if parameter_value is None:
@@ -1019,7 +1079,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         for param_key in cls.mgm_unclogger_add_params:
             parameter_name = '__' + param_key
             param_config = cls.mgm_unclogger_add_params[param_key]
-            if isinstance(param_config, bool) is False:
+            if isinstance(param_config, dict) is True:
                 param_config['threshold'] = param_config['threshold'] if \
                     'threshold' in param_config else cls.search_threshold_weighted_signal_values
 

@@ -33,6 +33,11 @@
       "trailing_stop_positive_offset_max_value": 0.1
     },
     "unclogger_spaces": {
+      "unclogger_buy_cooldown_minutes_window": {
+        "min": 180,
+        "max": 360,
+        "threshold": 20
+      },
       "unclogger_enabled": true,
       "unclogger_minimal_losing_trade_duration_minutes": {
         "min": 15,
