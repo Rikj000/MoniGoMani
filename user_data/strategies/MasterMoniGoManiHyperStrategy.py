@@ -779,8 +779,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                             break
 
                                     # Check if enough trend data has been stored to do the next check
-                                    temp = self.sell___unclogger_trend_lookback_candles_window.value
-                                    if len(stored_trend_dataframe) < round(temp / self.precision):
+                                    lookback_window = \
+                                        self.sell___unclogger_trend_lookback_candles_window.value / self.precision
+                                    if len(stored_trend_dataframe) < round(lookback_window):
                                         self.mgm_logger('debug', open_trade_unclogger,
                                                         f'No unclogging needed! Not enough trend data stored yet!')
                                     else:
@@ -852,8 +853,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return None  # By default we don't want a force sell to occur
 
-    def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float, time_in_force: str,
-                            **kwargs) -> bool:
+    def confirm_trade_entry(self, pair: str, order_type: str, amount: float,
+                            rate: float, time_in_force: str, **kwargs) -> bool:
         """
         Open Trade Unclogger Buy Cooldown Window
         ----------------------------------------
@@ -877,6 +878,32 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             return False
 
         return True  # By default we want the buy signal to go through
+
+    def confirm_trade_exit(self, pair: str, trade: Trade, order_type: str, amount: float,
+                           rate: float, time_in_force: str, sell_reason: str, **kwargs) -> bool:
+        """
+        Weighted Signals Sell Profit Only
+        ---------------------------------
+        Override Sell Signal - Configurable setting, if enabled weighted sell signals require to be profitable to go
+        through.
+
+        Timing for this function is critical, it's needed to avoid doing heavy tasks or network requests in this method.
+
+        :param pair: Pair that's about to be sold.
+        :param order_type: Order type (as configured in order_types). usually limit or market.
+        :param amount: Amount in quote currency.
+        :param rate: Rate that's going to be used when using limit orders
+        :param time_in_force: Time in force. Defaults to GTC (Good-til-cancelled).
+        :param sell_reason: Sell reason, can be any of ['MGM_unclogging_losing_trade', 'sell_signal', 'force_sell',
+            'emergency_sell', 'roi', 'stop_loss', 'stoploss_on_exchange', 'trailing_stop_loss']
+        :param **kwargs: Ensure to keep this here so updates to this won't break your strategy.
+        :return bool: When True is returned, then the sell-order is placed on the exchange. False aborts the process
+        """
+        if (self.mgm_config['weighted_signal_spaces']['sell_profit_only'] is True) and \
+                (sell_reason == 'sell_signal') and (trade.calc_profit_ratio(rate) < 0):
+            return False
+
+        return True  # By default we want the sell signal to go through
 
     def mgm_logger(self, message_type: str, code_section: str, message: str):
         """
@@ -930,6 +957,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
     def _add_signal(self, signal_name: str, space: str, dataframe: DataFrame, condition: Any):
         """
+        # Weighted Variables
+        # ------------------
         Calculates the weight of each signal, also adds the signal to the dataframe if debugging is enabled.
         :param signal_name: Name of the signal to be added
         :param space: buy or sell
@@ -938,8 +967,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: DataFrame with debug signals
         """
 
-        # Weighted Variables
-        # ------------------
         # Initialize total signal and signals triggered columns (should be 0 = false by default)
         if 'total_buy_signal_strength' not in dataframe.columns:
             dataframe['total_buy_signal_strength'] = dataframe['total_sell_signal_strength'] = 0

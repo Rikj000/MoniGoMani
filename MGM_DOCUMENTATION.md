@@ -180,6 +180,7 @@ The settings inside `mgm-config.json`'s `weighted_signal_spaces` section are use
 
 | Parameter | Description |
 | --- | --- |
+| **sell_profit_only** | If set to `true`, then weighted sell signals require to be profitable to go through.<br> **Datatype:** Boolean |
 | **min_weighted_signal_value** | **1st HyperOpt Run:** Minimal value used in the HyperOpt Space for weighted signals. <br> **2nd HyperOpt Run:** Weak weighted signals are weeded out by overriding them to their respective Minimal value. <br> **Datatype:** Integer |
 | **max_weighted_signal_value** | **1st HyperOpt Run:** Maximum value used in the HyperOpt Space for weighted signals. <br> **2nd HyperOpt Run:** Strong weighted signals are boosted by overriding them to their respective Maximum value. <br> **Datatype:** Integer |
 | **min_trend_total_signal_needed_value** | **1st HyperOpt Run:** Minimal value used in the HyperOpt Space for total weighted signals needed. <br> **Datatype:** Integer |

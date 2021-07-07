@@ -14,6 +14,7 @@
       "sell_trades_when_upwards": true
     },
     "weighted_signal_spaces": {
+      "sell_profit_only": true,
       "min_weighted_signal_value": 0,
       "max_weighted_signal_value": 100,
       "min_trend_total_signal_needed_value": 60,
