@@ -13,7 +13,7 @@ TMP_DIR="/tmp"
 # define one ore more quotecoins as array (USDT ETH BTC)
 # QUOTECOINS=(USDT ETH BTC)
 ###
-EXCHANGES=(binance bitpanda coinex)
+EXCHANGES=(binance bitpanda coinex kraken)
 QUOTECOINS=(ETH)
 
 ###
@@ -23,8 +23,30 @@ QUOTECOINS=(ETH)
 TIMEFRAMES="5m 1h"
 DAYS=1
 
+###
+# Parallel downloads - This, for now, is Kraken-only
+# if you would like to tweak parallel downloads for Kraken, set this appropriately
+# they rate limit by IP & quote pair, so even though they're quite aggressive on rate limits
+# doing this in parallel by pair doesn't get rate limited IME, by default, one process per core
+# since Kraken requires that the trade data is downloaded to generate candles > 720 but nprocs *2
+# or even more parallelism is probably just fine on architectures like x64 with SMT, etc
+#
+# I have added this with a bit of thought towards allowing by-exchange parallelism if other exchanges
+# have similar rate limiting, but this is outside my experience with other exchanges right now
+###
+PARALLEL_REQS_KRAKEN=`nproc`
+PARALLEL_REQS_DEFAULT=1
+PARALLEL_INSTALLED=1
+if ! command -v parallel &> /dev/null
+then
+    PARALLEL_INSTALLED=0
+    echo "GNU Parallel doesn't appear to be installed or in the PATH, parallel downloads will not be used"
+    echo "Install GNU parallel (https://www.gnu.org/software/parallel/) to utilize parallel downloads when supported"
+fi
+
+
 ### PID FILE CHECK NOT TO START ANOTHER DOWNLOAD ######################################################################
-PIDFILE=/var/run/fqtpairdownload.pid
+PIDFILE=/var/run/fqtpairdownloadeur.pid
 
 if [ -f $PIDFILE ]
 then
@@ -61,6 +83,22 @@ source .env/bin/activate ;
 # loop through exchanges
 for EXCHANGE in ${EXCHANGES[@]}
 do
+  # Kraken is odd, you need to dl-trades (see freqtrade's discussion on this in their download-data docs), check for this extra opt
+  if [[ ${EXCHANGE,,} == *"kraken"* ]]
+  then
+    EXCHG_SPECIFIC_OPTS="--dl-trades"
+    PARALLEL_REQS=${PARALLEL_REQS_KRAKEN}
+  else
+    PARALLEL_REQS=$PARALLEL_REQS_DEFAULT
+  fi
+  
+  if [[ PARALLEL_REQS -gt 1  && PARALLEL_INSTALLED == 0 ]] 
+  then
+        echo "You have asked for $PARALLEL_REQS parallel downloads, but GNU Parallel doesn't appear to be installed"
+        echo "or is not in the PATH, parallel downloads will not be used until this is fixed."
+        echo "Install GNU parallel and ensure it is in the PATH (https://www.gnu.org/software/parallel/) to utilize parallel downloads when supported"
+        PARALLEL_REQS=1
+  fi
   # loop through quote coins
   for COIN in ${QUOTECOINS[@]}
   do
@@ -77,7 +115,12 @@ do
       echo "exchange ${EXCHANGE} has currently ${PAIR_COUNT} pairs for ${COIN} - starting download for timeframes = ${TIMEFRAMES}, days = ${DAYS}"
       START=$(date +%s)
       # >>> main magic! :)
-      freqtrade download-data --pairs-file ${TMP_FILE} --days ${DAYS} --timeframes ${TIMEFRAMES} --exchange ${EXCHANGE} --logfile ${LOG_FILE} 2>/dev/null
+      if [[ ${PARALLEL_INSTALLED} == 1 ]]
+      then
+        jq -c -r '.[]' ${TMP_FILE} | parallel -j${PARALLEL_REQS} freqtrade download-data ${EXCHG_SPECIFIC_OPTS} --days ${DAYS} --timeframes ${TIMEFRAMES} --exchange ${EXCHANGE} --logfile ${LOG_FILE} --pairs {} 2>/dev/null
+      else
+        freqtrade download-data ${EXCHG_SPECIFIC_OPTS} --days ${DAYS} --timeframes ${TIMEFRAMES} --exchange ${EXCHANGE} --logfile ${LOG_FILE} --pair-file ${TMP_FILE}
+      fi
       END=$(date +%s)
       DIFF=$(echo "${END} - ${START}" | bc)
       echo "exchange ${EXCHANGE} pair download for ${COIN} completed in ${DIFF}s"
