@@ -173,6 +173,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     is_dry_live_run_detected = True  # Class level runmode detection, Gets set automatically
     informative_timeframe = timeframe  # Gets set automatically
     timeframe_multiplier = None  # Gets set automatically
+    separator = 1.5  # Gets set automatically
+    separator_candle_weight_reducer = 0.03  # Gets set automatically
 
     # Initialize comparison values to check if total signals utilized by HyperOpt are possible
     total_signals_possible = {}
@@ -346,6 +348,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             self.mgm_logger('info', initialization, f'Current run mode detected as: Dry/Live-Run. '
                                                     f'Auto updated is_dry_live_run_detected to: True')
 
+        if self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True:
+            self.separator = self.mgm_config['unclogger_spaces'][
+                'unclogger_trend_lookback_candles_window_recent_past_weight_separator']
+            separator_window = (self.separator / 1) - (1 / self.separator)
+            self.separator_candle_weight_reducer = \
+                separator_window / (self.sell___unclogger_trend_lookback_candles_window.value / self.precision)
+
         super().__init__(config)
 
     @staticmethod
@@ -355,7 +364,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         a nice visualization in FreqUI
 
         :param weighted_signal_plots: FreqUI plotting data used for weighted signals (and their indicators)
-        :return: Complete FreqUI plotting data containing weighted signal + other MGM framework plotting
+        :return: Complete FreqUI plotting data containing weighted signal + other MGM framework plottinSSg
         """
         # Plot configuration to show all signals used in MoniGoMani in FreqUI (Use load from Strategy in FreqUI)
         framework_plots = {
@@ -813,23 +822,26 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                                             f'Calculating amount of '
                                                             f'unclogger_trend_lookback_candles_window'
                                                             f' "satisfied" for pair: {pair}')
-                                            unclogger_candles_satisfied = 0
+
+                                            unclogger_weighted_candles_satisfied = 0
                                             temp = self.sell___unclogger_trend_lookback_candles_window.value
                                             for lookback_candle in range(1, round(temp / self.precision) + 1):
                                                 for trend in self.mgm_trends:
                                                     if self.mgm_config['unclogger_spaces'][
                                                         f'unclogger_trend_lookback_window_uses_{trend}_candles'] \
                                                             & (stored_trend_dataframe[lookback_candle] == trend):
-                                                        unclogger_candles_satisfied += 1
+                                                        unclogger_weighted_candles_satisfied += \
+                                                            self.separator \
+                                                            - (lookback_candle * self.separator_candle_weight_reducer)
                                             self.mgm_logger('debug', open_trade_unclogger,
                                                             f'Amount of unclogger_trend_lookback_candles_window '
-                                                            f'"satisfied": {str(unclogger_candles_satisfied)} '
+                                                            f'"satisfied": {str(unclogger_weighted_candles_satisfied)} '
                                                             f'for pair: {pair}')
 
                                             # Calculate the percentage of the lookback window currently satisfied
                                             temp = self.sell___unclogger_trend_lookback_candles_window.value
                                             unclogger_candles_percentage_satisfied = \
-                                                (unclogger_candles_satisfied / round(temp / self.precision)) * 100
+                                                (unclogger_weighted_candles_satisfied / round(temp / self.precision)) * 100
 
                                             # Override Sell Signal: Unclog trade by forcing a sell & attempt to continue
                                             # the profit climb with the "freed up trading slot"
