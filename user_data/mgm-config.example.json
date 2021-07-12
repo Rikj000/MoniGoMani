@@ -21,7 +21,7 @@
       "min_trend_total_signal_needed_candles_lookback_window_value": 1,
       "max_trend_total_signal_needed_candles_lookback_window_value": 6,
       "min_trend_signal_triggers_needed": 2,
-      "search_threshold_weighted_signal_values": 10,
+      "search_threshold_weighted_signal_values": 30,
       "search_threshold_trend_total_signal_needed_candles_lookback_window_value": 1,
       "search_threshold_trend_signal_triggers_needed": 1
     },
