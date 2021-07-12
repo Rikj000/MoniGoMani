@@ -285,7 +285,7 @@ Imagine following configuration for `buy` on `upwards` trends:
     "buy_upwards_trend_rsi_weight": "17",
     "buy_upwards_trend_sma_long_golden_cross_weight": "32",
     "buy_upwards_trend_sma_short_golden_cross_weight": "100",
-    "buy_upwards_trend_vwap_cross_weight": "58",
+    "buy_upwards_trend_vwap_cross_weight": "58"
 }
 ```
 Here we are working with a lookback window of 2 candles, this means that all signals counting up for the total needed may occur in the current candle and the candle before that, but each signal is only allowed to fire off once.
@@ -307,7 +307,14 @@ A different amount of buy and sell signals is possible, and the initial search s
 
 #### Defining Indicators Examples
 First add the technical analysis indicators you wish to use to MGM's `do_populate_indicators()` function.   
-Checkout the [TA-Lib Python Wrapper - Indicators and Functions Documentation](https://mrjbq7.github.io/ta-lib/funcs.html) to get an idea of what is possible with TA-Lib. But feel free to look for other means of implementing indicators too.
+
+Check out these **+200 Easy to implement Indicators** for toying with the Weighted Signal Interface:
+- Freqtrade Technical (https://github.com/freqtrade/technical)
+- TA-Lib (https://mrjbq7.github.io/ta-lib/funcs.html)
+- Pandas-TA (https://twopirllc.github.io/pandas-ta)
+- Hacks for Life Blog (https://hacks-for-life.blogspot.com)
+But feel free to look for other means of implementing indicators too.
+
 ```python
 def do_populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
     """

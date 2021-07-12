@@ -33,15 +33,17 @@
                 If you'd like to see this project progress faster then please help out where you can 
                 <a href="https://github.com/Rikj000/MoniGoMani/issues">here</a>!    
                 <br><img width=1000><br>
+                <b>Recommended Freqtrade commit: <a href="https://github.com/freqtrade/freqtrade/pull/5219/commits/3503fdb4ec31be99f433fdce039543e0911964d6">3503fdb4</a></b> 
+                <br><br>
             </td>
         </tbody>
     </table>
 </p>
 
 ## Motivation
-Isn't that what we all want? Our money to go many? Well that's what this Freqtrade framework/strategy hopes to do for you by enabling you to HyperOpt a lot of signals to alter the weight from.
+Isn't that what we all want? Our money to go many? Well that's what this Freqtrade  Framework & Strategy hopes to do for you "easily", in any market!
 
-Big thank you to xmatthias and everyone who helped on MoniGoMani, Freqtrade Discord support was also really helpful, so thank you too!
+Big thank you to xmatthias and everyone who helped on MoniGoMani, Freqtrade Discord support was also really helpful, so thank you as-well!
 
 If you like my work, feel free to donate or use one of my referral links, that would also greatly be appreciated:
 
@@ -59,8 +61,8 @@ If you like my work, feel free to donate or use one of my referral links, that w
 
 
 ## ⚠️ Disclaimer
- - This strategy is under development. It is not recommended running it live at this moment.
- - Always test this strategy before using it!
+ - This Framework / Strategy is under development. It is not recommended running it live at this moment.
+ - Always test your MoniGoMani configuration before using it!
  - I am in no way responsible for your live results! This strategy is still experimental and under heavy development!
  - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) after doing manual changes!
  - You need to [optimize](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
