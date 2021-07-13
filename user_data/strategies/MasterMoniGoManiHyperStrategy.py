@@ -133,9 +133,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     # If results from a previous HyperOpt Run are found then continue the next HyperOpt Run upon them
     mgm_config_hyperopt_path = f'{os.getcwd()}/user_data/{mgm_config_hyperopt_name}'
     if os.path.isfile(mgm_config_hyperopt_path) is True:
-        # Load the previous 'mgm-config-hyperopt.json' file as an object and parse it as a dictionary
-        file_object = open(mgm_config_hyperopt_path, )
-        mgm_config_hyperopt = json.load(file_object)
+        # Try to load the previous 'mgm-config-hyperopt.json' file as an object and parse it as a dictionary
+        # if the parse fails, warn and continue as if it didn't exist.
+        try:
+            file_object = open(mgm_config_hyperopt_path, )
+            mgm_config_hyperopt = json.load(file_object)
+          except ValueError as e:
+              mgm_config_hyperopt = {}
+              logger.warn(f'MoniGoManiHyperStrategy - WARN - {mgm_config_hyperopt_path} is inaccessible or is not valid JSON,'
+                          f'disregarding existing {mgm_config_hyperopt_name} file and treating as first hyperopt run!')
 
         # Convert the loaded 'mgm-config-hyperopt.json' data to the needed HyperOpt Results format if it's found
         # Default stub values from 'mgm-config.json' are used otherwise.
