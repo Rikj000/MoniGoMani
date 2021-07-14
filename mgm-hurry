@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # -* vim: syntax=python -*-
 '''
-hurry – 💨 Your command is my objective 💨
+mgm-hurry – 💨 Your command is my objective 💨
 '''
 
 import glob
@@ -21,13 +21,13 @@ from art import tprint
 from InquirerPy import prompt
 from InquirerPy.validator import NumberValidator
 
-logging.basicConfig(format='= HURRY = %(levelname)s: %(message)s',
+logging.basicConfig(format='= MGM-HURRY = %(levelname)s: %(message)s',
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 coloredlogs.install(level=logging.DEBUG, logger=logger)
 
 
-class Hurry():
+class MGMHurry():
     '''
     💨 Your command is my objective 💨
 
@@ -37,7 +37,7 @@ class Hurry():
     config = []
 
     def __init__(self):
-        tprint("hurry cli")
+        tprint("mgm-hurry")
 
         self._basedir = os.getcwd()
 
@@ -230,7 +230,7 @@ class Hurry():
             else:
                 self.start_trader(True)
         else:
-            logger.info('💨 Executing hurry up finished.')
+            logger.info('💨 Executing mgm-hurry up finished.')
 
     def install_freqtrade(self,
                           branch: str = "develop",
@@ -276,7 +276,7 @@ class Hurry():
                 f'deactivate; bash {target_dir}/setup.sh --install')
 
             logger.info(
-                '🍺 Freqtrade has been installed. You can now proceed to install MGM. (Hint: hurry install_mgm)'
+                '🍺 Freqtrade has been installed. You can now proceed to install MGM. (Hint: mgm-hurry install_mgm)'
             )
 
     def install_mgm(self, branch: str = "development", target_dir: str = None):
@@ -345,7 +345,7 @@ class Hurry():
             self.__create_mgm_config_files(target_dir)
 
             logger.info(
-                '🍺 MGM has been installed. You can now proceed to setup your instance. (Hint: hurry setup)'
+                '🍺 MGM has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)'
             )
 
     @staticmethod
@@ -555,7 +555,7 @@ class Hurry():
         logger.info('💨 💨 💨')
 
         if self.__reload_config() is False:
-            logger.error('No Hurry config file found. Please run: hurry setup')
+            logger.error('No Hurry config file found. Please run: mgm-hurry setup')
             sys.exit(0)
 
         timerange = self.__get_preset_timerange(timerange)
@@ -706,7 +706,7 @@ class Hurry():
         logger.info('💨 💨 💨')
 
         if self.__reload_config() is False:
-            logger.error('No Hurry config file found. Please run: hurry setup')
+            logger.error('No Hurry config file found. Please run: mgm-hurry setup')
             sys.exit(0)
 
         self.__init_freqtrade()
@@ -862,7 +862,7 @@ class Hurry():
 
         if epoch == 0:
             logger.error(
-                '🤷‍♂️ Please pass the epoch number through. Hint: hurry hyperopt_show_epoch --epoch=1337'
+                '🤷‍♂️ Please pass the epoch number through. Hint: mgm-hurry hyperopt_show_epoch --epoch=1337'
             )
             sys.exit(1)
 
@@ -884,7 +884,7 @@ class Hurry():
 
         if epoch == 0:
             logger.error(
-                '🤷‍♂️ Please pass the epoch number through. Hint: hurry hyperopt_apply_epoch --epoch=1337'
+                '🤷‍♂️ Please pass the epoch number through. Hint: mgm-hurry hyperopt_apply_epoch --epoch=1337'
             )
             sys.exit(1)
 
@@ -1186,7 +1186,7 @@ class Hurry():
 
 if __name__ == "__main__":
     try:
-        fire.Fire(Hurry)
+        fire.Fire(MGMHurry)
     except KeyboardInterrupt:
         print('😼 KTHXBAI')
         sys.exit(0)
