@@ -23,7 +23,7 @@ services:
     command: >
       trade
       --logfile /freqtrade/user_data/logs/freqtrade.log
-      --db-url sqlite:////freqtrade/user_data/tradesv3-MoniGoMani_v0.12.0.sqlite
+      --db-url sqlite:////freqtrade/user_data/tradesv3-MoniGoMani_v0.13.0.sqlite
       --config /freqtrade/user_data/mgm-config.json
       --config /freqtrade/user_data/mgm-config-private.json
       --strategy MoniGoManiHyperStrategy

@@ -1,19 +1,29 @@
+# Ignore the Private Config to prevent accidental pushing
+user_data/mgm-config-private.json
+# Ignore the HyperOpt Result Files that are used by Default
+user_data/mgm-config-hyperopt.json
+user_data/strategies/MoniGoManiHyperStrategy.json
 # Ignore Release Template
 ReleaseTemplate.md
 # Ignore Python Caches
 user_data/hyperopts/__pycache__/
 user_data/strategies/__pycache__/
-user_data/data
-user_data/*_results/
-user_data/logs/
-user_data/*.lock
+# Ignore Legacy Python Caches
 Legacy MoniGoMani/user_data/hyperopts/__pycache__/
 Legacy MoniGoMani/user_data/strategies/__pycache__/
-# Ignore VSCodium Workspace
-workspace.code-workspace
-# Ignore JetBrains .idea Folder
+# Ignore Other General User Data
+user_data/*_results/
+user_data/*.lock
+user_data/data/
+user_data/logs/
+user_data/plot/
+# Ignore JetBrains Folder
 .idea/
+# Ignore VSCodium Folder & Workspace
+workspace.code-workspace
+.vscode/
 # Ignore Logo Folder
 Logo/
-# Ignore VSC
-.vscode
+# Ignore fthypt and legacy pickle Files
+*.fthypt
+*.pickle

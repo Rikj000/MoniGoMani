@@ -2,7 +2,7 @@
     "pairlists": [
         {
             "method": "VolumePairList",
-            "number_assets": 30,
+            "number_assets": 120,
             "sort_key": "quoteVolume",
             "refresh_period": 1800
         },
@@ -36,31 +36,26 @@
         },
         {
             "method": "VolumePairList",
-            "number_assets": 6,
+            "number_assets": 10,
             "sort_key": "quoteVolume"
         }
     ],
     "exchange": {
         "name": "binance",
         "pair_blacklist": [
-            ".*USD/USDT",
-            "USD.*/USDT",
-            ".*DOWN/BTC",
-            ".*UP/BTC",
-            ".*DOWN/ETH",
-            ".*UP/ETH",
-            ".*DOWN/USDT",
-            ".*UP/USDT",
-            ".*DOWN/BNB",
-            ".*UP/BNB",
+            ".*USD.*/.*",
+            ".*BULL.*/.*",
+            ".*BEAR.*/.*",
+            ".*UP.*/.*",
+            ".*DOWN.*/.*",
+            ".*HEDGE.*/.*",
+            ".*PREMIUM.*/.*",
+            ".*PERP.*/.*",
             ".*/BNB",
             "BNB/.*",
-            ".*_PREMIUM",
-            ".*PERP",
-            ".*BULL/.*",
-            ".*BEAR/.*",
-            ".*BULL2021/.*",
-            ".*BEAR2021/.*"
+            "EPS/.*",
+            "EUR/.*",
+            "GBP/.*"
         ],
         "ccxt_config": {
             "enableRateLimit": true

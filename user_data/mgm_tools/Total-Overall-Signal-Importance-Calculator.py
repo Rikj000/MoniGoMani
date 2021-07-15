@@ -4,12 +4,14 @@ import argparse
 import json
 import os
 import sys
+
+
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
 
 class TotalOverallSignalImportanceCalculator:
     """
-    Total Overall Signal Importance Calculator for MoniGoMani v0.12.0
+    Total Overall Signal Importance Calculator for MoniGoMani v0.13.0
     -----------------------------------------------------------------
     First do 1 or 2 HyperOpt Runs and extract your results to a 'mgm-config-hyperopt.json'
 
@@ -154,74 +156,68 @@ def print_total_signal_header():
     print(full_signal_format.format('', '', 'down', 'side', 'up'))
 
 
-def print_total_buy_signal(calculator_data):
-    print(full_signal_format.format('total buy signals needed', '',
-                                    str(calculator_data.buy_params['buy__downwards_trend_total_signal_needed']) + '%',
-                                    str(calculator_data.buy_params['buy__sideways_trend_total_signal_needed']) + '%',
-                                    str(calculator_data.buy_params['buy__upwards_trend_total_signal_needed']) + '%'))
+def print_total_signal(calculator_data, space: str):
+    params = getattr(calculator_data, f'{space}_params')
+    print(full_signal_format.format(f'total {space} signals needed', '',
+                                    zero_x(str(params[f'{space}__downwards_trend_total_signal_needed']) + '%'),
+                                    zero_x(str(params[f'{space}__sideways_trend_total_signal_needed']) + '%'),
+                                    zero_x(str(params[f'{space}__upwards_trend_total_signal_needed']) + '%')))
 
 
-def print_total_buy_lookback(calculator_data):
+def print_total_lookback(calculator_data, space: str):
+    params = getattr(calculator_data, f'{space}_params')
     print(full_signal_format.format(
-        'total buy signals lookback windows', '',
-        str(calculator_data.buy_params['buy__downwards_trend_total_signal_needed_candles_lookback_window']),
-        str(calculator_data.buy_params['buy__sideways_trend_total_signal_needed_candles_lookback_window']),
-        str(calculator_data.buy_params['buy__upwards_trend_total_signal_needed_candles_lookback_window'])))
+        f'total {space} signals lookback windows', '',
+        zero_x(str(int(params[f'{space}__downwards_trend_total_signal_needed_candles_lookback_window']))),
+        zero_x(str(int(params[f'{space}__sideways_trend_total_signal_needed_candles_lookback_window']))),
+        zero_x(str(int(params[f'{space}__upwards_trend_total_signal_needed_candles_lookback_window'])))))
 
 
-def print_total_sell_signal(calculator_data):
-    print(full_signal_format.format('total sell signals needed', '',
-                                    str(calculator_data.sell_params['sell__downwards_trend_total_signal_needed']) + '%',
-                                    str(calculator_data.sell_params['sell__sideways_trend_total_signal_needed']) + '%',
-                                    str(calculator_data.sell_params['sell__upwards_trend_total_signal_needed']) + '%'))
-
-
-def print_total_sell_lookback(calculator_data):
-    print(full_signal_format.format(
-        'total sell signals lookback windows', '',
-        str(calculator_data.sell_params['sell__downwards_trend_total_signal_needed_candles_lookback_window']),
-        str(calculator_data.sell_params['sell__sideways_trend_total_signal_needed_candles_lookback_window']),
-        str(calculator_data.sell_params['sell__upwards_trend_total_signal_needed_candles_lookback_window'])))
+def print_signal_triggers_needed(calculator_data, space: str):
+    params = getattr(calculator_data, f'{space}_params')
+    print(full_signal_format.format(f'{space} signal triggers needed', '',
+                                    zero_x(str(int(params[f'{space}__downwards_trend_signal_triggers_needed']))),
+                                    zero_x(str(int(params[f'{space}__sideways_trend_signal_triggers_needed']))),
+                                    zero_x(str(int(params[f'{space}__upwards_trend_signal_triggers_needed'])))))
 
 
 def print_full_signal_header():
     print(full_signal_format.format('', 'avg', 'down', 'side', 'up'))
 
 
-def print_full_buy_signal(calculator_data, signal, importance):
+def print_full_signal(calculator_data, signal, importance, space: str):
+    params = getattr(calculator_data, f'{space}_params')
     print(full_signal_format.format(f'{str(signal)}:', f'{str(round(importance, 2))}%',
-                                    str(calculator_data.buy_params[f'buy_downwards_trend_{signal}_weight']) + '%',
-                                    str(calculator_data.buy_params[f'buy_sideways_trend_{signal}_weight']) + '%',
-                                    str(calculator_data.buy_params[f'buy_upwards_trend_{signal}_weight']) + '%'))
-
-
-def print_full_sell_signal(calculator_data, signal, importance):
-    print(full_signal_format.format(f'{str(signal)}:', f'{str(round(importance, 2))}%',
-                                    str(calculator_data.sell_params[f'sell_downwards_trend_{signal}_weight']) + '%',
-                                    str(calculator_data.sell_params[f'sell_sideways_trend_{signal}_weight']) + '%',
-                                    str(calculator_data.sell_params[f'sell_upwards_trend_{signal}_weight']) + '%'))
+                                    zero_x(str(params[f'{space}_downwards_trend_{signal}_weight']) + '%'),
+                                    zero_x(str(params[f'{space}_sideways_trend_{signal}_weight']) + '%'),
+                                    zero_x(str(params[f'{space}_upwards_trend_{signal}_weight']) + '%')))
 
 
 def print_full_avg_signal(signal, importance, avg_weights):
     print(full_signal_format.format(f'{str(signal)}:', f'{str(round(importance, 2))}%',
-                                    str(avg_weights[f'avg_downwards_trend_{signal}_weight']) + '%',
-                                    str(avg_weights[f'avg_sideways_trend_{signal}_weight']) + '%',
-                                    str(avg_weights[f'avg_upwards_trend_{signal}_weight']) + '%'))
+                                    zero_x(str(avg_weights[f'avg_downwards_trend_{signal}_weight']) + '%'),
+                                    zero_x(str(avg_weights[f'avg_sideways_trend_{signal}_weight']) + '%'),
+                                    zero_x(str(avg_weights[f'avg_upwards_trend_{signal}_weight']) + '%')))
 
 
 def print_sell_unclogger_check(unclogger_check, value):
     print(signal_format.format(f'{unclogger_check}:', str(value).replace('.0', '')))
 
 
-def print_buy_sell_params(calculator_data):
+def print_params(calculator_data, space: str):
+    params = getattr(calculator_data, f'{space}_params')
     print('')
-    print('# Buy hyperspace params:')
-    print('buy_params = ' + json.dumps(calculator_data.buy_params, indent=4, sort_keys=True).
+    print(f'# {space.capitalize()} hyperspace params:')
+    print(f'{space}_params = ' + json.dumps(params, indent=4, sort_keys=True).
           replace('\"', '\'').replace('true', 'True').replace('false', 'False').replace('.0', ''))
-    print('')
-    print('# Sell hyperspace params:')
-    print('sell_params = ' + json.dumps(calculator_data.sell_params, indent=4, sort_keys=True).
-          replace('\"', '\'').replace('true', 'True').replace('false', 'False').replace('.0', ''))
+
+
+def zero_x(parameter):
+    temp_param = parameter[0:-1] if isinstance(parameter, str) and (parameter[-1] == '%') else parameter
+    if float(temp_param) == 0.0:
+        return 'X'
+    else:
+        return parameter
 
 
 def main():
@@ -245,7 +241,7 @@ def main():
     avg_trend_weights = {}
 
     # Load the MoniGoMani settings
-    mgm_config_path = os.getcwd() + '/user_data/' + calculator_data.mgm_config_name
+    mgm_config_path = f'{os.getcwd()}/user_data/{calculator_data.mgm_config_name}'
     if os.path.isfile(mgm_config_path) is True:
         # Load the 'mgm-config.json' file as an object and parse it as a dictionary
         file_object = open(mgm_config_path, )
@@ -258,7 +254,7 @@ def main():
                  f'correct file and/or alter "mgm_config_name" in "Total-Overall-Signal-Importance-Calculator.py"')
 
     # If results from a previous HyperOpt Run are found then continue the next HyperOpt Run upon them
-    mgm_config_hyperopt_path = os.getcwd() + '/user_data/' + calculator_data.mgm_config_hyperopt_name
+    mgm_config_hyperopt_path = f'{os.getcwd()}/user_data/{calculator_data.mgm_config_hyperopt_name}'
     if os.path.isfile(mgm_config_hyperopt_path) is True:
         # Load the provided 'mgm-config-hyperopt.json' file as an object
         file_object = open(mgm_config_hyperopt_path, )
@@ -267,27 +263,48 @@ def main():
 
         # Convert the 'mgm-config-hyperopt.json' file data to params needed for the calculator
         try:
-            # Convert the Total Signals Needed + Their Lookback Windows + Weighted Buy & Sell Signal Data
             for space in spaces:
                 indicator_names = weighted_buy_signal_names if space == 'buy' else weighted_sell_signal_names
                 params = getattr(calculator_data, f'{space}_params')
                 for trend in mgm_trends:
-                    for indicator in indicator_names:
-                        dictionary_key = f'{space}_{trend}_trend_{indicator}_weight'
-                        params[dictionary_key] = mgm_config_hyperopt_json_data['params'][dictionary_key]
+                    if mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
+                        # Convert the Weighted Buy & Sell Signal Data
+                        for indicator in indicator_names:
+                            dictionary_key = f'{space}_{trend}_trend_{indicator}_weight'
+                            params[dictionary_key] = mgm_config_hyperopt_json_data['params'][space][dictionary_key]
+                        # Convert the Total Signals Needed
+                        dictionary_key = f'{space}__{trend}_trend_total_signal_needed'
+                        params[dictionary_key] = mgm_config_hyperopt_json_data['params'][space][dictionary_key]
+                        # Convert the Lookback Windows
+                        dictionary_key += '_candles_lookback_window'
+                        params[dictionary_key] = mgm_config_hyperopt_json_data['params'][space][dictionary_key]
+                        # Convert the Signal Triggers Needed
+                        dictionary_key = f'{space}__{trend}_trend_signal_triggers_needed'
+                        params[dictionary_key] = mgm_config_hyperopt_json_data['params'][space][dictionary_key]
 
-                    dictionary_key = f'{space}__{trend}_trend_total_signal_needed'
-                    params[dictionary_key] = mgm_config_hyperopt_json_data['params'][dictionary_key]
-                    dictionary_key += '_candles_lookback_window'
-                    params[dictionary_key] = mgm_config_hyperopt_json_data['params'][dictionary_key]
+                    # Generate default 0 values if not trading in this trend
+                    else:
+                        # Convert the Weighted Buy & Sell Signal Data
+                        for indicator in indicator_names:
+                            dictionary_key = f'{space}_{trend}_trend_{indicator}_weight'
+                            params[dictionary_key] = 0
+                        # Convert the Total Signals Needed
+                        dictionary_key = f'{space}__{trend}_trend_total_signal_needed'
+                        params[dictionary_key] = 0
+                        # Convert the Lookback Windows
+                        dictionary_key += '_candles_lookback_window'
+                        params[dictionary_key] = 0
+                        # Convert the Signal Triggers Needed
+                        dictionary_key = f'{space}__{trend}_trend_signal_triggers_needed'
+                        params[dictionary_key] = 0
 
             # Convert the Sell Unclogger Data
             for unclogger_check_name in unclogger_check_names:
                 dictionary_key = f'sell___unclogger_{unclogger_check_name}'
                 config_dictionary_key = f'unclogger_{unclogger_check_name}'
-                if dictionary_key in mgm_config_hyperopt_json_data['params']:
+                if dictionary_key in mgm_config_hyperopt_json_data['params']['sell']:
                     calculator_data.unclogger_params[unclogger_check_name] = \
-                        mgm_config_hyperopt_json_data['params'][dictionary_key]
+                        mgm_config_hyperopt_json_data['params']['sell'][dictionary_key]
                 elif (config_dictionary_key in mgm_config['unclogger_spaces']) and \
                         (isinstance(mgm_config['unclogger_spaces'][config_dictionary_key], bool) is True):
                     calculator_data.unclogger_params[unclogger_check_name] = \
@@ -319,26 +336,37 @@ def main():
         params = calculator_data.buy_params if space == 'buy' else calculator_data.sell_params
 
         for indicator in indicator_names:
-            weight = 0
-
+            weight = active_trends = 0
             for trend in mgm_trends:
                 dictionary_key = f'{space}_{trend}_trend_{indicator}_weight'
-                weight += int(params[dictionary_key])
+                if mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
+                    weight += int(params[dictionary_key])
+                    active_trends += 1
 
-            if space == 'buy':
-                total_overall_buy_weights[indicator] = weight / len(mgm_trends)
-            else:
-                total_overall_sell_weights[indicator] = weight / len(mgm_trends)
+            if active_trends > 0:
+                if space == 'buy':
+                    total_overall_buy_weights[indicator] = weight / active_trends
+                else:
+                    total_overall_sell_weights[indicator] = weight / active_trends
 
     # Calculate the total overall combined weights
     for combined_indicator in combined_weighted_signal_names.keys():
         indicators = combined_weighted_signal_names[combined_indicator]
 
         for trend in mgm_trends:
-            avg_weight = (int(calculator_data.buy_params[f'buy_{trend}_trend_{indicators[0]}_weight']) +
-                          int(calculator_data.sell_params[f'sell_{trend}_trend_{indicators[-1]}_weight'])) / 2
-            avg_trend_weights[f'avg_{trend}_trend_{combined_indicator}_weight'] = avg_weight
-
+            if (mgm_config['trading_during_trends'][f'buy_trades_when_{trend}'] is True) and \
+                    (mgm_config['trading_during_trends'][f'sell_trades_when_{trend}'] is True):
+                avg_weight = (int(calculator_data.buy_params[f'buy_{trend}_trend_{indicators[0]}_weight']) +
+                              int(calculator_data.sell_params[f'sell_{trend}_trend_{indicators[-1]}_weight'])) / 2
+                avg_trend_weights[f'avg_{trend}_trend_{combined_indicator}_weight'] = avg_weight
+            elif mgm_config['trading_during_trends'][f'buy_trades_when_{trend}'] is True:
+                avg_trend_weights[f'avg_{trend}_trend_{combined_indicator}_weight'] = \
+                    int(calculator_data.buy_params[f'buy_{trend}_trend_{indicators[0]}_weight'])
+            elif mgm_config['trading_during_trends'][f'sell_trades_when_{trend}'] is True:
+                avg_trend_weights[f'avg_{trend}_trend_{combined_indicator}_weight'] = \
+                    int(calculator_data.sell_params[f'sell_{trend}_trend_{indicators[-1]}_weight'])
+            else:
+                avg_trend_weights[f'avg_{trend}_trend_{combined_indicator}_weight'] = 0
         total_overall_weights[combined_indicator] = \
             (total_overall_buy_weights[indicators[0]] + total_overall_sell_weights[indicators[-1]]) / 2
 
@@ -356,25 +384,23 @@ def main():
 
     print_section_header('Total Signals Needed:')
     print_total_signal_header()
-    print_total_buy_signal(calculator_data)
-    print_total_buy_lookback(calculator_data)
-    print_total_sell_signal(calculator_data)
-    print_total_sell_lookback(calculator_data)
+    for space in ['buy', 'sell']:
+        print_total_signal(calculator_data, space)
+        print_total_lookback(calculator_data, space)
+        print_signal_triggers_needed(calculator_data, space)
 
     print_section_header('Total Overall Signal Importance:')
     print_full_signal_header()
     for signal, importance in total_overall_weights.items():
         print_full_avg_signal(signal, importance, avg_trend_weights)
 
-    print_section_header('Total Overall Buy Signal Importance:')
-    print_full_signal_header()
-    for signal, importance in total_overall_buy_weights.items():
-        print_full_buy_signal(calculator_data, signal, importance)
-
-    print_section_header('Total Overall Sell Signal Importance:')
-    print_full_signal_header()
-    for signal, importance in total_overall_sell_weights.items():
-        print_full_sell_signal(calculator_data, signal, importance)
+    for space in ['buy', 'sell']:
+        print_section_header(f'Total Overall {space.capitalize()} Signal Importance:')
+        print_full_signal_header()
+        total_overall_weights = \
+            total_overall_buy_weights.items() if space == 'buy' else total_overall_sell_weights.items()
+        for signal, importance in total_overall_weights:
+            print_full_signal(calculator_data, signal, importance, space)
 
     print_section_header('Losing Open Trade Sell Unclogger:')
     for unclogger_check, value in calculator_data.unclogger_params.items():
@@ -382,7 +408,8 @@ def main():
 
     if args.precision_used != 1:
         print_section_header('Buy/Sell Hyperspace Params:')
-        print_buy_sell_params(calculator_data)
+        for space in ['buy', 'sell']:
+            print_params(calculator_data, space)
 
     if args.output_to_file:
         f.close()
