@@ -1,0 +1,1127 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# -* vim: syntax=python -*-
+
+'''
+mgm-hurry – 💨 Your command is my objective 💨
+'''
+
+import glob
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from string import Template
+import fire
+import yaml
+from art import tprint
+from InquirerPy import prompt
+from InquirerPy.validator import NumberValidator
+
+from user_data.mgm_tools.mgm_hurry.FreqtradeCli import FreqtradeCli
+from user_data.mgm_tools.mgm_hurry.MgmCli import MgmCli
+
+from user_data.mgm_tools.mgm_hurry.LeetLogger import get_logger
+logger = get_logger()
+
+class MGMHurry():
+    '''
+    💨 Your command is my objective 💨
+
+    CLI Tool for setting up a Freqtrade instance containing the MGM strategy
+    '''
+
+    config = []
+    freqtrade_cli = None
+
+    def __init__(self):
+        tprint("mgm-hurry")
+
+        self._basedir = os.getcwd()
+
+        if self.__reload_config() is False:
+            logger.error('⚠️ Failed to load or create .hurry config file.')
+
+        self.freqtrade_cli = FreqtradeCli(self._basedir, logger)
+        self.mgm_cli = MgmCli(self._basedir, logger)
+
+    def __reload_config(self) -> bool:
+        '''
+        Reads configuration from .hurry file and stores
+        in self.config attribute.
+        Creates new .hurry config file with default values
+        if no .hurry config file could be found.
+
+        Returns:
+            result (bool); True in fact.
+        '''
+
+        self.config = None
+
+        if os.path.exists(".hurry") is False:
+            # Create bare .hurry config file
+            self.__write_config()
+
+        if os.path.exists(".hurry") is True:
+            self.config = self.__read_config()
+
+        return True
+
+    def up(self):  # pylint: disable=invalid-name
+        '''The all in one command. Hurry up, turn it up!'''
+
+        questions = [
+            {
+                "type": "confirm",
+                "name": "install_freqtrade",
+                "message": "💨 Do you want to install Freqtrade?"
+            },
+            {
+                "type": "confirm",
+                "name": "install_mgm",
+                "message": "💨 Do you want to install MGM?"
+            },
+            {
+                "type": "confirm",
+                "name": "run_setup",
+                "message": "💨 Do you want to configure it now?"
+            },
+            {
+                "type": "confirm",
+                "name": "download_static_pairlist",
+                "message": "💨 Do you want to generate a static pairlist now?"
+            },
+            {
+                "type": "confirm",
+                "name": "download_data",
+                "message": "💨 Do you want to download candle data now?"
+            },
+            {
+                "type": "confirm",
+                "name": "do_hyperopt",
+                "message": "💨 Do you want to hyperopt now?"
+            },
+            {
+                "type": "confirm",
+                "name": "do_backtest",
+                "message": "💨 Do you want to backtest now?"
+            },
+            {
+                "type":
+                "list",
+                "name":
+                "start_trading",
+                "message":
+                "💨 Do you want to start trading?",
+                "choices": [{
+                    "name": "No",
+                    "value": 0
+                }, {
+                    "name": "Yes, Dry-Run please",
+                    "value": 1
+                }, {
+                    "name": "Yes, for real!",
+                    "value": 2
+                }]
+            },
+        ]
+
+        answers = prompt(questions=questions)
+
+        if answers == {}:
+            sys.exit()
+
+        if answers.get('install_freqtrade') is True:
+            self.install_freqtrade()
+
+        if answers.get('install_mgm') is True:
+            self.install_mgm()
+
+        if answers.get('run_setup') is True:
+            self.setup()
+
+        if answers.get('download_static_pairlist') is True:
+            self.download_static_pairlist()
+
+        if answers.get('download_data') is True:
+            self.download_candle_data()
+
+        if answers.get('do_hyperopt') is True:
+            # First HO run
+            self.hyperopt()
+            ho_choice = prompt(questions=[{
+                "type": "input",
+                "name": "ho_epoch",
+                "message":
+                "(HO 1) Choose the epoch which fits the best to your liking: (0-800) ",
+                "filter": lambda val: int(val),
+                "validate": NumberValidator()
+            }])
+            self.hyperopt_apply_epoch(ho_choice.get('ho_epoch'), 1)
+
+            # Second HO run
+            self.hyperopt()
+            ho_choice = prompt(questions=[{
+                "type": "input",
+                "name": "ho_epoch",
+                "message":
+                "(HO 2) Choose the epoch which fits the best to your liking: (0-800) ",
+                "filter": lambda val: int(val),
+                "validate": NumberValidator()
+            }])
+            self.hyperopt_apply_epoch(ho_choice.get('ho_epoch'), 2)
+
+        if answers.get('do_backtest') is True:
+            self.backtest()
+
+        if answers.get('start_trading') > 0:
+            if answers.get('start_trading') == 2:
+                self.start_trader(False)
+            else:
+                self.start_trader(True)
+        else:
+            logger.info('💨 Executing mgm-hurry up finished.')
+
+    def install_freqtrade(self,
+                          branch: str = "develop",
+                          target_dir: str = None):
+        '''Install Freqtrade the easy way.
+
+        Args:
+            branch (string, optional): Checkout a specific branch. Defaults to main.
+            target_dir (string, optional): Specify a target_dir to install to.
+                                            Defaults to os.getcwd().
+        '''
+        logger.info('💨 💨 💨')
+        logger.info('👉 Install Freqtrade ')
+        logger.info('💨 💨 💨')
+
+        # Checking freqtrade installation to confirm for overwrite
+        if self.freqtrade_cli.installation_exists() is True:
+            questions = [
+                {
+                    "type": "confirm",
+                    "message": "It looks like Freqtrade is already installed. Proceed to overwrite?",
+                    "name": "proceed",
+                    "default": False,
+                },
+            ]
+
+            result = prompt(questions)
+
+            if result.get('proceed') is False:
+                sys.exit(1)
+
+        if target_dir is None:
+            target_dir = self._basedir
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            self.__exec_cmd(
+                f"git clone -b {branch} https://github.com/freqtrade/freqtrade.git {tmpdirname}"
+            )
+
+            self.__exec_cmd(f'cp -rf {tmpdirname}/* {target_dir}')
+
+            self.__exec_cmd(
+                f'deactivate; bash {target_dir}/setup.sh --install')
+
+            logger.info(
+                '🍺 Freqtrade has been installed. You can now proceed to install MGM. (Hint: mgm-hurry install_mgm)'
+            )
+
+    def install_mgm(self, branch: str = "development", target_dir: str = None):
+        '''Install the MGM strategy.
+
+        Args:
+            branch (str, optional): Git-branch to install. Defaults to "development".
+            target_dir (str, optional): Target directory to install MGM. Defaults to os.getcwd().
+        '''
+        logger.info('💨 💨 💨')
+        logger.info('👉 Install MGM ')
+        logger.info('💨 💨 💨')
+
+        # Checking mgm installation to confirm for overwrite
+        if self.mgm_cli.installation_exists() is True:
+            questions = [
+                {
+                    "type": "confirm",
+                    "message": "It looks like MGM is already installed. Proceed to overwrite?",
+                    "name": "proceed",
+                    "default": False,
+                },
+            ]
+
+            result = prompt(questions)
+
+            if result.get('proceed') is False:
+                sys.exit(1)
+
+            questions = [
+                {
+                    "type": "confirm",
+                    "message": ("Should I print your mgm-config-private.json contents "
+                                    "so you can copy it over to new installation?"),
+                    "name": "print",
+                    "default": False,
+                },
+                {
+                    "type": "confirm",
+                    "message": ("WARNING: You are printing sensitive information"
+                                " which you should NEVER SHARE with anybody. Really proceed?"),
+                    "name": "print_confirmed",
+                    "default": False,
+                    "when": lambda result: result["print"]
+                }
+            ]
+
+            result = prompt(questions)
+
+            if result.get('print_confirmed') is True:
+                # Read mgm-config-private.json and pretty print it
+                with open(self._basedir + '/user_data/mgm-config-private.json', ) as mgm_private_config:
+                    print(json.dumps(json.load(mgm_private_config), indent=4))
+
+        if target_dir is None:
+            target_dir = self._basedir
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            self.__exec_cmd(
+                f"git clone -b {branch} https://github.com/Rikj000/MoniGoMani.git {tmpdirname}"
+            )
+
+            self.__exec_cmd(
+                f'cp -rf {tmpdirname}/user_data/* {target_dir}/user_data/')
+
+            self.mgm_cli.create_config_files(target_dir)
+
+            logger.info(
+                '🍺 MGM has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)'
+            )
+
+    def setup(self):
+        '''
+        Saves setup data based on your answers
+        '''
+        logger.info('💨 💨 💨')
+        logger.info('👉 Setup ')
+        logger.info('💨 💨 💨')
+
+        logger.info("🤓 Let's answer some questions to make your life easier.")
+
+        strategies = map(
+            lambda f: os.path.basename(f).replace(".py", ""),
+            glob.glob(self._basedir + "/user_data/strategies/*.py"))
+
+        strategies_choices = []
+        for strat in strategies:
+            if strat != "MasterMoniGoManiHyperStrategy":
+                strategies_choices.append({"name": strat, "value": strat})
+
+        if len(strategies_choices) == 0:
+            strat_dir = self._basedir + "/user_data/strategies/"
+            logger.error(
+                f"🤷‍♂️ I could not find any strategy in {strat_dir}. Did you install Freqtrade and MGM?"
+            )
+            sys.exit(1)
+
+        self.mgm_cli.create_config_files(self._basedir)
+
+        hyperopts = map(lambda f: os.path.basename(f).replace(".py", ""),
+                        glob.glob(self._basedir + "/user_data/hyperopts/*.py"))
+
+        hyperopts_choices = []
+        for hyperopt in hyperopts:
+            hyperopts_choices.append({"name": hyperopt, "value": hyperopt})
+
+        if len(hyperopts_choices) == 0:
+            ho_dir = self._basedir + "/user_data/hyperopts/"
+            logger.error(
+                f"🤷‍♂️ I could not find any hyperopts in {ho_dir}. Did you install Freqtrade and MGM?"
+            )
+            sys.exit(1)
+
+        existing_config = self.__read_config()
+
+        questions = [{
+            "type": "list",
+            "name": "install_type",
+            "message": "Which way you want to use Freqtrade?",
+            "choices": ["docker", "source"],
+            "default": existing_config["install_type"] or ""
+        }, {
+            "type": "input",
+            "name": "timerange",
+            "message": "Please enter the default timerange you want to use",
+            "default": existing_config["timerange"] or "20201201-20210316"
+        }, {
+            "type": "list",
+            "name": "ho_strategy",
+            "message": "Which HyperOpt Strategy do you want to use?",
+            "choices": strategies_choices,
+            "default": existing_config["hyperopt"]["strategy"] or "" # fixme; what if strat from config not exists?
+        }, {
+            "type": "list",
+            "name": "ho_loss",
+            "message": "Which HyperOpt Loss do you want to use?",
+            "choices": hyperopts_choices,
+            "default": existing_config["hyperopt"]["loss"] or "" # fixme; what if loss file from config not exists?
+        }, {
+            "type": "checkbox",
+            "name": "ho_spaces",
+            "message": "Which spaces do you want to HyperOpt?",
+            "choices": map(
+                lambda x: {"enabled": True, "name": x['name'], "value": x['value']}
+                            if x["value"] in existing_config["hyperopt"]["spaces"].split(" ")
+                            else {"enabled": False, "name": x['name'], "value": x['value']},
+                [
+                    {"enabled": False, "name": "default", "value": "default"},
+                    {"enabled": False, "name": "buy", "value": "buy"},
+                    {"enabled": False, "name": "sell", "value": "sell"},
+                    {"enabled": False, "name": "roi", "value": "roi"},
+                    {"enabled": False, "name": "stoploss", "value": "stoploss"},
+                    {"enabled": False, "name": "trailing", "value": "trailing"},
+                    {"enabled": False, "name": "all", "value":  "all"}
+                ]
+            ),
+            "filter": lambda val: " ".join(val)
+        }, {
+            "type": "input",
+            "name": "ho_quotation",
+            "message": "Please enter the default quotation you want to use",
+            "default": existing_config["hyperopt"]["quote"] or "BTC"
+        }, {
+            "type": "input",
+            "name": "ho_epochs",
+            "message":
+            "Please enter the amount of epochs you want to HyperOpt",
+            "default": str(existing_config["hyperopt"]["epochs"]) or "800",
+            "filter": lambda val: int(val)
+        }, {
+            "type": "confirm",
+            "message": "Do you want to also setup your exchange?",
+            "name": "proceed_exchange",
+            "default": True,
+        }, {
+            "type": "list",
+            "name": "exchange",
+            "message": "Which exchange do you want to use?",
+            "choices": ["binance", "ftx", "bittrex"],
+            "when": lambda result: result["proceed_exchange"]
+        }, {
+            "type": "password",
+            "name": "api_key",
+            "message": "Please enter the exchange API key",
+            "when": lambda result: result["proceed_exchange"]
+        }, {
+            "type": "password",
+            "name": "api_secret",
+            "message": "Please enter the exchange API secret: ",
+            "when": lambda result: result["proceed_exchange"]
+        }]
+
+        answers = prompt(questions=questions)
+
+        if answers == {}:
+            sys.exit(0)
+
+        newconfig = {
+            'config': {
+                'install_type': answers.get('install_type'),
+                'timerange': answers.get('timerange'),
+                'exchange': answers.get('exchange') or "none",
+                'hyperopt': {
+                    'strategy': answers.get('ho_strategy'),
+                    'loss': answers.get('ho_loss'),
+                    'spaces': answers.get('ho_spaces') or "default",
+                    'quote': answers.get('ho_quotation'),
+                    'epochs': answers.get('ho_epochs')
+                }
+            }
+        }
+
+        self.__write_config(newconfig)
+        self.__reload_config()
+
+        if answers.get('proceed_exchange') is True:
+            cred = {
+                'exchange': answers.get('exchange'),
+                'api_key': answers.get('api_key'),
+                'api_secret': answers.get('api_secret'),
+            }
+
+            self._save_exchange_credentials(cred)
+
+        self.__setup_telegram()
+
+    def cleanup(self):
+        '''
+        Deletes stored hyperopt config from previous run(s)
+        '''
+        logger.info('💨 💨 💨')
+        logger.info('👉 Cleanup ')
+        logger.info('💨 💨 💨')
+
+        logger.info('👉 Removing user_data/mgm-config-hyperopt.json')
+
+        ho_file = f"{self._basedir}/user_data/mgm-config-hyperopt.json"
+
+        if os.path.exists(ho_file):
+            os.remove(ho_file)
+
+        logger.info('🍺 HyperOpt config removed.')
+
+    def download_candle_data(self, timerange: str = None):
+        '''
+        Downloads candle data for the given timerange.
+
+        Args:
+            timerange (str, Optional): Timerange from/to in string format (start-end):
+                                        yyyymmdd-yyyymmdd. Defaults to timerange out of
+                                        .hurry config file.
+                                    -or- for preset timerange: down, side, up
+        '''
+        logger.info('💨 💨 💨')
+        logger.info('👉 Download candle data ')
+        logger.info('💨 💨 💨')
+
+        if self.__reload_config() is False:
+            logger.error('No Hurry config file found. Please run: mgm-hurry setup')
+            sys.exit(0)
+
+        timerange = self.__get_preset_timerange(timerange)
+
+        if self.freqtrade_cli.installation_exists() is False:
+            logger.error('No Freqtrade installation found. I crash. ')
+
+        questions = [{
+            'type': 'input',
+            'name': 'timerange',
+            'message': 'Please enter the timerange you want to use: ',
+            'default': timerange
+        }, {
+            'type':
+            'checkbox',
+            'name':
+            'tickers',
+            'message':
+            'Specify which tickers to download: ',
+            'choices': [
+                {
+                    'name': '1m',
+                    'value': '1m',
+                    'enabled': False
+                },
+                {
+                    'name': '3m',
+                    'value': '3m',
+                    'enabled': False
+                },
+                {
+                    'name': '5m',
+                    'value': '5m',
+                    'enabled': True
+                },
+                {
+                    'name': '15m',
+                    'value': '15m',
+                    'enabled': False
+                },
+                {
+                    'name': '30m',
+                    'value': '30m',
+                    'enabled': False
+                },
+                {
+                    'name': '1h',
+                    'value': '1h',
+                    'enabled': True
+                },
+                {
+                    'name': '2h',
+                    'value': '2h',
+                    'enabled': False
+                },
+                {
+                    'name': '4h',
+                    'value': '4h',
+                    'enabled': False
+                },
+                {
+                    'name': '6h',
+                    'value': '6h',
+                    'enabled': False
+                },
+                {
+                    'name': '8h',
+                    'value': '8h',
+                    'enabled': False
+                },
+                {
+                    'name': '12h',
+                    'value': '12h',
+                    'enabled': False
+                },
+                {
+                    'name': '1d',
+                    'value': '1d',
+                    'enabled': False
+                },
+                {
+                    'name': '3d',
+                    'value': '3d',
+                    'enabled': False
+                },
+                {
+                    'name': '1w',
+                    'value': '1w',
+                    'enabled': False
+                },
+                {
+                    'name': '2w',
+                    'value': '2w',
+                    'enabled': False
+                },
+                {
+                    'name': '1M',
+                    'value': '1M',
+                    'enabled': False
+                },
+                {
+                    'name': '1y',
+                    'value': '1y',
+                    'enabled': False
+                },
+            ],
+            'validate':
+            lambda result: len(result) >= 1,
+            'invalid_message':
+            'should be at least 1 selection',
+            'instruction':
+            '(select at least 1)',
+            'filter':
+            lambda val: " ".join(val)
+        }]
+
+        answers = prompt(questions=questions)
+
+        if answers == {}:
+            sys.exit()
+
+        timerange = answers.get('timerange')
+        tickers = answers.get('tickers')
+
+        logger.info(
+            f'👉 Downloading candle data ({tickers}) for timerange {timerange}')
+
+        dcd = f"{self.config['ft_binary']} download-data --timerange {timerange} \
+            -t {tickers} -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json"
+
+        self.__exec_cmd(dcd)
+
+        logger.info('🍺 Downloading candle data finished.')
+
+    def download_static_pairlist(self):
+        '''
+        Downloads static pairlist and saves into mgm_pair_lists folder.
+
+        Fixme:
+            * Temporary disabled due to nasty bug
+            && jq 'del(.exchange.pair_whitelist )' ./user_data/mgm-config.json > ./tmp.json && jq -s '.[0] * .[1]'
+                ./tmp.json ./user_data/mgm_pair_lists/$exchange-$hyperopt_quote-Top-Volume-StaticPairList.json >
+                ./user_data/mgm-config.json && rm ./tmp.json && jq '.' ./user_data/mgm-config.json"
+            * Catch errors
+
+        '''
+        logger.info('💨 💨 💨')
+        logger.info('👉 Computing Top Volume Static Pairlist')
+        logger.info('💨 💨 💨')
+
+        if self.__reload_config() is False:
+            logger.error('No Hurry config file found. Please run: mgm-hurry setup')
+            sys.exit(0)
+
+        if self.freqtrade_cli.installation_exists() is False:
+            logger.error('Whaaaa.. No Freqtrade installation found. Beats me...')
+            sys.exit(0)
+
+        target_file = '$basedir/user_data/mgm_pair_lists/$exchange-$hyperopt_quote-Top-Volume-StaticPairList.json'
+        target_file = Template(target_file).substitute(
+            basedir=self._basedir,
+            exchange=self.config['exchange'].title(),
+            hyperopt_quote=self.config['hyperopt']['quote'])
+
+        cmd_str = "$ft_binary test-pairlist -c ./user_data/mgm_tools/$exchange-Retrieve-Top-Volume-StaticPairList.json \
+            --quote $hyperopt_quote --print-json | tail -n 1 | jq '.| $exchange_placeholder' > $target_file"
+
+        cmd_str = Template(cmd_str).substitute(
+            ft_binary=self.config['ft_binary'],
+            exchange=self.config['exchange'].title(),
+            hyperopt_quote=self.config['hyperopt']['quote'],
+            exchange_placeholder="{exchange: {pair_whitelist: .}}",
+            target_file=target_file)
+
+        self.__exec_cmd(cmd_str)
+
+        logger.info(" 🍺 Writing pairlist to mgm-config.json... ")
+
+        # Copy static pairlist to mgm-config.json as pair whitelist
+        with open(self._basedir + '/user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json', ) \
+            as static_pairlist:
+            mgm_config_json = json.load(static_pairlist)
+
+        with open(self._basedir + '/user_data/mgm-config.json', ) as mgm_config:
+            mgm_config_data = json.load(mgm_config)
+
+        mgm_config_data['exchange']['pair_whitelist'] = mgm_config_json['exchange']['pair_whitelist']
+
+        with open(self._basedir + '/user_data/mgm-config.json', 'w') as target_f:
+            json.dump(mgm_config_data, target_f, indent=4)
+
+        # logger.error("🤷‍♂️ Something happened on the way to heaven 🌟🤦‍♀️")
+
+    def hyperopt(self,
+                 timerange: str = None,
+                 strategy: str = None,
+                 spaces: str = None,
+                 enable_protections: bool = True,
+                 apply_best_results: bool = False):
+        '''
+        HyperOpt Magic. Runs HyperOpt process to find out the most positive settings.
+
+        Args:
+            timerange (str, Optional): timerange from/to in format (start-end): yyyymmdd-yyyymmdd or preset [up, down, side]
+            strategy (str, Optional): Hyper Opt strategy to use. Defaults to MoniGoManiHyperStrategy.
+            spaces (str, Optional): Spaces (space delimited) to optimize for [default, all, buy, sell, roi, stoploss, etc]
+            enable_protections (bool, Optional): Add '--enable-protections' flag to HO-command. Defaults to True.
+            apply_best_results (bool, Optional): Apply 'best' HO results direct after HO? Defaults to False.
+        '''
+        logger.info('💨 💨 💨')
+        logger.info(
+            '👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
+        logger.info('💨 💨 💨')
+
+        timerange = self.__get_preset_timerange(timerange)
+
+        if strategy is None:
+            strategy = self.config['hyperopt']['strategy']
+
+        if spaces is None:
+            spaces = self.config['hyperopt']['spaces']
+
+        cmd = (
+            (
+                f'$ft_binary hyperopt -s $ho_strategy '
+                '-c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json '
+                f'--hyperopt-loss $ho_loss --spaces $ho_spaces -e $ho_epochs --timerange $timerange '
+            )
+        )
+
+        if enable_protections is True:
+            cmd = cmd.strip() + ' --enable-protections'
+
+        if apply_best_results is True:
+            cmd = cmd.strip() + ' && mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json'
+
+        cmd = Template(cmd).substitute(
+            ft_binary=self.config['ft_binary'],
+            ho_strategy=strategy,
+            ho_loss=self.config['hyperopt']['loss'],
+            ho_spaces=spaces,
+            ho_epochs=self.config['hyperopt']['epochs'],
+            timerange=timerange)
+
+        self.__exec_cmd(cmd)
+
+        logger.info('🍺 HyperOpt run ready... 🥵')
+
+    def hyperopt_show_results(self,
+                              only_best: bool = True,
+                              only_profitable: bool = False):
+        '''
+        Show hyperopt results after choosing a fthypt file.
+
+        Args:
+            only_best (bool, Optional); Show only best epochs. Defaults to True.
+            only_profitable (bool, Optional); Show only profitable epochs. Defaults to False.
+        '''
+
+        fthypts = map(
+            os.path.basename,
+            sorted(glob.glob(self._basedir +
+                             '/user_data/hyperopt_results/*.fthypt'),
+                   key=os.path.getmtime,
+                   reverse=True))
+
+        dat = list(fthypts)
+
+        if len(dat) == 0:
+            logger.warning('Whoops, no hyperopt results could be found.')
+            sys.exit(1)
+
+        questions = [
+            {
+                'type': 'list',
+                'name': 'fthypt_file',
+                'message':
+                'Please select the hyperopt results you want to show: ',
+                'choices': dat
+            },
+        ]
+
+        answers = prompt(questions=questions)
+
+        choice = answers.get('fthypt_file')
+
+        logger.info("👉 Showing hyperopt results for: " + choice)
+
+        best = "--best" if only_best is True else ""
+        profit = "--profitable" if only_profitable is True else ""
+
+        dcd = f"{self.config['ft_binary']} hyperopt-list --hyperopt-filename '{choice}' {best} {profit}"
+        logger.debug(dcd)
+
+        self.__exec_cmd(dcd)
+
+    def hyperopt_show_epoch(self, epoch: int = 0):
+        '''
+        Shows the HyperOpt results for given epoch.
+
+        Args:
+            epoch (int): The epoch number to show the results from.
+        '''
+        logger.info('💨 💨 💨')
+        logger.info('👉 Hyperopt show results ')
+        logger.info('💨 💨 💨')
+
+        if epoch == 0:
+            logger.error(
+                '🤷‍♂️ Please pass the epoch number through. Hint: mgm-hurry hyperopt_show_epoch --epoch=1337'
+            )
+            sys.exit(1)
+
+        logger.info('👉  Showing HyperOpt results for epoch # {epoch}')
+
+        self.__exec_cmd(f"{self.config['ft_binary']} hyperopt-show -n {epoch}")
+
+    def hyperopt_apply_epoch(self, epoch: int = 0, run: int = 1):
+        '''Apply HyperOpt results from given epoch
+
+        Args:
+            epoch (int): The epoch number to apply the results from.
+            run (int, Optional): Defaults to 1. Run number of hyperopt.
+                                First run has different command than second.
+        '''
+        logger.info('💨 💨 💨')
+        logger.info('👉 Hyperopt apply epoch ')
+        logger.info('💨 💨 💨')
+
+        if epoch == 0:
+            logger.error(
+                '🤷‍♂️ Please pass the epoch number through. Hint: mgm-hurry hyperopt_apply_epoch --epoch=1337'
+            )
+            sys.exit(1)
+
+        logger.info(f'👉 Applying HyperOpt results of epoch # {epoch}')
+
+        # View & Apply HyperOpt Results from a trusted <epoch of choice>:
+        self.__exec_cmd(
+            (f"{self.config['ft_binary']} hyperopt-show -n {epoch} "
+            f"-c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json "
+            f" && mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json")
+        )
+
+        logger.info(f'🍺 Hyperopt results of epoch # {epoch} are applied.')
+
+    def backtest(self, timerange: str = None, enable_protections: bool = True):
+        '''
+        Run a backtest session.
+
+        Args:
+            timerange (string, Optional): The target timerange for backtesting. Defaults to None.
+            enable_protections (bool, Optional): Whether or not to enable protections. Defaults to True.
+        '''
+        logger.info('💨 💨 💨')
+        logger.info('👉 Start backtesting. Lets see how it all turns out!')
+        logger.info('💨 💨 💨')
+
+        timerange = self.__get_preset_timerange(timerange)
+
+        cmd = (
+            '$ft_binary backtesting -s $ho_strategy '
+            '-c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json '
+            '--timerange $timerange')
+
+        if enable_protections is True:
+            cmd = cmd + " --enable-protections"
+
+        cmd = Template(cmd).substitute(
+            ft_binary=self.config['ft_binary'],
+            ho_strategy=self.config['hyperopt']['strategy'],
+            timerange=timerange)
+
+        self.__exec_cmd(cmd)
+
+        logger.info('🍺 Backtesting ready... 🤑')
+
+    def start_trader(self, dry_run: bool = False):
+        '''
+        Start the trader. Your ultimate goal!
+
+        Args:
+            dry_run (bool, Optional): Use dry_run mode. Defaults to False
+        '''
+        logger.info('💨 💨 💨')
+        logger.info('👉 Start trader ')
+        logger.info('💨 💨 💨')
+
+        cmd = (
+            f"{self.config['ft_binary']} trade "
+            "-c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json "
+            "-c ./user_data/mgm-config-hyperopt.json --strategy {self.config['hyperopt']['strategy']}"
+        )
+
+        if dry_run is True:
+            cmd = cmd + " --dry-run"
+
+        self.__exec_cmd(cmd)
+
+    def __setup_telegram(self) -> bool:
+        '''
+        Questionnaire to setup Telegram Bot
+
+        Returns:
+            bool: False if no answers are given, True if all went ok.
+        '''
+        questions = [
+            {
+                "type": "confirm",
+                "message": "Do you want to also setup your Telegram bot? ",
+                "name": "proceed_telegram",
+                "default": True,
+            },
+            {
+                "type": "confirm",
+                "message": "Do you want to enable the Telegram Bot?",
+                "name": "enable_telegram",
+                "default": True,
+                "when": lambda result: result["proceed_telegram"]
+            },
+            {
+                "type":
+                "password",
+                "name":
+                "telegram_token",
+                "message":
+                "Please enter your Telegram Bot token: ",
+                "default":
+                "",
+                "when":
+                lambda result: result["proceed_telegram"] and result[
+                    "enable_telegram"]
+            },
+            {
+                "type":
+                "input",
+                "name":
+                "telegram_chat_id",
+                "message":
+                "Please enter the chat ID: ",
+                "default":
+                "",
+                "when":
+                lambda result: result["proceed_telegram"] and result[
+                    "enable_telegram"]
+            },
+        ]
+
+        answers = prompt(questions=questions)
+
+        if answers == {}:
+            return False
+
+        if answers.get('proceed_telegram') is True:
+            opt = {
+                'enable_telegram': answers.get('enable_telegram'),
+                'telegram_token': answers.get('telegram_token'),
+                'telegram_chat_id': answers.get('telegram_chat_id')
+            }
+
+            self._save_telegram_credentials(opt)
+
+        return True
+
+    def _save_exchange_credentials(self, cred: dict):
+        '''
+        Save exchange credentials to mgm-config-private.json
+
+        Args:
+            cred (dict) - list containing values for [exchange,api_key,api_secret]
+        '''
+        with open(self._basedir + '/user_data/mgm-config-private.json', 'w+') as file:
+            try:
+                data = json.load(file)
+            except:  # pylint: disable=bare-except
+                data = {}
+
+        data['exchange'] = {
+            "name": cred['exchange'],
+            "key": cred['api_key'],
+            "secret": cred['api_secret']
+        }
+
+        with open(self._basedir + '/user_data/mgm-config-private.json', 'w+') as outfile:
+            json.dump(data, outfile, indent=4)
+
+        logger.info("🍺 Exchange settings written to mgm-config-private.json")
+
+    def _save_telegram_credentials(self, opt: dict):
+        '''
+        Save Telegram bot settings
+
+        Args:
+            opt (dict): list containing values for [enable_telegram,telegram_token,telegram_chat_id]
+        '''
+        data = []
+
+        with open(self._basedir + '/user_data/mgm-config-private.json', ) as file:
+            data = json.load(file)
+
+        data['telegram'] = {
+            "enabled": opt['enable_telegram'],
+            "token": opt['telegram_token'],
+            "chat_id": opt['telegram_chat_id']
+        }
+
+        with open(self._basedir + '/user_data/mgm-config-private.json', 'w') as outfile:
+            json.dump(data, outfile, indent=4)
+
+        logger.info(
+            "🍺 Telegram bot settings written to mgm-config-private.json")
+
+    def __get_preset_timerange(self, timerange: str) -> str:
+        '''
+        Parses given timerange-string into according timerange dates
+
+        Args:
+            timerange (str): the timerange-string to parse [up, down, side]
+
+        Returns:
+            timerange (str): the parsed timerange string in yyyymmdd-yyyymmdd format
+        '''
+
+        tr_input = timerange
+
+        if timerange is None:
+            timerange = self.config['timerange']
+
+        if timerange == "down":
+            timerange = '20210509-20210524'
+
+        if timerange == "side":
+            timerange = '20210518-20210610'
+
+        if timerange == "up":
+            timerange = '20210127-20210221'
+
+        tr_output = timerange
+
+        logger.info(f'☀️ Timerange string parsed from "{tr_input}" to "{tr_output}"')
+
+        return timerange
+
+    @staticmethod
+    def __exec_cmd(cmd: str) -> int:
+        '''
+        Executes shell command and logs output as debug output.
+
+        Args:
+            cmd (str): The command, sir
+
+        Returns:
+            returncode (int): The returncode of the subprocess
+        '''
+        if cmd is None or cmd == "":
+            logger.error(
+                '🤷‍♂️ Please pass a command through. Without command no objective, sir!'
+            )
+            sys.exit(1)
+
+        retcode = 1
+
+        with subprocess.Popen(cmd,
+                                shell=True,
+                                stdout=subprocess.PIPE,
+                                encoding='utf-8') as process:
+
+            while True:
+                output = process.stdout.readline()
+                if output == '' and process.poll() is not None:
+                    break
+
+                if output:
+                    print(output.strip())
+
+            retcode = process.poll()
+
+        return retcode
+
+    def __read_config(self):
+        '''
+        Reads config values out of .hurry config file.
+
+        Returns:
+            config (dict): Dictionary containing all config key/value pairs. Or returns None.
+        '''
+        with open(".hurry", "r") as ymlfile:
+            cfg = yaml.full_load(ymlfile) or {}
+
+        if 'config' in cfg:
+            return cfg['config']
+
+        # Something happened on the way to heaven
+        # Let's fix it to create a default .hurry config file
+        self.__write_config()
+
+        return None
+
+    def __write_config(self, config: dict = None):
+        '''
+        Write config-array to .hurry config file.
+        Writes the passed config dicationary or if
+        nothing passed, it will write default values.
+
+        Args:
+            config (dict, Optional): The config values to store. Defaults to None.
+        '''
+        if config is None:
+            config = {
+                'config': {
+                    'install_type': 'docker',
+                    'timerange': '20201201-20210316',
+                    'exchange': 'binance',
+                    'hyperopt': {
+                        'strategy': 'MoniGoManiHyperStrategy',
+                        'loss': 'UncloggedWinRatioAndProfitRatioLoss',
+                        'spaces': 'buy sell',
+                        'quote': 'BTC',
+                        'epochs': 800
+                    }
+                }
+            }
+
+        with open('.hurry', 'w+') as file:
+            yaml.dump(config, file)
+
+        self.__reload_config()
+
+        logger.info("🍺 Configuration data written to .hurry file")
+
+
+if __name__ == "__main__":
+    try:
+        fire.Fire(MGMHurry)
+    except KeyboardInterrupt:
+        print('😼 KTHXBAI')
+        sys.exit(0)

@@ -1,0 +1,6 @@
+art==5.2
+coloredlogs==15.0.1
+fire==0.4.0
+InquirerPy==0.2.0
+logger==1.4
+PyYAML==5.4.1

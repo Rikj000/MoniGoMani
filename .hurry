@@ -1,0 +1,10 @@
+config:
+  exchange: binance
+  hyperopt:
+    epochs: 800
+    loss: UncloggedWinRatioAndProfitRatioLoss
+    quote: BTC
+    spaces: buy sell
+    strategy: MoniGoManiHyperStrategy
+  install_type: docker
+  timerange: 20201201-20210316
