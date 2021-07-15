@@ -58,6 +58,7 @@
     - [Enabled StaticPairList / Disabled VolumePairList Example](#enabled-staticpairlist--disabled-volumepairlist-example)
     - [Download StaticPairLists](#download-staticpairlists)
 - [Go-To Commands](#go-to-commands)
+- [How to test for improvements](#how-to-test-for-improvements)
 - [How to share your test results properly](#how-to-share-your-test-results-properly)
 - [Common mistakes](#common-mistakes)
     - [HyperOpting: +300 epochs, no results yet](#hyperopting-300-epochs-no-results-yet)
@@ -309,10 +310,11 @@ A different amount of buy and sell signals is possible, and the initial search s
 First add the technical analysis indicators you wish to use to MGM's `do_populate_indicators()` function.   
 
 Check out these **+200 Easy to implement Indicators** for toying with the Weighted Signal Interface:
-- Freqtrade Technical (https://github.com/freqtrade/technical)
-- TA-Lib (https://mrjbq7.github.io/ta-lib/funcs.html)
-- Pandas-TA (https://twopirllc.github.io/pandas-ta)
-- Hacks for Life Blog (https://hacks-for-life.blogspot.com)
+- [Freqtrade Technical](https://github.com/freqtrade/technical)
+- [TA-Lib](https://mrjbq7.github.io/ta-lib/funcs.html)
+- [Pandas-TA](https://twopirllc.github.io/pandas-ta)
+- [Hacks for Life Blog](https://hacks-for-life.blogspot.com)
+
 But feel free to look for other means of implementing indicators too.
 
 ```python
@@ -491,6 +493,34 @@ freqtrade download-data --timerange 20210414-20210618 -t 5m 30m -c ./user_data/m
 ```powershell
 freqtrade plot-profit --export-filename ./user_data/backtest_results/<backtest-results-file> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210501-20210616 --timeframe 1h
 ```
+
+# How to test for improvements
+The process is rather simple really on **1st HyperOpt Runs**:
+- Copy/paste the Run 1 command
+- Check/Save the HyperOpt Run 1a Results
+- Reset MoniGoMani
+- Adjust a single:
+  - Setting in `mgm-config.json`
+  - Indicator/weighted signal
+  - The spaces used
+  - The protections enabled/disabled
+  - ...
+- Copy/paste the Run 1 command again, use the same `--random-state` as you used in the previous test
+- Compare if the HyperOpt Run 1b Results are better then on your Run 1a attempt
+
+You can also do this for  **2nd HyperOpt Runs**, but this is a little more difficult, after your 1st Run be sure to:
+- Check/Save the HyperOpt Run 1 Results, Copy/paste the Run 2 command upon an epoch of choice and with a new random state
+- Check/Save the HyperOpt Run 2a Results
+- Reset MoniGoMani
+- Restore your initial 1st Run with `hyperopt-show` with the correct epoch and `--hyperopt-filename`
+- Adjust a single:
+  - Setting in `mgm-config.json`
+  - Indicator/weighted signal
+  - The spaces used
+  - The protections enabled/disabled
+  - ...
+- Copy/paste the Run 2 command again, use the same `--random-state` as you used in the previous test
+- Compare if the HyperOpt Run 2b Results are better then on your Run 2a attempt
 
 # How to share your test results properly
 The easiest way to share how your MGM setup has been doing would be by posting a screenshot in the [Discord Server](https://discord.gg/xFZ9bB6vEz) with the output of the `/status table` and `/profit` commands (Using the Telegram connection of the bot) + The complete output of the log being printed while HyperOpting (See [Some Test Results]() for examples).   
