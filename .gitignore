@@ -28,3 +28,5 @@ Logo/
 # Ignore fthypt and legacy pickle Files
 *.fthypt
 *.pickle
+# Ignore pytest cache files
+.pytest_cache
