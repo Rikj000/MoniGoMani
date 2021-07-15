@@ -138,10 +138,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         try:
             file_object = open(mgm_config_hyperopt_path, )
             mgm_config_hyperopt = json.load(file_object)
-          except ValueError as e:
-              mgm_config_hyperopt = {}
-              logger.warn(f'MoniGoManiHyperStrategy - WARN - {mgm_config_hyperopt_path} is inaccessible or is not valid JSON,'
-                          f'disregarding existing {mgm_config_hyperopt_name} file and treating as first hyperopt run!')
+        except ValueError as e:
+            mgm_config_hyperopt = {}
+            logger.warn(f'MoniGoManiHyperStrategy - WARN - {mgm_config_hyperopt_path} is inaccessible or is not valid JSON,'
+                        f'disregarding existing {mgm_config_hyperopt_name} file and treating as first hyperopt run!')
 
         # Convert the loaded 'mgm-config-hyperopt.json' data to the needed HyperOpt Results format if it's found
         # Default stub values from 'mgm-config.json' are used otherwise.
