@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -* vim: syntax=python -*-
 
-import os
+import os, sys
 
 class FreqtradeCli:
     '''
@@ -17,8 +17,12 @@ class FreqtradeCli:
         '''
         self.basedir = basedir
         self.install_type = None
-        self.logger = logger
         self.freqtrade_binary = None
+
+        if logger is None:
+            return None
+
+        self.logger = logger
 
         if os.path.exists(f"{self.basedir}/.env/bin/freqtrade") is False:
             logger.warning('🤷‍♂️ No Freqtrade installation found.')
