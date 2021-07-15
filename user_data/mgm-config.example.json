@@ -68,7 +68,7 @@
     },
     "default_stub_values": {
       "minimal_roi": {
-        "0": 10
+        "0": 100
       },
       "stoploss": -1,
       "trailing_stop": false,
