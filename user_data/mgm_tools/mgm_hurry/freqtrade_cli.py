@@ -53,8 +53,11 @@ class FreqtradeCli:
         return self.__install_type
 
     @install_type.setter
-    def install_type(self, install_type):
-        self.__install_type = install_type
+    def install_type(self, p_install_type):
+        if p_install_type in ['source', 'docker']:
+            self.__install_type = p_install_type
+        else:
+            self.__install_type = None
 
     @property
     def freqtrade_binary(self):
@@ -65,6 +68,15 @@ class FreqtradeCli:
         self.__freqtrade_binary = freqtrade_binary
 
     def installation_exists(self) -> bool:
+        '''
+        Returns true if all is setup correctly
+        source:
+            And after all the freqtrade binary is found
+            in the .env subdirectory.
+        docker:
+            Does not check for physic existence of Docker.
+            But returns True.
+        '''
         if self.__install_type is None:
             return False
 
@@ -76,7 +88,8 @@ class FreqtradeCli:
         if self.__install_type == 'docker':
             return True
 
-        if self.__install_type == 'source' and os.path.exists(f"{self.basedir}/.env/bin/freqtrade"):
-            return True
+        if self.__install_type == 'source':
+            if os.path.exists(f"{self.basedir}/.env/bin/freqtrade"):
+                return True
 
         return False
