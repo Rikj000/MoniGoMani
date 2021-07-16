@@ -1,38 +1,40 @@
 # -*- coding: utf-8 -*-
 # -* vim: syntax=python -*-
-
+# --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 import os
+# --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
+
+
 
 class FreqtradeCli:
-    '''
+    """
     FreqtradeCli is responsible for all Freqtrade (installation) related tasks.
-    '''
+    """
 
     def __init__(self, basedir, logger):
-        '''
+        """
         Initializes the Freqtrade binary
 
-        Returns:
-            results (bool): True if freqtrade installation is found. False otherwise.
-        '''
+        :return results: (bool) True if freqtrade installation is found. False otherwise.
+        """
         self.basedir = basedir
         self.install_type = None
         self.logger = logger
         self.freqtrade_binary = None
 
-        if os.path.exists(f"{self.basedir}/.env/bin/freqtrade") is False:
-            logger.warning('🤷‍♂️ No Freqtrade installation found.')
+        if os.path.exists(f'{self.basedir}/.env/bin/freqtrade') is False:
+            logger.warning('🤷♂️ No Freqtrade installation found.')
             return None
 
         if self.install_type is None:
             return None
 
-        if self.install_type == "source":
-            self.freqtrade_binary = f"source {self.basedir}/.env/bin/activate; freqtrade"
+        if self.install_type == 'source':
+            self.freqtrade_binary = f'source {self.basedir}/.env/bin/activate; freqtrade'
         else:
-            self.freqtrade_binary = "docker-compose run --rm freqtrade"
+            self.freqtrade_binary = 'docker-compose run --rm freqtrade'
 
-        logger.debug(f"👉 Freqtrade binary: `{self.freqtrade_binary}`")
+        logger.debug(f'👉 Freqtrade binary: `{self.freqtrade_binary}`')
 
         return self
 
@@ -67,12 +69,11 @@ class FreqtradeCli:
         if self.__freqtrade_binary is None:
             return False
 
-        # well if install_type is docker, we return True
-        # because we don't verify if docker is installed
+        # Well if install_type is docker, we return True because we don't verify if docker is installed
         if self.__install_type == 'docker':
             return True
 
-        if self.__install_type == 'source' and os.path.exists(f"{self.basedir}/.env/bin/freqtrade"):
+        if self.__install_type == 'source' and os.path.exists(f'{self.basedir}/.env/bin/freqtrade'):
             return True
 
         return False
