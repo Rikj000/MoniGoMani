@@ -425,9 +425,15 @@ class MGMHurry():
         if answers == {}:
             sys.exit(0)
 
+        if answers.get('install_type') == "source":
+            ft_binary = f"source {self.basedir}/.env/bin/activate; freqtrade"
+        else:
+            ft_binary = "docker-compose run --rm freqtrade"
+
         newconfig = {
             'config': {
                 'install_type': answers.get('install_type'),
+                'ft_binary': ft_binary,
                 'timerange': answers.get('timerange'),
                 'exchange': answers.get('exchange') or "none",
                 'hyperopt': {
