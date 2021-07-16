@@ -829,14 +829,15 @@ class MGMHurry:
         """
         Save exchange credentials to "mgm-config-private.json"
 
-        Args:
-            cred (dict) - list containing values for [exchange,api_key,api_secret]
-        '''
-        with open(self._basedir + '/user_data/mgm-config-private.json', 'w+') as file:
-            try:
-                data = json.load(file)
-            except:  # pylint: disable=bare-except
-                data = {}
+        :param cred: (dict) - List containing values for [exchange,api_key,api_secret]
+        """
+        if len(cred) == 0:
+            logger.warning(
+                'Did not write exchange credentials to "mgm-config-private.json" because no data was passed.')
+            return False
+
+        with open(self._basedir + '/user_data/mgm-config-private.json', ) as file:
+            data = json.load(file)
 
         data['exchange'] = {
             'name': cred['exchange'],
@@ -853,10 +854,12 @@ class MGMHurry:
         """
         Save Telegram bot settings
 
-        Args:
-            opt (dict): list containing values for [enable_telegram,telegram_token,telegram_chat_id]
-        '''
-        data = []
+        :param opt: (dict): list containing values for [enable_telegram,telegram_token,telegram_chat_id]
+        """
+        if len(opt) == 0:
+            logger.warning(
+                'Did not write telegram credentials to "mgm-config-private.json" because no data was passed.')
+            return False
 
         with open(f'{self._basedir}/user_data/mgm-config-private.json', ) as file:
             data = json.load(file)
