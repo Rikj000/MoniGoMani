@@ -9,7 +9,6 @@ mgm-hurry – 💨 Your command is my objective 💨
 import glob
 import json
 import os
-import shutil
 import subprocess
 import sys
 import tempfile
