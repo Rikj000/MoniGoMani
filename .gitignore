@@ -6,12 +6,8 @@ user_data/strategies/MoniGoManiHyperStrategy.json
 # Ignore Release Template
 ReleaseTemplate.md
 # Ignore Python Caches
-user_data/hyperopts/__pycache__/
-user_data/mgm_tools/mgm_hurry/__pycache__/
-user_data/strategies/__pycache__/
-# Ignore Legacy Python Caches
-Legacy MoniGoMani/user_data/hyperopts/__pycache__/
-Legacy MoniGoMani/user_data/strategies/__pycache__/
+__pycache__/
+ *.pyc
 # Ignore Other General User Data
 user_data/*_results/
 user_data/*.lock
