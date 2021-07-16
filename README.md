@@ -2,7 +2,7 @@
         <img src="https://repository-images.githubusercontent.com/352191040/43a50e00-ab61-11eb-92c9-fb91d458e8af" alt="MoniGoMani" height="250" />
 </p>
 
-<p align="center">
+<p align="center" style="font-family: 'Segoe Script'">
     <b style="font-size: 2em;">MoniGoMani</b><br><i>Freqtrade Framework & Strategy</i>
 </p>
 

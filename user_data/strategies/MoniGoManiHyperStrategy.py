@@ -1,5 +1,7 @@
 # pragma pylint: disable=missing-docstring, invalid-name, pointless-string-statement
 # flake8: noqa: F401
+# -*- coding: utf-8 -*-
+# -* vim: syntax=python -*-
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 import sys
 from pathlib import Path
