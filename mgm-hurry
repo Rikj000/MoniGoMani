@@ -23,7 +23,7 @@ from InquirerPy.validator import NumberValidator
 from user_data.mgm_tools.mgm_hurry.freqtrade_cli import FreqtradeCli
 from user_data.mgm_tools.mgm_hurry.MgmCli import MgmCli
 
-from user_data.mgm_tools.mgm_hurry.LeetLogger import get_logger
+from user_data.mgm_tools.mgm_hurry.leet_logger import get_logger
 logger = get_logger()
 
 class MGMHurry():

@@ -65,7 +65,7 @@ def __get_instance(dir, use_logger = True):
     logger = None
 
     if use_logger is True:
-        from user_data.mgm_tools.mgm_hurry.LeetLogger import get_logger
+        from user_data.mgm_tools.mgm_hurry.leet_logger import get_logger
         logger = get_logger()
 
     fc = FreqtradeCli(dir, logger)
