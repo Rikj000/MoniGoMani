@@ -1,15 +1,14 @@
+from user_data.mgm_tools.mgm_hurry.freqtrade_cli import FreqtradeCli
 import sys
 sys.path.append(".")
 sys.path.append("..")
 
-from user_data.mgm_tools.mgm_hurry.freqtrade_cli import FreqtradeCli
-
 def test_initialisation_without_logger():
-    fc = __get_instance('.', use_logger = False)
+    fc = __get_instance('.', use_logger=False)
     assert isinstance(fc, FreqtradeCli)
 
 def test_initialisation_with_logger():
-    fc = __get_instance('.', use_logger = True)
+    fc = __get_instance('.', use_logger=True)
     assert isinstance(fc, FreqtradeCli)
 
 def test_set_basedir():
@@ -53,10 +52,11 @@ def test_installation_exists_install_type_docker():
     fc.freqtrade_binary = 'unknown'
     assert fc.installation_exists() is True
 
+
 '''
 Private helper methods
 '''
-def __get_instance(dir, use_logger = True):
+def __get_instance(dir, use_logger=True):
     '''
     Todo:
         - Mock logger object
