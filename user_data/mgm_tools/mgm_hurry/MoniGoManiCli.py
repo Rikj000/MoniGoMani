@@ -25,7 +25,7 @@ class MoniGoManiCli:
             self.logger.warning('🤷♂️ No "mgm-config.json" file found.')
             return False
 
-        if os.path.exists(f"{self.basedir}/user_data/strategies/MoniGoManiHyperStrategy.py") is False:
+        if os.path.exists(f'{self.basedir}/user_data/strategies/MoniGoManiHyperStrategy.py') is False:
             self.logger.warning('🤷♂️ No "MoniGoManiHyperStrategy.py" file found.')
             return False
 
