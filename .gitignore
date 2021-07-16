@@ -38,4 +38,4 @@ Logo/
 *.pickle
 
 # Ignore pytest cache files
-.pytest_cache
+.pytest_cache/
