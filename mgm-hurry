@@ -450,13 +450,18 @@ class MGMHurry:
         logger.info('💨 💨 💨')
 
         logger.info('👉 Removing "mgm-config-hyperopt.json"')
+        mgm_config_hyperopt_path = f'{self._basedir}/user_data/mgm-config-hyperopt.json'
 
-        ho_file = f'{self._basedir}/user_data/mgm-config-hyperopt.json'
+        if os.path.exists(mgm_config_hyperopt_path):
+            os.remove(mgm_config_hyperopt_path)
 
-        if os.path.exists(ho_file):
-            os.remove(ho_file)
+        logger.info('👉 Removing "MoniGoManiHyperStrategy.json"')
+        mgm_strategy_config_hyperopt_path = f'{self._basedir}./user_data/strategies/MoniGoManiHyperStrategy.json'
 
-        logger.info('🍺 HyperOpt config removed.')
+        if os.path.exists(mgm_strategy_config_hyperopt_path):
+            os.remove(mgm_strategy_config_hyperopt_path)
+
+        logger.info('🍺 Reset successful, MoniGoMani HyperOpt configs removed...')
 
     def download_candle_data(self, timerange: str = None):
         """
