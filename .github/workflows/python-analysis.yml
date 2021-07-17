@@ -8,7 +8,7 @@ name: "pylint"
 
 on:
   push:
-    branches: [ master, feature/gh-action-ci ]
+    branches: [ master, development ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ master ]
