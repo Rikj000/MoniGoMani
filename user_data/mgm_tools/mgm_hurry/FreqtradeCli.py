@@ -2,6 +2,8 @@
 # -* vim: syntax=python -*-
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 import os
+import tempfile
+from user_data.mgm_tools.mgm_hurry.MgmToolbox import __exec_cmd
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
 
@@ -38,6 +40,7 @@ class FreqtradeCli:
 
         return self
 
+
     def _get_freqtrade_binary_path(self, basedir: str, install_type: str):
         """Determine the freqtrade binary path based on install_type.
 
@@ -55,6 +58,7 @@ class FreqtradeCli:
 
         return freqtrade_binary
 
+
     @property
     def basedir(self):
         return self.__basedir
@@ -62,6 +66,7 @@ class FreqtradeCli:
     @basedir.setter
     def basedir(self, basedir):
         self.__basedir = basedir
+
 
     @property
     def install_type(self):
@@ -74,6 +79,7 @@ class FreqtradeCli:
         else:
             self.__install_type = None
 
+
     @property
     def freqtrade_binary(self):
         return self.__freqtrade_binary
@@ -81,6 +87,7 @@ class FreqtradeCli:
     @freqtrade_binary.setter
     def freqtrade_binary(self, freqtrade_binary):
         self.__freqtrade_binary = freqtrade_binary
+
 
     def installation_exists(self) -> bool:
         """
@@ -106,3 +113,16 @@ class FreqtradeCli:
             return True
 
         return False
+
+
+    def download_setup_freqtrade(self, branch: str = 'develop', target_dir: str = None):
+        """
+        Install Freqtrade using a git clone to target_dir.
+
+        :param branch: (string, optional) Checkout a specific branch. Defaults to 'develop'.
+        :param target_dir: (string, optional) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
+        """
+        with tempfile.TemporaryDirectory() as temp_dirname:
+            __exec_cmd(f'git clone -b {branch} https://github.com/freqtrade/freqtrade.git {temp_dirname}')
+            __exec_cmd(f'cp -rf {temp_dirname}/* {target_dir}')
+            __exec_cmd(f'deactivate; bash {target_dir}/setup.sh --install')

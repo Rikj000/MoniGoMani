@@ -5,7 +5,6 @@
 import glob
 import json
 import os
-import subprocess
 import sys
 import tempfile
 from string import Template
@@ -210,15 +209,11 @@ class MGMHurry:
         if target_dir is None:
             target_dir = self._basedir
 
-        with tempfile.TemporaryDirectory() as temp_dirname:
-            self.__exec_cmd(f'git clone -b {branch} https://github.com/freqtrade/freqtrade.git {temp_dirname}')
+        self.freqtrade_cli.download_setup_freqtrade(branch, target_dir)
 
-            self.__exec_cmd(f'cp -rf {temp_dirname}/* {target_dir}')
+        logger.info('🍺 Freqtrade has been installed. '
+                    'You can now proceed to install MoniGoMani. (Hint: mgm-hurry install_mgm)')
 
-            self.__exec_cmd(f'deactivate; bash {target_dir}/setup.sh --install')
-
-            logger.info('🍺 Freqtrade has been installed. '
-                        'You can now proceed to install MoniGoMani. (Hint: mgm-hurry install_mgm)')
 
     def install_mgm(self, branch: str = 'development', target_dir: str = None):
         """
@@ -875,6 +870,7 @@ class MGMHurry:
 
         logger.info('🍺 Telegram bot settings written to "mgm-config-private.json"')
 
+
     def __get_preset_timerange(self, timerange: str) -> str:
         """
         Parses given timerange-string into according timerange dates
@@ -900,35 +896,6 @@ class MGMHurry:
 
         return timerange
 
-    @staticmethod
-    def __exec_cmd(cmd: str) -> int:
-        """
-        Executes shell command and logs output as debug output.
-
-        :param cmd: (str) The command, sir
-        :return returncode: (int) The returncode of the subprocess
-        """
-        if cmd is None or cmd == '':
-            logger.error(
-                '🤷♂️ Please pass a command through. Without command no objective, sir!'
-            )
-            sys.exit(1)
-
-        return_code = 1
-
-        with subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8') as process:
-
-            while True:
-                output = process.stdout.readline()
-                if output == '' and process.poll() is not None:
-                    break
-
-                if output:
-                    print(output.strip())
-
-            return_code = process.poll()
-
-        return return_code
 
     def __read_config(self):
         """
@@ -945,6 +912,7 @@ class MGMHurry:
         # Something happened on the way to heaven. Let's fix it to create a default ".hurry" config file
         self.__write_config()
         return None
+
 
     def __write_config(self, config: dict = None):
         """
