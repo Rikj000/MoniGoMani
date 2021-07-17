@@ -32,14 +32,28 @@ class FreqtradeCli:
         if self.install_type is None:
             return None
 
-        if self.install_type == 'source':
-            self.freqtrade_binary = f'source {self.basedir}/.env/bin/activate; freqtrade'
-        else:
-            self.freqtrade_binary = 'docker-compose run --rm freqtrade'
+        self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
 
         logger.debug(f'👉 Freqtrade binary: `{self.freqtrade_binary}`')
 
         return self
+
+    def _get_freqtrade_binary_path(self, basedir: str, install_type: str):
+        """Determine the freqtrade binary path based on install_type.
+
+        Args:
+            basedir (str): basedir is used in case of source installation
+            install_type (str): Either docker or source.
+
+        Returns:
+            str: command to run freqtrade. defaults to docker.
+        """
+        freqtrade_binary = 'docker-compose run --rm freqtrade'
+
+        if install_type == 'source':
+            freqtrade_binary = f'source {basedir}/.env/bin/activate; freqtrade'
+
+        return freqtrade_binary
 
     @property
     def basedir(self):
