@@ -594,7 +594,7 @@ class MGMHurry:
         # logger.error('🤷♂ Something happened on the way to heaven 🌟🤦♀')
 
     def hyperopt(self, timerange: str = None, strategy: str = None, spaces: str = None,
-                 enable_protections: bool = True, apply_best_results: bool = False):
+                 enable_protections: bool = True, random_state: int = None, apply_best_results: bool = True):
         """
         HyperOpt Magic. Runs HyperOpt process to find out the most positive settings.
 
@@ -604,8 +604,10 @@ class MGMHurry:
         :param spaces: (str, Optional): Spaces (space delimited) to optimize
             for [default, all, buy, sell, roi, stoploss, etc]. Defaults to value in '.hurry'
         :param enable_protections: (bool, Optional): Add '--enable-protections' flag to HO-command. Defaults to True.
-        :param apply_best_results: (bool, Optional): Apply 'best' HO results direct after HO? Defaults to False.
+        :param random_state: (int, Optional): Add '--random-state random_state' flag to HO-command. Defaults to None.
+        :param apply_best_results: (bool, Optional): Apply 'best' HO results direct after HO? Defaults to True.
         """
+
         logger.info('💨 💨 💨')
         logger.info('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
         logger.info('💨 💨 💨')
@@ -618,16 +620,15 @@ class MGMHurry:
         if spaces is None:
             spaces = self.config['hyperopt']['spaces']
 
-        cmd = (
-            (
-                f'$ft_binary hyperopt -s $ho_strategy \
-                -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json \
-                --hyperopt-loss $ho_loss --spaces $ho_spaces -e $ho_epochs --timerange $timerange '
-            )
-        )
+        cmd = f'$ft_binary hyperopt -s $ho_strategy \
+              -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json \
+              --hyperopt-loss $ho_loss --spaces $ho_spaces -e $ho_epochs --timerange $timerange '
 
         if enable_protections is True:
             cmd = f'{cmd.strip()} --enable-protections'
+
+        if random_state is not None:
+            cmd = f'{cmd.strip()} --random-state $random_state'
 
         if apply_best_results is True:
             cmd = f'{cmd.strip()} && mv ./user_data/strategies/MoniGoManiHyperStrategy.json \
@@ -639,7 +640,8 @@ class MGMHurry:
             ho_loss=self.config['hyperopt']['loss'],
             ho_spaces=spaces,
             ho_epochs=self.config['hyperopt']['epochs'],
-            timerange=timerange)
+            timerange=timerange,
+            random_state=random_state)
 
         self.__exec_cmd(cmd)
 
