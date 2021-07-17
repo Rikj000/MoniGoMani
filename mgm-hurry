@@ -17,6 +17,7 @@ from art import tprint
 
 from user_data.mgm_tools.mgm_hurry.FreqtradeCli import FreqtradeCli
 from user_data.mgm_tools.mgm_hurry.LeetLogger import get_logger
+from user_data.mgm_tools.mgm_hurry.MgmToolbox import __exec_cmd
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 
 logger = get_logger()
@@ -271,9 +272,9 @@ class MGMHurry:
             target_dir = self._basedir
 
         with tempfile.TemporaryDirectory() as temp_dirname:
-            self.__exec_cmd(f'git clone -b {branch} https://github.com/Rikj000/MoniGoMani.git {temp_dirname}')
+            __exec_cmd(f'git clone -b {branch} https://github.com/Rikj000/MoniGoMani.git {temp_dirname}')
 
-            self.__exec_cmd(f'cp -rf {temp_dirname}/user_data/* {target_dir}/user_data/')
+            __exec_cmd(f'cp -rf {temp_dirname}/user_data/* {target_dir}/user_data/')
 
             self.mgm_cli.create_config_files(target_dir)
 
@@ -521,7 +522,7 @@ class MGMHurry:
         dcd = f'{self.config["ft_binary"]} download-data --timerange {timerange} \
               -t {tickers} -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json'
 
-        self.__exec_cmd(dcd)
+        __exec_cmd(dcd)
 
         logger.info('🍺 Downloading candle data finished.')
 
@@ -564,7 +565,7 @@ class MGMHurry:
             exchange_placeholder='{exchange: {pair_whitelist: .}}',
             target_file=target_file)
 
-        self.__exec_cmd(cmd_str)
+        __exec_cmd(cmd_str)
 
         logger.info('🍺 Writing pairlist to "mgm-config.json"...')
 
@@ -632,7 +633,7 @@ class MGMHurry:
             ho_epochs=self.config['hyperopt']['epochs'],
             timerange=timerange)
 
-        self.__exec_cmd(cmd)
+        __exec_cmd(cmd)
 
         logger.info('🍺 HyperOpt run ready... 🥵')
 
@@ -674,7 +675,7 @@ class MGMHurry:
         dcd = f'{self.config["ft_binary"]} hyperopt-list --hyperopt-filename "{choice}" {best} {profit}'
         logger.debug(dcd)
 
-        self.__exec_cmd(dcd)
+        __exec_cmd(dcd)
 
     def hyperopt_show_epoch(self, epoch: int = 0):
         """
@@ -692,7 +693,7 @@ class MGMHurry:
 
         logger.info('👉 Showing HyperOpt results for epoch # {epoch}')
 
-        self.__exec_cmd(f'{self.config["ft_binary"]} hyperopt-show -n {epoch}')
+        __exec_cmd(f'{self.config["ft_binary"]} hyperopt-show -n {epoch}')
 
     def hyperopt_apply_epoch(self, epoch: int = 0, run: int = 1):
         """
@@ -712,7 +713,7 @@ class MGMHurry:
         logger.info(f'👉 Applying HyperOpt results of epoch # {epoch}')
 
         # View & Apply HyperOpt Results from a trusted <epoch of choice>:
-        self.__exec_cmd(
+        __exec_cmd(
             (f'{self.config["ft_binary"]} hyperopt-show -n {epoch} -c ./user_data/mgm-config.json \
              -c ./user_data/mgm-config-private.json  && \
              mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json')
@@ -744,7 +745,7 @@ class MGMHurry:
             ho_strategy=self.config['hyperopt']['strategy'],
             timerange=timerange)
 
-        self.__exec_cmd(cmd)
+        __exec_cmd(cmd)
 
         logger.info('🍺 Backtesting ready... 🤑')
 
@@ -766,7 +767,7 @@ class MGMHurry:
         if dry_run is True:
             cmd = f'{cmd} --dry-run'
 
-        self.__exec_cmd(cmd)
+        __exec_cmd(cmd)
 
     def __setup_telegram(self) -> bool:
         """
