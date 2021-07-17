@@ -140,8 +140,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             mgm_config_hyperopt = json.load(file_object)
         except ValueError as e:
             mgm_config_hyperopt = {}
-            logger.warn(f'MoniGoManiHyperStrategy - WARN - {mgm_config_hyperopt_path} is inaccessible or is not valid JSON,'
-                        f'disregarding existing {mgm_config_hyperopt_name} file and treating as first hyperopt run!')
+            logger.warning(f'MoniGoManiHyperStrategy - WARN - {mgm_config_hyperopt_path} is inaccessible or is '
+                           f'not valid JSON, disregarding existing {mgm_config_hyperopt_name} file and '
+                           f'treating as first hyperopt run!')
 
         # Convert the loaded 'mgm-config-hyperopt.json' data to the needed HyperOpt Results format if it's found
         # Default stub values from 'mgm-config.json' are used otherwise.
@@ -194,8 +195,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             """
             Generates a Custom Long Continuous ROI-Table with less gaps in it.
             Configurable step_size is loaded in from the Master MGM Framework.
-            :param params: Base Parameters used for the ROI Table calculation
-            :return: ROI Table
+
+            :param params: (Dict) Base Parameters used for the ROI Table calculation
+            :return Dict: Generated ROI Table
             """
             step = MasterMoniGoManiHyperStrategy.roi_table_step_size
 
@@ -219,6 +221,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             Create a ROI space. Defines values to search for each ROI steps.
             This method implements adaptive roi hyperspace with varied ranges for parameters which automatically adapts
             to the un-zoomed informative_timeframe used by the MGM Framework during BackTesting & HyperOpting.
+
+            :return List: Generated ROI Space
             """
 
             # Default scaling coefficients for the roi hyperspace. Can be changed to adjust resulting ranges of the ROI
@@ -285,6 +289,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             """
             Define custom stoploss search space with configurable parameters for the Stoploss Value to search.
             Override it if you need some different range for the parameter in the 'stoploss' optimization hyperspace.
+
+            :return List: Generated Stoploss Space
             """
             return [
                 SKDecimal(MasterMoniGoManiHyperStrategy.stoploss_max_value,
@@ -296,6 +302,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         def trailing_space() -> List[Dimension]:
             """
             Define custom trailing search space with parameters configurable in 'mgm-config.json'
+
+            :return List: Generated Trailing Space
             """
             return [
                 # It was decided to always set trailing_stop is to True if the 'trailing' hyperspace
@@ -322,7 +330,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     def __init__(self, config: dict):
         """
         First method to be called once during the MoniGoMani class initialization process
-        :param config::
+
+        :param config: (dict)
         """
 
         initialization = 'Initialization'
@@ -370,8 +379,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         a nice visualization in FreqUI
 
         :param weighted_signal_plots: FreqUI plotting data used for weighted signals (and their indicators)
-        :return: Complete FreqUI plotting data containing weighted signal + other MGM framework plottinSSg
+        :return dict: Complete FreqUI plotting data containing weighted signal + other MGM Framework plotting
         """
+
         # Plot configuration to show all signals used in MoniGoMani in FreqUI (Use load from Strategy in FreqUI)
         framework_plots = {
             # Main Plots - Trend Indicator (SAR)
@@ -410,8 +420,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         """
         Adds the core indicators used to define trends to the strategy engine.
 
-        :param dataframe: Dataframe with data from the exchange
-        :param metadata: Additional information, like the currently traded pair
+        :param dataframe: (DataFrame) DataFrame with data from the exchange
+        :param metadata: (dict) Additional information, like the currently traded pair
         :return: a Dataframe with all core trend indicators for MoniGoMani
         """
 
@@ -440,18 +450,18 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     def _populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Adds indicators based on Run-Mode & TimeFrame-Zoom:
+        If Dry/Live-running or BackTesting/HyperOpting without TimeFrame-Zoom it just pulls
+        'timeframe' (1h candles) to compute indicators.
 
-        If Dry/Live-running or BackTesting/HyperOpting without TimeFrame-Zoom it just pulls 'timeframe' (1h candles) to
-        compute indicators.
+        If BackTesting/HyperOpting with TimeFrame-Zoom it pulls 'informative_pairs' (1h candles)
+        to compute indicators, but then tests upon 'backtest_timeframe' (5m or 1m candles)
+        to simulate price movement during that 'timeframe' (1h candle).
 
-        If BackTesting/HyperOpting with TimeFrame-Zoom it pulls 'informative_pairs' (1h candles) to compute indicators,
-        but then tests upon 'backtest_timeframe' (5m or 1m candles) to simulate price movement during that 'timeframe'
-        (1h candle).
-
-        :param dataframe: Dataframe with data from the exchange
-        :param metadata: Additional information, like the currently traded pair
-        :return: a Dataframe with all mandatory indicators for MoniGoMani
+        :param dataframe: (DataFrame) DataFrame with data from the exchange
+        :param metadata: (dict) Additional information, like the currently traded pair
+        :return DataFrame: DataFrame for MoniGoMani with all mandatory indicator data populated
         """
+
         timeframe_zoom = 'TimeFrame-Zoom'
         # Compute indicator data during Backtesting / Hyperopting when TimeFrame-Zooming
         if (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe):
@@ -500,7 +510,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         """
         Fetches all the trades currently open depending on the current RunMode of Freqtrade
 
-        :param trade: trade object.
+        :param trade: (trade) Current open trade object.
         :return List: List containing all current open trades
         """
         custom_information_storage = 'custom_stoploss - Custom Information Storage'
@@ -626,8 +636,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # Since we (currently) only want to use this function for custom information storage!
         return -1
 
-    def custom_sell(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float,
-                    current_profit: float, **kwargs):
+    def custom_sell(self, pair: str, trade: 'Trade', current_time: 'datetime',
+                    current_rate: float, current_profit: float, **kwargs):
         """
         Open Trade Unclogger:
         ---------------------
@@ -902,8 +912,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         """
         Weighted Signals Sell Profit Only
         ---------------------------------
-        Override Sell Signal - Configurable setting, if enabled weighted sell signals require to be profitable to go
-        through.
+        Override Sell Signal - Configurable setting, if enabled
+        weighted sell signals require to be profitable to go through.
 
         Timing for this function is critical, it's needed to avoid doing heavy tasks or network requests in this method.
 
@@ -917,6 +927,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param **kwargs: Ensure to keep this here so updates to this won't break your strategy.
         :return bool: When True is returned, then the sell-order is placed on the exchange. False aborts the process
         """
+
         if (self.mgm_config['weighted_signal_spaces']['sell_profit_only'] is True) and \
                 (sell_reason == 'sell_signal') and (trade.calc_profit_ratio(rate) < 0):
             return False
@@ -953,10 +964,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     def _generate_weight_condition(self, dataframe: DataFrame, space: str) -> DataFrame:
         """
         Generates the final condition that checks the weights per trend
+
         :param dataframe: DataFrame populated with indicators
         :param space: buy or sell space
         :return: Lambda conditions
         """
+
         conditions_weight = []
         # If TimeFrame-Zooming => Only use 'informative_timeframe' data
         for trend in self.mgm_trends:
@@ -1068,6 +1081,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param overrideable: Allow value to be overrideable or not (defaults to 'True')
         :return: None
         """
+
         parameter_dictionary = getattr(cls, f'{space}_params')
         parameter_key = f'{space}_{parameter_name}'
         parameter_value = parameter_dictionary.get(parameter_key)
