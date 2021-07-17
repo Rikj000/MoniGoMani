@@ -238,8 +238,8 @@ class MGMHurry:
                     'type': 'confirm',
                     'message': 'It looks like MoniGoMani is already installed. Proceed to overwrite?',
                     'name': 'proceed',
-                    'default': False,
-                },
+                    'default': False
+                }
             ]
 
             result = prompt(questions)
@@ -253,7 +253,7 @@ class MGMHurry:
                     'message': f'Should I print your "mgm-config-private.json" contents '
                                f'so you can copy it over to new installation?',
                     'name': 'print',
-                    'default': False,
+                    'default': False
                 },
                 {
                     'type': 'confirm',
@@ -594,16 +594,15 @@ class MGMHurry:
         HyperOpt Magic. Runs HyperOpt process to find out the most positive settings.
 
         :param timerange: (str, Optional): timerange from/to in format (start-end): yyyymmdd-yyyymmdd
-            or preset [up, down, side]
-        :param strategy: (str, Optional): Hyper Opt strategy to use. Defaults to MoniGoManiHyperStrategy.
+            or preset [up, down, side]. Defaults to value in '.hurry'
+        :param strategy: (str, Optional): Hyper Opt strategy to use. Defaults to value in '.hurry'
         :param spaces: (str, Optional): Spaces (space delimited) to optimize
-            for [default, all, buy, sell, roi, stoploss, etc]
+            for [default, all, buy, sell, roi, stoploss, etc]. Defaults to value in '.hurry'
         :param enable_protections: (bool, Optional): Add '--enable-protections' flag to HO-command. Defaults to True.
         :param apply_best_results: (bool, Optional): Apply 'best' HO results direct after HO? Defaults to False.
         """
         logger.info('💨 💨 💨')
-        logger.info(
-            '👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
+        logger.info('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
         logger.info('💨 💨 💨')
 
         timerange = self.__get_preset_timerange(timerange)
@@ -909,9 +908,7 @@ class MGMHurry:
         :return returncode: (int) The returncode of the subprocess
         """
         if cmd is None or cmd == '':
-            logger.error(
-                '🤷♂️ Please pass a command through. Without command no objective, sir!'
-            )
+            logger.error('🤷♂️ Please pass a command through. Without command no objective, sir!')
             sys.exit(1)
 
         return_code = 1

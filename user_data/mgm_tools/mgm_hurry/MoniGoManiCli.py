@@ -30,10 +30,9 @@ class MoniGoManiCli:
             return False
 
         self.logger.debug('👉 MoniGoManiHyperStrategy and configuration found √')
-
         return True
 
-    def create_config_files(self, target_dir: str):
+    def create_config_files(self, target_dir: str) -> bool:
         """
         Copy example files as def files.
 
