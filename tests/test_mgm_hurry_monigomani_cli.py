@@ -14,7 +14,7 @@ def test_initialisation():
 
 
 def test_installation_exists_without_installation():
-    cli = __get_instance()
+    cli = __get_instance('.', __get_logger())
     result = cli.installation_exists()
     assert result is False
 
@@ -52,3 +52,11 @@ Private helper methods
 def __get_instance(basedir='.', logger=None):
     cli = MoniGoManiCli(basedir, logger)
     return cli
+
+def __get_logger() -> Logger:
+    '''
+    Todo:
+        - Implement a mock-object.
+    '''
+    logger = Logger(name='mockme')
+    return logger
