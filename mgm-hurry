@@ -249,15 +249,15 @@ class MGMHurry:
             questions = [
                 {
                     'type': 'confirm',
-                    'message': f'Should I print your "mgm-config-private.json" contents '
-                               f'so you can copy it over to new installation?',
+                    'message': 'Should I print your "mgm-config-private.json" contents '
+                               'so you can copy it over to new installation?',
                     'name': 'print',
                     'default': False
                 },
                 {
                     'type': 'confirm',
-                    'message': f'WARNING: You are printing sensitive information '
-                               f'which you should NEVER SHARE with anybody. Really proceed?',
+                    'message': 'WARNING: You are printing sensitive information '
+                               'which you should NEVER SHARE with anybody. Really proceed?',
                     'name': 'print_confirmed',
                     'default': False,
                     'when': lambda result: result['print']
@@ -629,7 +629,7 @@ class MGMHurry:
         if spaces is None:
             spaces = self.config['hyperopt']['spaces']
 
-        cmd = f'$ft_binary hyperopt -s $ho_strategy \
+        cmd = '$ft_binary hyperopt -s $ho_strategy \
               -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json \
               --hyperopt-loss $ho_loss --spaces $ho_spaces -e $ho_epochs --timerange $timerange '
 
@@ -652,7 +652,7 @@ class MGMHurry:
             output_file_name = f'HyperOptResults-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.log'
         self.__exec_cmd(cmd, save_output, output_path, output_file_name)
 
-        if (apply_best_results is True) and (strategy is 'MoniGoManiHyperStrategy'):
+        if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
             self.__exec_cmd('mv ./user_data/strategies/MoniGoManiHyperStrategy.json '
                             './user_data/mgm-config-hyperopt.json')
         else:
