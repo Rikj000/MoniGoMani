@@ -406,7 +406,7 @@ class MGMHurry:
         answers = prompt(questions=questions)
 
         if answers == {}:
-            sys.exit(0)
+            sys.exit(1)
 
         # FIXME
         if answers.get('install_type') == 'source':
@@ -479,7 +479,7 @@ class MGMHurry:
 
         if self.__reload_config() is False:
             self._logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
-            sys.exit(0)
+            sys.exit(1)
 
         timerange = self.__get_preset_timerange(timerange)
 
@@ -555,11 +555,11 @@ class MGMHurry:
 
         if self.__reload_config() is False:
             self._logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
-            sys.exit(0)
+            sys.exit(1)
 
         if self.freqtrade_cli.installation_exists() is False:
             self._logger.error('🤷 Whaaaa.. No Freqtrade installation found. Beats me...')
-            sys.exit(0)
+            sys.exit(1)
 
         target_file = '$basedir/user_data/mgm_pair_lists/$exchange-$hyperopt_quote-Top-Volume-StaticPairList.json'
         target_file = Template(target_file).substitute(

@@ -85,7 +85,7 @@ class MoniGoManiCli:
 
         if hurry_config is None:
             self.logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
-            sys.exit(0)
+            sys.exit(1)
 
         # Start loading the MoniGoMani config files
         mgm_config_files = {
@@ -100,7 +100,7 @@ class MoniGoManiCli:
                     (mgm_config_filename not in hurry_config['mgm_config_names']):
                 self.logger.error(f'🤷 No "{mgm_config_filename}" filename found in the ".hurry" \
                                   config file. Please run: mgm-hurry setup')
-                sys.exit(0)
+                sys.exit(1)
 
             mgm_config_filepath = f'{self.basedir}/user_data/{hurry_config["mgm_config_names"][mgm_config_filename]}'
 
@@ -109,7 +109,7 @@ class MoniGoManiCli:
                     (mgm_config_filename in ['mgm-config', 'mgm-config-private']):
                 self.logger.error(f'🤷 No "{mgm_config_filename}" file found in the "user_data" \
                                   directory. Please run: mgm-hurry setup')
-                sys.exit(0)
+                sys.exit(1)
 
             elif (os.path.isfile(mgm_config_filepath) is False) and (mgm_config_filename == 'mgm-config-hyperopt'):
                 self.logger.info(f'No "{mgm_config_filename}" file found in the "user_data" directory.')
