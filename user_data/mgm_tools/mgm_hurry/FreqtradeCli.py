@@ -3,7 +3,7 @@
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 import os
 import tempfile
-from user_data.mgm_tools.mgm_hurry.MgmToolbox import __exec_cmd
+from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
 
@@ -26,6 +26,8 @@ class FreqtradeCli:
             return None
 
         self.logger = logger
+
+        self.monigomani_cli = MoniGoManiCli(self.basedir, self.logger)
 
         if os.path.exists(f"{self.basedir}/.env/bin/freqtrade") is False:
             logger.warning('🤷♂️ No Freqtrade installation found.')
@@ -123,6 +125,6 @@ class FreqtradeCli:
         :param target_dir: (string, optional) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
-            __exec_cmd(f'git clone -b {branch} https://github.com/freqtrade/freqtrade.git {temp_dirname}')
-            __exec_cmd(f'cp -rf {temp_dirname}/* {target_dir}')
-            __exec_cmd(f'deactivate; bash {target_dir}/setup.sh --install')
+            self.monigomani_cli._exec_cmd(f'git clone -b {branch} https://github.com/freqtrade/freqtrade.git {temp_dirname}')
+            self.monigomani_cli._exec_cmd(f'cp -rf {temp_dirname}/* {target_dir}')
+            self.monigomani_cli._exec_cmd(f'deactivate; bash {target_dir}/setup.sh --install')

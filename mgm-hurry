@@ -645,13 +645,13 @@ class MGMHurry:
 
         if output_file_name is None:
             output_file_name = f'HyperOptResults-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.log'
-        self.self.monigomani_cli._exec_cmd(cmd, save_output, output_path, output_file_name)
+        self.monigomani_cli._exec_cmd(cmd, save_output, output_path, output_file_name)
 
         if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
-            self.self.monigomani_cli._exec_cmd('mv ./user_data/strategies/MoniGoManiHyperStrategy.json '
+            self.monigomani_cli._exec_cmd('mv ./user_data/strategies/MoniGoManiHyperStrategy.json '
                             './user_data/mgm-config-hyperopt.json')
         else:
-            self.self.monigomani_cli._exec_cmd(f'rm ./user_data/strategies/{strategy}.json')
+            self.monigomani_cli._exec_cmd(f'rm ./user_data/strategies/{strategy}.json')
 
         self._logger.info('🍺 HyperOpt run ready... 🥵')
 

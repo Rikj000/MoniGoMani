@@ -47,8 +47,6 @@ def test_create_config_files_faulty_example_file():
 """
 Private helper methods
 """
-
-
 def __get_instance(basedir='.', logger=None):
     cli = MoniGoManiCli(basedir, logger)
     return cli
