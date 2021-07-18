@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 # -* vim: syntax=python -*-
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
+import datetime
 import json
 import os
 import shutil
+import subprocess
 import sys
 import yaml
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
@@ -17,6 +19,7 @@ class MoniGoManiCli:
     def __init__(self, basedir, logger):
         self.basedir = basedir
         self.logger = logger
+
 
     def installation_exists(self) -> bool:
         """
@@ -34,6 +37,7 @@ class MoniGoManiCli:
 
         self.logger.debug('👉 MoniGoManiHyperStrategy and configuration found √')
         return True
+
 
     def create_config_files(self, target_dir: str) -> bool:
         """
@@ -53,6 +57,7 @@ class MoniGoManiCli:
 
         self.logger.info('👉 MoniGoMani config files prepared √')
         return True
+
 
     def load_config_files(self) -> dict:
         """
@@ -111,3 +116,55 @@ class MoniGoManiCli:
         mgm_config_files['mgm-config-hurry'] = hurry_config
 
         return mgm_config_files
+
+
+
+    def _exec_cmd(self, cmd: str, save_output: bool = False,
+                   output_path: str = None, output_file_name: str = None) -> int:
+        """
+        Executes shell command and logs output as debug output.
+
+        :param cmd: (str) The command, sir
+        :param save_output: (bool) Save the output to a '.log' file. Defaults to False
+        :param output_path: (str) Path to the output of the '.log' file.
+            Defaults to 'Some Test Results/MoniGoMani_version_number/'
+        :param output_file_name: (str) Name of the '.log' file. Defaults to 'Results-<Current-DateTime>.log'
+        :return returncode: (int) The returncode of the subprocess
+        """
+
+        if cmd is None or cmd == '':
+            self.logger.error('🤷 Please pass a command through. Without command no objective, sir!')
+            sys.exit(1)
+
+        return_code = 1
+
+        if save_output is True:
+            if output_path is None:
+                output_path = f'{self.basedir}/Some Test Results/'
+                if not os.path.isdir(output_path):
+                    os.mkdir(output_path)
+
+                mgm_config_files = self.load_config_files()
+                output_path = f'{output_path}{mgm_config_files["mgm-config-private"]["bot_name"]}/'
+
+            if output_file_name is None:
+                output_file_name = f'MGM-Hurry-Command-Results-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.log'
+
+            if not os.path.isdir(output_path):
+                os.mkdir(output_path)
+
+            output_file = open(output_path + output_file_name, 'w')
+
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT, encoding='utf-8')
+
+        for line in process.stdout:
+            if save_output is True:
+                second_splitter = line.find(' - ', line.find(' - ') + 1) + 3
+                trimmed_line = line[second_splitter:len(line)]
+                if self.filter_line(trimmed_line) is False:
+                    output_file.write(trimmed_line)
+            sys.stdout.write(line)
+        process.wait()
+
+        return return_code
