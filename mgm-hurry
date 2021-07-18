@@ -734,7 +734,7 @@ class MGMHurry:
         self._logger.info('💨 💨 💨')
 
         if epoch == 0:
-            self._logger.error('🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_apply_epoch --epoch=1337')
+            self._logger.error('🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_apply_epoch --epoch=837')
             sys.exit(1)
 
         self._logger.info(f'👉 Applying HyperOpt results of epoch # {epoch}')
