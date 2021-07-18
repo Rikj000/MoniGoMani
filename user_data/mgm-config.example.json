@@ -59,7 +59,7 @@
       },
       "unclogger_trend_lookback_candles_window_percentage_needed": {
         "min": 10,
-        "max": 40
+        "max": 50
       },
       "unclogger_trend_lookback_candles_window_recent_past_weight_separator": 2,
       "unclogger_trend_lookback_window_uses_downwards_candles": true,
