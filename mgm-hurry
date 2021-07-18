@@ -45,7 +45,7 @@ class MGMHurry:
             logger.error('⚠️ Failed to load or create ".hurry" config file.')
 
         self.freqtrade_cli = FreqtradeCli(self._basedir, logger)
-        self.mgm_cli = MoniGoManiCli(self._basedir, logger)
+        self.monigomani_cli = MoniGoManiCli(self._basedir, logger)
 
     def __reload_config(self) -> bool:
         """
@@ -232,7 +232,7 @@ class MGMHurry:
         logger.info('💨 💨 💨')
 
         # Checking MoniGoMani installation to confirm for overwrite
-        if self.mgm_cli.installation_exists() is True:
+        if self.monigomani_cli.installation_exists() is True:
             questions = [
                 {
                     'type': 'confirm',
@@ -280,7 +280,7 @@ class MGMHurry:
 
             self.__exec_cmd(f'cp -rf {temp_dirname}/user_data/* {target_dir}/user_data/')
 
-            self.mgm_cli.create_config_files(target_dir)
+            self.monigomani_cli.create_config_files(target_dir)
 
             logger.info(
                 '🍺 MoniGoMani has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)'
@@ -309,7 +309,7 @@ class MGMHurry:
             logger.error(f'🤷♂️ I could not find any strategy in {strat_dir}. Did you install Freqtrade & MoniGoMani?')
             sys.exit(1)
 
-        self.mgm_cli.create_config_files(self._basedir)
+        self.monigomani_cli.create_config_files(self._basedir)
 
         hyperopts = map(lambda f: os.path.basename(f).replace('.py', ''),
                         glob.glob(f'{self._basedir}/user_data/hyperopts/*.py'))
