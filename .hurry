@@ -10,3 +10,7 @@ config:
     strategy: MoniGoManiHyperStrategy
   install_type: source
   timerange: 20210501-20210616
+  mgm_config_names:
+    mgm-config: mgm-config.json
+    mgm-config-private: mgm-config-private.json
+    mgm-config-hyperopt: mgm-config-hyperopt.json
