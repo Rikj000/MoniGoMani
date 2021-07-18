@@ -8,6 +8,7 @@ import os
 import subprocess
 import sys
 import tempfile
+from datetime import datetime
 from string import Template
 
 import fire
@@ -591,8 +592,9 @@ class MGMHurry:
 
         # logger.error('🤷 Something happened on the way to heaven 🌟🤦')
 
-    def hyperopt(self, timerange: str = None, strategy: str = None, spaces: str = None,
-                 enable_protections: bool = True, random_state: int = None, apply_best_results: bool = True):
+    def hyperopt(self, timerange: str = None, strategy: str = None, spaces: str = None, enable_protections: bool = True,
+                 random_state: int = None, apply_best_results: bool = True, clean_start: bool = False,
+                 save_output: bool = True, output_path: str = None, output_file_name: str = None):
         """
         HyperOpt Magic. Runs HyperOpt process to find out the most positive settings.
 
@@ -604,6 +606,12 @@ class MGMHurry:
         :param enable_protections: (bool, Optional): Add '--enable-protections' flag to HO-command. Defaults to True.
         :param random_state: (int, Optional): Add '--random-state random_state' flag to HO-command. Defaults to None.
         :param apply_best_results: (bool, Optional): Apply 'best' HO results direct after HO? Defaults to True.
+        :param clean_start: (bool, Optional): Cleanup MoniGoMani before starting the HO? Defaults to False.
+        :param save_output: (bool, Optional) Save the output to a '.log' file. Defaults to True
+        :param output_path: (str) Path to the output of the '.log' file.
+            Defaults to 'Some Test Results/MoniGoMani_version_number/'
+        :param output_file_name: (str, Optional) Name of the '.log' file.
+            Defaults to 'HyperOptResults-<Current-DateTime>.log'
         """
 
         logger.info('💨 💨 💨')
@@ -641,7 +649,15 @@ class MGMHurry:
             timerange=timerange,
             random_state=random_state)
 
-        self.__exec_cmd(cmd)
+        if output_file_name is None:
+            output_file_name = f'HyperOptResults-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.log'
+        self.__exec_cmd(cmd, save_output, output_path, output_file_name)
+
+        if (apply_best_results is True) and (strategy is 'MoniGoManiHyperStrategy'):
+            self.__exec_cmd('mv ./user_data/strategies/MoniGoManiHyperStrategy.json '
+                            './user_data/mgm-config-hyperopt.json')
+        else:
+            self.__exec_cmd(f'rm ./user_data/strategies/{strategy}.json')
 
         logger.info('🍺 HyperOpt run ready... 🥵')
 
@@ -966,6 +982,10 @@ class MGMHurry:
         Executes shell command and logs output as debug output.
 
         :param cmd: (str) The command, sir
+        :param save_output: (bool) Save the output to a '.log' file. Defaults to False
+        :param output_path: (str) Path to the output of the '.log' file.
+            Defaults to 'Some Test Results/MoniGoMani_version_number/'
+        :param output_file_name: (str) Name of the '.log' file. Defaults to 'Results-<Current-DateTime>.log'
         :return returncode: (int) The returncode of the subprocess
         """
 
@@ -975,17 +995,34 @@ class MGMHurry:
 
         return_code = 1
 
-        with subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, encoding='utf-8') as process:
+        if save_output is True:
+            if output_path is None:
+                output_path = f'{self._basedir}/Some Test Results/'
+                if not os.path.isdir(output_path):
+                    os.mkdir(output_path)
 
-            while True:
-                output = process.stdout.readline()
-                if output == '' and process.poll() is not None:
-                    break
+                mgm_config_files = self.monigomani_cli.load_config_files()
+                output_path = f'{output_path}{mgm_config_files["mgm-config-private"]["bot_name"]}/'
 
-                if output:
-                    print(output.strip())
+            if output_file_name is None:
+                output_file_name = f'MGM-Hurry-Command-Results-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.log'
 
-            return_code = process.poll()
+            if not os.path.isdir(output_path):
+                os.mkdir(output_path)
+
+            output_file = open(output_path + output_file_name, 'w')
+
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT, encoding='utf-8')
+
+        for line in process.stdout:
+            if save_output is True:
+                second_splitter = line.find(' - ', line.find(' - ') + 1) + 3
+                trimmed_line = line[second_splitter:len(line)]
+                if self.filter_line(trimmed_line) is False:
+                    output_file.write(trimmed_line)
+            sys.stdout.write(line)
+        process.wait()
 
         return return_code
 
