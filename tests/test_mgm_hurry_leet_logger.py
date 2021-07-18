@@ -1,5 +1,5 @@
 from logging import Logger
-from user_data.mgm_tools.mgm_hurry.LeetLogger import get_logger
+from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import get_logger
 
 import sys
 

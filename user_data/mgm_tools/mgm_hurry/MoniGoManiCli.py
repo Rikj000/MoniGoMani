@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 # -* vim: syntax=python -*-
+#
+# ___  ___               _  _____        ___  ___               _  _____  _  _
+# |  \/  |              (_)|  __ \       |  \/  |              (_)/  __ \| |(_)
+# | .  . |  ___   _ __   _ | |  \/  ___  | .  . |  __ _  _ __   _ | /  \/| | _
+# | |\/| | / _ \ | '_ \ | || | __  / _ \ | |\/| | / _` || '_ \ | || |    | || |
+# | |  | || (_) || | | || || |_\ \| (_) || |  | || (_| || | | || || \__/\| || |
+# \_|  |_/ \___/ |_| |_||_| \____/ \___/ \_|  |_/ \__,_||_| |_||_| \____/|_||_|
+#
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 import datetime
 import json
@@ -116,7 +124,6 @@ class MoniGoManiCli:
         mgm_config_files['mgm-config-hurry'] = hurry_config
 
         return mgm_config_files
-
 
 
     def _exec_cmd(self, cmd: str, save_output: bool = False,
