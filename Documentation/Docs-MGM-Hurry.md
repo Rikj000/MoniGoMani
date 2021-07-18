@@ -3,7 +3,9 @@
 <img src="https://user-images.githubusercontent.com/86197446/123507408-6d624900-d669-11eb-9606-4a022bc4a117.png" width="300" height="289" align="center">
 </p>
 
-Hurry is a CLI tool to speed setting up [Freqtrade](https://www.freqtrade.io/en/stable/) with [MoniGoMani](https://github.com/Rikj000/MoniGoMani) HyperStrategy & co. Setting it all up requires some knowledge of the entire process, until you found Hurry 💨. You will get up and running (or, trading) in no time!
+MGM-Hurry is a CLI tool to speedup & simplify the setup & usage of [Freqtrade](https://www.freqtrade.io/en/stable/) in combination with the [MoniGoMani](https://github.com/Rikj000/MoniGoMani) FrameWork & Strategy.
+Setting it all up requires some knowledge of the entire process, until you found MGM-Hurry 💨.
+You will get up and HyperOpting (or, Dry/Live Running) in no time!
 
 ## Requirements
 
@@ -11,7 +13,7 @@ Hurry is a CLI tool to speed setting up [Freqtrade](https://www.freqtrade.io/en/
 * Install required Python packages using the [PIP package manager](https://pip.pypa.io/en/stable/installing/):
 
 ```shell
-  pip3 install -r https://raw.githubusercontent.com/topscoder/hurry-cli/master/requirements.txt
+  pip3 install -r https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/requirements-dev.txt
 ```
 
 ## Installation instructions
@@ -52,16 +54,16 @@ Hurry includes an interactive wizard which guides you through the entire process
 All you need to do is run:
 
 ``` shell
-python3 hurry up
+python3 mgm-hurry up
 ```
 
 ## Usage
 
 ```shell
 
-  $ python3 hurry --help
+  $ python3 mgm-hurry --help
 
-  Usage: python3 hurry [command] [options]
+  Usage: python3 mgm-hurry [command] [options]
 
   CLI tool for Freqtrade and MGM Hyper Strategy.
 
