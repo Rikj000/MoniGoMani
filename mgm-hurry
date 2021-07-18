@@ -21,8 +21,6 @@ from user_data.mgm_tools.mgm_hurry.LeetLogger import get_logger
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 
 logger = get_logger()
-
-
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
 
@@ -198,7 +196,7 @@ class MGMHurry:
                     'type': 'confirm',
                     'message': 'It looks like Freqtrade is already installed. Proceed to overwrite?',
                     'name': 'proceed',
-                    'default': False,
+                    'default': False
                 },
             ]
 
@@ -306,7 +304,7 @@ class MGMHurry:
 
         if len(strategies_choices) == 0:
             strat_dir = f'{self._basedir}/user_data/strategies/'
-            logger.error(f'🤷♂️ I could not find any strategy in {strat_dir}. Did you install Freqtrade & MoniGoMani?')
+            logger.error(f'🤷 I could not find any strategy in {strat_dir}. Did you install Freqtrade & MoniGoMani?')
             sys.exit(1)
 
         self.monigomani_cli.create_config_files(self._basedir)
@@ -320,7 +318,7 @@ class MGMHurry:
 
         if len(hyperopts_choices) == 0:
             ho_dir = f'{self._basedir}/user_data/hyperopts/'
-            logger.error(f'🤷♂️ I could not find any hyperopts in {ho_dir}. Did you install Freqtrade & MoniGoMani?')
+            logger.error(f'🤷 I could not find any hyperopts in {ho_dir}. Did you install Freqtrade & MoniGoMani?')
             sys.exit(1)
 
         existing_config = self.__read_config()
@@ -475,13 +473,13 @@ class MGMHurry:
         logger.info('💨 💨 💨')
 
         if self.__reload_config() is False:
-            logger.error('No Hurry config file found. Please run: mgm-hurry setup')
+            logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
             sys.exit(0)
 
         timerange = self.__get_preset_timerange(timerange)
 
         if self.freqtrade_cli.installation_exists() is False:
-            logger.error('No Freqtrade installation found. I crash.')
+            logger.error('🤷 No Freqtrade installation found. I crash.')
 
         questions = [{
             'type': 'input',
@@ -509,7 +507,7 @@ class MGMHurry:
                 {'name': '1w', 'value': '1w', 'enabled': False},
                 {'name': '2w', 'value': '2w', 'enabled': False},
                 {'name': '1M', 'value': '1M', 'enabled': False},
-                {'name': '1y', 'value': '1y', 'enabled': False},
+                {'name': '1y', 'value': '1y', 'enabled': False}
             ],
             'validate': lambda result: len(result) >= 1,
             'invalid_message': 'should be at least 1 selection',
@@ -551,11 +549,11 @@ class MGMHurry:
         logger.info('💨 💨 💨')
 
         if self.__reload_config() is False:
-            logger.error('No Hurry config file found. Please run: mgm-hurry setup')
+            logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
             sys.exit(0)
 
         if self.freqtrade_cli.installation_exists() is False:
-            logger.error('Whaaaa.. No Freqtrade installation found. Beats me...')
+            logger.error('🤷 Whaaaa.. No Freqtrade installation found. Beats me...')
             sys.exit(0)
 
         target_file = '$basedir/user_data/mgm_pair_lists/$exchange-$hyperopt_quote-Top-Volume-StaticPairList.json'
@@ -591,7 +589,7 @@ class MGMHurry:
         with open(f'{self._basedir}/user_data/mgm-config.json', 'w') as target_f:
             json.dump(mgm_config_data, target_f, indent=4)
 
-        # logger.error('🤷♂ Something happened on the way to heaven 🌟🤦♀')
+        # logger.error('🤷 Something happened on the way to heaven 🌟🤦')
 
     def hyperopt(self, timerange: str = None, strategy: str = None, spaces: str = None,
                  enable_protections: bool = True, random_state: int = None, apply_best_results: bool = True):
@@ -698,7 +696,7 @@ class MGMHurry:
         logger.info('💨 💨 💨')
 
         if epoch == 0:
-            logger.error('🤷♂️ Please pass the epoch number through. Hint: mgm-hurry hyperopt_show_epoch --epoch=837')
+            logger.error('🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_show_epoch --epoch=837')
             sys.exit(1)
 
         logger.info('👉 Showing HyperOpt results for epoch # {epoch}')
@@ -717,7 +715,7 @@ class MGMHurry:
         logger.info('💨 💨 💨')
 
         if epoch == 0:
-            logger.error('🤷♂️ Please pass the epoch number through. Hint: mgm-hurry hyperopt_apply_epoch --epoch=1337')
+            logger.error('🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_apply_epoch --epoch=1337')
             sys.exit(1)
 
         logger.info(f'👉 Applying HyperOpt results of epoch # {epoch}')
@@ -914,8 +912,9 @@ class MGMHurry:
         :param cmd: (str) The command, sir
         :return returncode: (int) The returncode of the subprocess
         """
+
         if cmd is None or cmd == '':
-            logger.error('🤷♂️ Please pass a command through. Without command no objective, sir!')
+            logger.error('🤷 Please pass a command through. Without command no objective, sir!')
             sys.exit(1)
 
         return_code = 1
