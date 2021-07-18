@@ -614,6 +614,9 @@ class MGMHurry:
             Defaults to 'HyperOptResults-<Current-DateTime>.log'
         """
 
+        if clean_start is True:
+            self.cleanup()
+
         logger.info('💨 💨 💨')
         logger.info('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
         logger.info('💨 💨 💨')
@@ -635,10 +638,6 @@ class MGMHurry:
 
         if random_state is not None:
             cmd = f'{cmd.strip()} --random-state $random_state'
-
-        if apply_best_results is True:
-            cmd = f'{cmd.strip()} && mv ./user_data/strategies/MoniGoManiHyperStrategy.json \
-                  ./user_data/mgm-config-hyperopt.json'
 
         cmd = Template(cmd).substitute(
             ft_binary=self.config['ft_binary'],
