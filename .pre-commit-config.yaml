@@ -3,11 +3,10 @@
 default_language_version:
     python: python3.8
 #files: 'mgm-hurry requirements*.txt tests/*.py user_data/*.json user_data/mgm_tools/* user_data/mgm_tools/mgm_hurry/* user_data/strategies/*MoniGoMani*.py'
-files: |
-    (?x)^(
-        mgm-hurry|
-        requirements*\.txt
-    )
+# files: |
+#     (?x)^(
+#         requirements*\.txt
+#     )$
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
