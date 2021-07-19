@@ -15,7 +15,6 @@ jobs:
     strategy:
       matrix:
         python-version: [3.9]
-        # python-version: [3.6, 3.7, 3.8, 3.9]
 
     steps:
       - uses: actions/checkout@v2
@@ -36,18 +35,17 @@ jobs:
           flake8 mgm-hurry --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         run: |
-          pytest --doctest-modules --junitxml=tests/junit/test-results-${{ matrix.python-version }}.xml --cov=. --cov-report=xml --cov-report=html
-      # - name: Upload pytest test results
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: pytest-results-${{ matrix.python-version }}
-      #     path: tests/junit/test-results-${{ matrix.python-version }}.xml
-      #   if: ${{ always() }}
+          pytest --doctest-modules --junitxml=tests/junit/test-results-${{ matrix.python-version }}.xml --cov=com --cov-report=xml --cov-report=html
+      - name: Upload pytest test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: pytest-results-${{ matrix.python-version }}
+          path: tests/junit/test-results-${{ matrix.python-version }}.xml
+        if: ${{ always() }}
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
-          artifact: /test-results-(.*)/
-          name: 'Test Report $1'
+          name: Test Report
           path: tests/junit/test-results-*.xml
           reporter: java-junit
