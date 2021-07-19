@@ -43,8 +43,7 @@ jobs:
           path: tests/junit/test-results-${{ matrix.python-version }}.xml
         # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: always()
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v2
         with:
-          files: tests/junit/test-results-*.xml
+          report_paths: 'tests/junit/test-results-*.xml'
