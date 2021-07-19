@@ -46,6 +46,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
-          name: Test Report
+          artifact: /test-results-(.*)/
+          name: 'Test Report $1'
           path: tests/junit/test-results-*.xml
           reporter: java-junit
