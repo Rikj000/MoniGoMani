@@ -1,10 +1,11 @@
 from logging import Logger
-from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 import pytest
 import sys
 
 sys.path.append('.')
 sys.path.append('..')
+
+from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli  # pylint: disable=E402
 
 
 def test_initialisation():

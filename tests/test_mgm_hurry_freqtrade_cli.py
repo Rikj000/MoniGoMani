@@ -1,10 +1,10 @@
-from user_data.mgm_tools.mgm_hurry.freqtrade_cli import FreqtradeCli
-from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import get_logger
-
 import sys
 
 sys.path.append('.')
 sys.path.append('..')
+
+from user_data.mgm_tools.mgm_hurry.FreqtradeCli import FreqtradeCli
+from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import get_logger
 
 
 '''
