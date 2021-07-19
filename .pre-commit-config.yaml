@@ -25,15 +25,10 @@ repos:
 
     # -   id: check-case-conflict # Check for files with names that would conflict on a case-insensitive filesystem like MacOS HFS+ or Windows FAT.
     # -   id: check-docstring-first
-    # -   id: check-json
     # -   id: check-merge-conflict
-    # -   id: check-yaml
-    # -   id: check-added-large-files
     # -   id: detect-private-key
-    # -   id: double-quote-string-fixer
     # -   id: fix-encoding-pragma
     # -   id: pretty-format-json
-    # -   id: requirements-txt-fixer
 
 # Let's consider a uniform autoformatter like Black or Yapf
 # -   repo: https://github.com/psf/black
