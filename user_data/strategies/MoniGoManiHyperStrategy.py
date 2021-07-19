@@ -1,5 +1,7 @@
 # pragma pylint: disable=missing-docstring, invalid-name, pointless-string-statement
 # flake8: noqa: F401
+# -*- coding: utf-8 -*-
+# -* vim: syntax=python -*-
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 import sys
 from pathlib import Path
@@ -134,31 +136,41 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         }
     })
 
-    def informative_pairs(self):
+    def informative_pairs(self) -> list:
         """
-        Defines additional informative pair/interval combinations to be cached from the exchange, these will be used
-        during TimeFrame-Zoom.
-        :return:
+        Defines additional informative pair/interval combinations to be cached from the exchange,
+        these will be used during TimeFrame-Zoom.
+
+        :return informative_pairs: (list) List populated with additional informative pairs
         """
+
         pairs = self.dp.current_whitelist()
         informative_pairs = [(pair, self.informative_timeframe) for pair in pairs]
         return informative_pairs
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        # Adds base indicators based on Run-Mode & TimeFrame-Zoom
+        """
+        Adds base indicators based on Run-Mode & TimeFrame-Zoom
+
+        :param dataframe: (DataFrame) DataFrame with data from the exchange
+        :param metadata: (dict) Additional information, like the currently traded pair
+        :return DataFrame: DataFrame for MoniGoMani with all mandatory indicator data populated
+        """
+
         return self._populate_indicators(dataframe=dataframe, metadata=metadata)
 
     def do_populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Adds several different TA indicators to MoniGoMani's DataFrame.
+        Adds several different TA indicators to MoniGoMani's DataFrame per pair.
         Should be called with 'informative_pair' (1h candles) during backtesting/hyperopting with TimeFrame-Zoom!
 
         Performance Note: For the best performance be frugal on the number of indicators you are using.
         Only add in indicators that you are using in your weighted signal configuration for MoniGoMani,
         otherwise you will waste your memory and CPU usage.
-        :param dataframe: Dataframe with data from the exchange
-        :param metadata: Additional information, like the currently traded pair
-        :return: a Dataframe with all mandatory indicators for MoniGoMani
+
+        :param dataframe: (DataFrame) DataFrame with data from the exchange
+        :param metadata: (dict) Additional information, like the currently traded pair
+        :return DataFrame: DataFrame for MoniGoMani with all mandatory indicator data populated
         """
 
         # Momentum Indicators (timeperiod is expressed in candles)
@@ -207,13 +219,30 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         return dataframe
 
     def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        # Keep this call to populate the conditions responsible for the weights of your signals
+        """
+        Populates the buy trend with weighted buy signals used in MoniGoMani's DataFrame per pair.
+
+        :param dataframe: (DataFrame) DataFrame with data from the exchange and all mandatory indicator data populated
+        :param metadata: (dict) Additional information, like the currently traded pair
+        :return DataFrame: DataFrame for MoniGoMani with all mandatory weighted buy signals populated
+        """
+
+        # Keep this call to populate the conditions responsible for the weights of your buy signals
         dataframe = self._populate_trend('buy', dataframe, metadata)
 
         return dataframe
 
     def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        # Keep this call to populate the conditions responsible for the weights of your signals
+        """
+        Populates the buy trend with weighted buy signals used in MoniGoMani's DataFrame per pair.
+
+        :param dataframe: (DataFrame) DataFrame with data from the exchange,
+            all mandatory indicator and weighted buy signal data populated
+        :param metadata: (dict) Additional information, like the currently traded pair
+        :return DataFrame: DataFrame for MoniGoMani with all mandatory weighted sell signals populated
+        """
+
+        # Keep this call to populate the conditions responsible for the weights of your sell signals
         dataframe = self._populate_trend('sell', dataframe, metadata)
 
         return dataframe

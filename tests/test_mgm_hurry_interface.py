@@ -1,6 +1,6 @@
 import pytest
 
-'''
+"""
 This unit test file will help while splitting mgm-hurry
 into more modular code.
 
@@ -27,8 +27,9 @@ Interface mgm-hurry:
       hyperopt_apply_epoch
       backtest
       start_trader
-'''
+"""
 
-@pytest.mark.skip(reason="Test not implemented.")
+
+@pytest.mark.skip(reason='Test not implemented.')
 def test_basic_usage():
-  assert NotImplemented
+    assert NotImplemented

@@ -1,9 +1,11 @@
 from logging import Logger
-from user_data.mgm_tools.mgm_hurry.leet_logger import get_logger
+from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import get_logger
 
 import sys
-sys.path.append(".")
-sys.path.append("..")
+
+sys.path.append('.')
+sys.path.append('..')
+
 
 def test_initialisation_logger():
     logger = get_logger()

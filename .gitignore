@@ -6,7 +6,7 @@ user_data/mgm-config-hyperopt.json
 user_data/strategies/MoniGoManiHyperStrategy.json
 
 # Ignore Release Template
-ReleaseTemplate.md
+Documentation/ReleaseTemplate.md
 
 # Ignore Python Caches
 __pycache__/
@@ -36,6 +36,26 @@ Logo/
 # Ignore fthypt and legacy pickle Files
 *.fthypt
 *.pickle
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+test-results*.xml
 
 # Ignore pytest cache files
 .pytest_cache/
