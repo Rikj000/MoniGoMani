@@ -2,7 +2,7 @@
 
 👍🎉 First off, thanks for taking the time to contribute! 🎉👍
 
-The following is a set of guidelines for contributing to the MoniGoMani Hyper Strategy and its modules, which are hosted in the [Rikj000](https://github.com/Rikj000/MoniGoMani) repository on GitHub. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
+The following is a set of guidelines for contributing to the MoniGoMani Hyper Strategy and its modules, which are hosted in the [Rikj000 repository](https://github.com/Rikj000/MoniGoMani) on GitHub. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
 ## Local development
 
@@ -16,12 +16,10 @@ See [Pre-commit](https://pre-commit.com) for usage and installation instructions
 
 GitHub Actions are used in order to run automated unit-tests against our code. These actions are triggered at push-events into main, development and feature/* branches. These actions are also triggered at every Pull Request so we all can see very quickly if something happened.
 
-It can be quite handy to run a GitHub action workflow on your local machine. And then `act` is your friend.
+It can be quite handy to run a GitHub action workflow on your local machine. Well, [`act`](https://github.com/nektos/act) is your friend.
 
-[Go to `act` website](https://github.com/nektos/act)
+---
 
-<hr>
+*Note; this document is inspired by the [awesome Atom contributing guidelines](https://github.com/atom/atom/blob/master/CONTRIBUTING.md)*
 
-*Note; this document is inspired by the awesome Atom contributing guidelines https://github.com/atom/atom/blob/master/CONTRIBUTING.md*
-
-<hr>
+---
