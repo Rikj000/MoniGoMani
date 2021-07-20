@@ -2,18 +2,23 @@
         <img src="https://repository-images.githubusercontent.com/352191040/43a50e00-ab61-11eb-92c9-fb91d458e8af" alt="MoniGoMani" height="250" />
 </p>
 
-<p align="center">
-    <b style="font-size: 2em;">MoniGoMani</b><br><i>Freqtrade Framework & Strategy</i>
+<p align="center" style="font-family: 'Segoe Script'">
+    <i><b style="font-size: 2em;">MoniGoMani</b><br>Freqtrade Framework & Strategy</i>
 </p>
 
 <p align="center">
+    <a href="https://github.com/Rikj000/MoniGoMani/actions/workflows/python-analysis.yml">
+        <img src="https://github.com/Rikj000/MoniGoMani/actions/workflows/python-analysis.yml/badge.svg">
+    </a>
     <a href="https://discord.gg/xFZ9bB6vEz">
         <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join CryptoStonksShallRise on Discord">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases">
         <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases/latest">
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
+    </a>
+    <br>
+    <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md">
         <img src="https://img.shields.io/badge/Docs-MGM__DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
@@ -33,7 +38,7 @@
                 If you'd like to see this project progress faster then please help out where you can
                 <a href="https://github.com/Rikj000/MoniGoMani/issues">here</a>!
                 <br><img width=1000><br>
-                <b>Recommended Freqtrade commit: <a href="https://github.com/freqtrade/freqtrade/pull/5219/commits/3503fdb4ec31be99f433fdce039543e0911964d6">3503fdb4</a></b> 
+                <b>Recommended Freqtrade commit: <a href="https://github.com/freqtrade/freqtrade/pull/5219/commits/3503fdb4ec31be99f433fdce039543e0911964d6">3503fdb4</a></b>
                 <br><br>
             </td>
         </tbody>
@@ -107,7 +112,7 @@ Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/Mon
 - All HyperOpt Results can easily be applied and removed with the use of some [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#go-to-commands)
 - Configurable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends, each table **currently** has 10 Buy & 10 Sell signals implemented ***(HyperOptable!)***:
   - [ADX](https://www.investopedia.com/terms/a/adx.asp)
-  - [MACD](https://www.investopedia.com/terms/m/macd.asp)  
+  - [MACD](https://www.investopedia.com/terms/m/macd.asp)
   - [MFI](https://www.investopedia.com/terms/m/mfi.asp)
   - [RSI](https://www.investopedia.com/terms/r/rsi.asp)
   - [SMA](https://www.investopedia.com/terms/s/sma.asp) Short [Death](https://www.investopedia.com/terms/d/deathcross.asp)/[Golden](https://www.investopedia.com/terms/g/goldencross.asp) Cross
@@ -154,9 +159,9 @@ rm ./user_data/mgm-config-hyperopt.json ./user_data/strategies/MoniGoManiHyperSt
 ```powershell
 freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210501-20210616 --enable-protections
 ```
-**Total Average Signal Importance Calculation** *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
+**Total Average Signal Importance Calculation** *(with the [TotalOverallSignalImportanceCalculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py))*:
 ```powershell
-python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py
+python ./user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py
 ```
 Retrieve and apply a current **Binance-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*:
 ```powershell
@@ -174,14 +179,15 @@ freqtrade plot-profit --export-filename ./user_data/backtest_results/<backtest-r
 
 ## Got Test Results - Ideas - Config Improvements?
 - Feel free to join our community [**CryptoStonksShallRise**](https://discord.gg/xFZ9bB6vEz) on Discord, there you can follow/participate in the **Official MoniGoMani Channels**:
-  - `📢︱moni-go-mani`
-  - `✨︱git-updates`
-  - `🗞︱github-discussions`
-  - `🖥︱development` *(Exclusive to MoniGoMani Developers & Sponsors!)*
-  - `🛠︱testing`
+  - `📢︱moni-go-mani` *(All Official MGM Releases & important messages can be followed here)*
+  - `✨︱git-updates` *(All GitHub Commits can be followed here)*
+  - `🗞︱github-discussions` *(All conversations tied to GitHub Issues & Pull Requests can be followed here)*
+  - `🖥︱development` *(Channel for discussing development on MGM. exclusive for MoniGoMani Developers)*
+  - `👑︱testing-elite` *(Channel for members that have proven to be true additions to the community. Exclusive for MoniGoMani Testing MVP and above))*
+  - `🛠︱testing` *(Your go-to channel for partaking in the community. Feel free to drop your test results / config files / ideas here)*
   - `❔︱help` *(Be sure to take your time to read the [Documentation](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md) thoroughly before asking questions though!)*
-  - `🎉︱setup-releases`
-  - `🗄︱cluster-results` *(Exclusive to the MoniGoMani Cluster Maintainer & MoniGoMani Developers, for now!)*
+  - `🎉︱setup-releases` *(Release your personal profitable MGM configurations/HyperOpted versions here)*
+  - `🗄︱cluster-results` *(Automated Ph3nol Cluster Releases. Exclusive to the MoniGoMani Cluster Maintainer & MoniGoMani Developers, for now!)*
 
 More general chats for `📈︱technical-analysis`, `🤖︱freqtrade`, `📊︱iconomi` and `🍉︱random` discussion are also available there :slightly_smiling_face:
 

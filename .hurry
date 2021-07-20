@@ -1,10 +1,16 @@
 config:
   exchange: binance
+  ft_binary: Path/To/Freqtrade_MoniGoMani/.env/bin/activate;
+    freqtrade
   hyperopt:
-    epochs: 800
-    loss: UncloggedWinRatioAndProfitRatioLoss
-    quote: BTC
+    epochs: 1000
+    loss: WinRatioAndProfitRatioLoss
+    quote: USDT
     spaces: buy sell
     strategy: MoniGoManiHyperStrategy
-  install_type: docker
-  timerange: 20201201-20210316
+  install_type: source
+  timerange: 20210501-20210616
+  mgm_config_names:
+    mgm-config: mgm-config.json
+    mgm-config-private: mgm-config-private.json
+    mgm-config-hyperopt: mgm-config-hyperopt.json

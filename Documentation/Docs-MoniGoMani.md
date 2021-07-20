@@ -93,7 +93,7 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
        - Refined search spaces ranging between the values found during the 1st Run (Loaded from `mgm-config-hyperopt.json`) plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json` (This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)   
        - Weak weighted signals weeded out by overriding them to their respective `min_` value (Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
        - Strong weighted signals are boosted by overriding them to their respective `max_` value (Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
-**7)** Load your results into the `Total-Overall-Signal-Importance-Calculator.py` and run it's [Go-To Command](#go-to-commands) to receive a nice weighted signal report for sharing in the [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.  
+**7)** Load your results into the `TotalOverallSignalImportanceCalculator.py` and run it's [Go-To Command](#go-to-commands) to receive a nice weighted signal report for sharing in the [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.  
 
 
 # How to Configure MoniGoMani
@@ -387,7 +387,7 @@ Once you defined them you can load them in FreqUI as following:
 
 
 # Total Overall Signal Importance Calculator
-Execute: `python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
+Execute: `python ./user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
 The higher the score of a signal the better! It will also export to a `./user_data/Total-Average-Signal-Importance-Report.log` file for easy sharing!   
 Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can improve the signals!   
 
@@ -476,9 +476,9 @@ rm ./user_data/mgm-config-hyperopt.json ./user_data/strategies/MoniGoManiHyperSt
 ```powershell
 freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210501-20210616 --enable-protections
 ```
-**Total Average Signal Importance Calculation** *(with the [Total-Overall-Signal-Importance-Calculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py))*:
+**Total Average Signal Importance Calculation** *(with the [TotalOverallSignalImportanceCalculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py))*:
 ```powershell
-python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py
+python ./user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py
 ```
 Retrieve and apply a current **Binance-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*:
 ```powershell
@@ -525,10 +525,10 @@ You can also do this for  **2nd HyperOpt Runs**, but this is a little more diffi
 # How to share your test results properly
 The easiest way to share how your MGM setup has been doing would be by posting a screenshot in the [Discord Server](https://discord.gg/xFZ9bB6vEz) with the output of the `/status table` and `/profit` commands (Using the Telegram connection of the bot) + The complete output of the log being printed while HyperOpting (See [Some Test Results]() for examples).   
    
-Also, one of the other most welcome things is the results from the `Total-Overall-Signal-Importance-Calculator`, but you'll have to paste your own fresh HyperOpt results in it first before it can make you a nice report that can help us find better signals for MGM !:rocket:   
+Also, one of the other most welcome things is the results from the `TotalOverallSignalImportanceCalculator`, but you'll have to paste your own fresh HyperOpt results in it first before it can make you a nice report that can help us find better signals for MGM !:rocket:   
 
 Of course all FreqUI / Telegram / config / HyperOpt results done on MGM **can be** useful / be learned from!
-Try to **always include** a  `Total-Overall-Signal-Importance-Calculator` report or just your own MoniGoMani file with your HyperOpt results applied to it!   
+Try to **always include** a  `TotalOverallSignalImportanceCalculator` report or just your own MoniGoMani file with your HyperOpt results applied to it!   
 Since without knowing which signal weights or which on/off settings are applied we can't really truly learn much from your results!   
 
 The epoch table being generated when HyperOpting + the number of the epoch you used is also very helpful, so we can easily rule out if your test results are exploited. (See [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)!)   

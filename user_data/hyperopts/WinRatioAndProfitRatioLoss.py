@@ -1,5 +1,5 @@
-__author__ = "PoCk3T"
-__copyright__ = "The GNU General Public License v3.0"
+__author__ = 'PoCk3T'
+__copyright__ = 'The GNU General Public License v3.0'
 
 from datetime import datetime
 from typing import Dict
@@ -18,15 +18,15 @@ class WinRatioAndProfitRatioLoss(IHyperOptLoss):
                                *args, **kwargs) -> float:
         """
         Custom objective function, returns smaller number for better results
-        
+
         This function optimizes for both: best profit AND stability
-        
-        On stability, the final score has an incentive, through 'win_ratio', 
+
+        On stability, the final score has an incentive, through 'win_ratio',
         to make more winning deals out of all deals done
-        
+
         This might prove to be more reliable for dry and live runs of FreqTrade
         and prevent over-fitting on best profit only
-        """        
+        """
 
         wins = len(results[results['profit_ratio'] > 0])
         avg_profit = results['profit_ratio'].sum() * 100.0

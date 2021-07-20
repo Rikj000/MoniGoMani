@@ -1,5 +1,5 @@
-__author__ = "PoCk3T"
-__copyright__ = "The GNU General Public License v3.0"
+__author__ = 'PoCk3T'
+__copyright__ = 'The GNU General Public License v3.0'
 
 from datetime import datetime
 from typing import Dict

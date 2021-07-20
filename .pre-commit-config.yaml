@@ -1,0 +1,44 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+default_language_version:
+    python: python3.8
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+    -   id: trailing-whitespace
+        types: [file, python]
+    -   id: end-of-file-fixer
+        types: [file, python]
+    -   id: check-ast # Simply check whether files parse as valid python.
+        types: [file, python]
+    -   id: check-docstring-first
+        types: [file, python]
+    -   id: check-json
+        types: [file, json]
+    -   id: check-added-large-files
+        types: [file]
+    -   id: check-yaml
+        types: [file, yaml]
+    -   id: debug-statements
+        types: [file, python]
+    -   id: name-tests-test
+        files: ^tests/
+        types: [file, python]
+    -   id: double-quote-string-fixer
+        types: [file, python]
+    -   id: requirements-txt-fixer
+        files: ^requirements
+        types: [file, plain-text]
+    -   id: check-case-conflict # Check for files with names that would conflict on a case-insensitive filesystem like MacOS HFS+ or Windows FAT.
+        types: [file, python]
+    # -   id: check-merge-conflict
+    # -   id: detect-private-key
+    # -   id: fix-encoding-pragma
+    # -   id: pretty-format-json
+
+# Let's consider a uniform autoformatter like Black or Yapf
+# -   repo: https://github.com/psf/black
+#     rev: 19.3b0
+#     hooks:
+#     -   id: black

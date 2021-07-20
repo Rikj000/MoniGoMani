@@ -1,4 +1,4 @@
-# TODO
+# `mgm-hurry` ToDo
 
 - [x] Cleanup code and docs
 - [x] Implement check method which checks for freqtrade, mgm and config existence
@@ -10,4 +10,3 @@
 - [ ] Implement logging modes (debug, info, default)
 - [ ] Implement some movement in CLI at time consuming tasks. It sometimes looks like nothing happens, but it does!
   - [Yaspin](https://github.com/pavdmyt/yaspin)
--
