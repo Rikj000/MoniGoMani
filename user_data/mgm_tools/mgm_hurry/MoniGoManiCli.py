@@ -28,7 +28,6 @@ class MoniGoManiCli:
         self.basedir = basedir
         self.logger = logger
 
-
     def installation_exists(self) -> bool:
         """
         Checks if the MGM Hyper Strategy installation exists
@@ -45,7 +44,6 @@ class MoniGoManiCli:
 
         self.logger.debug('👉 MoniGoManiHyperStrategy and configuration found √')
         return True
-
 
     def create_config_files(self, target_dir: str) -> bool:
         """
@@ -65,7 +63,6 @@ class MoniGoManiCli:
 
         self.logger.info('👉 MoniGoMani config files prepared √')
         return True
-
 
     def load_config_files(self) -> dict:
         """
@@ -124,7 +121,6 @@ class MoniGoManiCli:
         mgm_config_files['mgm-config-hurry'] = hurry_config
 
         return mgm_config_files
-
 
     def _exec_cmd(self, cmd: str, save_output: bool = False,
                    output_path: str = None, output_file_name: str = None) -> int:
