@@ -10,23 +10,30 @@ default_language_version:
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
-    files: ^requirements*.txt$
     hooks:
     -   id: trailing-whitespace
+        files: \.py$
     -   id: end-of-file-fixer
+        files: \.py$
     -   id: check-ast # Simply check whether files parse as valid python.
         files: \.py$
     -   id: check-docstring-first
+        files: \.py$
     -   id: check-json
         files: \.json$
     -   id: check-added-large-files
     -   id: check-yaml
         files: \.yml|\.yaml$
     -   id: debug-statements
+        files: \.py$
     -   id: name-tests-test
+        files: \.py$
     -   id: double-quote-string-fixer
+        files: \.py$
     -   id: requirements-txt-fixer
+        files: \.txt$
     -   id: check-case-conflict # Check for files with names that would conflict on a case-insensitive filesystem like MacOS HFS+ or Windows FAT.
+        files: \.py$
     # -   id: check-docstring-first
     # -   id: check-merge-conflict
     # -   id: detect-private-key
