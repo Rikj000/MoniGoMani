@@ -344,14 +344,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                                     f'Auto updated is_dry_live_run_detected to: False')
 
             self.mgm_logger('info', initialization,
-                            f'Calculating and storing "timeframe_multiplier" + Updating startup_candle_count"')
+                            f'Calculating and storing "timeframe_multiplier"')
             self.timeframe_multiplier = \
                 int(timeframe_to_minutes(self.informative_timeframe) / timeframe_to_minutes(self.timeframe))
             if self.timeframe_multiplier < 1:
                 raise SystemExit(f'MoniGoManiHyperStrategy - ERROR - TimeFrame-Zoom - "timeframe" must be bigger than '
                                  f'"backtest_timeframe"')
-            if RunMode(config.get('runmode', RunMode.OTHER)) is RunMode.BACKTEST:
-                self.startup_candle_count *= self.timeframe_multiplier
 
         else:
             if os.path.isfile(self.mgm_config_hyperopt_path) is False:
