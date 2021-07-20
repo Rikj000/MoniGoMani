@@ -52,7 +52,6 @@ class FreqtradeCli:
 
         return self
 
-
     def _get_freqtrade_binary_path(self, basedir: str, install_type: str):
         """Determine the freqtrade binary path based on install_type.
 
@@ -70,7 +69,6 @@ class FreqtradeCli:
 
         return freqtrade_binary
 
-
     @property
     def basedir(self):
         return self.__basedir
@@ -78,7 +76,6 @@ class FreqtradeCli:
     @basedir.setter
     def basedir(self, basedir):
         self.__basedir = basedir
-
 
     @property
     def install_type(self):
@@ -91,7 +88,6 @@ class FreqtradeCli:
         else:
             self.__install_type = None
 
-
     @property
     def freqtrade_binary(self):
         return self.__freqtrade_binary
@@ -99,7 +95,6 @@ class FreqtradeCli:
     @freqtrade_binary.setter
     def freqtrade_binary(self, freqtrade_binary):
         self.__freqtrade_binary = freqtrade_binary
-
 
     def installation_exists(self) -> bool:
         """
@@ -125,7 +120,6 @@ class FreqtradeCli:
             return True
 
         return False
-
 
     def download_setup_freqtrade(self, branch: str = 'develop', target_dir: str = None):
         """
