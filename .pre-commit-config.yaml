@@ -12,29 +12,31 @@ repos:
     rev: v3.2.0
     hooks:
     -   id: trailing-whitespace
-        files: \.py$
+        types: [file, python]
     -   id: end-of-file-fixer
-        files: \.py$
+        types: [file, python]
     -   id: check-ast # Simply check whether files parse as valid python.
-        files: \.py$
+        types: [file, python]
     -   id: check-docstring-first
-        files: \.py$
+        types: [file, python]
     -   id: check-json
-        files: \.json$
+        types: [file, json]
     -   id: check-added-large-files
+        types: [file]
     -   id: check-yaml
-        files: \.yml|\.yaml$
+        types: [file, yaml]
     -   id: debug-statements
-        files: \.py$
+        types: [file, python]
     -   id: name-tests-test
-        files: \.py$
+        files: ^tests/
+        types: [file, python]
     -   id: double-quote-string-fixer
-        files: \.py$
+        types: [file, python]
     -   id: requirements-txt-fixer
-        files: \.txt$
+        files: ^requirements
+        types: [file, plain-text]
     -   id: check-case-conflict # Check for files with names that would conflict on a case-insensitive filesystem like MacOS HFS+ or Windows FAT.
-        files: \.py$
-    # -   id: check-docstring-first
+        types: [file, python]
     # -   id: check-merge-conflict
     # -   id: detect-private-key
     # -   id: fix-encoding-pragma
