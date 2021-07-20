@@ -122,8 +122,7 @@ class MoniGoManiCli:
 
         return mgm_config_files
 
-    def _exec_cmd(self, cmd: str, save_output: bool = False,
-                   output_path: str = None, output_file_name: str = None) -> int:
+    def _exec_cmd(self, cmd: str, save_output: bool = False, output_path: str = None, output_file_name: str = None) -> int:
         """
         Executes shell command and logs output as debug output.
 
