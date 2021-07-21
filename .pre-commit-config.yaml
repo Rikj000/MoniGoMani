@@ -4,7 +4,7 @@ default_language_version:
     python: python3.8
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v4.0.1
     hooks:
     -   id: trailing-whitespace
         types: [file, python]
@@ -36,11 +36,16 @@ repos:
     -   id: detect-private-key
     -   id: fix-encoding-pragma
         types: [file, python]
-    # -   id: pretty-format-json
-    #     types: [file, json]
 
-# Let's consider a uniform autoformatter like Black or Yapf
-# -   repo: https://github.com/psf/black
-#     rev: 19.3b0
+    # yapf mainly for code formatting
+    # FIXME needs some tweaking to our likings
+# -   repo: https://github.com/pre-commit/mirrors-yapf
+#     rev: 'v0.31.0'
 #     hooks:
-#     -   id: black
+#     -   id: yapf
+
+    # flake8 mainly for style smells
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: '3.9.2'
+    hooks:
+    -   id: flake8
