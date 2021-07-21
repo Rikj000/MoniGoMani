@@ -117,7 +117,7 @@ class MGMHurry:
                 'type': 'list',
                 'name': 'start_trading',
                 'message': '💨 Do you want to start trading?',
-                "choices": [
+                'choices': [
                     {
                         'name': 'No',
                         'value': 0
@@ -356,7 +356,7 @@ class MGMHurry:
             'message': 'Which spaces do you want to HyperOpt?',
             'choices': map(
                 lambda x: {'enabled': True, 'name': x['name'], 'value': x['value']}
-                if x['value'] in existing_config["hyperopt"]["spaces"].split(' ')
+                if x['value'] in existing_config['hyperopt']['spaces'].split(' ')
                 else {'enabled': False, 'name': x['name'], 'value': x['value']},
                 [
                     {'enabled': False, 'name': 'default', 'value': 'default'},
@@ -390,7 +390,7 @@ class MGMHurry:
             'name': 'exchange',
             'message': 'Which exchange do you want to use?',
             'choices': ['binance', 'ftx', 'bittrex'],
-            'when': lambda result: result["proceed_exchange"]
+            'when': lambda result: result['proceed_exchange']
         }, {
             'type': 'password',
             'name': 'api_key',
@@ -811,7 +811,7 @@ class MGMHurry:
             },
             {
                 'type': 'confirm',
-                "message": 'Do you want to enable the Telegram Bot?',
+                'message': 'Do you want to enable the Telegram Bot?',
                 'name': 'enable_telegram',
                 'default': True,
                 'when': lambda result: result['proceed_telegram']
