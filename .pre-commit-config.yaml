@@ -35,7 +35,9 @@ repos:
     -   id: check-merge-conflict
     -   id: detect-private-key
     -   id: fix-encoding-pragma
-    -   id: pretty-format-json
+        types: [file, python]
+    # -   id: pretty-format-json
+    #     types: [file, json]
 
 # Let's consider a uniform autoformatter like Black or Yapf
 # -   repo: https://github.com/psf/black
