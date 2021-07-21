@@ -55,6 +55,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+junit/
 test-results*.xml
 
 # Ignore pytest cache files
