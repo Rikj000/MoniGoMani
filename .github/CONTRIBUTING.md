@@ -10,6 +10,31 @@ The following is a set of guidelines for contributing to the MoniGoMani Hyper St
 
 This project uses a set of git commit hooks to help us developers to write – *and more important, commit & push* – code mostly in the same fashion. These hooks are configured in `.pre-commit-config.yaml` and can be run on your dev machine by using an automated `pre-commit` integration.
 
+```shell
+$ pre-commit run --all
+
+~/Projects/MoniGoMani(feature/gh-action-ci) » pre-commit run --all
+
+Trim Trailing Whitespace.................................................Passed
+Fix End of Files.........................................................Passed
+Check python ast.........................................................Passed
+Check docstring is first.................................................Passed
+Check JSON...............................................................Passed
+Check for added large files..............................................Passed
+Check Yaml...............................................................Passed
+Debug Statements (Python)................................................Passed
+Tests should end in _test.py.............................................Passed
+Fix double quoted strings................................................Failed
+- hook id: double-quote-string-fixer
+- exit code: 1
+- files were modified by this hook
+
+Fixing strings in mgm-hurry
+
+Fix requirements.txt.....................................................Passed
+Check for case conflicts.................................................Passed
+```
+
 See [Pre-commit](https://pre-commit.com) for usage and installation instructions.
 
 ### GitHub Action Workflows
