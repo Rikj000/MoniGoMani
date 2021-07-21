@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pytest
 
 # This unit test file will help while splitting mgm-hurry

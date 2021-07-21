@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from logging import Logger
 import pytest
 import sys

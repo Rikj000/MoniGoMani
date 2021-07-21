@@ -32,10 +32,10 @@ repos:
         types: [file, plain-text]
     -   id: check-case-conflict # Check for files with names that would conflict on a case-insensitive filesystem like MacOS HFS+ or Windows FAT.
         types: [file, python]
-    # -   id: check-merge-conflict
-    # -   id: detect-private-key
-    # -   id: fix-encoding-pragma
-    # -   id: pretty-format-json
+    -   id: check-merge-conflict
+    -   id: detect-private-key
+    -   id: fix-encoding-pragma
+    -   id: pretty-format-json
 
 # Let's consider a uniform autoformatter like Black or Yapf
 # -   repo: https://github.com/psf/black
