@@ -13,33 +13,45 @@
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 import os
 import tempfile
+
+import logger
+
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
+
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
 
-class FreqtradeCli:
-    """
-    FreqtradeCli is responsible for all Freqtrade (installation) related tasks.
-    """
+class FreqtradeCli(object):
+    """FreqtradeCli is responsible for all Freqtrade (installation) related tasks."""
 
-    def __init__(self, basedir, logger):
-        """
-        Initializes the Freqtrade binary
+    basedir: str
+    install_type: str
+    freqtrade_binary: str
+    cli_logger: logger
+    monigomani_cli: MoniGoManiCli
 
-        :return results: (bool) True if freqtrade installation is found. False otherwise.
+    def __init__(self, basedir: str, cli_logger: logger):
+        """Initialize the Freqtrade binary.
+
+        Args:
+            basedir (str): The basedir to be used as our root directory.
+            cli_logger (logger): The mgmlogger object to be used to log.
+
+        Returns:
+            None if no freqtrade installation is found.
         """
         self.basedir = basedir
         self.install_type = None
         self.freqtrade_binary = None
 
-        if logger is None:
+        if cli_logger is None:
             return None
 
-        self.logger = logger
+        self.cli_logger = cli_logger
 
         self.monigomani_cli = MoniGoManiCli(self.basedir, self.logger)
 
-        if os.path.exists(f'{self.basedir}/.env/bin/freqtrade') is False:
+        if os.path.exists('{0}/.env/bin/freqtrade'.format(self.basedir)) is False:
             logger.warning('🤷♂️ No Freqtrade installation found.')
             return None
 
@@ -48,9 +60,51 @@ class FreqtradeCli:
 
         self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
 
-        logger.debug(f'👉 Freqtrade binary: `{self.freqtrade_binary}`')
+        logger.debug('👉 Freqtrade binary: `{0}`'.format(self.freqtrade_binary))
 
-        return self
+    def installation_exists(self) -> bool:
+        """Return true if all is setup correctly.
+
+        Returns:
+            bool: True if install_type is docker or freqtrade is found. False otherwise.
+
+                source:
+                    And after all the freqtrade binary is found
+                    in the .env subdirectory.
+                docker:
+                    Does not check for physical existence of Docker.
+                    But returns True.
+        """
+        if self.install_type is None:
+            return False
+
+        if self.freqtrade_binary is None:
+            return False
+
+        # Well if install_type is docker, we return True because we don't verify if docker is installed
+        if self.install_type == 'docker':
+            return True
+
+        if self.install_type == 'source':
+            if os.path.exists('{0}/.env/bin/freqtrade'.format(self.basedir)):
+                return True
+
+        return False
+
+    def download_setup_freqtrade(self, branch: str = 'develop', target_dir: str = None):
+        """
+        Install Freqtrade using a git clone to target_dir.
+
+        Args:
+            branch (str): Checkout a specific branch. Defaults to 'develop'.
+            target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
+        """
+        with tempfile.TemporaryDirectory() as temp_dirname:
+            self.monigomani_cli.exec_cmd(
+                'git clone -b {0} https://github.com/freqtrade/freqtrade.git {1}'.format(branch, temp_dirname, ),
+            )
+            self.monigomani_cli.exec_cmd('cp -rf {0}/* {1}'.format(temp_dirname, target_dir))
+            self.monigomani_cli.exec_cmd('deactivate; bash {0}/setup.sh --install'.format(target_dir))
 
     def _get_freqtrade_binary_path(self, basedir: str, install_type: str):
         """Determine the freqtrade binary path based on install_type.
@@ -65,70 +119,6 @@ class FreqtradeCli:
         freqtrade_binary = 'docker-compose run --rm freqtrade'
 
         if install_type == 'source':
-            freqtrade_binary = f'source {basedir}/.env/bin/activate; freqtrade'
+            freqtrade_binary = 'source {0}/.env/bin/activate; freqtrade'.format(basedir)
 
         return freqtrade_binary
-
-    @property
-    def basedir(self):
-        return self.__basedir
-
-    @basedir.setter
-    def basedir(self, basedir):
-        self.__basedir = basedir
-
-    @property
-    def install_type(self):
-        return self.__install_type
-
-    @install_type.setter
-    def install_type(self, p_install_type):
-        if p_install_type in ['source', 'docker']:
-            self.__install_type = p_install_type
-        else:
-            self.__install_type = None
-
-    @property
-    def freqtrade_binary(self):
-        return self.__freqtrade_binary
-
-    @freqtrade_binary.setter
-    def freqtrade_binary(self, freqtrade_binary):
-        self.__freqtrade_binary = freqtrade_binary
-
-    def installation_exists(self) -> bool:
-        """
-        Returns true if all is setup correctly
-        source:
-            And after all the freqtrade binary is found
-            in the .env subdirectory.
-        docker:
-            Does not check for physic existence of Docker.
-            But returns True.
-        """
-        if self.__install_type is None:
-            return False
-
-        if self.__freqtrade_binary is None:
-            return False
-
-        # Well if install_type is docker, we return True because we don't verify if docker is installed
-        if self.__install_type == 'docker':
-            return True
-
-        if (self.__install_type == 'source') and os.path.exists(f'{self.basedir}/.env/bin/freqtrade'):
-            return True
-
-        return False
-
-    def download_setup_freqtrade(self, branch: str = 'develop', target_dir: str = None):
-        """
-        Install Freqtrade using a git clone to target_dir.
-
-        :param branch: (string, optional) Checkout a specific branch. Defaults to 'develop'.
-        :param target_dir: (string, optional) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
-        """
-        with tempfile.TemporaryDirectory() as temp_dirname:
-            self.monigomani_cli._exec_cmd(f'git clone -b {branch} https://github.com/freqtrade/freqtrade.git {temp_dirname}')
-            self.monigomani_cli._exec_cmd(f'cp -rf {temp_dirname}/* {target_dir}')
-            self.monigomani_cli._exec_cmd(f'deactivate; bash {target_dir}/setup.sh --install')
