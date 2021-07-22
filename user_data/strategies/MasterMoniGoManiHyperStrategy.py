@@ -146,26 +146,27 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Convert the loaded 'mgm-config-hyperopt.json' data to the needed HyperOpt Results format if it's found
         # Default stub values from 'mgm-config.json' are used otherwise.
-        for space in mgm_config_hyperopt['params']:
-            if space in ['buy', 'sell']:
-                for param, param_value in mgm_config_hyperopt['params'][space].items():
-                    if param.startswith('buy'):
-                        buy_params[param] = param_value
-                    else:
-                        sell_params[param] = param_value
+        if mgm_config_hyperopt != {}:
+            for space in mgm_config_hyperopt['params']:
+                if space in ['buy', 'sell']:
+                    for param, param_value in mgm_config_hyperopt['params'][space].items():
+                        if param.startswith('buy'):
+                            buy_params[param] = param_value
+                        else:
+                            sell_params[param] = param_value
 
-            if space == 'roi':
-                minimal_roi = mgm_config_hyperopt['params'][space]
+                if space == 'roi':
+                    minimal_roi = mgm_config_hyperopt['params'][space]
 
-            if space == 'stoploss':
-                stoploss = mgm_config_hyperopt['params'][space][space]
+                if space == 'stoploss':
+                    stoploss = mgm_config_hyperopt['params'][space][space]
 
-            if space == 'trailing':
-                trailing_stop = mgm_config_hyperopt['params'][space]['trailing_stop']
-                trailing_stop_positive = mgm_config_hyperopt['params'][space]['trailing_stop_positive']
-                trailing_stop_positive_offset = mgm_config_hyperopt['params'][space]['trailing_stop_positive_offset']
-                trailing_only_offset_is_reached = \
-                    mgm_config_hyperopt['params'][space]['trailing_only_offset_is_reached']
+                if space == 'trailing':
+                    trailing_stop = mgm_config_hyperopt['params'][space]['trailing_stop']
+                    trailing_stop_positive = mgm_config_hyperopt['params'][space]['trailing_stop_positive']
+                    trailing_stop_positive_offset = mgm_config_hyperopt['params'][space]['trailing_stop_positive_offset']
+                    trailing_only_offset_is_reached = \
+                        mgm_config_hyperopt['params'][space]['trailing_only_offset_is_reached']
     else:
         mgm_config_hyperopt = {}
 
