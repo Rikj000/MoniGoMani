@@ -662,7 +662,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param current_rate: Rate, calculated based on pricing settings in ask_strategy.
         :param current_profit: Current profit (as ratio), calculated based on current_rate.
         :param **kwargs: Ensure to keep this here so updates to this won't break MoniGoMani.
-        :return float: New stoploss value, relative to the current-rate
+        :return: True or string if a custom sell should occur, otherwise None
         """
 
         open_trade_unclogger = 'Open Trade Unclogger'
