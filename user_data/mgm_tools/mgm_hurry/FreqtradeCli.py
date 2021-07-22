@@ -27,11 +27,11 @@ from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 class FreqtradeCli(object):
     """FreqtradeCli is responsible for all Freqtrade (installation) related tasks."""
 
-    basedir: str
-    install_type: str
+    basedir: os.strerror
     freqtrade_binary: str
     cli_logger: logger
     monigomani_cli: MoniGoManiCli
+    _install_type: str
 
     def __init__(self, basedir: str, cli_logger: logger):
         """Initialize the Freqtrade binary.
@@ -44,7 +44,7 @@ class FreqtradeCli(object):
             None if no freqtrade installation is found.
         """
         self.basedir = basedir
-        self.install_type = None
+        self._install_type = None
         self.freqtrade_binary = None
 
         if cli_logger is None:
@@ -55,7 +55,7 @@ class FreqtradeCli(object):
         self.monigomani_cli = MoniGoManiCli(self.basedir, self.logger)
 
         if os.path.exists('{0}/.env/bin/freqtrade'.format(self.basedir)) is False:
-            logger.warning('🤷♂️ No Freqtrade installation found.')
+            self.cli_logger.warning('🤷♂️ No Freqtrade installation found.')
             return None
 
         if self.install_type is None:
@@ -63,7 +63,29 @@ class FreqtradeCli(object):
 
         self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
 
-        logger.debug('👉 Freqtrade binary: `{0}`'.format(self.freqtrade_binary))
+        self.cli_logger.debug('👉 Freqtrade binary: `{0}`'.format(self.freqtrade_binary))
+
+    @property
+    def install_type(self) -> str:
+        """Return property install_type.
+
+        Returns:
+            str: the install type. either source, docker or None.
+        """
+        return self._install_type
+
+    @install_type.setter
+    def install_type(self, p_install_type):
+        if p_install_type in {'source', 'docker'}:
+            self._install_type = p_install_type
+
+    def logger(self) -> logger:
+        """Access the internal logger.
+
+        Returns:
+            logger: Current internal logger.
+        """
+        return self.cli_logger
 
     def installation_exists(self) -> bool:
         """Return true if all is setup correctly.
