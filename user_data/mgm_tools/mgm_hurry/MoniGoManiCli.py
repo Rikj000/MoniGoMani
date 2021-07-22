@@ -122,6 +122,10 @@ class MoniGoManiCli:
 
         return mgm_config_files
 
+    def exec_cmd(self, cmd: str, save_output: bool = False, output_path: str = None, output_file_name: str = None) -> int:
+        """Wrapper around private method _exec_cmd."""
+        return self._exec_cmd(cmd, save_output, output_path, output_file_name)
+
     def _exec_cmd(self, cmd: str, save_output: bool = False, output_path: str = None, output_file_name: str = None) -> int:
         """
         Executes shell command and logs output as debug output.
