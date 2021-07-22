@@ -197,9 +197,10 @@ This is where we'll keep track of all **New Feature, Feature Enhancements and Bu
 
 To keep track of what's exactly planned for the next release you can also check the [**Milestones**](https://github.com/Rikj000/MoniGoMani/milestones) section!
 
+You can also check out the [**MoniGoMani - Global Development Progress**](https://github.com/Rikj000/MoniGoMani/projects/1?fullscreen=true) board, which gives a clear overview of all what is `Planned`, `In Progress` & `Done`!
+
 ## ChangeLog
 MoniGoMani's ChangeLog can be read under the [**Releases**](https://github.com/Rikj000/MoniGoMani/releases/) section!
-*(You can also check the [Older Legacy ChangeLog](https://github.com/Rikj000/MoniGoMani/blob/main/CHANGELOG.md) to see the very beginning of MGM)*
 
 ## Freqtrade
 **Freqtrade** is the well known `open source crypto day-trading bot` that makes this strategy possible!
