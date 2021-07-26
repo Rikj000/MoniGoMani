@@ -70,3 +70,6 @@ docs/
 freqtrade/
 junit/
 scripts/
+tests/
+!tests/mgm/
+!tests/mgm*.py
