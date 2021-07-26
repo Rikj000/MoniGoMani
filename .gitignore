@@ -71,5 +71,15 @@ freqtrade/
 junit/
 scripts/
 tests/
-!tests/mgm/
-!tests/mgm*.py
+!tests/mgm*
+
+freqtrade.service
+freqtrade.service.watchdog
+MANIFEST.in
+mkdocs.yml
+pyproject.toml
+pyproject.yml
+requirements*.txt
+setup.cfg
+setup.py
+setup.sh
