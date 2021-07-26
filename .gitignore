@@ -59,3 +59,14 @@ test-results*.xml
 
 # Ignore pytest cache files
 .pytest_cache/
+
+# Ignore freqtrade installation
+.env/
+build_helpers/
+config_examples/
+docker/
+!docker/Dockerfile.MoniGoMani
+docs/
+freqtrade/
+junit/
+scripts/
