@@ -4,7 +4,24 @@
 
 The following is a set of guidelines for contributing to the MoniGoMani Hyper Strategy and its modules, which are hosted in the [Rikj000 repository](https://github.com/Rikj000/MoniGoMani) on GitHub. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
-## Local development
+## Development
+
+Some developer notes. Never forget.
+
+### Pre commit hooks
+
+Using a pre-commit hook most of the checks, linting and testing is executed
+automatically. It is configured in .pre-commit-config.yaml.
+
+See (https://pre-commit.com)[pre-commit.com] for installation and usage instructions.
+
+Run pre-commit only at changed files:
+
+`pre-commit run --from-ref HEAD^^^ --to-ref HEAD`
+
+Run pre-commit at all files:
+
+`pre-commit run --all`
 
 ### Git Commit Hook(s)
 

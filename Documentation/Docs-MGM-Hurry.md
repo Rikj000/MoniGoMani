@@ -145,19 +145,20 @@ $ hurry setup
 
 Some developer notes. Never forget.
 
-### Yapf formatting
+### Pre commit hooks
 
-```shell
-yapf mgm-hurry --diff
-yapf mgm-hurry > mgm-hurry.diff
-yapf -i mgm-hurry
-```
+Using a pre-commit hook most of the checks, linting and testing is executed
+automatically. It is configured in .pre-commit-config.yaml.
 
-### Generate pydoc
+See (https://pre-commit.com)[pre-commit.com] for installation and usage instructions.
 
-```shell
-python3 -m pydoc -w ./mgm-hurry
-```
+Run pre-commit only at changed files:
+
+`pre-commit run --from-ref HEAD^^^ --to-ref HEAD`
+
+Run pre-commit at all files:
+
+`pre-commit run --all`
 
 ### Timerange examples
 

@@ -38,8 +38,8 @@ repos:
         files: ^(tests/|mgm_hurry)* # All files in tests/ and all files matching mgm_hurry*
         types: [file, python]
 
-    # yapf mainly for code formatting
-    # FIXME needs some tweaking to our likings
+# yapf mainly for code formatting
+# FIXME needs some tweaking to our likings
 # -   repo: https://github.com/pre-commit/mirrors-yapf
 #     rev: 'v0.31.0'
 #     hooks:
