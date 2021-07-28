@@ -219,8 +219,7 @@ class MGMHurry:
         self.freqtrade_cli.download_setup_freqtrade(branch, target_dir)
 
         self._logger.info('🍺 Freqtrade has been installed. '
-                    'You can now proceed to install MoniGoMani. (Hint: mgm-hurry install_mgm)')
-
+                          'You can now proceed to install MoniGoMani. (Hint: mgm-hurry install_mgm)')
 
     def install_mgm(self, branch: str = 'development', target_dir: str = None):
         """
@@ -658,7 +657,7 @@ class MGMHurry:
 
         if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
             self.monigomani_cli._exec_cmd('mv ./user_data/strategies/MoniGoManiHyperStrategy.json '
-                            './user_data/mgm-config-hyperopt.json')
+                                          './user_data/mgm-config-hyperopt.json')
         else:
             self.monigomani_cli._exec_cmd(f'rm ./user_data/strategies/{strategy}.json')
 
@@ -898,7 +897,6 @@ class MGMHurry:
 
         self._logger.info('🍺 Telegram bot settings written to "mgm-config-private.json"')
 
-
     def __get_preset_timerange(self, timerange: str) -> str:
         """
         Parses given timerange-string into according timerange dates
@@ -980,7 +978,6 @@ class MGMHurry:
 
         return False
 
-
     def __read_config(self):
         """
         Reads config values out of ".hurry" config file.
@@ -996,7 +993,6 @@ class MGMHurry:
         # Something happened on the way to heaven. Let's fix it to create a default ".hurry" config file
         self.__write_config()
         return None
-
 
     def __write_config(self, config: dict = None):
         """

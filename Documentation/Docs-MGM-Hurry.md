@@ -141,25 +141,6 @@ $ hurry setup
 ...
 ```
 
-## Development
-
-Some developer notes. Never forget.
-
-### Pre commit hooks
-
-Using a pre-commit hook most of the checks, linting and testing is executed
-automatically. It is configured in .pre-commit-config.yaml.
-
-See (https://pre-commit.com)[pre-commit.com] for installation and usage instructions.
-
-Run pre-commit only at changed files:
-
-`pre-commit run --from-ref HEAD^^^ --to-ref HEAD`
-
-Run pre-commit at all files:
-
-`pre-commit run --all`
-
 ### Timerange examples
 
 |Trend    |Timerange            |

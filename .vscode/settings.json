@@ -1,5 +1,10 @@
 {
     "python.linting.enabled": true,
     "python.formatting.provider": "yapf",
-    "python.linting.flake8Enabled": true
+    "python.testing.pytestArgs": [
+        "."
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestEnabled": true
 }

@@ -189,7 +189,7 @@ class MoniGoManiCli(object):
             )
 
             if output_file_name is None:
-                output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime("%d-%m-%Y-%H-%M-%S"))
+                output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
 
             if not os.path.isdir(output_path):
                 os.mkdir(output_path)
