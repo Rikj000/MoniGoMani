@@ -33,7 +33,7 @@ class MoniGoManiConfig(object):
         self.__basedir = basedir
         self.__mgm_logger = cli_logger
 
-        self.__full_path_config = "{0}/.hurry".format(self.__basedir)
+        self.__full_path_config = '{0}/.hurry'.format(self.__basedir)
 
         # if .hurry file exists
         if self.valid_config_file_present():
