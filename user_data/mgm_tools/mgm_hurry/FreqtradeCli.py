@@ -101,18 +101,28 @@ class FreqtradeCli(object):
                     But returns True.
         """
         if self.install_type is None:
+            self.cli_logger.warning('FreqtradeCli::installation_exists() failed. No install_type.')
             return False
 
         if self.freqtrade_binary is None:
+            self.cli_logger.warning('FreqtradeCli::installation_exists() failed. No freqtrade_binary.')
             return False
 
         # Well if install_type is docker, we return True because we don't verify if docker is installed
         if self.install_type == 'docker':
+            self.cli_logger.info(
+                'FreqtradeCli::installation_exists() succeeded because install_type is set to docker.',
+            )
             return True
 
         if self.install_type == 'source':
+            self.cli_logger.info('FreqtradeCli::installation_exists() install_type is "source".')
             if os.path.exists('{0}/.env/bin/freqtrade'.format(self.basedir)):
                 return True
+            else:
+                self.cli_logger.error(
+                    'FreqtradeCli::installation_exists() failed. freqtrade binary not found in {0}/.env/bin/freqtrade.'.format(self.basedir),
+                )
 
         return False
 
