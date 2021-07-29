@@ -2,6 +2,7 @@
 # -* vim: syntax=python -*-
 
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
+
 """MoniGoManiCli is the responsible module to communicate with the mgm strategy."""
 
 # ___  ___               _  _____        ___  ___               _  _____  _  _
