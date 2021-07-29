@@ -32,18 +32,15 @@ class MoniGoManiConfig(object):
     def __init__(self, basedir: str, cli_logger: logger):
         self.__basedir = basedir
         self.__mgm_logger = cli_logger
-
         self.__full_path_config = '{0}/.hurry'.format(self.__basedir)
 
         # if .hurry file exists
         if self.valid_config_file_present():
             # yes: read and load config
-            self.config = self.__read_config()
+            self.__config = self.__read_config()
         else:
             # no: create basic config + file
-            self.config = self.__create_default_config()
-
-        self.reload()
+            self.__config = self.__create_default_config()
 
     def valid_config_file_present(self) -> bool:
         """Check if the .hurry config file exists on disk."""
