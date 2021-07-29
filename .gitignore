@@ -60,3 +60,27 @@ test-results*.xml
 
 # Ignore pytest cache files
 .pytest_cache/
+
+# Ignore freqtrade installation
+.env/
+build_helpers/
+config_examples/
+docker/
+!docker/Dockerfile.MoniGoMani
+docs/
+freqtrade/
+junit/
+scripts/
+tests/
+!tests/mgm*
+
+freqtrade.service
+freqtrade.service.watchdog
+MANIFEST.in
+mkdocs.yml
+pyproject.toml
+pyproject.yml
+requirements*.txt
+setup.cfg
+setup.py
+setup.sh
