@@ -95,11 +95,14 @@ def ExportMGMresult(config_file, input_file, output_file) :
     results_df.insert(0,"RunID",runID)
 
     #export result as csv file for readable result
+    if output_file is None or output_file == "" :
+        output_file = "../hyperopt_results/" + runID + ".csv"
+
     results_df.to_csv(output_file, index=False, header=True, mode='w', encoding='UTF-8')
 
 def main(argv):
     inputfile = ""
-    outputfile = "../hyperopt_results/last_result.csv"
+    outputfile = ""
     configfile = "../mgm-config.json"
     try:
         opts, args = getopt.getopt(argv,"hc:i:o:",["cfile=","ifile=","ofile="])
