@@ -75,18 +75,19 @@ class MoniGoManiCli(object):
         ]
 
         for example_file in example_files:
-            if not os.path.exists(os.path.join(target_dir, '/user_data/', example_file['src'])):
+            src_file = target_dir + '/user_data/' + example_file['src']
+
+            if not os.path.isfile(src_file):
                 self.logger.error('❌ Bummer. Cannot find the example file "{0}" to copy from.'.format(example_file['src']))
                 return False
 
-            if os.path.exists(os.path.join(target_dir, '/user_data/', example_file['dest'])):
+            dest_file = target_dir + '/user_data/' + example_file['dest']
+
+            if os.path.isfile(dest_file):
                 self.logger.warning('⚠️ The target file "{0}" already exists. Would be overwritten.'.format(example_file['dest']))
                 return False
 
-            shutil.copyfile(
-                os.path.join(target_dir, '/user_data', example_file['src']),
-                os.path.join(target_dir, '/user_data/', example_file['dest']),
-            )
+            shutil.copyfile(src_file, dest_file)
 
         self.logger.info('👉 MoniGoMani config files prepared √')
         return True
