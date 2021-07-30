@@ -1,4 +1,4 @@
--r requirements-dev.txt
+-r requirements-mgm.txt
 
 flake8==3.9.2
 pre-commit==2.10.0
