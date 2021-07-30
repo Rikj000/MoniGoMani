@@ -81,6 +81,7 @@ mkdocs.yml
 pyproject.toml
 pyproject.yml
 requirements*.txt
+!requirements*mgm*.txt
 setup.cfg
 setup.py
 setup.sh

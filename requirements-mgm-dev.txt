@@ -1,3 +1,5 @@
+-r requirements-dev.txt
+
 flake8==3.9.2
 pre-commit==2.10.0
 pytest==6.2.4
