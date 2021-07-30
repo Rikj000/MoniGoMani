@@ -32,22 +32,19 @@ class MoniGoManiConfig(object):
     def __init__(self, basedir: str, cli_logger: logger):
         self.__basedir = basedir
         self.__mgm_logger = cli_logger
-
         self.__full_path_config = '{0}/.hurry'.format(self.__basedir)
 
         # if .hurry file exists
         if self.valid_config_file_present():
             # yes: read and load config
-            self.config = self.__read_config()
+            self.__config = self.__read_config()
         else:
             # no: create basic config + file
-            self.config = self.__create_default_config()
-
-        self.__reload()
+            self.__config = self.__create_default_config()
 
     def valid_config_file_present(self) -> bool:
         """Check if the .hurry config file exists on disk."""
-        if not os.path.isdir(self.__full_path_config) is True:
+        if not os.path.isfile(self.__full_path_config) is True:
             self.__mgm_logger.warning(
                 'Could not find .hurry config file at {0}'.format(self.__full_path_config)
             )
@@ -72,13 +69,19 @@ class MoniGoManiConfig(object):
     def config(self, data: dict):
         self.__config = data
 
-    def __reload(self) -> bool:
-        """ Reloads config file and stores in property of this object.
+    def get(self, element: str):
+        if element not in self.__config:
+            return False
+
+        return self.__config[element]
+
+    def reload(self) -> bool:
+        """Reload config file and store as property in current object.
 
         Returns:
             bool: True if config is read, False if config could not be read.
         """
-        if not self.valid_config_file_present() is True:
+        if self.valid_config_file_present() is not True:
             self.__mgm_logger.error('Failed to reload config. No valid config file present.')
             return False
 
@@ -103,9 +106,9 @@ class MoniGoManiConfig(object):
 
     def __create_default_config(self):
         """ Creates default .hurry config file with default values. """
-        self.__write_config(None)
+        self.write(None)
 
-    def __write_config(self, config: dict = None):
+    def write(self, config: dict = None):
         """ Write config-array to ".hurry" config file and load its contents into config-property.
 
         Writes the passed config dictionary or if nothing passed, it will write default values.
@@ -131,6 +134,6 @@ class MoniGoManiConfig(object):
         with open(self.__full_path_config, 'w+') as file:
             yaml.dump(config, file)
 
-        self.__reload()
+        self.reload()
 
         self.__mgm_logger.info('🍺 Configuration data written to ".hurry" file')
