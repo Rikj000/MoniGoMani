@@ -724,7 +724,7 @@ class MGMHurry:
         self.monigomani_cli._exec_cmd(
             (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} -c ./user_data/mgm-config.json \
              -c ./user_data/mgm-config-private.json  && \
-             mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json')
+             mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json'                                                                                                         )
         )
 
         self._logger.info(f'🍺 Hyperopt results of epoch # {epoch} are applied.')
@@ -743,7 +743,7 @@ class MGMHurry:
         timerange = self.__get_preset_timerange(timerange)
 
         cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json \
-               -c ./user_data/mgm-config-private.json --timerange $timerange')
+               -c ./user_data/mgm-config-private.json --timerange $timerange'                                                                             )
 
         if enable_protections is True:
             cmd = f'{cmd} --enable-protections'
@@ -840,8 +840,11 @@ class MGMHurry:
                 'Did not write exchange credentials to "mgm-config-private.json" because no data was passed.')
             return False
 
-        with open(self._basedir + '/user_data/mgm-config-private.json', ) as file:
-            data = json.load(file)
+        try:
+            with open(self._basedir + '/user_data/mgm-config-private.json', 'a+') as file:
+                data = json.load(file)
+        except:
+            data = {}
 
         data['exchange'] = {
             'name': cred['exchange'],
