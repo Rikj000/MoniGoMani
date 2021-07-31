@@ -138,7 +138,7 @@ class FreqtradeCli(object):
             self.monigomani_cli.exec_cmd(
                 'git clone -b {0} https://github.com/freqtrade/freqtrade.git {1}'.format(branch, temp_dirname, ),
             )
-            self.monigomani_cli.exec_cmd('cp -rf {0}/* {1}'.format(temp_dirname, target_dir))
+            self.monigomani_cli.exec_cmd('cp -r {0}/* {1}'.format(temp_dirname, target_dir))
             self.monigomani_cli.exec_cmd('deactivate; bash {0}/setup.sh --install'.format(target_dir))
 
     def _get_freqtrade_binary_path(self, basedir: str, install_type: str):
