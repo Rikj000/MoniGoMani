@@ -135,11 +135,9 @@ class FreqtradeCli(object):
             target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
-            self.monigomani_cli.exec_cmd(
-                'git clone -b {0} https://github.com/freqtrade/freqtrade.git {1}'.format(branch, temp_dirname, ),
-            )
-            self.monigomani_cli.exec_cmd('cp -r {0}/* {1}'.format(temp_dirname, target_dir))
-            self.monigomani_cli.exec_cmd('deactivate; bash {0}/setup.sh --install'.format(target_dir))
+            self.monigomani_cli.run_command('git clone -b {0} https://github.com/freqtrade/freqtrade.git {1}'.format(branch, temp_dirname))
+            self.monigomani_cli.run_command('cp -r {0}/* {1}'.format(temp_dirname, target_dir))
+            self.monigomani_cli.run_command('deactivate; bash {0}/setup.sh --install'.format(target_dir))
 
     def _get_freqtrade_binary_path(self, basedir: str, install_type: str):
         """Determine the freqtrade binary path based on install_type.

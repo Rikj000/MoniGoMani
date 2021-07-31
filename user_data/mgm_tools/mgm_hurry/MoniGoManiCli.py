@@ -28,6 +28,10 @@ import yaml
 class MoniGoManiCli(object):
     """Use this module to communicate with the mgm hyperstrategy,."""
 
+    log_output: bool = False
+    output_path: str = None
+    output_file_name: str = None
+
     def __init__(self, basedir, logger):
         """Instantiate a new object of mgm cli.
 
@@ -37,6 +41,10 @@ class MoniGoManiCli(object):
         """
         self.basedir = basedir
         self.logger = logger
+
+        self.log_output = True  # :todo move to mgm logger?
+        self.output_path = '{0}/Some Test Results/'.format(self.basedir)
+        self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
 
     def installation_exists(self) -> bool:
         """Check if the MGM Hyper Strategy installation exists.
@@ -154,40 +162,35 @@ class MoniGoManiCli(object):
 
         return mgm_config_files
 
-    def exec_cmd(self, cmd: str, save_output: bool = False, output_path: str = None, output_file_name: str = None) -> int:
-        """Execute shell command and logs output as debug output.
-
-        Args:
-            cmd (str): The command, sir
-            save_output (bool): Save the output to a '.log' file. Defaults to False
-            output_path (str): Path to the output of the '.log' file. Defaults to 'Some Test Results/MoniGoMani_version_number/'
-            output_file_name (str): Name of the '.log' file. Defaults to 'Results-<Current-DateTime>.log'
-
-        Returns:
-            returncode (int): The returncode of the subprocess
-        """
-        if cmd is None or cmd == '':
-            self.logger.error('🤷 Please pass a command through. Without command no objective, sir!')
-            sys.exit(1)
-
-        return self.run_command(cmd, log_output=save_output)
-
     def run_command(self,
                     command: str,
-                    log_output: bool = False,
+                    log_output: bool = None,
                     output_path: str = None,
                     output_file_name: str = None) -> int:
         """Execute shell command and log output to mgm logfile.
 
         :param command (str): Shell command to execute.
-        :param log_output (bool): Whether or not to log the output to mgm-logfile. Defaults to False.
-        :param output_path (str): The output path where the logfile exists. Defaults to None.
-        :param output_file_name (str): The filename of the logfile to write to. Defaults to None.
-
+        :param log_output (bool, optional): Whether or not to log the output to mgm-logfile. Defaults to False.
+        :param output_path (str, optional): Path to the output of the '.log' file. Defaults to 'Some Test Results/MoniGoMani_version_number/'
+        :param output_file_name (str, optional): Name of the '.log' file. Defaults to 'Results-<Current-DateTime>.log'.
         :return int: return code zero (0) if all went ok. > 0 if there's an issue.
         """
+        if command is None or command == '':
+            self.logger.error(
+                '🤷 Please pass a command through. Without command no objective, sir!'
+            )
+            sys.exit(1)
 
-        if log_output is True:
+        if output_path is None:
+            output_path = self.output_path
+
+        if output_file_name is None:
+            output_file_name = self.output_file_name
+
+        if log_output is not None:
+            self.log_output = log_output
+
+        if self.log_output is True:
             output_file = open(self._get_logfile(output_path=output_path, output_file_name=output_file_name), 'w')
 
         process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
@@ -203,8 +206,8 @@ class MoniGoManiCli(object):
         return rc
 
     def _get_logfile(self,
-                     output_path: str = None,
-                     output_file_name: str = None) -> str:
+                     output_path: str,
+                     output_file_name: str) -> str:
         """Get the full path to log file.
 
         Creates the output path directory if it not exists.
@@ -213,10 +216,9 @@ class MoniGoManiCli(object):
         :param output_path (str): The full path to the output log file. Defaults to None.
         :param output_file_name (str): The filename of the output log file. Defaults to None.
         :return str: full path to log file (including logfile name)
-        """
 
-        if output_path is None:
-            output_path = '{0}/Some Test Results/'.format(self.basedir)
+        :todo integrate in self.logger to avoid duplicate functionality
+        """
 
         if not os.path.isdir(output_path):
             os.mkdir(output_path)
@@ -232,21 +234,26 @@ class MoniGoManiCli(object):
                 '/',
             ), )
 
-        if output_file_name is None:
-            output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(
-                datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
-
-        if not os.path.isdir(output_path):
-            os.mkdir(output_path)
-
         return os.path.join(output_path, output_file_name)
 
     def _write_log_line(self, log_file, line):
+        """Writes clean log line to file.
+
+        :param log_file (file.open()): The log file to write to.
+        :param line (str): The data to log.
+
+        :todo integrate in self.logger to avoid duplicate functionality
+        """
+
         second_splitter = line.find(' - ', line.find(' - ') + 1) + 3
         trimmed_line = line[second_splitter:len(line)]
         if self.filter_line(trimmed_line) is False:
             log_file.write(trimmed_line)
 
+    def exec_cmd(self, cmd: str, save_output: bool = False) -> int:
+        self.logger.deprecated('Calling exec_cmd is deprecated. Please switch to public method run_command()')
+        return self.run_command(cmd, log_output=save_output)
+
     def _exec_cmd(self, cmd: str, save_output: bool = False, output_path: str = None, output_file_name: str = None) -> int:
-        self.logger.deprecated('Calling _exec_cmd is deprecated. Please switch to public method exec_cmd()')
-        return self.exec_cmd(cmd, save_output, output_path, output_file_name)
+        self.logger.deprecated('Calling _exec_cmd is deprecated. Please switch to public method run_command()')
+        return self.run_command(cmd, save_output, output_path, output_file_name)
