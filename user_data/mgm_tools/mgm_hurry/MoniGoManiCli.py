@@ -17,6 +17,7 @@ import json
 import os
 import shutil
 import subprocess  # noqa: S404 (skip security check)
+import shlex
 import sys
 
 import yaml
@@ -169,48 +170,82 @@ class MoniGoManiCli(object):
             self.logger.error('🤷 Please pass a command through. Without command no objective, sir!')
             sys.exit(1)
 
-        return_code = 1
+        return self.run_command(cmd, log_output=save_output)
 
-        if save_output is True:
-            if output_path is None:
-                output_path = '{0}/Some Test Results/'.format(self.basedir)
+    def run_command(self,
+                    command: str,
+                    log_output: bool = False,
+                    output_path: str = None,
+                    output_file_name: str = None) -> int:
+        """Execute shell command and log output to mgm logfile.
 
-            if not os.path.isdir(output_path):
-                os.mkdir(output_path)
+        :param command (str): Shell command to execute.
+        :param log_output (bool): Whether or not to log the output to mgm-logfile. Defaults to False.
+        :param output_path (str): The output path where the logfile exists. Defaults to None.
+        :param output_file_name (str): The filename of the logfile to write to. Defaults to None.
 
-            mgm_config_files = self.load_config_files()
+        :return int: return code zero (0) if all went ok. > 0 if there's an issue.
+        """
 
-            # create path like foo/bar/
-            # and be sure only 1 repeating / is used
-            output_path = os.path.normpath(
-                os.path.join(
-                    output_path,
-                    mgm_config_files['mgm-config-private']['bot_name'],
-                    '/',
-                ),
-            )
+        if log_output is True:
+            output_file = open(self._get_logfile(output_path=output_path, output_file_name=output_file_name), 'w')
 
-            if output_file_name is None:
-                output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
+        process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
+        while True:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            if output:
+                print(output.strip())
+                if log_output is True:
+                    self._write_log_line(output_file, output.strip())
+        rc = process.poll()
+        return rc
 
-            if not os.path.isdir(output_path):
-                os.mkdir(output_path)
+    def _get_logfile(self,
+                     output_path: str = None,
+                     output_file_name: str = None) -> str:
+        """Get the full path to log file.
 
-            output_file = open(output_path + output_file_name, 'w')
+        Creates the output path directory if it not exists.
+        Also creates the output file name if it not exists.
 
-        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT, encoding='utf-8')
+        :param output_path (str): The full path to the output log file. Defaults to None.
+        :param output_file_name (str): The filename of the output log file. Defaults to None.
+        :return str: full path to log file (including logfile name)
+        """
 
-        for line in process.stdout:
-            if save_output is True:
-                second_splitter = line.find(' - ', line.find(' - ') + 1) + 3
-                trimmed_line = line[second_splitter:len(line)]
-                if self.filter_line(trimmed_line) is False:
-                    output_file.write(trimmed_line)
-            sys.stdout.write(line)
-        process.wait()
+        if output_path is None:
+            output_path = '{0}/Some Test Results/'.format(self.basedir)
 
-        return return_code
+        if not os.path.isdir(output_path):
+            os.mkdir(output_path)
+
+        mgm_config_files = self.load_config_files()
+
+        # create path like foo/bar/
+        # and be sure only 1 repeating / is used
+        output_path = os.path.normpath(
+            os.path.join(
+                output_path,
+                mgm_config_files['mgm-config-private']['bot_name'],
+                '/',
+            ), )
+
+        if output_file_name is None:
+            output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(
+                datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
+
+        if not os.path.isdir(output_path):
+            os.mkdir(output_path)
+
+        return os.path.join(output_path, output_file_name)
+
+    def _write_log_line(self, log_file, line):
+        second_splitter = line.find(' - ', line.find(' - ') + 1) + 3
+        trimmed_line = line[second_splitter:len(line)]
+        if self.filter_line(trimmed_line) is False:
+            log_file.write(trimmed_line)
 
     def _exec_cmd(self, cmd: str, save_output: bool = False, output_path: str = None, output_file_name: str = None) -> int:
         self.logger.deprecated('Calling _exec_cmd is deprecated. Please switch to public method exec_cmd()')
