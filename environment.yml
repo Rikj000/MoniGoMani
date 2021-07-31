@@ -1,0 +1,71 @@
+name: freqtrade
+channels:
+  - conda-forge
+# - defaults
+dependencies:
+# 1/4 req main
+    - python>=3.7,<3.9
+    - numpy
+    - pandas
+    - pip
+
+    - aiohttp
+    - SQLAlchemy
+    - python-telegram-bot
+    - arrow
+    - cachetools
+    - requests
+    - urllib3
+    - wrapt
+    - jsonschema
+    - TA-Lib
+    - tabulate
+    - jinja2
+    - blosc
+    - sdnotify
+    - fastapi
+    - uvicorn
+    - pyjwt
+    - colorama
+    - questionary
+    - prompt-toolkit
+
+
+    # ============================
+    # 2/4 req dev
+
+    - coveralls
+    - flake8
+    - mypy
+    - pytest
+    - pytest-asyncio
+    - pytest-cov
+    - pytest-mock
+    - isort
+    - nbconvert
+
+    # ============================
+    # 3/4 req hyperopt
+
+    - scipy
+    - scikit-learn
+    - filelock
+    - scikit-optimize
+    - joblib
+    - progressbar2
+    # ============================
+    # 4/4 req plot
+
+    - plotly
+    - jupyter
+
+    - pip:
+        - pycoingecko
+        - py_find_1st
+        - tables
+        - pytest-random-order
+        - flake8-type-annotations
+        - ccxt
+        - flake8-tidy-imports
+        - -e .
+    # - python-rapidjso

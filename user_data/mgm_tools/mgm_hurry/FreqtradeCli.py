@@ -47,10 +47,10 @@ class FreqtradeCli():
         self._install_type = None
         self.freqtrade_binary = None
 
-        self.monigomani_cli = MoniGoManiCli(self.basedir, self.cli_logger)
-
         self._init_logger(cli_logger)
         self._init_freqtrade()
+
+        self.monigomani_cli = MoniGoManiCli(self.basedir, self.cli_logger)
 
     def _init_logger(self, cli_logger: logger = None) -> bool:
         """Initialize self.cli_logger property.
@@ -59,11 +59,11 @@ class FreqtradeCli():
         :return bool
         """
         if cli_logger is None:
-            return False
+            return None
 
         self.cli_logger = cli_logger
 
-        return True
+        return self.cli_logger
 
     def _init_freqtrade(self) -> bool:
         """Initialize self.freqtrade_binary property.
