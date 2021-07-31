@@ -24,7 +24,7 @@ from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
 
-class FreqtradeCli(object):
+class FreqtradeCli():
     """FreqtradeCli is responsible for all Freqtrade (installation) related tasks."""
 
     basedir: os.strerror
@@ -33,7 +33,7 @@ class FreqtradeCli(object):
     monigomani_cli: MoniGoManiCli
     _install_type: str
 
-    def __init__(self, basedir: str, cli_logger: logger):
+    def __init__(self, basedir: str, cli_logger: logger = None):
         """Initialize the Freqtrade binary.
 
         Args:
@@ -47,23 +47,43 @@ class FreqtradeCli(object):
         self._install_type = None
         self.freqtrade_binary = None
 
+        self.monigomani_cli = MoniGoManiCli(self.basedir, self.cli_logger)
+
+        self._init_logger(cli_logger)
+        self._init_freqtrade()
+
+    def _init_logger(self, cli_logger: logger = None) -> bool:
+        """Initialize self.cli_logger property.
+
+        :param cli_logger (logger, optional): the logger object to use for logging.
+        :return bool
+        """
         if cli_logger is None:
-            return None
+            return False
 
         self.cli_logger = cli_logger
 
-        self.monigomani_cli = MoniGoManiCli(self.basedir, self.cli_logger)
+        return True
 
+    def _init_freqtrade(self) -> bool:
+        """Initialize self.freqtrade_binary property.
+
+        :return bool: True if freqtrade installation
+                      is found and property is set. False otherwise.
+        """
         if os.path.exists('{0}/.env/bin/freqtrade'.format(self.basedir)) is False:
             self.cli_logger.warning('🤷♂️ No Freqtrade installation found.')
-            return None
+            return False
 
         if self.install_type is None:
-            return None
+            return False
 
         self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
 
-        self.cli_logger.debug('👉 Freqtrade binary: `{0}`'.format(self.freqtrade_binary))
+        self.cli_logger.debug('👉 Freqtrade binary: `{0}`'.format(
+            self.freqtrade_binary))
+
+        return True
 
     @property
     def install_type(self) -> str:
@@ -119,10 +139,11 @@ class FreqtradeCli(object):
             self.cli_logger.info('FreqtradeCli::installation_exists() install_type is "source".')
             if os.path.exists('{0}/.env/bin/freqtrade'.format(self.basedir)):
                 return True
-            else:
-                self.cli_logger.error(
-                    'FreqtradeCli::installation_exists() failed. freqtrade binary not found in {0}/.env/bin/freqtrade.'.format(self.basedir),
-                )
+
+            self.cli_logger.error(
+                'FreqtradeCli::installation_exists() failed. freqtrade binary not found in {0}/.env/bin/freqtrade.'
+                .format(self.basedir)
+            )
 
         return False
 
@@ -135,11 +156,15 @@ class FreqtradeCli(object):
             target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
-            self.monigomani_cli.run_command('git clone -b {0} https://github.com/freqtrade/freqtrade.git {1}'.format(branch, temp_dirname))
+            self.monigomani_cli.run_command(
+                'git clone -b {0} https://github.com/freqtrade/freqtrade.git {1}'
+                .format(branch, temp_dirname)
+            )
             self.monigomani_cli.run_command('cp -r {0}/* {1}'.format(temp_dirname, target_dir))
             self.monigomani_cli.run_command('deactivate; bash {0}/setup.sh --install'.format(target_dir))
 
-    def _get_freqtrade_binary_path(self, basedir: str, install_type: str):
+    @staticmethod
+    def _get_freqtrade_binary_path(basedir: str, install_type: str):
         """Determine the freqtrade binary path based on install_type.
 
         Args:
