@@ -141,24 +141,6 @@ $ hurry setup
 ...
 ```
 
-## Development
-
-Some developer notes. Never forget.
-
-### Yapf formatting
-
-```shell
-yapf mgm-hurry --diff
-yapf mgm-hurry > mgm-hurry.diff
-yapf -i mgm-hurry
-```
-
-### Generate pydoc
-
-```shell
-python3 -m pydoc -w ./mgm-hurry
-```
-
 ### Timerange examples
 
 |Trend    |Timerange            |

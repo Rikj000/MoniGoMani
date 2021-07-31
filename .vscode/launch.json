@@ -1,0 +1,24 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "python",
+      "name": "Python: mgm-hurry up",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "mgm-hurry",
+      "args": ["up"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Python: Current file",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    }
+  ]
+}

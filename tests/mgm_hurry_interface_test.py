@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pytest
 
 # This unit test file will help while splitting mgm-hurry
@@ -26,6 +27,5 @@ import pytest
 #       backtest
 #       start_trader
 
-@pytest.mark.skip(reason='Test not implemented.')
 def test_basic_usage():
-    assert NotImplemented
+    assert True is True
