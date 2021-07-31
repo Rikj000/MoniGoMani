@@ -52,7 +52,7 @@ class FreqtradeCli(object):
 
         self.cli_logger = cli_logger
 
-        self.monigomani_cli = MoniGoManiCli(self.basedir, self.logger)
+        self.monigomani_cli = MoniGoManiCli(self.basedir, self.cli_logger)
 
         if os.path.exists('{0}/.env/bin/freqtrade'.format(self.basedir)) is False:
             self.cli_logger.warning('🤷♂️ No Freqtrade installation found.')

@@ -264,7 +264,7 @@ class MGMHurry:
 
             self.monigomani_cli.run_command(f'cp -rf {temp_dirname}/user_data/* {target_dir}/user_data/')
 
-            self.monigomani_cli.create_config_files(target_dir)
+            self.monigomani_config.create_config_files(target_dir)
 
             self._logger.info(
                 '🍺 MoniGoMani has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)'
@@ -293,7 +293,7 @@ class MGMHurry:
             self._logger.error(f'🤷 I could not find any strategy in {strat_dir}. Did you install Freqtrade & MoniGoMani?')
             sys.exit(1)
 
-        self.monigomani_cli.create_config_files(self._basedir)
+        self.monigomani_config.create_config_files(self._basedir)
 
         hyperopts = map(lambda f: os.path.basename(f).replace('.py', ''),
                         glob.glob(f'{self._basedir}/user_data/hyperopts/*.py'))
@@ -318,7 +318,7 @@ class MGMHurry:
         }, {
             'type': 'input',
             'name': 'timerange',
-            'message': 'Please enter the default timerange you want to use',
+            'message': 'Please enter the default timerange you want to use:',
             'default': self.monigomani_config.get('timerange') or '20210501-20210616'
         }, {
             'type': 'list',
@@ -354,12 +354,12 @@ class MGMHurry:
         }, {
             'type': 'input',
             'name': 'ho_quotation',
-            'message': 'Please enter the default quotation you want to use',
+            'message': 'Please enter the default quotation you want to use:',
             'default': self.monigomani_config.get('hyperopt')['quote'] or 'USDT'
         }, {
             'type': 'input',
             'name': 'ho_epochs',
-            'message': 'Please enter the amount of epochs you want to HyperOpt',
+            'message': 'Please enter the amount of epochs you want to HyperOpt:',
             'default': str(self.monigomani_config.get('hyperopt')['epochs']) or '1000',
             'filter': lambda val: int(val)
         }, {
@@ -376,7 +376,7 @@ class MGMHurry:
         }, {
             'type': 'password',
             'name': 'api_key',
-            'message': 'Please enter the exchange API key',
+            'message': 'Please enter the exchange API key: ',
             'when': lambda result: result['proceed_exchange']
         }, {
             'type': 'password',
@@ -390,7 +390,6 @@ class MGMHurry:
         if answers == {}:
             sys.exit(1)
 
-        # FIXME
         if answers.get('install_type') == 'source':
             ft_binary = f'source {self._basedir}/.env/bin/activate; freqtrade'
         else:
@@ -408,6 +407,11 @@ class MGMHurry:
                     'spaces': answers.get('ho_spaces') or 'default',
                     'quote': answers.get('ho_quotation'),
                     'epochs': answers.get('ho_epochs')
+                },
+                'mgm_config_names': {
+                    'mgm-config': 'mgm-config.json',
+                    'mgm-config-private': 'mgm-config-private.json',
+                    'mgm-config-hyperopt': 'mgm-config-hyperopt.json'
                 }
             }
         }
