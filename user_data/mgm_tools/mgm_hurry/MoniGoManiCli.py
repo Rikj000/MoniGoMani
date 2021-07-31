@@ -69,8 +69,8 @@ class MoniGoManiCli(object):
                 'dest': 'mgm-config.json',
             },
             {
-                'src': 'mgm-config.example.json',
-                'dest': 'mgm-config.json',
+                'src': 'mgm-config-private.example.json',
+                'dest': 'mgm-config-private.json',
             },
         ]
 
@@ -84,8 +84,8 @@ class MoniGoManiCli(object):
             dest_file = target_dir + '/user_data/' + example_file['dest']
 
             if os.path.isfile(dest_file):
-                self.logger.warning('⚠️ The target file "{0}" already exists. Would be overwritten.'.format(example_file['dest']))
-                return False
+                self.logger.warning('⚠️ The target file "{0}" already exists. Is cool.'.format(example_file['dest']))
+                continue
 
             shutil.copyfile(src_file, dest_file)
 
