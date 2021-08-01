@@ -11,6 +11,10 @@
       "runtimeExecutable": "python3",
       "program": "mgm-hurry",
       "args": ["up"],
+      "env": {
+        "key": "value"
+      },
+      "envFile": "${workspaceFolder}/.env",
       "console": "integratedTerminal"
     },
     {
