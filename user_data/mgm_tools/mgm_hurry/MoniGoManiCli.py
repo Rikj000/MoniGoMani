@@ -15,6 +15,7 @@
 from datetime import datetime
 import os
 import subprocess  # noqa: S404 (skip security check)
+import fcntl
 import shlex
 import sys
 
@@ -92,17 +93,30 @@ class MoniGoManiCli(object):
         if self.log_output is True:
             output_file = open(self._get_logfile(output_path=output_path, output_file_name=output_file_name), 'w')
 
-        process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
-        while True:
-            output = process.stdout.readline()
-            if output == '' and process.poll() is not None:
-                break
+        process = subprocess.Popen(shlex.split(command),
+                                   shell=True,
+                                   stdout=subprocess.PIPE,
+                                   stdin=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
 
-            print(output.strip())
-            if log_output is True:
-                self._write_log_line(output_file, output.strip())
+        while process.poll() is None:
+            stdout = self.nonBlockRead(process.stdout)
+            if stdout:
+                if self.log_output is True:
+                    self._write_log_line(output_file, stdout)
+                else:
+                    print(stdout)
 
-        return process.poll()
+        return 0
+
+    def nonBlockRead(self, output):
+        fd = output.fileno()
+        fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+        fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+        try:
+            return output.read()
+        except:
+            return ''
 
     def _get_logfile(self,
                      output_path: str,
