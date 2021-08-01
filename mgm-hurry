@@ -269,15 +269,8 @@ class MGMHurry:
         if target_dir is None:
             target_dir = self._basedir
 
-        with tempfile.TemporaryDirectory() as temp_dirname:
-            # FIXME - commands should be run only if preceding command succeeded.
-            self.monigomani_cli.run_command(f'git clone -b {branch} https://github.com/Rikj000/MoniGoMani.git {temp_dirname}')
-            self.monigomani_cli.run_command(f'cp -rf {temp_dirname}/user_data/* {target_dir}/user_data/')
-            self.monigomani_config.create_config_files(target_dir)
+        self.monigomani_cli.download_setup_mgm(branch, target_dir)
 
-            self._logger.info(
-                '🍺 MoniGoMani has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)'
-            )
         return True
 
     def setup(self):
