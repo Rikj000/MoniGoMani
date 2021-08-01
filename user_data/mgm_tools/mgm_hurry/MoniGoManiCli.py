@@ -40,11 +40,6 @@ class MoniGoManiCli(object):
         self.basedir = basedir
         self.logger = MoniGoManiLogger(self.basedir).get_logger()
 
-        # :todo move to mgm logger?
-        # self.log_output = True
-        # self.output_path = '{0}/Some Test Results/'.format(self.basedir)
-        # self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
-
     def installation_exists(self) -> bool:
         """Check if the MGM Hyper Strategy installation exists.
 
@@ -62,11 +57,7 @@ class MoniGoManiCli(object):
         self.logger.debug('👉 MoniGoManiHyperStrategy and configuration found √')
         return True
 
-    def run_command(self,
-                    command: str,
-                    log_output: bool = None,
-                    output_path: str = None,
-                    output_file_name: str = None) -> int:
+    def run_command(self, command: str) -> int:
         """Execute shell command and log output to mgm logfile.
 
         :param command (str): Shell command to execute.
@@ -82,36 +73,30 @@ class MoniGoManiCli(object):
             )
             sys.exit(1)
 
-        if output_path is None:
-            output_path = self.output_path
+        with subprocess.Popen(shlex.split(command),
+                              shell=True,
+                              stdout=subprocess.PIPE,
+                              stdin=subprocess.PIPE,
+                              stderr=subprocess.PIPE) as process:
 
-        if output_file_name is None:
-            output_file_name = self.output_file_name
-
-        if log_output is not None:
-            self.log_output = log_output
-
-        if self.log_output is True:
-            output_file = open(self._get_logfile(output_path=output_path, output_file_name=output_file_name), 'w')
-
-        process = subprocess.Popen(shlex.split(command),
-                                   shell=True,
-                                   stdout=subprocess.PIPE,
-                                   stdin=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
-
-        while process.poll() is None:
-            stdout = self.nonBlockRead(process.stdout)
-            if stdout:
-                self.logger.info(stdout)
+            while process.poll() is None:
+                stdout = self.non_blocking_read(process.stdout)
+                if stdout:
+                    self.logger.info(stdout)
 
         return 0
 
-    def nonBlockRead(self, output):
-        fd = output.fileno()
-        fl = fcntl.fcntl(fd, fcntl.F_GETFL)
-        fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+    def non_blocking_read(self, output):
+        """Read shell stdout in a non-blocking way.
+
+        :param output (stdout)
+        :return output.read (str)
+        """
+        file_descriptor = output.fileno()
+        file_control = fcntl.fcntl(file_descriptor, fcntl.F_GETFL)
+        fcntl.fcntl(file_descriptor, fcntl.F_SETFL,
+                    file_control | os.O_NONBLOCK)
         try:
             return output.read()
-        except:
+        except Exception:
             return ''
