@@ -44,7 +44,7 @@ class MoniGoManiLogger():
         self.output_path = '{0}/Some Test Results/'.format(self.basedir)
         self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
 
-        logging_format = '%(asctime)s = MGM-HURRY = %(levelname)s: %(message)s'
+        logging_format = '%(asctime)s = %(levelname)s: %(message)s'
         logging_file = os.path.join(self.output_path, self.output_file_name)
 
         print_output = False  # FIXME remove, as this is for debugging purposes
@@ -63,33 +63,9 @@ class MoniGoManiLogger():
 
         self.logger = logging
 
-        # if print_output is True:
-        #     self.logger.basicConfig(format=logging_format,
-        #                             encoding='utf-8',
-        #                             level=logging.DEBUG)
-        # else:
-        #     self.logger.basicConfig(filename=logging_file,
-        #                             format=logging_format,
-        #                             encoding='utf-8',
-        #                             level=logging.DEBUG)
-
     def get_logger(self) -> logging:
         """Return the logging object."""
         return self.logger
-
-    # def _write_log_line(self, log_file, line):
-    #     """Writes clean log line to file.
-
-    #     :param log_file (file.open()): The log file to write to.
-    #     :param line (str): The data to log.
-
-    #     :todo integrate in self.logger to avoid duplicate functionality
-    #     """
-
-    # second_splitter = line.find(' - ', line.find(' - ') + 1) + 3
-    # trimmed_line = line[second_splitter:len(line)]
-    # if self.filter_line(trimmed_line) is False:
-    #     log_file.write(trimmed_line)
 
     @staticmethod
     def filter_line(line: str) -> bool:
