@@ -16,10 +16,9 @@
 
 import os
 import json
-import yaml
-import logger
-import shutil
 import sys
+import yaml
+import shutil
 
 # --- ↑ Do not remove these libs ↑ ---------------------------------------------------------------
 
@@ -39,12 +38,10 @@ class MoniGoManiConfig(object):
         self.__bot_name = 'Unnamed-Bot'
 
         # if .hurry file exists
-        if self.valid_config_file_present():
-            # yes: read and load config
-            self.__config = self.__read_config()
-        else:
-            # no: create basic config + file
-            self.__config = self.__create_default_config()
+        if self.valid_config_file_present() is False:
+            self.__create_default_config()
+
+        self.__config = self.__read_config()
 
     def valid_config_file_present(self) -> bool:
         """Check if the .hurry config file exists on disk."""
@@ -67,7 +64,7 @@ class MoniGoManiConfig(object):
 
     @property
     def config(self) -> dict:
-        return self.config
+        return self.__config
 
     @config.setter
     def config(self, data: dict):
@@ -118,7 +115,7 @@ class MoniGoManiConfig(object):
 
     def __create_default_config(self):
         """ Creates default .hurry config file with default values. """
-        self.write(None)
+        self.write()
 
     def create_config_files(self, target_dir: str) -> bool:
         """Copy example files as def files.
@@ -217,9 +214,9 @@ class MoniGoManiConfig(object):
 
             # Load the MoniGoMani config file as an object and parse it as a dictionary
             else:
-                file_object = open(mgm_config_filepath, )
-                json_data = json.load(file_object)
-                mgm_config_files[mgm_config_filename] = json_data
+                with open(mgm_config_filepath, ) as file_object:
+                    json_data = json.load(file_object)
+                    mgm_config_files[mgm_config_filename] = json_data
 
         # Append the previously loaded MGM-Hurry config file
         mgm_config_files['mgm-config-hurry'] = hurry_config
