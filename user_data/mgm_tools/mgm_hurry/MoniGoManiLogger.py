@@ -52,13 +52,13 @@ class MoniGoManiLogger():
         if print_output is True:
             logging.basicConfig(
                 format=logging_format,
-                datefmt="%F %A %T",
+                datefmt='%F %A %T',
                 level=logging.DEBUG)
         else:
             logging.basicConfig(
                 handlers=[logging.FileHandler(filename=logging_file,encoding='utf-8',mode='a+')],
                 format=logging_format,
-                datefmt="%F %A %T",
+                datefmt='%F %A %T',
                 level=logging.DEBUG)
 
         self.logger = logging
