@@ -38,19 +38,13 @@ repos:
         files: ^(tests/|mgm_hurry)* # All files in tests/ and all files matching mgm_hurry*
         types: [file, python]
 
-# yapf mainly for code formatting
-# FIXME needs some tweaking to our likings
-# -   repo: https://github.com/pre-commit/mirrors-yapf
-#     rev: 'v0.31.0'
-#     hooks:
-#     -   id: yapf
-
     # flake8 mainly for style smells
 -   repo: https://gitlab.com/pycqa/flake8
     rev: master
     hooks:
     -   id: flake8
-        exclude: 'freqtrade/'
+        types: [python]
+        files: '.*?(mgm)|(MoniGoMani).*?\.py$'
         args:
         - --select=F,E112,E113,E304,E501,E502,E701,E702,E703,E71,E72,E731,W191,W6
         - --max-line-length=240
@@ -72,4 +66,4 @@ repos:
         language: system
         types: [python]
         files: 'mgm_hurry_.*?_test\.py$'
-        always_run: true
+        verbose: true
