@@ -270,8 +270,8 @@ class MGMHurry:
             target_dir = self._basedir
 
         self.monigomani_cli.download_setup_mgm(branch, target_dir)
-
-        return True
+        self.monigomani_config.create_config_files(self._basedir)
+        self.logger.info('🍺 MoniGoMani has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)')
 
     def setup(self):
         """
@@ -732,7 +732,7 @@ class MGMHurry:
         self.monigomani_cli.run_command(
             (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} -c ./user_data/mgm-config.json \
              -c ./user_data/mgm-config-private.json  && \
-             mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json'                                                                                                                                                                                                                                                                                                                                                                                                                                    )
+             mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             )
         )
 
         self._logger.info(f'🍺 Hyperopt results of epoch # {epoch} are applied.')
@@ -751,7 +751,7 @@ class MGMHurry:
         timerange = self.__get_preset_timerange(timerange)
 
         cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json \
-               -c ./user_data/mgm-config-private.json --timerange $timerange'                                                                                                                                                                                                                                                                                                                    )
+               -c ./user_data/mgm-config-private.json --timerange $timerange'                                                                                                                                                                                                                                                                                                                                                                                                 )
 
         if enable_protections is True:
             cmd = f'{cmd} --enable-protections'

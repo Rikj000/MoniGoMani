@@ -13,9 +13,10 @@
 # \_|  |_/ \___/ |_| |_||_| \____/ \___/ \_|  |_/ \__,_||_| |_||_| \____/|_||_|
 
 import os
-import subprocess  # noqa: S404 (skip security check)
-import fcntl
-import shlex
+from shell_command import shell_call
+from git import Repo
+import tempfile
+from shutil import copytree
 import sys
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
@@ -57,17 +58,38 @@ class MoniGoManiCli(object):
         self.logger.debug('👉 MoniGoManiHyperStrategy and configuration found √')
         return True
 
+    def download_setup_mgm(self, branch: str = 'develop', target_dir: str = None):
+        """
+        Install Freqtrade using a git clone to target_dir.
+
+        Args:
+            branch (str): Checkout a specific branch. Defaults to 'develop'.
+            target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
+        """
+        with tempfile.TemporaryDirectory() as temp_dirname:
+
+            repo = Repo.clone_from("https://github.com/Rikj000/MoniGoMani.git",
+                                   temp_dirname,
+                                   branch=branch)
+
+            if not isinstance(repo, Repo):
+                self.logger.critical("Failed to clone MoniGoMani repo. I quit!")
+                os.sys.exit(1)
+
+            try:
+                copytree(f'cp -rf {temp_dirname}/user_data/',
+                         f'{target_dir}/user_data/')
+            except OSError as e:
+                if e.errno != 17:
+                    self.logger.error(e)
+                else:
+                    self.logger.warning(e)
+
     def run_command(self, command: str) -> int:
         """Execute shell command and log output to mgm logfile.
 
         :param command (str): Shell command to execute.
-        :param log_output (bool, optional): Whether or not to log the output to mgm-logfile. Defaults to False.
-        :param output_path (str, optional): Path to the output of the '.log' file.
-                                            Defaults to 'Some Test Results/MoniGoMani_version_number/'
-        :param output_file_name (str, optional): Name of the '.log' file. Defaults to 'Results-<Current-DateTime>.log'.
         :return int: return code zero (0) if all went ok. > 0 if there's an issue.
-
-        FIXME – implement better return codes
         """
         if command is None or command == '':
             self.logger.error(
@@ -75,32 +97,4 @@ class MoniGoManiCli(object):
             )
             sys.exit(1)
 
-        self.logger.debug(command)
-
-        with subprocess.Popen(shlex.split(command),
-                              shell=True,
-                              stdout=subprocess.PIPE,
-                              stdin=subprocess.PIPE,
-                              stderr=subprocess.PIPE) as process:
-
-            while process.poll() is None:
-                stdout = self.non_blocking_read(process.stdout)
-                if stdout:
-                    self.logger.info(stdout)
-
-        return 0
-
-    def non_blocking_read(self, output):
-        """Read shell stdout in a non-blocking way.
-
-        :param output (stdout)
-        :return output.read (str)
-        """
-        file_descriptor = output.fileno()
-        file_control = fcntl.fcntl(file_descriptor, fcntl.F_GETFL)
-        fcntl.fcntl(file_descriptor, fcntl.F_SETFL,
-                    file_control | os.O_NONBLOCK)
-        try:
-            return output.read()
-        except Exception:
-            return ''
+        return shell_call(command)

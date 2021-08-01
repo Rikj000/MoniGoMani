@@ -17,7 +17,6 @@
 import os
 from git import Repo
 import tempfile
-from shell_command import shell_call
 from shutil import copytree
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
@@ -150,7 +149,7 @@ class FreqtradeCli():
                 os.sys.exit(1)
 
             try:
-                copytree(temp_dirname, target_dir, ignore=ignore_existing)
+                copytree(temp_dirname, target_dir)
             except OSError as e:
                 if e.errno != 17:
                     self.cli_logger.error(e)
@@ -158,7 +157,8 @@ class FreqtradeCli():
                     self.cli_logger.warning(e)
 
             if os.path.isfile("{0}/setup.sh".format(target_dir)):
-                shell_call("bash {0}/setup.sh --install".format(target_dir))
+                self.monigomani_cli.run_command(
+                    "bash {0}/setup.sh --install".format(target_dir))
             else:
                 self.cli_logger.error('Could not run setup.sh for freqtrade because the file does not exist.')
 
@@ -179,8 +179,3 @@ class FreqtradeCli():
             freqtrade_binary = 'source {0}/.env/bin/activate; freqtrade'.format(basedir)
 
         return freqtrade_binary
-
-
-def ignore_existing(path, names):
-    print('Working in %s', path)
-    return []  # nothing will be ignored
