@@ -49,7 +49,7 @@ class MoniGoManiLogger():
         logging_level = logging.DEBUG
         logging_file = os.path.join(self.output_path, self.output_file_name)
 
-        print_output = False
+        print_output = False  # FIXME remove, as this is for debugging purposes
 
         if print_output is True:
             self.logger.basicConfig(format=logging_format,

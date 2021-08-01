@@ -26,6 +26,3 @@ import pytest
 #       hyperopt_apply_epoch
 #       backtest
 #       start_trader
-
-def test_basic_usage():
-    assert True is True
