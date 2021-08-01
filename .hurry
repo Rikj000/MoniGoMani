@@ -1,13 +1,14 @@
 config:
   exchange: binance
-  ft_binary: docker-compose run --rm freqtrade
+  ft_binary: source /Users/denver/Projects/ft_installation/mgm-play/.env/bin/activate;
+    freqtrade
   hyperopt:
-    epochs: 1000
+    epochs: 800
     loss: WinRatioAndProfitRatioLoss
     quote: USDT
     spaces: buy sell
     strategy: MoniGoManiHyperStrategy
-  install_type: docker
+  install_type: source
   mgm_config_names:
     mgm-config: mgm-config.json
     mgm-config-hyperopt: mgm-config-hyperopt.json
