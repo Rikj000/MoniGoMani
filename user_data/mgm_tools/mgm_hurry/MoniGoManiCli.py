@@ -13,13 +13,10 @@
 # \_|  |_/ \___/ |_| |_||_| \____/ \___/ \_|  |_/ \__,_||_| |_||_| \____/|_||_|
 
 from datetime import datetime
-import json
 import os
 import subprocess  # noqa: S404 (skip security check)
 import shlex
 import sys
-
-import yaml
 
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
@@ -72,7 +69,8 @@ class MoniGoManiCli(object):
 
         :param command (str): Shell command to execute.
         :param log_output (bool, optional): Whether or not to log the output to mgm-logfile. Defaults to False.
-        :param output_path (str, optional): Path to the output of the '.log' file. Defaults to 'Some Test Results/MoniGoMani_version_number/'
+        :param output_path (str, optional): Path to the output of the '.log' file.
+                                            Defaults to 'Some Test Results/MoniGoMani_version_number/'
         :param output_file_name (str, optional): Name of the '.log' file. Defaults to 'Results-<Current-DateTime>.log'.
         :return int: return code zero (0) if all went ok. > 0 if there's an issue.
         """
@@ -99,12 +97,12 @@ class MoniGoManiCli(object):
             output = process.stdout.readline()
             if output == '' and process.poll() is not None:
                 break
-            if output:
-                print(output.strip())
-                if log_output is True:
-                    self._write_log_line(output_file, output.strip())
-        rc = process.poll()
-        return rc
+
+            print(output.strip())
+            if log_output is True:
+                self._write_log_line(output_file, output.strip())
+
+        return process.poll()
 
     def _get_logfile(self,
                      output_path: str,
@@ -128,7 +126,7 @@ class MoniGoManiCli(object):
 
         # monigomani_config = MoniGoManiConfig(self.basedir, self.logger)
         # mgm_config_files = monigomani_config.load_config_files()
-        #self.monigomani_config.bot_name
+        # self.monigomani_config.bot_name
 
         bot_name = 'Unnamed Bot'
 
@@ -160,10 +158,51 @@ class MoniGoManiCli(object):
         if self.filter_line(trimmed_line) is False:
             log_file.write(trimmed_line)
 
-    def exec_cmd(self, cmd: str, save_output: bool = False) -> int:
-        self.logger.deprecated('Calling exec_cmd is deprecated. Please switch to public method run_command()')
-        return self.run_command(cmd, log_output=save_output)
+    @staticmethod
+    def filter_line(line: str) -> bool:
+        """
+        Checks if line needs to be filtered out.
 
-    def _exec_cmd(self, cmd: str, save_output: bool = False, output_path: str = None, output_file_name: str = None) -> int:
-        self.logger.deprecated('Calling _exec_cmd is deprecated. Please switch to public method run_command()')
-        return self.run_command(cmd, save_output, output_path, output_file_name)
+        :param line: Line to check if it needs to be filtered out
+        :return bool: True if line needs to be filtered out. False if it's allowed to be printed out
+        """
+
+        ignored_lines = {
+            'INFO - Verbosity set to', 'INFO - Using user-data directory:',
+            'INFO - Using data directory:',
+            'INFO - Parameter -j/--job-workers detected:',
+            'INFO - Parameter --random-state detected:',
+            'INFO - Checking exchange...', 'INFO - Exchange "',
+            'INFO - Using pairlist from configuration.',
+            'INFO - Validating configuration ...',
+            'INFO - Starting freqtrade in', 'INFO - Lock',
+            'INFO - Instance is running with', 'INFO - Using CCXT',
+            'INFO - Applying additional ccxt config:', 'INFO - Using Exchange',
+            'INFO - Using resolved exchange',
+            'INFO - Found no parameter file.',
+            'INFO - Strategy using order_types:',
+            'INFO - Strategy using order_time_in_force:',
+            'INFO - Strategy using stake_currency:',
+            'INFO - Strategy using stake_amount:',
+            'INFO - Strategy using protections:',
+            'INFO - Strategy using unfilledtimeout:',
+            'INFO - Strategy using use_sell_signal:',
+            'INFO - Strategy using sell_profit_only:',
+            'INFO - Strategy using ignore_roi_if_buy_signal:',
+            'INFO - Strategy using sell_profit_offset:',
+            'INFO - Strategy using disable_dataframe_checks:',
+            'INFO - Using resolved pairlist StaticPairList from',
+            'INFO - Using resolved hyperoptloss', 'INFO - Removing `',
+            'INFO - Using indicator startup period:',
+            'INFO - Note: NumExpr detected', 'INFO - NumExpr defaulting to',
+            'INFO - Dataload complete. Calculating indicators', 'INFO - Found',
+            'INFO - Number of parallel jobs set as:',
+            'INFO - Effective number of parallel workers used:'
+        }
+
+        matches = '\n'.join(ignored_line for ignored_line in ignored_lines
+                            if ignored_line.lower() in line.lower())
+        if len(matches) > 0:
+            return True
+
+        return False
