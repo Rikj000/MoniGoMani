@@ -66,12 +66,16 @@ class MoniGoManiCli(object):
                                             Defaults to 'Some Test Results/MoniGoMani_version_number/'
         :param output_file_name (str, optional): Name of the '.log' file. Defaults to 'Results-<Current-DateTime>.log'.
         :return int: return code zero (0) if all went ok. > 0 if there's an issue.
+
+        FIXME – implement better return codes
         """
         if command is None or command == '':
             self.logger.error(
                 '🤷 Please pass a command through. Without command no objective, sir!'
             )
             sys.exit(1)
+
+        self.logger.debug(command)
 
         with subprocess.Popen(shlex.split(command),
                               shell=True,

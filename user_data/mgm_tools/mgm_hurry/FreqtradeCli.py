@@ -70,8 +70,7 @@ class FreqtradeCli():
     def install_type(self) -> str:
         """Return property install_type.
 
-        Returns:
-            str: the install type. either source, docker or None.
+        :return str: the install type. either source, docker or None.
         """
         return self._install_type
 
@@ -83,8 +82,7 @@ class FreqtradeCli():
     def logger(self) -> MoniGoManiLogger:
         """Access the internal logger.
 
-        Returns:
-            logger: Current internal logger.
+        :return logger: Current internal logger.
         """
         return self.cli_logger
 
@@ -139,6 +137,7 @@ class FreqtradeCli():
             target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
+            # FIXME - commands should be run only if preceding command succeeded.
             self.monigomani_cli.run_command(
                 'git clone -b {0} https://github.com/freqtrade/freqtrade.git {1}'
                 .format(branch, temp_dirname)
