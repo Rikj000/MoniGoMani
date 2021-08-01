@@ -4,7 +4,7 @@ default_language_version:
     python: python3.8
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: master
     hooks:
     -   id: trailing-whitespace
         types: [file, python]
@@ -47,12 +47,25 @@ repos:
 
     # flake8 mainly for style smells
 -   repo: https://gitlab.com/pycqa/flake8
-    rev: '3.9.2'
+    rev: master
     hooks:
     -   id: flake8
+        exclude: 'freqtrade/'
+        args:
+        - --select=F,E112,E113,E304,E501,E502,E701,E702,E703,E71,E72,E731,W191,W6
+        - --max-line-length=240
+        - --statistics
 
 -   repo: local
     hooks:
+    -   id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        exclude: 'freqtrade/'
+        args:
+        - --disable=C,R,W0613,W0511,W0212,W0201,W0311,W0106,W0603,W0621,W0703,E1136
     -   id: pytest
         name: pytest
         entry: /usr/local/bin/pytest
