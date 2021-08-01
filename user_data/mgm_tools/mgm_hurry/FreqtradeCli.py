@@ -17,9 +17,8 @@
 import os
 import tempfile
 
-import logger
-
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
+from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
@@ -29,41 +28,23 @@ class FreqtradeCli():
 
     basedir: os.strerror
     freqtrade_binary: str
-    cli_logger: logger
+    cli_logger: MoniGoManiLogger
     monigomani_cli: MoniGoManiCli
     _install_type: str
 
-    def __init__(self, basedir: str, cli_logger: logger = None):
+    def __init__(self, basedir: str):
         """Initialize the Freqtrade binary.
 
-        Args:
-            basedir (str): The basedir to be used as our root directory.
-            cli_logger (logger): The mgmlogger object to be used to log.
-
-        Returns:
-            None if no freqtrade installation is found.
+        :param basedir (str): The basedir to be used as our root directory.
         """
         self.basedir = basedir
         self._install_type = 'docker'
         self.freqtrade_binary = None
 
-        self._init_logger(cli_logger)
+        self.cli_logger = MoniGoManiLogger(basedir).get_logger()
         self._init_freqtrade()
 
-        self.monigomani_cli = MoniGoManiCli(self.basedir, self.cli_logger)
-
-    def _init_logger(self, cli_logger: logger = None) -> bool:
-        """Initialize self.cli_logger property.
-
-        :param cli_logger (logger, optional): the logger object to use for logging.
-        :return bool
-        """
-        if cli_logger is None:
-            return None
-
-        self.cli_logger = cli_logger
-
-        return self.cli_logger
+        self.monigomani_cli = MoniGoManiCli(self.basedir)
 
     def _init_freqtrade(self) -> bool:
         """Initialize self.freqtrade_binary property.
@@ -99,7 +80,7 @@ class FreqtradeCli():
         if p_install_type in {'source', 'docker'}:
             self._install_type = p_install_type
 
-    def logger(self) -> logger:
+    def logger(self) -> MoniGoManiLogger:
         """Access the internal logger.
 
         Returns:

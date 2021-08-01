@@ -17,8 +17,10 @@
 import os
 import json
 import sys
-import yaml
 import shutil
+import yaml
+
+from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
 # --- ↑ Do not remove these libs ↑ ---------------------------------------------------------------
 
@@ -29,11 +31,11 @@ class MoniGoManiConfig(object):
     __config: dict
     __basedir: str
     __full_path_config: str
-    __mgm_logger: logger
+    __mgm_logger: MoniGoManiLogger
 
-    def __init__(self, basedir: str, cli_logger: logger):
+    def __init__(self, basedir: str):
         self.__basedir = basedir
-        self.__mgm_logger = cli_logger
+        self.__mgm_logger = MoniGoManiLogger(basedir).get_logger()
         self.__full_path_config = '{0}/.hurry'.format(self.__basedir)
         self.__bot_name = 'Unnamed-Bot'
 
@@ -45,8 +47,8 @@ class MoniGoManiConfig(object):
 
     def valid_config_file_present(self) -> bool:
         """Check if the .hurry config file exists on disk."""
-        if not os.path.isfile(self.__full_path_config) is True:
-            self.__mgm_logger.warning(
+        if os.path.isfile(self.__full_path_config) is not True:
+            self.logger.warning(
                 'Could not find .hurry config file at {0}'.format(self.__full_path_config)
             )
             return False
@@ -77,7 +79,7 @@ class MoniGoManiConfig(object):
         return self.__config[element]
 
     @property
-    def logger(self) -> logger:
+    def logger(self) -> MoniGoManiLogger:
         return self.__mgm_logger
 
     @property

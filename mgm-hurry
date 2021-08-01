@@ -28,7 +28,7 @@ from art import tprint
 from user_data.mgm_tools.mgm_hurry.FreqtradeCli import FreqtradeCli
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
-from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import get_logger
+from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
@@ -40,20 +40,21 @@ class MGMHurry:
     """
 
     monigomani_config: MoniGoManiConfig
+    _logger: MoniGoManiLogger
     freqtrade_cli: str
 
     def __init__(self):
         tprint('mgm-hurry')
 
         self._basedir = os.getcwd()
-        self._logger = get_logger()
-        self.monigomani_config = MoniGoManiConfig(self._basedir, self._logger)
+        self._logger = MoniGoManiLogger(self._basedir).get_logger()
+        self.monigomani_config = MoniGoManiConfig(self._basedir)
 
         if self.monigomani_config.reload() is False:
             self._logger.error('⚠️ Failed to load or create ".hurry" config file.')
 
-        self.freqtrade_cli = FreqtradeCli(self._basedir, self._logger)
-        self.monigomani_cli = MoniGoManiCli(self._basedir, self._logger)
+        self.freqtrade_cli = FreqtradeCli(self._basedir)
+        self.monigomani_cli = MoniGoManiCli(self._basedir)
 
     def up(self):  # pylint: disable=invalid-name
         """
@@ -861,11 +862,12 @@ class MGMHurry:
 
         self._logger.info('🍺 Exchange settings written to "mgm-config-private.json"')
 
-    def _save_telegram_credentials(self, opt: dict):
+    def _save_telegram_credentials(self, opt: dict) -> bool:
         """
         Save Telegram bot settings
 
         :param opt: (dict): list containing values for [enable_telegram,telegram_token,telegram_chat_id]
+        :return bool: True if json data is written. False otherwise.
         """
         if len(opt) == 0:
             self._logger.warning(
@@ -885,6 +887,8 @@ class MGMHurry:
             json.dump(data, outfile, indent=4)
 
         self._logger.info('🍺 Telegram bot settings written to "mgm-config-private.json"')
+
+        return True
 
     def __get_preset_timerange(self, timerange: str) -> str:
         """
