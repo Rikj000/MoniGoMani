@@ -40,26 +40,38 @@ class MoniGoManiLogger():
         :param print_output (bool, optional): Print output or log fo file. Defaults to True (so, printing output)
         """
         self.basedir = basedir
-        self.logger = logging
 
         self.output_path = '{0}/Some Test Results/'.format(self.basedir)
         self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
 
         logging_format = '%(asctime)s = MGM-HURRY = %(levelname)s: %(message)s'
-        logging_level = logging.DEBUG
         logging_file = os.path.join(self.output_path, self.output_file_name)
 
         print_output = False  # FIXME remove, as this is for debugging purposes
 
         if print_output is True:
-            self.logger.basicConfig(format=logging_format,
-                                    encoding='utf-8',
-                                    level=logging_level)
+            logging.basicConfig(
+                format=logging_format,
+                datefmt="%F %A %T",
+                level=logging.DEBUG)
         else:
-            self.logger.basicConfig(filename=logging_file,
-                                    format=logging_format,
-                                    encoding='utf-8',
-                                    level=logging_level)
+            logging.basicConfig(
+                handlers=[logging.FileHandler(filename=logging_file,encoding='utf-8',mode='a+')],
+                format=logging_format,
+                datefmt="%F %A %T",
+                level=logging.DEBUG)
+
+        self.logger = logging
+
+        # if print_output is True:
+        #     self.logger.basicConfig(format=logging_format,
+        #                             encoding='utf-8',
+        #                             level=logging.DEBUG)
+        # else:
+        #     self.logger.basicConfig(filename=logging_file,
+        #                             format=logging_format,
+        #                             encoding='utf-8',
+        #                             level=logging.DEBUG)
 
     def get_logger(self) -> logging:
         """Return the logging object."""
