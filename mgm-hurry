@@ -16,11 +16,15 @@ import json
 import os
 import sys
 import tempfile
+import logging
+
 from datetime import datetime
 from string import Template
 
 import fire
 import yaml
+
+
 from InquirerPy import prompt
 from InquirerPy.validator import NumberValidator
 from art import tprint
@@ -40,7 +44,7 @@ class MGMHurry:
     """
 
     monigomani_config: MoniGoManiConfig
-    _logger: MoniGoManiLogger
+    _logger: logging
     freqtrade_cli: str
 
     def __init__(self):
@@ -733,7 +737,7 @@ class MGMHurry:
         self.monigomani_cli.run_command(
             (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} -c ./user_data/mgm-config.json \
              -c ./user_data/mgm-config-private.json  && \
-             mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json'                                                                                                                                                                                                                  )
+             mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json'                                                                                                                                                                                                                                                                                                                           )
         )
 
         self._logger.info(f'🍺 Hyperopt results of epoch # {epoch} are applied.')
@@ -752,7 +756,7 @@ class MGMHurry:
         timerange = self.__get_preset_timerange(timerange)
 
         cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json \
-               -c ./user_data/mgm-config-private.json --timerange $timerange'                                                                                                                                                          )
+               -c ./user_data/mgm-config-private.json --timerange $timerange'                                                                                                                                                                                                                                       )
 
         if enable_protections is True:
             cmd = f'{cmd} --enable-protections'
