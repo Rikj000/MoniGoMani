@@ -271,7 +271,7 @@ class MGMHurry:
 
         self.monigomani_cli.download_setup_mgm(branch, target_dir)
         self.monigomani_config.create_config_files(self._basedir)
-        self.logger.info('🍺 MoniGoMani has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)')
+        self._logger.info('🍺 MoniGoMani has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)')
 
     def setup(self):
         """
