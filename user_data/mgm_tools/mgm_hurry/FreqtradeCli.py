@@ -15,7 +15,10 @@
 #                        |_|
 
 import os
+from git import Repo
 import tempfile
+from shell_command import shell_call
+from shutil import copytree
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
@@ -137,13 +140,27 @@ class FreqtradeCli():
             target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
-            # FIXME - commands should be run only if preceding command succeeded.
-            self.monigomani_cli.run_command(
-                'git clone -b {0} https://github.com/freqtrade/freqtrade.git {1}'
-                .format(branch, temp_dirname)
-            )
-            self.monigomani_cli.run_command('cp -r {0}/* {1}'.format(temp_dirname, target_dir))
-            self.monigomani_cli.run_command('bash {0}/setup.sh --install'.format(target_dir))
+
+            repo = Repo.clone_from("https://github.com/freqtrade/freqtrade",
+                                   temp_dirname,
+                                   branch=branch)
+
+            if not isinstance(repo, Repo):
+                self.cli_logger.critical("Failed to clone freqtrade repo. I quit!")
+                os.sys.exit(1)
+
+            try:
+                copytree(temp_dirname, target_dir, ignore=ignore_existing)
+            except OSError as e:
+                if e.errno != 17:
+                    self.cli_logger.error(e)
+                else:
+                    self.cli_logger.warning(e)
+
+            if os.path.isfile("{0}/setup.sh".format(target_dir)):
+                shell_call("bash {0}/setup.sh --install".format(target_dir))
+            else:
+                self.cli_logger.error('Could not run setup.sh for freqtrade because the file does not exist.')
 
     @staticmethod
     def _get_freqtrade_binary_path(basedir: str, install_type: str):
@@ -162,3 +179,8 @@ class FreqtradeCli():
             freqtrade_binary = 'source {0}/.env/bin/activate; freqtrade'.format(basedir)
 
         return freqtrade_binary
+
+
+def ignore_existing(path, names):
+    print('Working in %s', path)
+    return []  # nothing will be ignored
