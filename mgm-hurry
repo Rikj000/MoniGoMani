@@ -195,7 +195,8 @@ class MGMHurry:
             result = prompt(questions)
 
             if result.get('proceed') is False:
-                sys.exit(1)
+                self._logger.info('Skipping overwriting Freqtrade installation.')
+                return False
 
         if target_dir is None:
             target_dir = self._basedir
@@ -204,6 +205,8 @@ class MGMHurry:
 
         self._logger.info('🍺 Freqtrade has been installed. '
                           'You can now proceed to install MoniGoMani. (Hint: mgm-hurry install_mgm)')
+
+        return True
 
     def install_mgm(self, branch: str = 'development', target_dir: str = None):
         """
@@ -230,7 +233,9 @@ class MGMHurry:
             result = prompt(questions)
 
             if result.get('proceed') is False:
-                sys.exit(1)
+                self._logger.info(
+                    'Skipping overwriting MoniGoMani installation.')
+                return False
 
             questions = [
                 {
@@ -262,14 +267,13 @@ class MGMHurry:
 
         with tempfile.TemporaryDirectory() as temp_dirname:
             self.monigomani_cli.run_command(f'git clone -b {branch} https://github.com/Rikj000/MoniGoMani.git {temp_dirname}')
-
             self.monigomani_cli.run_command(f'cp -rf {temp_dirname}/user_data/* {target_dir}/user_data/')
-
             self.monigomani_config.create_config_files(target_dir)
 
             self._logger.info(
                 '🍺 MoniGoMani has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)'
             )
+        return True
 
     def setup(self):
         """
@@ -729,7 +733,7 @@ class MGMHurry:
         self.monigomani_cli.run_command(
             (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} -c ./user_data/mgm-config.json \
              -c ./user_data/mgm-config-private.json  && \
-             mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json'                                                                                                         )
+             mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json'                                                                                                                                                                                                                  )
         )
 
         self._logger.info(f'🍺 Hyperopt results of epoch # {epoch} are applied.')
@@ -748,7 +752,7 @@ class MGMHurry:
         timerange = self.__get_preset_timerange(timerange)
 
         cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json \
-               -c ./user_data/mgm-config-private.json --timerange $timerange'                                                                             )
+               -c ./user_data/mgm-config-private.json --timerange $timerange'                                                                                                                                                          )
 
         if enable_protections is True:
             cmd = f'{cmd} --enable-protections'
