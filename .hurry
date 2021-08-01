@@ -1,5 +1,6 @@
 config:
   exchange: binance
+  ft_binary: docker-compose run --rm freqtrade
   hyperopt:
     epochs: 1000
     loss: WinRatioAndProfitRatioLoss
@@ -7,4 +8,8 @@ config:
     spaces: buy sell
     strategy: MoniGoManiHyperStrategy
   install_type: docker
+  mgm_config_names:
+    mgm-config: mgm-config.json
+    mgm-config-hyperopt: mgm-config-hyperopt.json
+    mgm-config-private: mgm-config-private.json
   timerange: 20210501-20210616

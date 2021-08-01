@@ -44,7 +44,7 @@ class FreqtradeCli():
             None if no freqtrade installation is found.
         """
         self.basedir = basedir
-        self._install_type = None
+        self._install_type = 'docker'
         self.freqtrade_binary = None
 
         self._init_logger(cli_logger)
@@ -124,16 +124,18 @@ class FreqtradeCli():
             self.cli_logger.warning('FreqtradeCli::installation_exists() failed. No install_type.')
             return False
 
-        if self.freqtrade_binary is None:
-            self.cli_logger.warning('FreqtradeCli::installation_exists() failed. No freqtrade_binary.')
-            return False
-
         # Well if install_type is docker, we return True because we don't verify if docker is installed
         if self.install_type == 'docker':
             self.cli_logger.info(
                 'FreqtradeCli::installation_exists() succeeded because install_type is set to docker.',
             )
             return True
+
+        if self.freqtrade_binary is None:
+            self.cli_logger.warning(
+                'FreqtradeCli::installation_exists() failed. No freqtrade_binary.'
+            )
+            return False
 
         if self.install_type == 'source':
             self.cli_logger.info('FreqtradeCli::installation_exists() install_type is "source".')
@@ -161,7 +163,7 @@ class FreqtradeCli():
                 .format(branch, temp_dirname)
             )
             self.monigomani_cli.run_command('cp -r {0}/* {1}'.format(temp_dirname, target_dir))
-            self.monigomani_cli.run_command('deactivate; bash {0}/setup.sh --install'.format(target_dir))
+            self.monigomani_cli.run_command('bash {0}/setup.sh --install'.format(target_dir))
 
     @staticmethod
     def _get_freqtrade_binary_path(basedir: str, install_type: str):
