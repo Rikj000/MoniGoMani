@@ -17,12 +17,15 @@
 import os
 from git import Repo, RemoteProgress
 import tempfile
-from shutil import copytree
+from yaspin import yaspin
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
+
+YASPIN_INSTANCE: yaspin = None  # Global for a reason
+GIT_URL_FREQTRADE: str = 'https://github.com/freqtrade/freqtrade'
 
 
 class FreqtradeCli():
@@ -139,27 +142,28 @@ class FreqtradeCli():
             target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
+            with yaspin(text='Clone freqtrade repository', color='cyan') as YASPIN_INSTANCE:
+                repo = Repo.clone_from(GIT_URL_FREQTRADE, temp_dirname, branch=branch)
 
-            repo = Repo.clone_from('https://github.com/freqtrade/freqtrade',
-                                   temp_dirname,
-                                   branch=branch,
-                                   progress=MyProgressPrinter())
+                YASPIN_INSTANCE.write('Cloning freqtrade repository completed...')
 
-            if not isinstance(repo, Repo):
-                self.cli_logger.critical('Failed to clone freqtrade repo. I quit!')
-                os.sys.exit(1)
+                if not isinstance(repo, Repo):
+                    self.cli_logger.critical('Failed to clone freqtrade repo. I quit!')
+                    os.sys.exit(1)
 
-            try:
-                copytree(temp_dirname, target_dir)
-            except Exception:
-                pass
+                YASPIN_INSTANCE.ok("✔")
+
+            with yaspin(text='Copy freqtrade installation', color='cyan') as YASPIN_INSTANCE:
+                self.monigomani_cli.run_command('cp -R {0}/* {1}'.format(temp_dirname, target_dir))
+                YASPIN_INSTANCE.ok("✔")
 
             if os.path.isfile('{0}/setup.sh'.format(target_dir)):
-                self.monigomani_cli.run_command(
-                    'bash {0}/setup.sh --install'.format(target_dir))
+                self.monigomani_cli.run_command('bash {0}/setup.sh --install'.format(target_dir))
+                YASPIN_INSTANCE.ok("✔ Freqtrade installation completed")
             else:
-                self.cli_logger.error('Could not run setup.sh for freqtrade because the file does not exist.')
-
+                self.cli_logger.error(
+                    'Could not run {0}/setup.sh for freqtrade because the file does not exist.'
+                    .format(target_dir))
 
     @staticmethod
     def _get_freqtrade_binary_path(basedir: str, install_type: str):
@@ -181,7 +185,9 @@ class FreqtradeCli():
 
 class MyProgressPrinter(RemoteProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):
-        #print(op_code, cur_count, max_count, cur_count / (max_count or 100.0), message or "NO MESSAGE")
+        """
+        print(op_code, cur_count, max_count, cur_count / (max_count or 100.0), message or 'NO MESSAGE')
+        """
         if message:
             percentage = round((cur_count / max_count) * 100)
-            print('{0}% {1}'.format(percentage, message))
+            YASPIN_INSTANCE.write('{0}% {1}'.format(percentage, message))

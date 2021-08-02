@@ -11,6 +11,7 @@ plotly = "==5.1.0"
 PyYAML = "==5.4.1"
 gitpython = "*"
 shell-command = "*"
+yaspin = "==2.0.0"
 
 [dev-packages]
 flake8 = "==3.9.2"

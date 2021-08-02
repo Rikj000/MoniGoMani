@@ -7,3 +7,4 @@ logger==1.4
 plotly==5.1.0
 PyYAML==5.4.1
 shell-command==0.1
+yaspin==2.0.0
