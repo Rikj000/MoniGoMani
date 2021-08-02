@@ -44,7 +44,8 @@ repos:
     hooks:
     -   id: flake8
         types: [python]
-        files: '.*?(mgm)|(MoniGoMani).*?(?<!Strategy)\.py$' # all python files containing mgm or monigomani, except Strategy
+        files: '.*?(mgm)|(MoniGoMani).*?\.py$' # all python files containing mgm or monigomani
+        exclude: ^.*?(PairList|Strategy)\.py$ # except *PairList.py and *Strategy.py
         args:
         - --select=F,E112,E113,E304,E501,E502,E701,E702,E703,E71,E72,E731,W191,W6
         - --max-line-length=240
@@ -57,7 +58,8 @@ repos:
         entry: pylint
         language: system
         types: [python]
-        files: '.*?(mgm)|(MoniGoMani).*?(?<!Strategy)\.py$' # all python files containing mgm or monigomani, except Strategy
+        files: '.*?(mgm)|(MoniGoMani).*?\.py$' # all python files containing mgm or monigomani
+        exclude: ^.*?(PairList|Strategy)\.py$ # except *PairList.py and *Strategy.py
         args:
         - --disable=C,R,W0613,W0511,W0212,W0201,W0311,W0106,W0603,W0621,W0703,E1136
     -   id: pytest
