@@ -10,11 +10,11 @@ on:
 
 jobs:
   analyze:
-    name: Analyze
+    name: Unit testing
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9]
+        python-version: [3.8, 3.9]
 
     steps:
       - uses: actions/checkout@v2

@@ -10,11 +10,11 @@ on:
 
 jobs:
   analyze:
-    name: Analyze
+    name: Style Guide Checks
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9]
+        python-version: [3.8]
 
     steps:
       - uses: actions/checkout@v2
@@ -25,12 +25,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest pytest-cov
-          if [ -f requirements-mgm.txt ]; then pip install -r requirements-mgm.txt; fi
-          if [ -f requirements-mgm-dev.txt ]; then pip install -r requirements-mgm-dev.txt; fi
+          python -m pip install --user pipenv
+          pipenv install --dev
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          flake8 mgm-hurry --count --select=E9,F63,F7,F82 --show-source --statistics
+          pipenv run flake8 mgm-hurry --config tox.ini --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 mgm-hurry --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          pipenv run flake8 mgm-hurry --config tox.ini --count --exit-zero --statistics

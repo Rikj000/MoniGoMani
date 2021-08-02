@@ -56,7 +56,7 @@ class MoniGoManiLogger():
                 level=logging.DEBUG)
         else:
             logging.basicConfig(
-                handlers=[logging.FileHandler(filename=logging_file,encoding='utf-8',mode='a+')],
+                handlers=[logging.FileHandler(filename=logging_file, encoding='utf-8', mode='a+')],
                 format=logging_format,
                 datefmt='%F %A %T',
                 level=logging.DEBUG)

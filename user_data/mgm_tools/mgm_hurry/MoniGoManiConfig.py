@@ -37,7 +37,6 @@ class MoniGoManiConfig(object):
         self.__basedir = basedir
         self.__mgm_logger = MoniGoManiLogger(basedir).get_logger()
         self.__full_path_config = '{0}/.hurry'.format(self.__basedir)
-        self.__bot_name = 'Unnamed-Bot'
 
         # if .hurry file exists
         if self.valid_config_file_present() is False:

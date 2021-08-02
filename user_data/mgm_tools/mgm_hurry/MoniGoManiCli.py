@@ -78,7 +78,7 @@ class MoniGoManiCli(object):
 
             try:
                 copytree(f'cp -rf {temp_dirname}/user_data/', f'{target_dir}/user_data/')
-            except:
+            except Exception:
                 pass
 
     def run_command(self, command: str) -> int:
