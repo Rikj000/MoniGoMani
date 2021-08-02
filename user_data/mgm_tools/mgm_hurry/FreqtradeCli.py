@@ -151,15 +151,15 @@ class FreqtradeCli():
                     self.cli_logger.critical('Failed to clone freqtrade repo. I quit!')
                     os.sys.exit(1)
 
-                YASPIN_INSTANCE.ok("✔")
+                YASPIN_INSTANCE.ok('✔')
 
             with yaspin(text='Copy freqtrade installation', color='cyan') as YASPIN_INSTANCE:
                 self.monigomani_cli.run_command('cp -R {0}/* {1}'.format(temp_dirname, target_dir))
-                YASPIN_INSTANCE.ok("✔")
+                YASPIN_INSTANCE.ok('✔')
 
             if os.path.isfile('{0}/setup.sh'.format(target_dir)):
                 self.monigomani_cli.run_command('bash {0}/setup.sh --install'.format(target_dir))
-                YASPIN_INSTANCE.ok("✔ Freqtrade installation completed")
+                YASPIN_INSTANCE.ok('✔ Freqtrade installation completed')
             else:
                 self.cli_logger.error(
                     'Could not run {0}/setup.sh for freqtrade because the file does not exist.'

@@ -1,16 +1,23 @@
-# Contributing to MGM
+# Contributing to MoniGoMani Hyper Strategy
 
 👍🎉 First off, thanks for taking the time to contribute! 🎉👍
 
+
 The following is a set of guidelines for contributing to the MoniGoMani Hyper Strategy and its modules, which are hosted in the [Rikj000 repository](https://github.com/Rikj000/MoniGoMani) on GitHub. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
-![mgm tests](https://github.com/topscoder/MoniGoMani/workflows/pytest-unit-tests/badge.svg)
-![mgm style guide](https://github.com/topscoder/MoniGoMani/actions/workflows/flake8.yml/badge.svg)
-## Development
+---
 
-Some developer notes. Never forget.
+Table of Contents
+-
 
-### Installation instructions
+* [Installation instructions](#installation-instructions)
+* [Using pre-commit hooks](#using-pre-commit-hooks)
+* [GitHub Action Workflows](#github-action-workflows)
+
+---
+
+Installation instructions
+------
 
 We use `pipenv` for virtual environments. We install all packages and its dependencies using `pipenv`. Also we run all commands using `pipenv` to ensure we've the right dependencies and do not interfere with other environments or dependencies.
 
@@ -27,12 +34,10 @@ pipenv install --dev
 pipenv run pytest -c pytest.ini tests/
 ```
 
-### Pre-commit hooks
+Using pre-commit hooks
+------
 
-Using a pre-commit hook, most of the checks, linting and testing is executed
-automatically. It is configured in `.pre-commit-config.yaml` and used by the [pre-commit.com](https://pre-commit.com/) tool.
-
-See [pre-commit.com](https://pre-commit.com) for installation and usage instructions.
+This project uses a set of git commit hooks to help us developers to write – *and more important, maintain* – code mostly in the same style & fashion. These hooks are configured in `.pre-commit-config.yaml` and can be run on your machine by using an automated [pre-commit](https://pre-commit.com) integration.
 
 **Run pre-commit only at changed files:**
 
@@ -43,15 +48,7 @@ pipenv run pre-commit run --from-ref HEAD^^^ --to-ref HEAD
 **Run pre-commit at all files:**
 
 ```bash
-pipenv run pre-commit run --all
-```
-
-### Git Commit Hook(s)
-
-This project uses a set of git commit hooks to help us developers to write – *and more important, commit & push* – code mostly in the same fashion. These hooks are configured in `.pre-commit-config.yaml` and can be run on your machine by using an automated [pre-commit](https://pre-commit.com) integration.
-
-```shell
-$ pre-commit run --all
+$ pipenv run pre-commit run --all
 
 ~/Projects/MoniGoMani(master) » pre-commit run --all
 
@@ -77,8 +74,14 @@ Check for case conflicts.................................................Passed
 
 See https://pre-commit.com for usage and installation instructions.
 
-### GitHub Action Workflows
+GitHub Action Workflows
+------
 
 GitHub Actions are used in order to run automated unit-tests against our code. These actions are triggered at push-events into main, development and feature/* branches. These actions are also triggered at every Pull Request so we all can see very quickly if something happened.
 
 It can be quite handy to run a GitHub action workflow on your local machine. Well, [act](https://github.com/nektos/act) is your friend.
+
+---
+
+![mgm tests](https://github.com/topscoder/MoniGoMani/workflows/pytest-unit-tests/badge.svg)
+![mgm style guide](https://github.com/topscoder/MoniGoMani/actions/workflows/flake8.yml/badge.svg)

@@ -99,4 +99,4 @@ class MoniGoManiCli(object):
 
         cmd = shlex.split(command)
 
-        return shell_call(" ".join(cmd), shell=True)
+        return shell_call(' '.join(cmd), shell=True)
