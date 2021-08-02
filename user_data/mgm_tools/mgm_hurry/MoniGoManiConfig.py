@@ -240,7 +240,7 @@ class MoniGoManiConfig(object):
             return None
 
         # Load the MoniGoMani config file as an object and parse it as a dictionary
-        with open(mgm_config_filepath, ) as file_object:
+        with open(filename, ) as file_object:
             json_data = json.load(file_object)
             return json_data
 
