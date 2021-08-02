@@ -26,7 +26,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install --user pipenv
-          pipenv shell --anyway
           pipenv install --dev
       - name: Test with pytest
         run: |
