@@ -15,14 +15,12 @@ import glob
 import json
 import os
 import sys
-import tempfile
 import logging
 
 from datetime import datetime
 from string import Template
 
 import fire
-import yaml
 
 from InquirerPy import prompt
 from InquirerPy.validator import NumberValidator
@@ -733,9 +731,9 @@ class MGMHurry:
 
         # View & Apply HyperOpt Results from a trusted <epoch of choice>:
         self.monigomani_cli.run_command(
-            (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} -c ./user_data/mgm-config.json \
-             -c ./user_data/mgm-config-private.json  && \
-             mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             )
+            (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} -c ./user_data/mgm-config.json '
+             '-c ./user_data/mgm-config-private.json  && '
+             'mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json')
         )
 
         self._logger.info(f'🍺 Hyperopt results of epoch # {epoch} are applied.')
@@ -753,8 +751,8 @@ class MGMHurry:
 
         timerange = self.__get_preset_timerange(timerange)
 
-        cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json \
-               -c ./user_data/mgm-config-private.json --timerange $timerange'                                                                                                                                                                                                                                                                                                                                                                                                 )
+        cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json '
+               '-c ./user_data/mgm-config-private.json --timerange $timerange')
 
         if enable_protections is True:
             cmd = f'{cmd} --enable-protections'
@@ -854,7 +852,7 @@ class MGMHurry:
         try:
             with open(self._basedir + '/user_data/mgm-config-private.json', 'a+') as file:
                 data = json.load(file)
-        except:
+        except Exception:
             data = {}
 
         data['exchange'] = {
