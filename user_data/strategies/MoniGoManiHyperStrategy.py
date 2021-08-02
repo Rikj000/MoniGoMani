@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # pragma pylint: disable=missing-docstring, invalid-name, pointless-string-statement
 # flake8: noqa: F401
 # -*- coding: utf-8 -*-

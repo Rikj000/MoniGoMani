@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # --- ↓ Do not remove these libs ↓ -------------------------------------------------------------------------------------
 import json
 import logging
