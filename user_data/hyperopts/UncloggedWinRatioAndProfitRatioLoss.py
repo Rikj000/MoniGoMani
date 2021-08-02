@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'PoCk3T'
 __copyright__ = 'The GNU General Public License v3.0'
 

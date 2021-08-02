@@ -1,4 +1,5 @@
 #!/user/bin/python3
+# -*- coding: utf-8 -*-
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 import argparse
 import json

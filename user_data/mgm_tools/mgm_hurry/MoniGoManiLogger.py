@@ -47,7 +47,7 @@ class MoniGoManiLogger():
         logging_format = '%(asctime)s = %(levelname)s: %(message)s'
         logging_file = os.path.join(self.output_path, self.output_file_name)
 
-        print_output = False  # FIXME remove, as this is for debugging purposes
+        print_output = True  # FIXME remove, as this is for debugging purposes
 
         if print_output is True:
             logging.basicConfig(

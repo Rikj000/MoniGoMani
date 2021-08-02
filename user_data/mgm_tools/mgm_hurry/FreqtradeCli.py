@@ -15,7 +15,7 @@
 #                        |_|
 
 import os
-from git import Repo
+from git import Repo, RemoteProgress
 import tempfile
 from shutil import copytree
 
@@ -142,7 +142,8 @@ class FreqtradeCli():
 
             repo = Repo.clone_from('https://github.com/freqtrade/freqtrade',
                                    temp_dirname,
-                                   branch=branch)
+                                   branch=branch,
+                                   progress=MyProgressPrinter())
 
             if not isinstance(repo, Repo):
                 self.cli_logger.critical('Failed to clone freqtrade repo. I quit!')
@@ -150,17 +151,15 @@ class FreqtradeCli():
 
             try:
                 copytree(temp_dirname, target_dir)
-            except OSError as e:
-                if e.errno != 17:
-                    self.cli_logger.error(e)
-                else:
-                    self.cli_logger.warning(e)
+            except:
+                pass
 
             if os.path.isfile('{0}/setup.sh'.format(target_dir)):
                 self.monigomani_cli.run_command(
                     'bash {0}/setup.sh --install'.format(target_dir))
             else:
                 self.cli_logger.error('Could not run setup.sh for freqtrade because the file does not exist.')
+
 
     @staticmethod
     def _get_freqtrade_binary_path(basedir: str, install_type: str):
@@ -179,3 +178,10 @@ class FreqtradeCli():
             freqtrade_binary = 'source {0}/.env/bin/activate; freqtrade'.format(basedir)
 
         return freqtrade_binary
+
+class MyProgressPrinter(RemoteProgress):
+    def update(self, op_code, cur_count, max_count=None, message=''):
+        #print(op_code, cur_count, max_count, cur_count / (max_count or 100.0), message or "NO MESSAGE")
+        if message:
+            percentage = round((cur_count / max_count) * 100)
+            print('{0}% {1}'.format(percentage, message))

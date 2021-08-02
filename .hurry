@@ -1,6 +1,6 @@
 config:
   exchange: binance
-  ft_binary: source /Users/denver/Projects/ft_installation/mgm-play/.env/bin/activate;
+  ft_binary: source /Users/denver/Projects/ft_installation/mgm/.env/bin/activate;
     freqtrade
   hyperopt:
     epochs: 800

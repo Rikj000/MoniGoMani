@@ -77,13 +77,9 @@ class MoniGoManiCli(object):
                 os.sys.exit(1)
 
             try:
-                copytree(f'cp -rf {temp_dirname}/user_data/',
-                         f'{target_dir}/user_data/')
-            except OSError as e:
-                if e.errno != 17:
-                    self.logger.error(e)
-                else:
-                    self.logger.warning(e)
+                copytree(f'cp -rf {temp_dirname}/user_data/', f'{target_dir}/user_data/')
+            except:
+                pass
 
     def run_command(self, command: str) -> int:
         """Execute shell command and log output to mgm logfile.
@@ -97,4 +93,4 @@ class MoniGoManiCli(object):
             )
             sys.exit(1)
 
-        return shell_call(command)
+        return shell_call(command, shell=True)
