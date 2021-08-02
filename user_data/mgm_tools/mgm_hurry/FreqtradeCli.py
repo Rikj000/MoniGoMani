@@ -151,7 +151,7 @@ class FreqtradeCli():
 
             try:
                 copytree(temp_dirname, target_dir)
-            except:
+            except Exception:
                 pass
 
             if os.path.isfile('{0}/setup.sh'.format(target_dir)):
