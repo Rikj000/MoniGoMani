@@ -89,7 +89,6 @@ class MoniGoManiConfig(object):
     def reload(self) -> bool:
         """Reload config file and store as property in current object.
 
-
         :return bool: True if config is read, False if config could not be read.
         """
         if self.valid_config_file_present() is not True:
@@ -122,11 +121,8 @@ class MoniGoManiConfig(object):
     def create_config_files(self, target_dir: str) -> bool:
         """Copy example files as def files.
 
-        Args:
-            target_dir (str): The target dir where the "mgm-config.example.json" exists.
-
-        Returns:
-            success (bool): True if files are created, false if something failed.
+        :param target_dir (str): The target dir where the "mgm-config.example.json" exists.
+        :return success (bool): True if files are created, false if something failed.
         """
         example_files = [
             {
@@ -164,16 +160,12 @@ class MoniGoManiConfig(object):
             - mgm-config
             - mgm-config-private
             - mgm-config-hyperopt
-            - mgm-config-hurry
 
-        :return dict: Dictionary containing all the MoniGoMani Configuration files
+        :return dict: Dictionary containing all the MoniGoMani Configuration files in format
+                      { mgm-config: dict, mgm-config-private: dict, mgm-config-hyperopt: dict }
         """
 
-        # Load the MGM-Hurry Config file if it exists
-        with open('{0}/.hurry'.format(self.basedir), 'r') as yml_file:
-            config = yaml.full_load(yml_file) or {}
-
-        hurry_config = config['config'] if 'config' in config else None
+        hurry_config = self.read_hurry_config()
 
         if hurry_config is None:
             self.logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
@@ -188,42 +180,71 @@ class MoniGoManiConfig(object):
 
         for mgm_config_filename in mgm_config_files:
             # Check if the MoniGoMani config filename exist in the ".hurry" config file
-            if 'mgm_config_names' not in hurry_config or mgm_config_filename not in hurry_config[
-                    'mgm_config_names']:
-                self.logger.error(
+            if 'mgm_config_names' not in hurry_config or mgm_config_filename not in hurry_config['mgm_config_names']:
+                self.logger.critical(
                     '🤷 No "{0}" filename found in the ".hurry" config file. Please run: mgm-hurry setup'
                     .format(mgm_config_filename))
                 sys.exit(1)
 
-            mgm_config_filepath = '{0}/user_data/{1}'.format(
-                self.basedir,
-                hurry_config['mgm_config_names'][mgm_config_filename],
-            )
+            # Full path to current config file
+            mgm_config_filepath = self._get_full_path_for_config_name(hurry_config, mgm_config_filename)
 
-            # Check if the mandatory MoniGoMani config files exist
-            if os.path.isfile(mgm_config_filepath) is False:
-                if mgm_config_filename in ['mgm-config', 'mgm-config-private']:
-                    self.logger.error(
-                        '🤷 No "{0}" file found in the "user_data" directory. Please run: mgm-hurry setup'
-                        .format(mgm_config_filename))
-                    sys.exit(1)
-
-            elif (os.path.isfile(mgm_config_filepath) is
-                  False) and (mgm_config_filename == 'mgm-config-hyperopt'):
-                self.logger.info(
-                    'No "{0}" file found in the "user_data" directory.'.format(
-                        mgm_config_filename))
-
-            # Load the MoniGoMani config file as an object and parse it as a dictionary
-            else:
-                with open(mgm_config_filepath, ) as file_object:
-                    json_data = json.load(file_object)
-                    mgm_config_files[mgm_config_filename] = json_data
-
-        # Append the previously loaded MGM-Hurry config file
-        mgm_config_files['mgm-config-hurry'] = hurry_config
+            # Read config file contents
+            mgm_config_files[mgm_config_filename] = self.load_config_file(mgm_config_filepath)
 
         return mgm_config_files
+
+    def read_hurry_config(self) -> dict:
+        """Read .hurry configuration dotfile and return its yaml contents as dict.
+
+        :return dictionary containing the config section of .hurry file. None if failed.
+        """
+        with open('{0}/.hurry'.format(self.basedir), 'r') as yml_file:
+            config = yaml.full_load(yml_file) or {}
+
+        hurry_config = config['config'] if 'config' in config else None
+
+        return hurry_config
+
+    def _get_full_path_for_config_name(self, hurry_config: dict, cfg_name: str) -> str:
+        """Parses the full path to given config file based on settings in .hurry.
+
+        :param hurry_config (dict): The dictionary containing the hurry dotfile yaml config.
+        :return abs_path: The absolute path to the asked config file.
+        """
+        # Full path to current config file
+        mgm_config_filepath = '{0}/user_data/{1}'.format(
+            self.basedir,
+            hurry_config['mgm_config_names'][cfg_name],
+        )
+
+        return mgm_config_filepath
+
+    def get_config_filename(self, cfg_key: str) -> str:
+        """Transforms given cfg_key into the corresponding config filename.
+
+        :param cfg_key (str): the config name (key) to parse.
+        :return abs_path (str): the absolute path to the asked config file.
+        """
+        hurry_config = self.read_hurry_config()
+        return self._get_full_path_for_config_name(hurry_config, cfg_key)
+
+    def load_config_file(self, filename: str):
+        """Read json-file contents and return its data.
+
+        :param filename (str): The absolute path + filename to the json config file.
+        :return content: The json content of the file. json.load() return. None if failed.
+        """
+        if os.path.isfile(filename) is False:
+            self.logger.error('🤷 No "{0}" file found in the "user_data" directory. Please run: mgm-hurry setup'.format(filename))
+            return None
+
+        # Load the MoniGoMani config file as an object and parse it as a dictionary
+        with open(mgm_config_filepath, ) as file_object:
+            json_data = json.load(file_object)
+            return json_data
+
+        return None
 
     def write(self, config: dict = None):
         """ Write config-array to ".hurry" config file and load its contents into config-property.

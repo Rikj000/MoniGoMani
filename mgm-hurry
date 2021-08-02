@@ -24,7 +24,6 @@ from string import Template
 import fire
 import yaml
 
-
 from InquirerPy import prompt
 from InquirerPy.validator import NumberValidator
 from art import tprint
@@ -241,13 +240,17 @@ class MGMHurry:
                     'Skipping overwriting MoniGoMani installation.')
                 return False
 
+            # Check if the private config file already exists.
+            cfg_filename = self.monigomani_config.get_config_filename('mgm-config-private')
+
             questions = [
                 {
                     'type': 'confirm',
                     'message': 'Should I print your "mgm-config-private.json" contents '
                                'so you can copy it over to new installation?',
                     'name': 'print',
-                    'default': False
+                    'default': False,
+                    'when': lambda result: os.path.isfile(cfg_filename)
                 },
                 {
                     'type': 'confirm',
@@ -917,52 +920,6 @@ class MGMHurry:
         self._logger.info(f'☀️ Timerange string parsed from "{tr_input}" to "{tr_output}"')
 
         return timerange
-
-    def __read_config(self):
-        """
-        Reads config values out of ".hurry" config file.
-
-        :return config (dict) Dictionary containing all config key/value pairs. Or returns None.
-        """
-        with open('.hurry', 'r') as yml_file:
-            config = yaml.full_load(yml_file) or {}
-
-        if 'config' in config:
-            return config['config']
-
-        # Something happened on the way to heaven. Let's fix it to create a default ".hurry" config file
-        self.__write_config()
-        return None
-
-    def __write_config(self, config: dict = None):
-        """
-        Write config-array to ".hurry" config file.
-        Writes the passed config dictionary or if nothing passed, it will write default values.
-
-        :param config: (dict, Optional) The config values to store. Defaults to None.
-        """
-        if config is None:
-            config = {
-                'config': {
-                    'install_type': 'docker',
-                    'timerange': '20210501-20210616',
-                    'exchange': 'binance',
-                    'hyperopt': {
-                        'strategy': 'MoniGoManiHyperStrategy',
-                        'loss': 'WinRatioAndProfitRatioLoss',
-                        'spaces': 'buy sell',
-                        'quote': 'USDT',
-                        'epochs': 1000
-                    }
-                }
-            }
-
-        with open('.hurry', 'w+') as file:
-            yaml.dump(config, file)
-
-        self.monigomani_config.reload()
-
-        self._logger.info('🍺 Configuration data written to ".hurry" file')
 
 
 if __name__ == '__main__':
