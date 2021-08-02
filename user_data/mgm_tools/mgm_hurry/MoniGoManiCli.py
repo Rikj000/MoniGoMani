@@ -16,12 +16,16 @@ import os
 from shell_command import shell_call
 from git import Repo
 import tempfile
+
+import shlex
 from shutil import copytree
 import sys
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
+
+GIT_URL_MONIGOMANI: str = 'https://github.com/Rikj000/MoniGoMani.git'
 
 
 class MoniGoManiCli(object):
@@ -68,7 +72,7 @@ class MoniGoManiCli(object):
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
 
-            repo = Repo.clone_from('https://github.com/Rikj000/MoniGoMani.git',
+            repo = Repo.clone_from(GIT_URL_MONIGOMANI,
                                    temp_dirname,
                                    branch=branch)
 
@@ -93,4 +97,6 @@ class MoniGoManiCli(object):
             )
             sys.exit(1)
 
-        return shell_call(command, shell=True)
+        cmd = shlex.split(command)
+
+        return shell_call(" ".join(cmd), shell=True)
