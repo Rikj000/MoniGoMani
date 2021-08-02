@@ -140,12 +140,12 @@ class FreqtradeCli():
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
 
-            repo = Repo.clone_from("https://github.com/freqtrade/freqtrade",
+            repo = Repo.clone_from('https://github.com/freqtrade/freqtrade',
                                    temp_dirname,
                                    branch=branch)
 
             if not isinstance(repo, Repo):
-                self.cli_logger.critical("Failed to clone freqtrade repo. I quit!")
+                self.cli_logger.critical('Failed to clone freqtrade repo. I quit!')
                 os.sys.exit(1)
 
             try:
@@ -156,9 +156,9 @@ class FreqtradeCli():
                 else:
                     self.cli_logger.warning(e)
 
-            if os.path.isfile("{0}/setup.sh".format(target_dir)):
+            if os.path.isfile('{0}/setup.sh'.format(target_dir)):
                 self.monigomani_cli.run_command(
-                    "bash {0}/setup.sh --install".format(target_dir))
+                    'bash {0}/setup.sh --install'.format(target_dir))
             else:
                 self.cli_logger.error('Could not run setup.sh for freqtrade because the file does not exist.')
 

@@ -68,12 +68,12 @@ class MoniGoManiCli(object):
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
 
-            repo = Repo.clone_from("https://github.com/Rikj000/MoniGoMani.git",
+            repo = Repo.clone_from('https://github.com/Rikj000/MoniGoMani.git',
                                    temp_dirname,
                                    branch=branch)
 
             if not isinstance(repo, Repo):
-                self.logger.critical("Failed to clone MoniGoMani repo. I quit!")
+                self.logger.critical('Failed to clone MoniGoMani repo. I quit!')
                 os.sys.exit(1)
 
             try:
