@@ -9,8 +9,8 @@ inquirerpy = "==0.2.0"
 logger = "==1.4"
 plotly = "==5.1.0"
 PyYAML = "==5.4.1"
-shell_command = "==0.1"
 gitpython = "*"
+shell-command = "*"
 
 [dev-packages]
 flake8 = "==3.9.2"
