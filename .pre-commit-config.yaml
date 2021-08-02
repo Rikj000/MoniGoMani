@@ -4,7 +4,7 @@ default_language_version:
     python: python3.8
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: master
+    rev: 38b88246ccc552bffaaf54259d064beeee434539  # frozen: v4.0.1
     hooks:
     -   id: trailing-whitespace
         types: [file, python]
@@ -40,11 +40,11 @@ repos:
 
     # flake8 mainly for style smells
 -   repo: https://gitlab.com/pycqa/flake8
-    rev: master
+    rev: dcd740bc0ebaf2b3d43e59a0060d157c97de13f3  # frozen: 3.9.2
     hooks:
     -   id: flake8
         types: [python]
-        files: '.*?(mgm)|(MoniGoMani).*?\.py$'
+        files: '.*?(mgm)|(MoniGoMani).*?(?<!Strategy)\.py$' # all python files containing mgm or monigomani, except Strategy
         args:
         - --select=F,E112,E113,E304,E501,E502,E701,E702,E703,E71,E72,E731,W191,W6
         - --max-line-length=240
@@ -57,7 +57,7 @@ repos:
         entry: pylint
         language: system
         types: [python]
-        files: '.*?(mgm)|(MoniGoMani).*?\.py$'
+        files: '.*?(mgm)|(MoniGoMani).*?(?<!Strategy)\.py$' # all python files containing mgm or monigomani, except Strategy
         args:
         - --disable=C,R,W0613,W0511,W0212,W0201,W0311,W0106,W0603,W0621,W0703,E1136
     -   id: pytest
