@@ -10,8 +10,10 @@ logger = "==1.4"
 plotly = "==5.1.0"
 PyYAML = "==5.4.1"
 shell_command = "==0.1"
+gitpython = "*"
+
+[dev-packages]
 flake8 = "==3.9.2"
 pre-commit = "==2.10.0"
 pylint = "==2.6.0"
 pytest = "==6.2.4"
-gitpython = "*"
