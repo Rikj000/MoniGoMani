@@ -44,25 +44,6 @@ class MoniGoManiConfig(object):
 
         self.__config = self.__read_config()
 
-    def valid_config_file_present(self) -> bool:
-        """Check if the .hurry config file exists on disk."""
-        if os.path.isfile(self.__full_path_config) is not True:
-            self.logger.warning(
-                'Could not find .hurry config file at {0}'.format(self.__full_path_config)
-            )
-            return False
-
-        with open(self.__full_path_config, 'r') as yml_file:
-            config = yaml.full_load(yml_file) or {}
-
-        # Check if all required config keys
-        # are present in config file
-        for key in ['exchange', 'install_type', 'timerange']:
-            if not config['config'][key]:
-                return False
-
-        return True
-
     @property
     def config(self) -> dict:
         return self.__config
@@ -98,24 +79,24 @@ class MoniGoManiConfig(object):
 
         return True
 
-    def __read_config(self) -> dict:
-        """Reads config values out of ".hurry" config file.
+    def valid_config_file_present(self) -> bool:
+        """Check if the .hurry config file exists on disk."""
+        if os.path.isfile(self.__full_path_config) is not True:
+            self.logger.warning(
+                'Could not find .hurry config file at {0}'.format(
+                    self.__full_path_config))
+            return False
 
-        :return config (dict) Dictionary containing all config key/value pairs. Or returns None.
-        """
         with open(self.__full_path_config, 'r') as yml_file:
             config = yaml.full_load(yml_file) or {}
 
-        if 'config' in config:
-            return config['config']
+        # Check if all required config keys
+        # are present in config file
+        for key in ['exchange', 'install_type', 'timerange']:
+            if not config['config'][key]:
+                return False
 
-        # Something happened on the way to heaven.
-
-        return None
-
-    def __create_default_config(self):
-        """ Creates default .hurry config file with default values. """
-        self.write()
+        return True
 
     def create_config_files(self, target_dir: str) -> bool:
         """Copy example files as def files.
@@ -196,6 +177,8 @@ class MoniGoManiConfig(object):
     def read_hurry_config(self) -> dict:
         """Read .hurry configuration dotfile and return its yaml contents as dict.
 
+        TODO: move to module MoniGoManiHurry.py as this is more .hurry specific
+
         :return dictionary containing the config section of .hurry file. None if failed.
         """
         with open('{0}/.hurry'.format(self.basedir), 'r') as yml_file:
@@ -205,22 +188,10 @@ class MoniGoManiConfig(object):
 
         return hurry_config
 
-    def _get_full_path_for_config_name(self, hurry_config: dict, cfg_name: str) -> str:
-        """Parses the full path to given config file based on settings in .hurry.
-
-        :param hurry_config (dict): The dictionary containing the hurry dotfile yaml config.
-        :return abs_path: The absolute path to the asked config file.
-        """
-        # Full path to current config file
-        mgm_config_filepath = '{0}/user_data/{1}'.format(
-            self.basedir,
-            hurry_config['mgm_config_names'][cfg_name],
-        )
-
-        return mgm_config_filepath
-
     def get_config_filename(self, cfg_key: str) -> str:
         """Transforms given cfg_key into the corresponding config filename.
+
+        TODO: move along with read_hurry_config to hurry config module.
 
         :param cfg_key (str): the config name (key) to parse.
         :return abs_path (str): the absolute path to the asked config file.
@@ -228,11 +199,11 @@ class MoniGoManiConfig(object):
         hurry_config = self.read_hurry_config()
         return self._get_full_path_for_config_name(hurry_config, cfg_key)
 
-    def load_config_file(self, filename: str):
+    def load_config_file(self, filename: str) -> dict:
         """Read json-file contents and return its data.
 
         :param filename (str): The absolute path + filename to the json config file.
-        :return content: The json content of the file. json.load() return. None if failed.
+        :return dict: The json content of the file. json.load() return. None if failed.
         """
         if os.path.isfile(filename) is False:
             self.logger.error('🤷 No "{0}" file found in the "user_data" directory. Please run: mgm-hurry setup'.format(filename))
@@ -242,8 +213,6 @@ class MoniGoManiConfig(object):
         with open(filename, ) as file_object:
             json_data = json.load(file_object)
             return json_data
-
-        return None
 
     def write(self, config: dict = None):
         """ Write config-array to ".hurry" config file and load its contents into config-property.
@@ -280,3 +249,39 @@ class MoniGoManiConfig(object):
         self.reload()
 
         self.logger.info('🍺 Configuration data written to ".hurry" file')
+
+    def _get_full_path_for_config_name(self, hurry_config: dict,
+                                       cfg_name: str) -> str:
+        """Parses the full path to given config file based on settings in .hurry.
+
+        TODO: Move along with read_hurry_config to module MoniGoManiHurry.py
+
+        :param hurry_config (dict): The dictionary containing the hurry dotfile yaml config.
+        :return abs_path: The absolute path to the asked config file.
+        """
+        # Full path to current config file
+        mgm_config_filepath = '{0}/user_data/{1}'.format(
+            self.basedir,
+            hurry_config['mgm_config_names'][cfg_name],
+        )
+
+        return mgm_config_filepath
+
+    def __read_config(self) -> dict:
+        """Reads config values out of ".hurry" config file.
+
+        :return config (dict) Dictionary containing all config key/value pairs. Or returns None.
+        """
+        with open(self.__full_path_config, 'r') as yml_file:
+            config = yaml.full_load(yml_file) or {}
+
+        if 'config' in config:
+            return config['config']
+
+        # Something happened on the way to heaven.
+
+        return None
+
+    def __create_default_config(self):
+        """ Creates default .hurry config file with default values. """
+        self.write()

@@ -15,9 +15,11 @@
 #                        |_|
 
 import os
-from git import Repo, RemoteProgress
+from git import Repo
 import tempfile
 from yaspin import yaspin
+import json
+import subprocess
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
@@ -94,15 +96,7 @@ class FreqtradeCli():
     def installation_exists(self) -> bool:
         """Return true if all is setup correctly.
 
-        Returns:
-            bool: True if install_type is docker or freqtrade is found. False otherwise.
-
-                source:
-                    And after all the freqtrade binary is found
-                    in the .env subdirectory.
-                docker:
-                    Does not check for physical existence of Docker.
-                    But returns True.
+        :return bool: True if install_type is docker or freqtrade is found. False otherwise.
         """
         if self.install_type is None:
             self.cli_logger.warning('FreqtradeCli::installation_exists() failed. No install_type.')
@@ -137,9 +131,9 @@ class FreqtradeCli():
         """
         Install Freqtrade using a git clone to target_dir.
 
-        Args:
-            branch (str): Checkout a specific branch. Defaults to 'develop'.
-            target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
+        :param branch (str): Checkout a specific branch. Defaults to 'develop'.
+        :param target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
+        :return None
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
             with yaspin(text='Clone freqtrade repository', color='cyan') as YASPIN_INSTANCE:
@@ -165,16 +159,39 @@ class FreqtradeCli():
                     'Could not run {0}/setup.sh for freqtrade because the file does not exist.'
                     .format(target_dir))
 
+    def download_static_pairlist(self, stake_currency: str, exchange: str) -> dict:
+        """Use freqtrade test-pairlist command to download and test valid pair whitelist.
+
+        :param stake_currency (str): The stake currency to find the list of. Eg. BTC
+        :param exchange (str): The exchange to read the data from. Eg. Binance
+        :return json_whitelist (dict): The whitelist as a dictionary.
+        """
+        with tempfile.NamedTemporaryFile() as temp_file:
+            self.monigomani_cli.run_command(
+                ('source ./.env/bin/activate; '
+                 'freqtrade test-pairlist -c {0}/user_data/mgm_tools/{1}-Retrieve-Top-Volume-StaticPairList.json '
+                 '--quote {2} --print-json > {3}'
+                 .format(self.basedir, exchange.title(), stake_currency, temp_file.name))
+            )
+
+            # Read last line from temp_file, which is the json list containing pairlists
+            try:
+                last_line = subprocess.check_output(['tail', '-1', temp_file.name])
+                pair_whitelist = json.loads(last_line)
+            except json.JSONDecodeError as e:
+                self.cli_logger.critical('Unfortunately we could generate the static pairlist.')
+                self.cli_logger.debug(e)
+                return False
+
+            return pair_whitelist
+
     @staticmethod
     def _get_freqtrade_binary_path(basedir: str, install_type: str):
         """Determine the freqtrade binary path based on install_type.
 
-        Args:
-            basedir (str): basedir is used in case of source installation
-            install_type (str): Either docker or source.
-
-        Returns:
-            str: command to run freqtrade. defaults to docker.
+        :param basedir (str): basedir is used in case of source installation
+        :param install_type (str): Either docker or source.
+        :return str: command to run freqtrade. defaults to docker.
         """
         freqtrade_binary = 'docker-compose run --rm freqtrade'
 
@@ -182,12 +199,3 @@ class FreqtradeCli():
             freqtrade_binary = 'source {0}/.env/bin/activate; freqtrade'.format(basedir)
 
         return freqtrade_binary
-
-class MyProgressPrinter(RemoteProgress):
-    def update(self, op_code, cur_count, max_count=None, message=''):
-        """
-        print(op_code, cur_count, max_count, cur_count / (max_count or 100.0), message or 'NO MESSAGE')
-        """
-        if message:
-            percentage = round((cur_count / max_count) * 100)
-            YASPIN_INSTANCE.write('{0}% {1}'.format(percentage, message))

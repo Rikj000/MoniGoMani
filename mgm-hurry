@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # -* vim: syntax=python -*-
 # pylint: disable=W0108
+
 #                                       _
 #                                      | |
 #  _ __ ___    __ _  _ __ ___   ______ | |__   _   _  _ __  _ __  _   _
@@ -12,6 +13,9 @@
 #             |___/                                               |___/
 #
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
+
+"""mgm-hurry is a CLI Tool for setting up and managing a Freqtrade instance containing the MoniGoMani Framework & Strategy"""
+
 import glob
 import json
 import os
@@ -551,44 +555,28 @@ class MGMHurry:
             self._logger.error('🤷 Whaaaa.. No Freqtrade installation found. Beats me...')
             sys.exit(1)
 
-        target_file = '$basedir/user_data/mgm_pair_lists/$exchange-$hyperopt_quote-Top-Volume-StaticPairList.json'
-        target_file = Template(target_file).substitute(
-            basedir=self._basedir,
-            exchange=self.monigomani_config.config['exchange'].title(),
-            hyperopt_quote=self.monigomani_config.config['hyperopt']['quote'])
+        # Download and generate a static pairlist
+        quote = self.monigomani_config.config['hyperopt']['quote']
+        exchange = self.monigomani_config.config['exchange'].title()
+        static_pairlist = self.freqtrade_cli.download_static_pairlist(quote, exchange)
 
-        cmd_str = '$ft_binary test-pairlist -c ./user_data/mgm_tools/$exchange-Retrieve-Top-Volume-StaticPairList.json \
-            --quote $hyperopt_quote --print-json | tail -n 1 | jq ".| $exchange_placeholder" > $target_file'
+        # Save new static pairlist to his own pairlist json file
+        with open('{0}/user_data/mgm_pair_lists/{1}-{2}-Top-Volume-StaticPairList.json', 'w+') as pairlist_file:
+            json.dump(static_pairlist, pairlist_file, indent=4)
 
-        cmd_str = Template(cmd_str).substitute(
-            ft_binary=self.monigomani_config.config['ft_binary'],
-            exchange=self.monigomani_config.config['exchange'].title(),
-            hyperopt_quote=self.monigomani_config.config['hyperopt']['quote'],
-            exchange_placeholder='{exchange: {pair_whitelist: .}}',
-            target_file=target_file)
+        self._logger.info('🍺 Saving pairlist to "mgm-config.json"...')
 
-        self.monigomani_cli.run_command(cmd_str)
-
-        self._logger.info('🍺 Writing pairlist to "mgm-config.json"...')
-
-        # Copy static pairlist to mgm-config.json as pair whitelist
-        with open(f'{self._basedir}/user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json', ) \
-                as static_pairlist:
-            mgm_config_json = json.load(static_pairlist)
-
-        with open(f'{self._basedir}/user_data/mgm-config.json', ) as mgm_config:
-            mgm_config_data = json.load(mgm_config)
-
-        mgm_config_data['exchange']['pair_whitelist'] = mgm_config_json['exchange']['pair_whitelist']
-
-        with open(f'{self._basedir}/user_data/mgm-config.json', 'w') as target_f:
-            json.dump(mgm_config_data, target_f, indent=4)
-
-        # self._logger.error('🤷 Something happened on the way to heaven 🌟🤦')
+        # Overwrite the new static pairlist to the exchange config in mgm-config[exchange][pair_whitelist]
+        mgm_config_file = self.monigomani_config.get_config_filename('mgm-config')
+        with open('{0}/user_data/{1}'.format(self._basedir, mgm_config_file),
+                  'w+') as mgm_config:
+            mgm_config_object = json.load(mgm_config)
+            mgm_config_object['exchange']['pair_whitelist'] = static_pairlist
+            json.dump(mgm_config_object, mgm_config, indent=4)
 
     def hyperopt(self, timerange: str = None, strategy: str = None, spaces: str = None, enable_protections: bool = True,
                  random_state: int = None, apply_best_results: bool = True, clean_start: bool = False,
-                 save_output: bool = True, output_path: str = None, output_file_name: str = None):
+                 output_file_name: str = None):
         """
         HyperOpt Magic. Runs HyperOpt process to find out the most positive settings.
 
@@ -601,9 +589,6 @@ class MGMHurry:
         :param random_state: (int, Optional): Add '--random-state random_state' flag to HO-command. Defaults to None.
         :param apply_best_results: (bool, Optional): Apply 'best' HO results direct after HO? Defaults to True.
         :param clean_start: (bool, Optional): Cleanup MoniGoMani before starting the HO? Defaults to False.
-        :param save_output: (bool, Optional) Save the output to a '.log' file. Defaults to True
-        :param output_path: (str) Path to the output of the '.log' file.
-            Defaults to 'Some Test Results/MoniGoMani_version_number/'
         :param output_file_name: (str, Optional) Name of the '.log' file.
             Defaults to 'HyperOptResults-<Current-DateTime>.log'
         """
@@ -649,7 +634,7 @@ class MGMHurry:
 
         if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
             self.monigomani_cli.run_command('mv ./user_data/strategies/MoniGoManiHyperStrategy.json '
-                                          './user_data/mgm-config-hyperopt.json')
+                                            './user_data/mgm-config-hyperopt.json')
         else:
             self.monigomani_cli.run_command(f'rm ./user_data/strategies/{strategy}.json')
 
@@ -663,8 +648,10 @@ class MGMHurry:
         :param only_profitable: (bool, Optional); Show only profitable epochs. Defaults to False.
         """
 
-        fthypts = map(os.path.basename, sorted(glob.glob(f'{self._basedir}/user_data/hyperopt_results/*.fthypt'),
-                                               key=os.path.getmtime, reverse=True))
+        fthypts = map(os.path.basename,
+                      sorted(
+                          glob.glob(f'{self._basedir}/user_data/hyperopt_results/*.fthypt'),
+                          key=os.path.getmtime, reverse=True))
 
         dat = list(fthypts)
 
