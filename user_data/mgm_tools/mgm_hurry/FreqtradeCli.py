@@ -23,6 +23,7 @@ import subprocess
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
+from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
 
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
@@ -37,6 +38,7 @@ class FreqtradeCli():
     freqtrade_binary: str
     cli_logger: MoniGoManiLogger
     monigomani_cli: MoniGoManiCli
+    monigomani_config: MoniGoManiConfig
     _install_type: str
 
     def __init__(self, basedir: str):
@@ -45,13 +47,17 @@ class FreqtradeCli():
         :param basedir (str): The basedir to be used as our root directory.
         """
         self.basedir = basedir
-        self._install_type = 'docker'
-        self.freqtrade_binary = None
 
-        self.cli_logger = MoniGoManiLogger(basedir).get_logger()
+        self.cli_logger = MoniGoManiLogger(self.basedir).get_logger()
+        self.monigomani_config = MoniGoManiConfig(self.basedir)
+
+        self._install_type = self.monigomani_config.get('install_type') or None
+        self.freqtrade_binary = self.monigomani_config.get('ft_binary') or None
+
         self._init_freqtrade()
 
         self.monigomani_cli = MoniGoManiCli(self.basedir)
+
 
     def _init_freqtrade(self) -> bool:
         """Initialize self.freqtrade_binary property.
