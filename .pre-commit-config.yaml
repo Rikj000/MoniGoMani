@@ -67,5 +67,5 @@ repos:
         entry: pytest
         language: system
         types: [python]
-        files: 'mgm_hurry_.*?_test\.py$'
+        files: '.*?(mgm).*?(_test)\.py$'
         verbose: true
