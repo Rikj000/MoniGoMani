@@ -532,7 +532,7 @@ class MGMHurry:
         """
         Downloads StaticPairList and saves into mgm_pair_lists folder.
 
-        Fixme:
+        FIXME:
             * Temporary disabled due to nasty bug
             && jq 'del(.exchange.pair_whitelist )' ./user_data/mgm-config.json > ./tmp.json && jq -s '.[0] * .[1]'
                 ./tmp.json ./user_data/mgm_pair_lists/$exchange-$hyperopt_quote-Top-Volume-StaticPairList.json >
