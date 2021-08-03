@@ -76,6 +76,7 @@ tests/
 
 freqtrade.service
 freqtrade.service.watchdog
+freqtrade.egginfo
 MANIFEST.in
 mkdocs.yml
 pyproject.toml
