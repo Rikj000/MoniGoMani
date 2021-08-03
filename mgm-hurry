@@ -536,15 +536,10 @@ class MGMHurry:
         """
         Downloads StaticPairList and saves into mgm_pair_lists folder.
 
-        FIXME:
-            * Temporary disabled due to nasty bug
-            && jq 'del(.exchange.pair_whitelist )' ./user_data/mgm-config.json > ./tmp.json && jq -s '.[0] * .[1]'
-                ./tmp.json ./user_data/mgm_pair_lists/$exchange-$hyperopt_quote-Top-Volume-StaticPairList.json >
-                ./user_data/mgm-config.json && rm ./tmp.json && jq '.' ./user_data/mgm-config.json"
-            * Catch errors
+        :return None
         """
         self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Computing Top Volume Static Pairlist')
+        self._logger.info('👉 Download Top Volume Static Pairlist')
         self._logger.info('💨 💨 💨')
 
         if self.monigomani_config.reload() is False:
@@ -556,16 +551,17 @@ class MGMHurry:
             sys.exit(1)
 
         # Download and generate a static pairlist
+        self._logger.info('🤖 Generating new static pairlist...')
         quote = self.monigomani_config.config['hyperopt']['quote']
         exchange = self.monigomani_config.config['exchange'].title()
         static_pairlist = self.freqtrade_cli.download_static_pairlist(quote, exchange)
 
         # Save new static pairlist to his own pairlist json file
+        self._logger.info('🤖 Saving fresh static pairlist into mgm_pair_lists/...')
         with open('{0}/user_data/mgm_pair_lists/{1}-{2}-Top-Volume-StaticPairList.json', 'w+') as pairlist_file:
             json.dump(static_pairlist, pairlist_file, indent=4)
 
-        self._logger.info('🍺 Saving pairlist to "mgm-config.json"...')
-
+        self._logger.info('🍺 Saving pairlist as whitelist to "mgm-config.json"...')
         # Overwrite the new static pairlist to the exchange config in mgm-config[exchange][pair_whitelist]
         mgm_config_file = self.monigomani_config.get_config_filename('mgm-config')
         with open('{0}/user_data/{1}'.format(self._basedir, mgm_config_file),
