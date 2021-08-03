@@ -243,8 +243,16 @@ class MoniGoManiConfig(object):
                 }
             }
 
-        with open(self.__full_path_config, 'w+') as file:
-            yaml.dump(config, file)
+        # Protection to prevent from writing
+        # no data at all to mgm-config.
+        if len(config) == 0 or 'config' not in config or 'mgm_config_names' not in config['config']:
+            self.logger.error(
+                '🤯 Sorry, but looks like no configuration data would have been written, '
+                'resulting in an empty config file I quit.')
+            sys.exit(1)
+
+        with open(self.__full_path_config, 'w+') as cfg_file:
+            yaml.dump(config, cfg_file)
 
         self.reload()
 
