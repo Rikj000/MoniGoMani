@@ -92,7 +92,7 @@ class MoniGoManiCli(object):
         :return bool: True if ho-results file was successfully applied. False otherwise.
         """
         ho_json = '{0}/user_data/strategies/{1}.json'.format(self.basedir, strategy)
-        ho_config = '{0}/user_data/mgm-config-hyperopt.json'  # todo use the filename as specified in configuration
+        ho_config = '{0}/user_data/mgm-config-hyperopt.json'.format(self.basedir)  # todo use the filename as specified in configuration
 
         if os.path.isfile(ho_json) is False:
             self.logger.error('🤷 Failed applying best results because the results file {0} does not exist.'.format(ho_json))
@@ -108,7 +108,7 @@ class MoniGoManiCli(object):
 
         return True
 
-    def run_command(self, command: str, output_file_name: str = None) -> int:
+    def run_command(self, command: str, output_file_name: str = None):
         """Execute shell command and log output to mgm logfile.
 
         :param command (str): Shell command to execute.
@@ -125,11 +125,11 @@ class MoniGoManiCli(object):
 
         if output_file_name is not None:
             output = shell_output(cmd, universal_newlines=True)
-            with os.open(output_file_name, 'w+') as output_file:
+            with open(output_file_name, 'w+') as output_file:
                 output_file.write(output)
                 output_file.close()
 
             self.logger.debug(output)
             return 0
 
-        return shell_call(' '.join(cmd), shell=True)
+        return shell_call(cmd, shell=True)
