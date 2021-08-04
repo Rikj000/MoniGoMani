@@ -13,12 +13,12 @@
 # \_|  |_/ \___/ |_| |_||_| \____/ \___/ \_|  |_/ \__,_||_| |_||_| \____/|_||_|
 
 import os
-from shell_command import shell_call
+from shell_command import shell_call, shell_output
 from git import Repo
 import tempfile
 
 import shlex
-from shutil import copytree
+from shutil import copytree, copy2
 import sys
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
@@ -85,7 +85,30 @@ class MoniGoManiCli(object):
             except Exception:
                 pass
 
-    def run_command(self, command: str) -> int:
+    def apply_best_results(self, strategy: str) -> bool:
+        """Apply HO results to the hyperopt.json file.
+
+        :param strategy (str): The name of the strategy. Is used to determine ho-results file.
+        :return bool: True if ho-results file was successfully applied. False otherwise.
+        """
+        ho_json = '{0}/user_data/strategies/{1}.json'.format(self.basedir, strategy)
+        ho_config = '{0}/user_data/mgm-config-hyperopt.json'  # todo use the filename as specified in configuration
+
+        if os.path.isfile(ho_json) is False:
+            self.logger.error('🤷 Failed applying best results because the results file {0} does not exist.'.format(ho_json))
+            return False
+
+        # Apply best results from MoniGoManiHyperStrategy.json to mgm-config-hyperopt.json
+        if strategy == 'MoniGoManiHyperStrategy':
+            copy2(ho_json, ho_config)
+
+        # Cleanup leftover file
+        if os.path.isfile(ho_json) is True:
+            os.remove(ho_json)
+
+        return True
+
+    def run_command(self, command: str, output_file_name: str = None) -> int:
         """Execute shell command and log output to mgm logfile.
 
         :param command (str): Shell command to execute.
@@ -98,5 +121,15 @@ class MoniGoManiCli(object):
             sys.exit(1)
 
         cmd = shlex.split(command)
+        cmd = ' '.join(cmd)
+
+        if output_file_name is not None:
+            output = shell_output(cmd, universal_newlines=True)
+            with os.open(output_file_name, 'w+') as output_file:
+                output_file.write(output)
+                output_file.close()
+
+            self.logger.debug(output)
+            return 0
 
         return shell_call(' '.join(cmd), shell=True)
