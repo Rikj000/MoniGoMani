@@ -494,8 +494,8 @@ class MGMHurry:
                 {'name': '3m', 'value': '3m', 'enabled': False},
                 {'name': '5m', 'value': '5m', 'enabled': True},
                 {'name': '15m', 'value': '15m', 'enabled': False},
-                {'name': '30m', 'value': '30m', 'enabled': False},
-                {'name': '1h', 'value': '1h', 'enabled': True},
+                {'name': '30m', 'value': '30m', 'enabled': True},
+                {'name': '1h', 'value': '1h', 'enabled': False},
                 {'name': '2h', 'value': '2h', 'enabled': False},
                 {'name': '4h', 'value': '4h', 'enabled': False},
                 {'name': '6h', 'value': '6h', 'enabled': False},
@@ -527,6 +527,8 @@ class MGMHurry:
 
         dcd = f'{self.monigomani_config.config["ft_binary"]} download-data --timerange {timerange} \
               -t {tickers} -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json'
+
+        self._logger.debug(dcd)
 
         self.monigomani_cli.run_command(dcd)
 
@@ -623,6 +625,7 @@ class MGMHurry:
         if random_state is not None:
             cmd = f'{cmd.strip()} --random-state $random_state'
 
+        # Execute freqtrade hyperopt command. Will take some time!
         cmd = Template(cmd).substitute(
             ft_binary=self.monigomani_config.config['ft_binary'],
             ho_strategy=strategy,
@@ -632,16 +635,14 @@ class MGMHurry:
             timerange=timerange,
             random_state=random_state)
 
+        self._logger.debug(cmd)
+
         if output_file_name is None:
             output_file_name = f'HyperOptResults-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.log'
 
-        self.monigomani_cli.run_command(cmd)
+        self.monigomani_cli.run_command(cmd, output_file_name)
 
-        if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
-            self.monigomani_cli.run_command('mv ./user_data/strategies/MoniGoManiHyperStrategy.json '
-                                            './user_data/mgm-config-hyperopt.json')
-        else:
-            self.monigomani_cli.run_command(f'rm ./user_data/strategies/{strategy}.json')
+        self.monigomani_cli.apply_best_results(strategy)
 
         self._logger.info('🍺 HyperOpt run ready... 🥵')
 
