@@ -1281,7 +1281,8 @@
       "program": "${workspaceFolder}/mgm-hurry",
       "console": "integratedTerminal",
       "args": [
-        "download_candle_datac--timerange=20210414-20210618"
+        "download_candle_data",
+        "--timerange=20210414-20210618"
       ],
       "presentation": {
         "hidden": false,
