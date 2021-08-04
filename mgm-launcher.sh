@@ -8,7 +8,7 @@
 
 MGM_GIT_REPO="https://github.com/topscoder/MoniGoMani.git"
 MGM_GIT_BRANCH="feature/optimizations"
-MGM_TARGET_FOLDER="mgm"
+MGM_TARGET_FOLDER="monigomani"
 
 ##################
 
@@ -31,7 +31,9 @@ if [ -d "$MGM_TARGET_FOLDER" ]; then
     exit 1
 fi
 
-git clone -b $MGM_GIT_BRANCH $MGM_GIT_REPO $MGM_TARGET_FOLDER && cd $MGM_TARGET_FOLDER
+git clone -b $MGM_GIT_BRANCH $MGM_GIT_REPO $MGM_TARGET_FOLDER
+
+cd "$MGM_TARGET_FOLDER"
 
 python3 -m pip install --upgrade pip
 
