@@ -351,7 +351,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             if self.timeframe_multiplier < 1:
                 raise SystemExit(f'MoniGoManiHyperStrategy - ERROR - TimeFrame-Zoom - "timeframe" must be bigger than '
                                  f'"backtest_timeframe"')
-            self.startup_candle_count *= self.timeframe_multiplier
 
         else:
             if os.path.isfile(self.mgm_config_hyperopt_path) is False:
