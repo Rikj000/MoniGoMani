@@ -8,23 +8,1440 @@
   "configurations": [
     {
       "type": "python",
-      "name": "Python: mgm-hurry up",
+      "name": "Apply (Best) HyperOpt Results",
       "request": "launch",
       "runtimeExecutable": "python3",
-      "program": "mgm-hurry",
-      "args": ["up"],
-      "env": {
-        "key": "value"
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt-show",
+        "--best",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--no-header",
+        "--no-header",
+        "--print-json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
       },
-      "envFile": "${workspaceFolder}/.env",
-      "console": "integratedTerminal"
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
     },
     {
-      "name": "Python: Current file",
       "type": "python",
+      "name": "Apply (Number) HyperOpt Results",
       "request": "launch",
-      "program": "${file}",
-      "console": "integratedTerminal"
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt-show",
+        "-n",
+        "921",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--no-header",
+        "--no-header",
+        "--print-json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "BackTest (BinHV45, 15m)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "backtesting",
+        "--strategy",
+        "BinHV45",
+        "--timeframe",
+        "15m",
+        "--config",
+        "./user_data/config.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "BackTest (BinHV45, 1m)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "backtesting",
+        "--strategy",
+        "BinHV45",
+        "--timeframe",
+        "1m",
+        "--config",
+        "./user_data/config.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "BackTest (BinHV45, 5m)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "backtesting",
+        "--strategy",
+        "BinHV45",
+        "--timeframe",
+        "5m",
+        "--config",
+        "./user_data/config.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "BackTest (MoniGoManiHyperOpted, 1h) ",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "backtesting",
+        "-s",
+        "MoniGoManiHyperOpted",
+        "--timeframe",
+        "1h",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "BackTest (MoniGoManiHyperOpted, TimeRange) ",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "backtesting",
+        "-s",
+        "MoniGoManiHyperOpted",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--timerange",
+        "20210414-20210618"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "BackTest (MoniGoManiHyperStrategy, TimeRange) ",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "backtesting",
+        "-s",
+        "MoniGoManiHyperStrategy",
+        "",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--timerange",
+        "20210501-20210616"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "BackTest (TheForceV4, 5m)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "backtesting",
+        "--strategy",
+        "TheForceV4",
+        "--timeframe",
+        "5m",
+        "--config",
+        "./user_data/config.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "BackTest (TheForceV6, 5m)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "backtesting",
+        "--strategy",
+        "TheForceV6",
+        "--timeframe",
+        "5m",
+        "--config",
+        "./user_data/config.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "BackTest (TheForceV7HyperOpted, 5m) ",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "backtesting",
+        "--strategy",
+        "TheForceV7HyperOpted",
+        "--timeframe",
+        "5m",
+        "--config",
+        "./user_data/config.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "BackTest (TheForceV7, 5m)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "backtesting",
+        "--strategy",
+        "TheForceV7",
+        "--timeframe",
+        "5m",
+        "--config",
+        "./user_data/config.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "BackTest (strategijaconsensus, 30m) ",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "backtesting",
+        "--strategy",
+        "strategijaconsensus",
+        "--timeframe",
+        "30m",
+        "--config",
+        "./user_data/config.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, Last 30days, 15m)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--exchange",
+        "binance",
+        "--days",
+        "30",
+        "-t",
+        "15m",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, Last 30days, 1h)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--exchange",
+        "binance",
+        "--days",
+        "30",
+        "-t",
+        "1h",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, Last 30days, 1m)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--exchange",
+        "binance",
+        "--days",
+        "30",
+        "-t",
+        "1m",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, Last 30days, 30m)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--exchange",
+        "binance",
+        "--days",
+        "30",
+        "-t",
+        "30m",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, Last 30days, 5m)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--exchange",
+        "binance",
+        "--days",
+        "30",
+        "-t",
+        "5m",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, TimeRange, 1M)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--exchange",
+        "binance",
+        "--timerange",
+        "20210414-20210618",
+        "-t",
+        "1M",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, TimeRange, 1d)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--exchange",
+        "binance",
+        "--timerange",
+        "20210414-20210618",
+        "-t",
+        "1d",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, TimeRange, 1h)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--exchange",
+        "binance",
+        "--timerange",
+        "20210414-20210618",
+        "-t",
+        "1h",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, TimeRange, 1w)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--exchange",
+        "binance",
+        "--timerange",
+        "20210414-20210618",
+        "-t",
+        "1w",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, TimeRange, 30m)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--exchange",
+        "binance",
+        "--timerange",
+        "20210414-20210618",
+        "-t",
+        "30m",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, TimeRange, 5m, 1h)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--timerange",
+        "20210414-20210618",
+        "-t",
+        "5m",
+        "1h",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, TimeRange, 5m, 30m) ",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--timerange",
+        "20210414-20210618",
+        "-t",
+        "5m",
+        "30m",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Download Data (Binance, TimeRange, 5m)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "download-data",
+        "--exchange",
+        "binance",
+        "--timerange",
+        "20210414-20210618",
+        "-t",
+        "5m",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Dry-Run (MoniGoManiHyperStrategy, Log to file)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "trade",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "-s",
+        "MoniGoManiHyperStrategy",
+        "--dry-run",
+        "--logfile",
+        "./user_data/logs/freqtrade.log"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "HyperOpt (BinHV45, BinHV45HyperOpt, SharpeHyperOptLossDaily, All Spaces, 1000 Evaluations)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "--config",
+        "./user_data/config.json",
+        "--hyperopt-loss",
+        "SharpeHyperOptLossDaily",
+        "--spaces",
+        "all",
+        "--hyperopt",
+        "BinHV45HyperOpt",
+        "--strategy",
+        "BinHV45",
+        "-e",
+        "1000"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "HyperOpt (MoniGoMani, MoniGoManiHyperOpt, SharpeHyperOptLossDaily, All Spaces, 1000 Evaluations)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--hyperopt-loss",
+        "SharpeHyperOptLossDaily",
+        "--spaces",
+        "all",
+        "--hyperopt",
+        "MoniGoManiHyperOpt",
+        "-s",
+        "MoniGoMani",
+        "-e",
+        "1000"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "HyperOpt (MoniGoMani, MoniGoManiHyperOpt, SortinoHyperOptLossDaily, All Spaces, 1000 Evaluations, TimeRange)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--hyperopt-loss",
+        "SortinoHyperOptLossDaily",
+        "--spaces",
+        "all",
+        "--hyperopt",
+        "MoniGoManiHyperOpt",
+        "-s",
+        "MoniGoMani",
+        "-e",
+        "1000",
+        "--timerange",
+        "20210414-20210618"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "HyperOpt (TheForceV4, AdvancedSampleHyperOpt, SharpeHyperOptLossDaily, All Spaces, 1000 Evaluations)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "--config",
+        "./user_data/config.json",
+        "--hyperopt-loss",
+        "SharpeHyperOptLossDaily",
+        "--spaces",
+        "all",
+        "--hyperopt",
+        "AdvancedSampleHyperOpt",
+        "--strategy",
+        "TheForceV4",
+        "-e",
+        "1000"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "HyperOpt (TheForceV6, TheForceV6HyperOpt, SharpeHyperOptLossDaily, All Spaces, 1000 Evaluations)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "--config",
+        "./user_data/config.json",
+        "--hyperopt-loss",
+        "SharpeHyperOptLossDaily",
+        "--spaces",
+        "all",
+        "--hyperopt",
+        "TheForceV6Hyperopt",
+        "--strategy",
+        "TheForceV6",
+        "-e",
+        "1000"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "HyperOpt (TheForceV7, TheForceV6HyperOpt, SharpeHyperOptLossDaily, All Spaces, 1000 Evaluations) ",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "--config",
+        "./user_data/config.json",
+        "--hyperopt-loss",
+        "SharpeHyperOptLossDaily",
+        "--spaces",
+        "all",
+        "--hyperopt",
+        "TheForceV6Hyperopt",
+        "--strategy",
+        "TheForceV7",
+        "-e",
+        "1000"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "HyperOpt (TheForceV7, TheForceV7HyperOpt, SharpeHyperOptLossDaily, All Spaces, 1000 Evaluations)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "--config",
+        "./user_data/config.json",
+        "--hyperopt-loss",
+        "SharpeHyperOptLossDaily",
+        "--spaces",
+        "all",
+        "--hyperopt",
+        "TheForceV7Hyperopt",
+        "--strategy",
+        "TheForceV7",
+        "-e",
+        "1000"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "HyperOpt-Show (number)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt-show",
+        "-n",
+        "100",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Retrieve All Tradable (Binance, BTC)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/user_data/mgm_tools/Binance-Retrieve-All-Tradable-StaticPairList.py",
+      "console": "integratedTerminal",
+      "args": [
+        "-q",
+        "BTC"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Retrieve All Tradable (Binance, USDT)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/user_data/mgm_tools/Binance-Retrieve-All-Tradable-StaticPairList.py",
+      "console": "integratedTerminal",
+      "args": [
+        "-q",
+        "USDT"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Retrieve Top Volume (Binance, BTC)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "test-pairlist",
+        "-c",
+        "./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json",
+        "--quote",
+        "BTC",
+        "--print-json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Retrieve Top Volume (Binance, USDT)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "test-pairlist",
+        "-c",
+        "./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json",
+        "--quote",
+        "USDT",
+        "--print-json"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "SortinoHyperOptLossDaily, All Spaces, 1000 Evaluations, TimeRange, MoniGoManiHyperStrategy",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "-s",
+        "MoniGoManiHyperStrategy",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--hyperopt-loss",
+        "SortinoHyperOptLossDaily",
+        "--spaces",
+        "all",
+        "-e",
+        "1000",
+        "--timerange",
+        "20210501-20210616"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "SortinoHyperOptLossDaily, ROI-Buy-Sell-Stoploss Spaces, 1000 Evaluations, TimeRange",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--hyperopt-loss",
+        "SortinoHyperOptLossDaily",
+        "--spaces",
+        "roi",
+        "buy",
+        "sell",
+        "stoploss",
+        "-s",
+        "MoniGoManiHyperStrategy",
+        "-e",
+        "1000",
+        "--timerange",
+        "20210501-20210616"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "SortinoHyperOptLossDaily, Trailing Spaces, 1000 Evaluations, TimeRange",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--hyperopt-loss",
+        "SortinoHyperOptLossDaily",
+        "--spaces",
+        "--spaces",
+        "trailing",
+        "-s",
+        "MoniGoManiHyperStrategy",
+        "-e",
+        "1000",
+        "--timerange",
+        "20210501-20210616"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "SwingHighToSkyHyperStrategy (WinRatioAndProfitRatioLoss, All Spaces, 1000 Evaluations, TimeRange)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--hyperopt-loss",
+        "WinRatioAndProfitRatioLoss",
+        "--spaces",
+        "all",
+        "-s",
+        "SwingHighToSkyHyperStrategy",
+        "-e",
+        "1000",
+        "--timerange",
+        "20210414-20210618"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "SwingHighToSkyHyperStrategy (WinRatioAndProfitRatioLoss, All Spaces, 200 Evaluations, TimeRange)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--hyperopt-loss",
+        "WinRatioAndProfitRatioLoss",
+        "--spaces",
+        "all",
+        "-s",
+        "SwingHighToSkyHyperStrategy",
+        "-e",
+        "200",
+        "--timerange",
+        "20210414-20210618"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "TimeWatchedWinRatioAndAbsProfitLoss, All Spaces, 1000 Evaluations, TimeRange",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--hyperopt-loss",
+        "TimeWatchedWinRatioAndAbsProfitLoss",
+        "--spaces",
+        "all",
+        "-s",
+        "MoniGoManiHyperStrategy",
+        "-e",
+        "1000",
+        "--timerange",
+        "20210501-20210616"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "TimeWatchedWinRatioAndProfitRatioLoss, All Spaces, 1000 Evaluations, TimeRange",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--hyperopt-loss",
+        "TimeWatchedWinRatioAndProfitRatioLoss",
+        "--spaces",
+        "all",
+        "-s",
+        "MoniGoManiHyperStrategy",
+        "-e",
+        "1000",
+        "--timerange",
+        "20210501-20210616"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Total Overall Signal Importance Calculator",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py",
+      "console": "integratedTerminal",
+      "args": [
+        ""
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "Version",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "-V"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "WinRatioAndAbsProfitLoss, All Spaces, 1000 Evaluations, TimeRange",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--hyperopt-loss",
+        "WinRatioAndAbsProfitLoss",
+        "--spaces",
+        "all",
+        "-s",
+        "MoniGoManiHyperStrategy",
+        "-e",
+        "1000",
+        "--timerange",
+        "20210501-20210616"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "WinRatioAndProfitRatioLoss, All Spaces, 1000 Evaluations, TimeRange, MoniGoManiHyperStrategy",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/.env/bin/freqtrade",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "-s",
+        "MoniGoManiHyperStrategy",
+        "-c",
+        "./user_data/mgm-config.json",
+        "-c",
+        "./user_data/mgm-config-private.json",
+        "--hyperopt-loss",
+        "WinRatioAndProfitRatioLoss",
+        "--spaces",
+        "all",
+        "-e",
+        "1000",
+        "--timerange",
+        "20210501-20210616",
+        "-j",
+        "1"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "mgm-hurry download_candle_data (TimeRange)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/mgm-hurry",
+      "console": "integratedTerminal",
+      "args": [
+        "download_candle_datac--timerange=20210414-20210618"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "mgm-hurry hyperopt (TimeRange)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/mgm-hurry",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt",
+        "--timerange=20210501-20210616"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "mgm-hurry hyperopt_apply_epoch (800)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/mgm-hurry",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt_apply_epoch",
+        "800"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "mgm-hurry hyperopt_show_epoch (800)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/mgm-hurry",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt_show_epoch",
+        "800"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "mgm-hurry hyperopt_show_results (Only Best)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/mgm-hurry",
+      "console": "integratedTerminal",
+      "args": [
+        "hyperopt_show_results",
+        "--only_best=True",
+        "--only_profitable=False"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "mgm-hurry install_freqtrade (Develop, Install here)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/mgm-hurry",
+      "console": "integratedTerminal",
+      "args": [
+        "install_freqtrade",
+        "--branch=develop",
+        "--target_dir=."
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "mgm-hurry install_mgm (Development, Install here)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/mgm-hurry",
+      "console": "integratedTerminal",
+      "args": [
+        "install_mgm",
+        "--branch=development",
+        "--target_dir=."
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "mgm-hurry setup",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/mgm-hurry",
+      "console": "integratedTerminal",
+      "args": [
+        "setup"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "mgm-hurry start_trader (Dry-Run)",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/mgm-hurry",
+      "console": "integratedTerminal",
+      "args": [
+        "start_trader",
+        "--dry_run=true"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
+    },
+    {
+      "type": "python",
+      "name": "mgm-hurry up",
+      "request": "launch",
+      "runtimeExecutable": "python3",
+      "program": "${workspaceFolder}/mgm-hurry",
+      "console": "integratedTerminal",
+      "args": [
+        "up"
+      ],
+      "presentation": {
+        "hidden": false,
+        "group": "Freqtrade-Git"
+      },
+      "_comment": "Automatically converted from Jetbrains workspace.xml to VSCode launch.json"
     }
   ]
 }
