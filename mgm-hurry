@@ -638,11 +638,12 @@ class MGMHurry:
         self._logger.debug(cmd)
 
         if output_file_name is None:
-            output_file_name = f'HyperOptResults-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.log'
+            output_file_name = '{0}/user_data/hyperopt_results/HyperOptResults-{1}.log'.format(self._basedir, datetime.now().strftime("%d-%m-%Y-%H-%M-%S"))
 
         self.monigomani_cli.run_command(cmd, output_file_name)
 
-        self.monigomani_cli.apply_best_results(strategy)
+        if apply_best_results is True:
+            self.monigomani_cli.apply_best_results(strategy)
 
         self._logger.info('🍺 HyperOpt run ready... 🥵')
 
