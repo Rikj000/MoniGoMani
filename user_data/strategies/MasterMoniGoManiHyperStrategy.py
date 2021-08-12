@@ -1,4 +1,5 @@
 # --- ↓ Do not remove these libs ↓ -------------------------------------------------------------------------------------
+import copy
 import json
 import logging
 import math
@@ -171,10 +172,11 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         mgm_config_hyperopt = {}
 
     # Create dictionary to store custom information MoniGoMani will be using in RAM
-    custom_info = {
+    initial_custom_info: dict = {
         'open_trades': {},
         'unclogger_cooldown_pairs': {}
     }
+    custom_info: dict = copy.deepcopy(initial_custom_info)
 
     # Initialize some parameters which will be automatically configured/used by MoniGoMani
     use_custom_stoploss = True  # Leave this enabled (Needed for open_trade custom_information_storage)
@@ -599,39 +601,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                         f'Successfully removed garbage_trade {str(garbage_trade)} from custom_info!')
                         break
 
-        # Check if any old unclogger_cooldown_pairs data needs to be removed
-        if len(self.custom_info['unclogger_cooldown_pairs']) > 0:
-            for stored_cooldown_pair, start_cooldown_time in self.custom_info['unclogger_cooldown_pairs'].copy().items():
-                self.mgm_logger('debug', garbage_collector, f'Checking if cooldown period for unclogged pair '
-                                                            f'({stored_cooldown_pair}) has expired...')
-
-                minimal_cooldown_time = current_time.replace(tzinfo=None) - timedelta(minutes=round(
-                    self.sell___unclogger_buy_cooldown_minutes_window.value / self.precision))
-
-                self.mgm_logger('debug', garbage_collector, f' Minimal cooldown time currently needed: '
-                                                            f'{str(minimal_cooldown_time)}')
-                self.mgm_logger('debug', garbage_collector, f' Start of cooldown period for pair '
-                                                            f'({stored_cooldown_pair}): {str(start_cooldown_time)}')
-
-                if start_cooldown_time < minimal_cooldown_time:
-                    self.mgm_logger('debug', garbage_collector,
-                                    f'Cooldown period for unclogged pair ({stored_cooldown_pair}) has expired, '
-                                    f'removing from custom_info!')
-                    self.custom_info['unclogger_cooldown_pairs'].pop(stored_cooldown_pair)
-
         # Print all stored open trade info in custom_storage
         self.mgm_logger('debug', custom_information_storage,
                         f'Open trades ({str(len(self.custom_info["open_trades"]))}) in custom_info updated '
                         f'successfully!')
         self.mgm_logger('debug', custom_information_storage,
                         f'custom_info["open_trades"] contents: {repr(self.custom_info["open_trades"])}')
-
-        # Print all unclogger cooldown pair info in custom_storage
-        self.mgm_logger('debug', custom_information_storage,
-                        f'Unclogger cooldown pairs ({str(len(self.custom_info["unclogger_cooldown_pairs"]))}) in '
-                        f'custom_info updated successfully!')
-        self.mgm_logger('debug', custom_information_storage, f'custom_info["unclogger_cooldown_pairs"] contents: '
-                                                             f'{repr(self.custom_info["unclogger_cooldown_pairs"])}')
 
         # Always return a value bigger than the initial stoploss to keep using the initial stoploss.
         # Since we (currently) only want to use this function for custom information storage!
@@ -669,8 +644,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         custom_information_storage = 'custom_sell - Custom Information Storage'
 
         if (self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True) and \
-                (pair not in self.custom_info['unclogger_cooldown_pairs']) and \
-                (len(self.custom_info['open_trades']) > 0):
+                (pair in self.custom_info['open_trades']) and (self.custom_info['open_trades'][pair] != {}):
             try:
                 # Open Trade Custom Information Storage
                 # -------------------------------------
@@ -858,15 +832,23 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                             # Calculate the percentage of the lookback window currently satisfied
                                             temp = self.sell___unclogger_trend_lookback_candles_window.value
                                             unclogger_candles_percentage_satisfied = \
-                                                (unclogger_weighted_candles_satisfied / round(temp / self.precision)) * 100
+                                                (unclogger_weighted_candles_satisfied /
+                                                 round(temp / self.precision)) * 100
 
                                             # Override Sell Signal: Unclog trade by forcing a sell & attempt to continue
                                             # the profit climb with the "freed up trading slot"
                                             temp = self.sell___unclogger_trend_lookback_candles_window_percentage_needed.value
                                             if unclogger_candles_percentage_satisfied >= round(temp / self.precision):
                                                 # Buy Cooldown Window Custom Information Storage
-                                                self.custom_info['unclogger_cooldown_pairs'][pair] = \
-                                                    current_time.replace(tzinfo=None)
+                                                if pair not in self.custom_info['unclogger_cooldown_pairs']:
+                                                    self.custom_info['unclogger_cooldown_pairs'][pair] = []
+
+                                                self.custom_info['unclogger_cooldown_pairs'][pair].append({
+                                                    'start_time': current_time,
+                                                    'end_time': current_time + timedelta(minutes=round(
+                                                        self.sell___unclogger_buy_cooldown_minutes_window.value /
+                                                        self.precision))
+                                                })
 
                                                 self.mgm_logger('info', open_trade_unclogger,
                                                                 f'Unclogging losing trade...')
@@ -903,11 +885,28 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return bool: When True is returned, then the buy-order is placed on the exchange. False aborts the process
         """
 
+        unclogger_cooldown = 'Unclogger Cooldown'
+
         if (self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True) and \
                 (pair in self.custom_info['unclogger_cooldown_pairs']):
-            return False
+            for cooldown_period in self.custom_info['unclogger_cooldown_pairs'][pair][:]:
+                self.mgm_logger('debug', unclogger_cooldown,
+                                f'{pair} CoolDown Period:\n'
+                                f'    Cooldown Start Time: {cooldown_period["start_time"]}\n'
+                                f'    Cooldown End Time: {cooldown_period["end_time"]}\n'
+                                f'    Current Time: {current_time}')
 
-        return True  # By default we want the buy signal to go through
+                if cooldown_period['end_time'] < current_time:
+                    self.mgm_logger('debug', unclogger_cooldown,
+                                    f'Cooldown period for unclogged pair ({pair}) has expired, '
+                                    f'removing from custom_info! (CurrentTime: {current_time})')
+                    self.custom_info['unclogger_cooldown_pairs'][pair].remove(cooldown_period)
+                elif cooldown_period['start_time'] < current_time < cooldown_period['end_time']:
+                    self.mgm_logger('debug', unclogger_cooldown,
+                                    f'Blocking buy signal since pair is cooling down...')
+                    return False  # Block the buy signal from going through when the pair is still under cooldown
+
+        return True  # Allow the buy signal to go through if the pair is not under cooldown
 
     def confirm_trade_exit(self, pair: str, trade: Trade, order_type: str, amount: float,
                            rate: float, time_in_force: str, sell_reason: str,
@@ -1221,10 +1220,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: DataFrame with debug signals
         """
 
-        # Reset the total signals possible when a new BackTest starts (during HyperOpting)
+        # Reset some parameters when a new BackTest starts (during HyperOpting)
         if self.is_dry_live_run_detected is False:
+            # Reset the total signals possible
             for total_signal_possible in self.total_signals_possible:
                 self.total_signals_possible[total_signal_possible] = 0
+
+            # If needed, reset the custom_info dictionary when a new BackTest starts (during HyperOpting)
+            if self.custom_info != self.initial_custom_info:
+                self.custom_info = copy.deepcopy(self.initial_custom_info)
 
         signals = getattr(self, f'{space}_signals')
 
@@ -1233,7 +1237,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             self._add_signal(signal_name, space, dataframe, condition_func(dataframe))
 
         # Generates the conditions responsible for searching and comparing the weights needed to activate a buy or sell
-        dataframe.loc[(self._generate_weight_condition(dataframe=dataframe, space=space)), space] = 1
+        dataframe.loc[self._generate_weight_condition(dataframe=dataframe, space=space), space] = 1
 
         # Check if total signals needed are possible, if not force the bot to do nothing
         if self.is_dry_live_run_detected is False:
