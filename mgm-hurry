@@ -783,11 +783,11 @@ class MGMHurry:
 
         logger.info('🍺 Backtesting ready... 🤑')
 
-    def start_trader(self, dry_run: bool = False):
+    def start_trader(self, dry_run: bool = True):
         """
         Start the trader. Your ultimate goal!
 
-        :param dry_run: (bool, Optional): Use dry_run mode. Defaults to False
+        :param dry_run: (bool, Optional): Use dry_run mode. Defaults to True
         """
         logger.info('💨 💨 💨')
         logger.info('👉 Start trader')
