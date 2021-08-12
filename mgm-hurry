@@ -598,15 +598,17 @@ class MGMHurry:
 
         # logger.error('🤷 Something happened on the way to heaven 🌟🤦')
 
-    def hyperopt(self, timerange: str = None, strategy: str = None, spaces: str = None, enable_protections: bool = True,
-                 random_state: int = None, apply_best_results: bool = True, clean_start: bool = False,
-                 save_output: bool = True, output_path: str = None, output_file_name: str = None):
+    def hyperopt(self, timerange: str = None, strategy: str = None, loss: str = None, spaces: str = None,
+                 enable_protections: bool = True, random_state: int = None, apply_best_results: bool = True,
+                 clean_start: bool = False, save_output: bool = True, output_path: str = None,
+                 output_file_name: str = None, jobs: int = None):
         """
         HyperOpt Magic. Runs HyperOpt process to find out the most positive settings.
 
         :param timerange: (str, Optional): timerange from/to in format (start-end): yyyymmdd-yyyymmdd
             or preset [up, down, side]. Defaults to value in '.hurry'
         :param strategy: (str, Optional): Hyper Opt strategy to use. Defaults to value in '.hurry'
+        :param loss: (str, Optional): Specify the HyperOptLoss which you want to use. Defaults to value in '.hurry'
         :param spaces: (str, Optional): Spaces (space delimited) to optimize
             for [default, all, buy, sell, roi, stoploss, etc]. Defaults to value in '.hurry'
         :param enable_protections: (bool, Optional): Add '--enable-protections' flag to HO-command. Defaults to True.
@@ -615,25 +617,24 @@ class MGMHurry:
         :param clean_start: (bool, Optional): Cleanup MoniGoMani before starting the HO? Defaults to False.
         :param save_output: (bool, Optional) Save the output to a '.log' file. Defaults to True
         :param output_path: (str) Path to the output of the '.log' file.
-            Defaults to 'Some Test Results/MoniGoMani_version_number/'
+            Defaults to 'Some Test Results/<mgm-config-private-bot_name>/'
         :param output_file_name: (str, Optional) Name of the '.log' file.
             Defaults to 'HyperOptResults-<Current-DateTime>.log'
+        :param jobs: Amount of parallel workers (CPU cores) to use, gets set automatically by default
         """
 
+        strategy = self.config['hyperopt']['strategy'] if strategy is None else strategy
+        spaces = self.config['hyperopt']['spaces'] if spaces is None else spaces
+        loss = self.config['hyperopt']['loss'] if loss is None else loss
+
         if clean_start is True:
-            self.cleanup()
+            self.cleanup(strategy)
 
         logger.info('💨 💨 💨')
         logger.info('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
         logger.info('💨 💨 💨')
 
         timerange = self.__get_preset_timerange(timerange)
-
-        if strategy is None:
-            strategy = self.config['hyperopt']['strategy']
-
-        if spaces is None:
-            spaces = self.config['hyperopt']['spaces']
 
         cmd = '$ft_binary hyperopt -s $ho_strategy \
               -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json \
@@ -645,14 +646,18 @@ class MGMHurry:
         if random_state is not None:
             cmd = f'{cmd.strip()} --random-state $random_state'
 
+        if jobs is not None:
+            cmd = f'{cmd.strip()} -j $jobs'
+
         cmd = Template(cmd).substitute(
             ft_binary=self.config['ft_binary'],
             ho_strategy=strategy,
-            ho_loss=self.config['hyperopt']['loss'],
+            ho_loss=loss,
             ho_spaces=spaces,
             ho_epochs=self.config['hyperopt']['epochs'],
             timerange=timerange,
-            random_state=random_state)
+            random_state=random_state,
+            jobs=jobs)
 
         if output_file_name is None:
             output_file_name = f'HyperOptResults-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.log'
