@@ -943,7 +943,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         - The timestamp of logging + the message_type provided + the message provided
         - To the console & To "./user_data/logs/freqtrade.log"
 
-        :param message_type: The type of the message (INFO, DEBUG, WARNING, ERROR)
+        :param message_type: The type of the message (INFO, DEBUG, WARNING, ERROR, CUSTOM)
         :param code_section: The section in the code where the message occurred
         :param message: The log message to be displayed
         """
@@ -961,6 +961,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             elif (self.mgm_log_levels_enabled['error'] is True) and (message_type.upper() == 'ERROR'):
                 logger.setLevel(logging.ERROR)
                 logger.error(code_section + ' - ' + message)
+            elif (self.mgm_log_levels_enabled['custom'] is True) and (message_type.upper() == 'CUSTOM'):
+                logger.setLevel(logging.DEBUG)
+                logger.debug(f'CUSTOM - {code_section} - {message}')
 
     def _generate_weight_condition(self, dataframe: DataFrame, space: str) -> DataFrame:
         """
