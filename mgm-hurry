@@ -716,6 +716,11 @@ class MGMHurry:
         Shows the HyperOpt results for given epoch.
 
         :param epoch: (int) The epoch number to show the results from.
+
+        ToDo:
+            - Add `--apply` (defaults to `True`)
+            - Scrap `hyperopt_apply_epoch`
+            - Add `--fthypt` (defaults to last known)
         """
         logger.info('💨 💨 💨')
         logger.info('👉 Hyperopt show results')
