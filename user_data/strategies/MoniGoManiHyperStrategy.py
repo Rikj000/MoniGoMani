@@ -12,6 +12,7 @@ import talib.abstract as ta
 from pandas import DataFrame
 
 import freqtrade.vendor.qtpylib.indicators as qtpylib
+from freqtrade.constants import ListPairsWithTimeframes
 
 # Master Framework file must reside in same folder as Strategy file
 sys.path.append(str(Path(__file__).parent))
@@ -136,7 +137,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         }
     })
 
-    def informative_pairs(self) -> list:
+    def informative_pairs(self) -> ListPairsWithTimeframes:
         """
         Defines additional informative pair/interval combinations to be cached from the exchange,
         these will be used during TimeFrame-Zoom.

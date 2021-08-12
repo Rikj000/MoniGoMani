@@ -7,7 +7,7 @@ import sys
 from abc import ABC
 from datetime import datetime, timedelta
 from functools import reduce
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np  # noqa
 import pandas as pd  # noqa
@@ -532,7 +532,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return all_open_trades
 
-    def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
+    def custom_stoploss(self, pair: str, trade: Trade, current_time: datetime,
                         current_rate: float, current_profit: float, **kwargs) -> float:
         """
         Open Trade Custom Information Storage & Garbage Collector
@@ -637,8 +637,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # Since we (currently) only want to use this function for custom information storage!
         return -1
 
-    def custom_sell(self, pair: str, trade: 'Trade', current_time: 'datetime',
-                    current_rate: float, current_profit: float, **kwargs):
+    def custom_sell(self, pair: str, trade: Trade, current_time: datetime, current_rate: float,
+                    current_profit: float, **kwargs) -> Optional[Union[str, bool]]:
         """
         Open Trade Unclogger:
         ---------------------
@@ -882,8 +882,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return None  # By default we don't want a force sell to occur
 
-    def confirm_trade_entry(self, pair: str, order_type: str, amount: float,
-                            rate: float, time_in_force: str, **kwargs) -> bool:
+    def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
+                            time_in_force: str, current_time: datetime, **kwargs) -> bool:
         """
         Open Trade Unclogger Buy Cooldown Window
         ----------------------------------------
@@ -898,6 +898,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param amount: Amount in target (quote) currency that's going to be traded.
         :param rate: Rate that's going to be used when using limit orders
         :param time_in_force: Time in force. Defaults to GTC (Good-til-cancelled).
+        :param current_time: datetime object, containing the current datetime
         :param **kwargs: Ensure to keep this here so updates to this won't break MoniGoMani.
         :return bool: When True is returned, then the buy-order is placed on the exchange. False aborts the process
         """
@@ -909,7 +910,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         return True  # By default we want the buy signal to go through
 
     def confirm_trade_exit(self, pair: str, trade: Trade, order_type: str, amount: float,
-                           rate: float, time_in_force: str, sell_reason: str, **kwargs) -> bool:
+                           rate: float, time_in_force: str, sell_reason: str,
+                           current_time: datetime, **kwargs) -> bool:
         """
         Weighted Signals Sell Profit Only
         ---------------------------------
@@ -919,13 +921,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         Timing for this function is critical, it's needed to avoid doing heavy tasks or network requests in this method.
 
         :param pair: Pair that's about to be sold.
+        :param trade: trade object.
         :param order_type: Order type (as configured in order_types). usually limit or market.
         :param amount: Amount in quote currency.
         :param rate: Rate that's going to be used when using limit orders
         :param time_in_force: Time in force. Defaults to GTC (Good-til-cancelled).
         :param sell_reason: Sell reason, can be any of ['MGM_unclogging_losing_trade', 'sell_signal', 'force_sell',
             'emergency_sell', 'roi', 'stop_loss', 'stoploss_on_exchange', 'trailing_stop_loss']
-        :param **kwargs: Ensure to keep this here so updates to this won't break your strategy.
+        :param current_time: datetime object, containing the current datetime
+        :param **kwargs: Ensure to keep this here so updates to this won't break MoniGoMani.
         :return bool: When True is returned, then the sell-order is placed on the exchange. False aborts the process
         """
 
