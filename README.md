@@ -15,8 +15,8 @@
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md">
-        <img src="https://img.shields.io/badge/Docs-MGM__DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/wiki">
+        <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
     </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
     </a> <a href="https://www.iconomi.com/register?ref=JdFzz">
@@ -59,28 +59,29 @@ If you like my work, feel free to donate or use one of my referral links, that w
     </a>
 </p>
 
-
 ## ⚠️ Disclaimer
- - This Framework / Strategy is under development. It is not recommended running it live at this moment.
- - Always test your MoniGoMani configuration before using it!
- - I am in no way responsible for your live results! This strategy is still experimental and under heavy development!
- - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) after doing manual changes!
- - You need to [optimize](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
+ - This Framework & Strategy are still experimental and under heavy development. It is not recommended running it live at this moment.
+ - Always make sure to understand & test your MoniGoMani configuration until you trust it, before even thinking about going live!
+ - I am in no way responsible for your live results! You are always responsible for your own MoniGoMani configuration!
+ - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) after doing manual changes!
+ - You need to [optimized](https://github.com/Rikj000/MoniGoMani/blob/main/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
 <hr>
 
-
-# Table of Contents
+## Table of Contents
+- [Motivation](#motivation)
+- [⚠️ Disclaimer](#️-disclaimer)
 - [Table of Contents](#table-of-contents)
-  - [The Idea & Theory](#the-idea--theory)
-  - [Feature List](#feature-list)
-  - [Getting Started](#getting-started)
-  - [Go-To Commands](#go-to-commands)
-  - [Got Test Results - Ideas - Config Improvements?](#got-test-results---ideas---config-improvements)
-  - [Planned](#planned)
-  - [ChangeLog](#changelog)
-  - [Freqtrade](#freqtrade)
-  - [ICONOMI](#iconomi)
-      - [Recommended ICONOMI Strategies](#recommended-iconomi-strategies)
+- [The Idea & Theory](#the-idea--theory)
+- [Feature List](#feature-list)
+- [Getting Started](#getting-started)
+- [Go-To Commands](#go-to-commands)
+- [Got Test Results - Ideas - Config Improvements?](#got-test-results---ideas---config-improvements)
+- [Planned](#planned)
+- [ChangeLog](#changelog)
+- [Freqtrade](#freqtrade)
+  - [Supported Exchanges](#supported-exchanges)
+- [ICONOMI](#iconomi)
+    - [Recommended ICONOMI Strategies](#recommended-iconomi-strategies)
 
 
 ## The Idea & Theory
@@ -208,7 +209,20 @@ It's completely free to use and alter and has many amazing features.
 Big thank you to **xmatthias** and everyone who helped on it!
 - **[Official Freqtrade Website](https://www.freqtrade.io/en/latest/)**
 - **[Official Freqtrade GitHub Repository](https://github.com/freqtrade/freqtrade)**
-- **[Official Freqtrade Discord Server](https://discord.gg/j84KnP57kW)**- [Sigmoid](https://en.wikipedia.org/wiki/Sigmoid_function) Buy/Sell Signals
+- **[Official Freqtrade Discord Server](https://discord.gg/j84KnP57kW)**
+
+### Supported Exchanges
+
+Please read Freqtrade's [exchange specific notes](https://www.freqtrade.io/en/latest/exchanges/) to learn about eventual, special configurations needed for each exchange.
+| Exchange | Join | Freqtrade Support | CCXT Certified | Discount |
+|:--------:|:----:|:-----------------:|:--------------:|:--------:|
+| [![binance](https://user-images.githubusercontent.com/1294454/29604020-d5483cdc-87ee-11e7-94c7-d1a8d9169293.jpg)](https://www.binance.com/en/register?ref=97611461) | [Binance](https://www.binance.com/en/register?ref=97611461) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) | [![Sign up with Binance using my referral link for a 5% discount!](https://img.shields.io/static/v1?label=Fee&message=%2d5%25&color=orange)](https://www.binance.com/en/register?ref=97611461) |
+| [![ftx](https://user-images.githubusercontent.com/1294454/67149189-df896480-f2b0-11e9-8816-41593e17f9ec.jpg)](https://ftx.com/#a=33116566) | [FTX](https://ftx.com/#a=33116566) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) | [![Sign up with FTX using my referral link for a 5% discount!](https://img.shields.io/static/v1?label=Fee&message=%2d5%25&color=orange)](https://ftx.com/#a=33116566) |
+| [![kraken](https://user-images.githubusercontent.com/51840849/76173629-fc67fb00-61b1-11ea-84fe-f2de582f58a3.jpg)](https://www.kraken.com) | [Kraken](https://www.kraken.com) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) |
+| [![bittrex](https://user-images.githubusercontent.com/51840849/87153921-edf53180-c2c0-11ea-96b9-f2a9a95a455b.jpg)](https://bittrex.com/Account/Register?referralCode=JCC-AWM-VU1) | [Bittrex](https://bittrex.com/Account/Register?referralCode=JCC-AWM-VU1) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-market$places) |
+| [![bitvavo](https://user-images.githubusercontent.com/1294454/83165440-2f1cf200-a116-11ea-9046-a255d09fb2ed.jpg)](https://bitvavo.com/?a=2D64A068E5) | [Bitvavo](https://bitvavo.com/?a=2D64A068E5) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Community_Tested-blue.svg)](https://www.freqtrade.io/en/latest/#community-tested) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) | |
+| [![kucoin](https://user-images.githubusercontent.com/51840849/87295558-132aaf80-c50e-11ea-9801-a2fb0c57c799.jpg)](https://www.kucoin.com/ucenter/signup?rcode=rJ2VUZ3) | [KuCoin](https://www.kucoin.com/ucenter/signup?rcode=rJ2VUZ3) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Community_Tested-blue.svg)](https://www.freqtrade.io/en/latest/#community-tested) | |
+
 
 ## ICONOMI
 Can't wait until MoniGoMani is fully on point? Or is this all too technical for you? Check out **[ICONOMI](https://www.iconomi.com/register?ref=JdFzz)!**

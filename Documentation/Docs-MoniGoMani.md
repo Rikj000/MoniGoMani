@@ -7,8 +7,8 @@
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md">
-        <img src="https://img.shields.io/badge/Docs-MGM__DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/wiki">
+        <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
     </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
     </a> <a href="https://www.iconomi.com/register?ref=JdFzz">
@@ -19,16 +19,15 @@
 </p>
 
 ## ⚠️ Disclaimer
- - This strategy is under development. It is not recommended running it live at this moment.
- - Always test this strategy before using it!
- - I am in no way responsible for your live results! This strategy is still experimental and under heavy development!
+ - This Framework & Strategy are still experimental and under heavy development. It is not recommended running it live at this moment.
+ - Always make sure to understand & test your MoniGoMani configuration until you trust it, before even thinking about going live!
+ - I am in no way responsible for your live results! You are always responsible for your own MoniGoMani configuration!
  - MoniGoMani should always be [re-optimized](#how-to-optimize-monigomani) after doing manual changes!
  - You need to [optimize](#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
 <hr>
 
 
-# Table of Contents
-- [Table of Contents](#table-of-contents)
+## Table of Contents
 - [Freqtrade Installation](#freqtrade-installation)
 - [How to Optimize MoniGoMani](#how-to-optimize-monigomani)
 - [How to Configure MoniGoMani](#how-to-configure-monigomani)
