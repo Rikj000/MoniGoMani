@@ -440,27 +440,33 @@ class MGMHurry:
 
         self.__setup_telegram()
 
-    def cleanup(self):
+    def cleanup(self, strategy: str = 'MoniGoManiHyperStrategy'):
         """
-        Deletes stored hyperopt config from previous run(s)
+        Deletes stored HyperOpt config(s) from previous run(s)
+
+        :param strategy: (Optional, string) Name of the Strategy to cleanup, defaults to 'MoniGoManiHyperStrategy'
         """
+        cleaned_up = False
         logger.info('💨 💨 💨')
         logger.info('👉 Cleanup')
         logger.info('💨 💨 💨')
 
-        logger.info('👉 Removing "mgm-config-hyperopt.json"')
-        mgm_config_hyperopt_path = f'{self._basedir}/user_data/mgm-config-hyperopt.json'
+        if strategy == 'MoniGoManiHyperStrategy':
+            mgm_config_hyperopt_path = \
+                f'{self._basedir}/user_data/{self.config["mgm_config_names"]["mgm-config-hyperopt"]}'
+            if os.path.exists(mgm_config_hyperopt_path):
+                logger.info(f'👉 Removing "{self.config["mgm_config_names"]["mgm-config-hyperopt"]}"')
+                os.remove(mgm_config_hyperopt_path)
+                cleaned_up = True
 
-        if os.path.exists(mgm_config_hyperopt_path):
-            os.remove(mgm_config_hyperopt_path)
+        strategy_config_hyperopt_path = f'{self._basedir}/user_data/strategies/{strategy}.json'
+        if os.path.exists(strategy_config_hyperopt_path):
+            logger.info(f'👉 Removing "{strategy}.json"')
+            os.remove(strategy_config_hyperopt_path)
+            cleaned_up = True
 
-        logger.info('👉 Removing "MoniGoManiHyperStrategy.json"')
-        mgm_strategy_config_hyperopt_path = f'{self._basedir}./user_data/strategies/MoniGoManiHyperStrategy.json'
-
-        if os.path.exists(mgm_strategy_config_hyperopt_path):
-            os.remove(mgm_strategy_config_hyperopt_path)
-
-        logger.info('🍺 Reset successful, MoniGoMani HyperOpt configs removed...')
+        logger.info(f'🍺 Cleanup successful, {strategy} ready for a fresh HyperOpt Run...') if cleaned_up is True \
+            else logger.info(f'🍺 No Cleanup was needed, {strategy} ready for a fresh HyperOpt Run...')
 
     def download_candle_data(self, timerange: str = None):
         """
