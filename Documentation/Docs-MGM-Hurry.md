@@ -7,39 +7,23 @@ MGM-Hurry is a CLI tool to speedup & simplify the setup & usage of [Freqtrade](h
 Setting it all up requires some knowledge of the entire process, until you found MGM-Hurry 💨.
 You will get up and HyperOpting (or, Dry/Live Running) in no time!
 
-## Requirements
-
-* Python 3.8+ is required
-* Install required Python packages using the [PIP package manager](https://pip.pypa.io/en/stable/installing/):
-
-```shell
-  pip3 install -r https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/requirements-dev.txt
-```
-
 ## Installation instructions
 
-To install Hurry CLI:
+* Python 3.8+ is required
+
+MGM provides an all-in-one setup tool. It will guide you through the entire installation procedure. Not only for MGM, but Freqtrade also. You want the entire package, right? 🤙
+
+Just run the following command:
 
 ```shell
-  curl "https://raw.githubusercontent.com/topscoder/hurry-cli/master/hurry" --output hurry
+  curl -s "https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/mgm-launcher.sh" | bash
 ```
 
-### Pro tip
-
-Add an alias in your shell config (eg. ~/.zshrc) so you can use Hurry as `hurry` everywhere :)
-
-```shell
-  alias hurry="python3 /path/to/hurry-cli/hurry"
-```
-
-Or, if you use [`fish-shell`](https://fishshell.com) than `hurry.fish` is your friend.
-Copy `hurry.fish` to your fish functions folder (`~/.config/fish/functions/hurry.fish`) and you are ready to roll!
-
-## Quick start
+## Wait, what is happening?
 
 **Hurry up! Time is money**
 
-Hurry includes an interactive wizard which guides you through the entire process of:
+MGM Launcher installs all necessary dependencies to run Freqtrade with MoniGoMani on your machine. MGM comes with MGM-Hurry also. It's our CLI tool for configuring MGM to you liking. It includes an interactive wizard which guides you through the entire process of:
 
 * Installing and configuring Freqtrade
 * Installing and configuring MGM
