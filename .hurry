@@ -1,7 +1,6 @@
 config:
   exchange: binance
-  ft_binary: source /Users/denver/Projects/ft_installation/mgm/.env/bin/activate;
-    freqtrade
+  ft_binary: source /Users/denver/Projects/MoniGoMani/.env/bin/activate; freqtrade
   hyperopt:
     epochs: 800
     loss: WinRatioAndProfitRatioLoss

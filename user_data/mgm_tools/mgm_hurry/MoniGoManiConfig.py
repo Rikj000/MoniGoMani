@@ -293,7 +293,7 @@ class MoniGoManiConfig(object):
     def __create_default_config(self):
         """ Creates default .hurry config file with default values. """
         self.write()
-    
+
     def __get_preset_timerange(self, timerange: str) -> str:
         """
         Parses given timerange-string into according timerange dates
@@ -346,7 +346,7 @@ class MoniGoManiConfig(object):
         self.logger.info('🍺 Telegram bot settings written to "mgm-config-private.json"')
 
         return True
-        
+
     def _save_exchange_credentials(self, cred: dict):
         """
         Save exchange credentials to "mgm-config-private.json"

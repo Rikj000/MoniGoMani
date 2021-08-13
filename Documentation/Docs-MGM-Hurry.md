@@ -133,3 +133,17 @@ $ hurry setup
 |Uptrend  | `20210127-20210221` |
 |Sidetrend| `20210518-20210610` |
 |Final    | `20210425-20210610` |
+
+### Developer Notes
+
+```shell
+
+# Install pipenv
+brew install pipenv
+
+# Installs pip packages from Pipfile
+pipenv install -d  # -d to install dev dependencies also
+
+pre-commit
+
+```

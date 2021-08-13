@@ -161,21 +161,21 @@
         "outdated_offset": 5,
         "markets_refresh_interval": 60,
         "pair_whitelist": [
+            "BTC/USDT",
             "ETH/USDT",
+            "ADA/USDT",
+            "XRP/USDT",
+            "DOGE/USDT",
             "AXS/USDT",
-            "SAND/USDT",
-            "CHZ/USDT",
-            "CHR/USDT",
-            "DOT/USDT",
             "MATIC/USDT",
-            "ENJ/USDT",
-            "SOL/USDT",
+            "DOT/USDT",
+            "CHZ/USDT",
+            "FIL/USDT",
+            "LTC/USDT",
+            "ETC/USDT",
+            "WIN/USDT",
             "LINK/USDT",
-            "AAVE/USDT",
-            "MANA/USDT",
-            "THETA/USDT",
-            "COMP/USDT",
-            "FIL/USDT"
+            "DENT/USDT"
         ]
     },
     "pairlists": [
