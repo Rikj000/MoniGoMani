@@ -29,18 +29,17 @@ GIT_URL_MONIGOMANI: str = 'https://github.com/Rikj000/MoniGoMani.git'
 
 
 class MoniGoManiCli(object):
-    """Use this module to communicate with the mgm hyperstrategy,."""
-
-    log_output: bool = False
-    output_path: str = None
-    output_file_name: str = None
+    """Use this module to communicate with the mgm hyperstrategy.
+    
+    Attributes:
+        logger      The logger function of the MoniGoManiCli module.
+    """
     logger: MoniGoManiLogger
 
     def __init__(self, basedir):
-        """Instantiate a new object of mgm cli.
+        """Let's talk command-line-ish.
 
-        Args:
-            basedir (str): The directory
+        :param basedir (str): The directory
         """
         self.basedir = basedir
         self.logger = MoniGoManiLogger(self.basedir).get_logger()
@@ -48,8 +47,7 @@ class MoniGoManiCli(object):
     def installation_exists(self) -> bool:
         """Check if the MGM Hyper Strategy installation exists.
 
-        Returns:
-            success (bool): Whether or not the config and strategy files are found.
+        :return success (bool): Whether or not the config and strategy files are found.
         """
         if os.path.exists('{0}/user_data/mgm-config.json'.format(self.basedir)) is False:
             self.logger.warning('🤷♂️ No "mgm-config.json" file found.')
@@ -66,9 +64,8 @@ class MoniGoManiCli(object):
         """
         Install Freqtrade using a git clone to target_dir.
 
-        Args:
-            branch (str): Checkout a specific branch. Defaults to 'develop'.
-            target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
+        :param branch (str): Checkout a specific branch. Defaults to 'develop'.
+        :param target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
 

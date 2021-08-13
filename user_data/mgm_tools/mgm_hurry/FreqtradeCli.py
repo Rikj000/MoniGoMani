@@ -27,19 +27,27 @@ from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
 
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
-YASPIN_INSTANCE: yaspin = None  # Global for a reason
+YASPIN_INSTANCE: yaspin = None  # Global scope for a reason
 GIT_URL_FREQTRADE: str = 'https://github.com/freqtrade/freqtrade'
 
 
 class FreqtradeCli():
-    """FreqtradeCli is responsible for all Freqtrade (installation) related tasks."""
-
-    basedir: os.strerror
-    freqtrade_binary: str
-    cli_logger: MoniGoManiLogger
-    monigomani_cli: MoniGoManiCli
-    monigomani_config: MoniGoManiConfig
-    _install_type: str
+    """FreqtradeCli is responsible for all Freqtrade (installation) related tasks.
+    
+    Attributes:
+        basedir             The basedir where the monigomani install lives.
+        freqtrade_binary    The abs path to the freqtrade executable.
+        cli_logger          The logger function of the MoniGoManiCli module.
+        monigomani_cli      The MoniGoManiCli object.
+        monigomani_config   The MoniGoManiConfig object.
+        _install_type       The current install type of freqtrade. Either 'source' or default 'docker'
+    """
+    basedir             : str
+    freqtrade_binary    : str
+    cli_logger          : MoniGoManiLogger
+    monigomani_cli      : MoniGoManiCli
+    monigomani_config   : MoniGoManiConfig
+    _install_type       : str
 
     def __init__(self, basedir: str):
         """Initialize the Freqtrade binary.

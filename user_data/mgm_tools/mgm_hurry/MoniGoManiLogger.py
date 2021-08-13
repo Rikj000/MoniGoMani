@@ -27,8 +27,13 @@ class MoniGoManiLogger():
     Let's Log and Roll.
 
     More information at https://docs.python.org/3/howto/logging.html
-    """
 
+    Attributes:
+        basedir             The basedir where the monigomani install lives.
+        logger              The logger function of the MoniGoManiCli module.
+        output_path         Absolute path to the directory where logs are stored.
+        output_file_name    The logfile name.log
+    """
     basedir: str
     logger: logging
     output_path: str
@@ -36,18 +41,17 @@ class MoniGoManiLogger():
 
     def __init__(self, basedir: str, print_output: bool = True):
         """
+        Wrapper object around the logger function that logs messages like we want.
+
         :param basedir (str): The basedir of MGM
         :param print_output (bool, optional): Print output or log to file. Defaults to True (so, printing output)
         """
         self.basedir = basedir
-
         self.output_path = '{0}/Some Test Results/'.format(self.basedir)
         self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
 
         logging_format = '%(asctime)s = %(levelname)s: %(message)s'
         logging_file = os.path.join(self.output_path, self.output_file_name)
-
-        print_output = True  # FIXME remove, as this is for debugging purposes
 
         if print_output is True:
             logging.basicConfig(

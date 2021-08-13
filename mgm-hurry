@@ -479,7 +479,7 @@ class MGMHurry:
             self._logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
             sys.exit(1)
 
-        timerange = self.monigomani_config.__get_preset_timerange(timerange)
+        timerange = self.monigomani_config._get_preset_timerange(timerange)
 
         if self.freqtrade_cli.installation_exists() is False:
             self._logger.error('🤷 No Freqtrade installation found. I crash.')
@@ -611,7 +611,7 @@ class MGMHurry:
         self._logger.info('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
         self._logger.info('💨 💨 💨')
 
-        timerange = self.monigomani_config.__get_preset_timerange(timerange)
+        timerange = self.monigomani_config._get_preset_timerange(timerange)
 
         if strategy is None:
             strategy = self.monigomani_config.config['hyperopt']['strategy']
@@ -748,7 +748,7 @@ class MGMHurry:
         self._logger.info('👉 Start backtesting. Lets see how it all turns out!')
         self._logger.info('💨 💨 💨')
 
-        timerange = self.monigomani_config.__get_preset_timerange(timerange)
+        timerange = self.monigomani_config._get_preset_timerange(timerange)
 
         cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json '
                '-c ./user_data/mgm-config-private.json --timerange $timerange')

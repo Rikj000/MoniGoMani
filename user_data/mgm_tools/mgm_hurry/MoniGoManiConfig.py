@@ -26,14 +26,25 @@ from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
 
 class MoniGoManiConfig(object):
-    """MoniGoManiConfig is responsible for all MGM Config related tasks."""
-
+    """MoniGoManiConfig is responsible for all MGM Config related tasks.
+    
+    Attributes:
+        __config            Dictionary containing the configuration parameters.
+        __basedir           The basedir where the monigomani install lives.
+        __full_path_config  Absolute path to .hurry config file.
+        __mgm_logger        The logger function of the MoniGoManiCli module.
+    """
     __config: dict
     __basedir: str
     __full_path_config: str
     __mgm_logger: MoniGoManiLogger
 
     def __init__(self, basedir: str):
+        """MGM has configuration.
+
+        Args:
+            basedir (str): The directory
+        """
         self.__basedir = basedir
         self.__mgm_logger = MoniGoManiLogger(basedir).get_logger()
         self.__full_path_config = '{0}/.hurry'.format(self.__basedir)
@@ -288,7 +299,7 @@ class MoniGoManiConfig(object):
         """ Creates default .hurry config file with default values. """
         self.write()
 
-    def __get_preset_timerange(self, timerange: str) -> str:
+    def _get_preset_timerange(self, timerange: str) -> str:
         """
         Parses given timerange-string into according timerange dates
 
