@@ -37,7 +37,7 @@ class MoniGoManiLogger():
     def __init__(self, basedir: str, print_output: bool = True):
         """
         :param basedir (str): The basedir of MGM
-        :param print_output (bool, optional): Print output or log fo file. Defaults to True (so, printing output)
+        :param print_output (bool, optional): Print output or log to file. Defaults to True (so, printing output)
         """
         self.basedir = basedir
 
