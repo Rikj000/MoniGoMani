@@ -177,8 +177,6 @@ class MoniGoManiConfig(object):
     def read_hurry_config(self) -> dict:
         """Read .hurry configuration dotfile and return its yaml contents as dict.
 
-        TODO: move to module MoniGoManiHurry.py as this is more .hurry specific
-
         :return dictionary containing the config section of .hurry file. None if failed.
         """
         with open('{0}/.hurry'.format(self.basedir), 'r') as yml_file:
@@ -190,8 +188,6 @@ class MoniGoManiConfig(object):
 
     def get_config_filename(self, cfg_key: str) -> str:
         """Transforms given cfg_key into the corresponding config filename.
-
-        TODO: move along with read_hurry_config to hurry config module.
 
         :param cfg_key (str): the config name (key) to parse.
         :return abs_path (str): the absolute path to the asked config file.
@@ -261,8 +257,6 @@ class MoniGoManiConfig(object):
     def _get_full_path_for_config_name(self, hurry_config: dict,
                                        cfg_name: str) -> str:
         """Parses the full path to given config file based on settings in .hurry.
-
-        TODO: Move along with read_hurry_config to module MoniGoManiHurry.py
 
         :param hurry_config (dict): The dictionary containing the hurry dotfile yaml config.
         :return abs_path: The absolute path to the asked config file.
