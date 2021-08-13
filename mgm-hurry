@@ -49,9 +49,9 @@ class MGMHurry:
         freqtrade_cli       The FreqtradeCli object
         _logger             The logging function out of MoniGoManiLogger
     """
-    monigomani_config   : MoniGoManiConfig
-    freqtrade_cli       : FreqtradeCli
-    _logger             : logging
+    monigomani_config: MoniGoManiConfig
+    freqtrade_cli: FreqtradeCli
+    _logger: logging
 
     def __init__(self):
         tprint('mgm-hurry')
@@ -564,9 +564,7 @@ class MGMHurry:
 
         # Save new static pairlist to his own pairlist json file
         self._logger.info('🤖 Saving fresh static pairlist into mgm_pair_lists/...')
-        with open(
-            '{0}/user_data/mgm_pair_lists/{1}-{2}-Top-Volume-StaticPairList.json'.format(self._basedir, exchange, quote), 'w+'
-            ) as pairlist_file:
+        with open('{0}/user_data/mgm_pair_lists/{1}-{2}-Top-Volume-StaticPairList.json'.format(self._basedir, exchange, quote), 'w+') as pairlist_file:
             data_format = {'exchange': {'pair_whitelist': static_pairlist}}
             json.dump(data_format, pairlist_file, indent=4)
 
