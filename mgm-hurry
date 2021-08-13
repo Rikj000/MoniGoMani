@@ -43,11 +43,15 @@ class MGMHurry:
     💨 Your command is my objective 💨
 
     CLI Tool for setting up and managing a Freqtrade instance containing the MoniGoMani Framework & Strategy
-    """
 
-    monigomani_config: MoniGoManiConfig
-    _logger: logging
-    freqtrade_cli: str
+    Attributes:
+        monigomani_config   The monigomani_config object
+        freqtrade_cli       The FreqtradeCli object
+        _logger             The logging function out of MoniGoManiLogger
+    """
+    monigomani_config   : MoniGoManiConfig
+    freqtrade_cli       : FreqtradeCli
+    _logger             : logging
 
     def __init__(self):
         tprint('mgm-hurry')
@@ -434,7 +438,7 @@ class MGMHurry:
                 'api_secret': answers.get('api_secret'),
             }
 
-            self._save_exchange_credentials(cred)
+            self.monigomani_config._save_exchange_credentials(cred)
 
         self.__setup_telegram()
 
@@ -475,7 +479,7 @@ class MGMHurry:
             self._logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
             sys.exit(1)
 
-        timerange = self.__get_preset_timerange(timerange)
+        timerange = self.monigomani_config.__get_preset_timerange(timerange)
 
         if self.freqtrade_cli.installation_exists() is False:
             self._logger.error('🤷 No Freqtrade installation found. I crash.')
@@ -607,7 +611,7 @@ class MGMHurry:
         self._logger.info('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
         self._logger.info('💨 💨 💨')
 
-        timerange = self.__get_preset_timerange(timerange)
+        timerange = self.monigomani_config.__get_preset_timerange(timerange)
 
         if strategy is None:
             strategy = self.monigomani_config.config['hyperopt']['strategy']
@@ -744,7 +748,7 @@ class MGMHurry:
         self._logger.info('👉 Start backtesting. Lets see how it all turns out!')
         self._logger.info('💨 💨 💨')
 
-        timerange = self.__get_preset_timerange(timerange)
+        timerange = self.monigomani_config.__get_preset_timerange(timerange)
 
         cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json '
                '-c ./user_data/mgm-config-private.json --timerange $timerange')
@@ -829,90 +833,9 @@ class MGMHurry:
                 'telegram_chat_id': answers.get('telegram_chat_id')
             }
 
-            self._save_telegram_credentials(opt)
+            self.monigomani_config._save_telegram_credentials(opt)
 
         return True
-
-    def _save_exchange_credentials(self, cred: dict):
-        """
-        Save exchange credentials to "mgm-config-private.json"
-
-        :param cred: (dict) - List containing values for [exchange,api_key,api_secret]
-        """
-        if len(cred) == 0:
-            self._logger.warning(
-                'Did not write exchange credentials to "mgm-config-private.json" because no data was passed.')
-            return False
-
-        try:
-            with open(self._basedir + '/user_data/mgm-config-private.json', 'a+') as file:
-                data = json.load(file)
-        except Exception:
-            data = {}
-
-        data['exchange'] = {
-            'name': cred['exchange'],
-            'key': cred['api_key'],
-            'secret': cred['api_secret']
-        }
-
-        with open(f'{self._basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
-            json.dump(data, outfile, indent=4)
-
-        self._logger.info('🍺 Exchange settings written to "mgm-config-private.json"')
-
-    def _save_telegram_credentials(self, opt: dict) -> bool:
-        """
-        Save Telegram bot settings
-
-        :param opt: (dict): list containing values for [enable_telegram,telegram_token,telegram_chat_id]
-        :return bool: True if json data is written. False otherwise.
-        """
-        if len(opt) == 0:
-            self._logger.warning(
-                'Did not write telegram credentials to "mgm-config-private.json" because no data was passed.')
-            return False
-
-        with open(f'{self._basedir}/user_data/mgm-config-private.json', ) as file:
-            data = json.load(file)
-
-        data['telegram'] = {
-            'enabled': opt['enable_telegram'],
-            'token': opt['telegram_token'],
-            'chat_id': opt['telegram_chat_id']
-        }
-
-        with open(f'{self._basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
-            json.dump(data, outfile, indent=4)
-
-        self._logger.info('🍺 Telegram bot settings written to "mgm-config-private.json"')
-
-        return True
-
-    def __get_preset_timerange(self, timerange: str) -> str:
-        """
-        Parses given timerange-string into according timerange dates
-
-        :param timerange: (str) The timerange-string to parse [up, down, side]
-        :return str: The parsed timerange string in yyyymmdd-yyyymmdd format
-        """
-
-        tr_input = timerange
-
-        if timerange is None:
-            timerange = self.monigomani_config.config['timerange']
-        if timerange == 'down':
-            timerange = '20210509-20210524'
-        if timerange == 'side':
-            timerange = '20210518-20210610'
-        if timerange == 'up':
-            timerange = '20210127-20210221'
-
-        tr_output = timerange
-
-        self._logger.info(f'☀️ Timerange string parsed from "{tr_input}" to "{tr_output}"')
-
-        return timerange
 
 
 if __name__ == '__main__':

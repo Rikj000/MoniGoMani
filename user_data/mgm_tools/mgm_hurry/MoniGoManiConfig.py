@@ -293,3 +293,84 @@ class MoniGoManiConfig(object):
     def __create_default_config(self):
         """ Creates default .hurry config file with default values. """
         self.write()
+    
+    def __get_preset_timerange(self, timerange: str) -> str:
+        """
+        Parses given timerange-string into according timerange dates
+
+        :param timerange: (str) The timerange-string to parse [up, down, side]
+        :return str: The parsed timerange string in yyyymmdd-yyyymmdd format
+        """
+
+        tr_input = timerange
+
+        if timerange is None:
+            timerange = self.config['timerange']
+        if timerange == 'down':
+            timerange = '20210509-20210524'
+        if timerange == 'side':
+            timerange = '20210518-20210610'
+        if timerange == 'up':
+            timerange = '20210127-20210221'
+
+        tr_output = timerange
+
+        self.logger.debug(f'☀️ Timerange string parsed from "{tr_input}" to "{tr_output}"')
+
+        return timerange
+
+    def _save_telegram_credentials(self, opt: dict) -> bool:
+        """
+        Save Telegram bot settings
+
+        :param opt: (dict): list containing values for [enable_telegram,telegram_token,telegram_chat_id]
+        :return bool: True if json data is written. False otherwise.
+        """
+        if len(opt) == 0:
+            self.logger.warning(
+                'Did not write telegram credentials to "mgm-config-private.json" because no data was passed.')
+            return False
+
+        with open(f'{self.basedir}/user_data/mgm-config-private.json', ) as file:
+            data = json.load(file)
+
+        data['telegram'] = {
+            'enabled': opt['enable_telegram'],
+            'token': opt['telegram_token'],
+            'chat_id': opt['telegram_chat_id']
+        }
+
+        with open(f'{self.basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
+            json.dump(data, outfile, indent=4)
+
+        self.logger.info('🍺 Telegram bot settings written to "mgm-config-private.json"')
+
+        return True
+        
+    def _save_exchange_credentials(self, cred: dict):
+        """
+        Save exchange credentials to "mgm-config-private.json"
+
+        :param cred: (dict) - List containing values for [exchange,api_key,api_secret]
+        """
+        if len(cred) == 0:
+            self.logger.warning(
+                'Did not write exchange credentials to "mgm-config-private.json" because no data was passed.')
+            return False
+
+        try:
+            with open(self.basedir + '/user_data/mgm-config-private.json', 'a+') as file:
+                data = json.load(file)
+        except Exception:
+            data = {}
+
+        data['exchange'] = {
+            'name': cred['exchange'],
+            'key': cred['api_key'],
+            'secret': cred['api_secret']
+        }
+
+        with open(f'{self.basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
+            json.dump(data, outfile, indent=4)
+
+        self.logger.info('🍺 Exchange settings written to "mgm-config-private.json"')
