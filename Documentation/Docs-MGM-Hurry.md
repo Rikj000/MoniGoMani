@@ -70,7 +70,7 @@ python3 mgm-hurry up
 
 ```
 
-### Examples
+## Examples
 
 ```shell
 $ hurry up
@@ -125,16 +125,20 @@ $ hurry setup
 ...
 ```
 
-### Timerange examples
+## Timeranges
+
+Here are some examples of timeranges for each different market type (bearish, bullish etc).
 
 |Trend    |Timerange            |
-|-----    |---------            |
+|-------- |-------------------- |
 |Downtrend| `20210509-20210524` |
 |Uptrend  | `20210127-20210221` |
 |Sidetrend| `20210518-20210610` |
 |Final    | `20210425-20210610` |
+---------------------------------
 
-### Developer Notes
+Developer Notes
+---
 
 ```shell
 
@@ -147,3 +151,22 @@ pipenv install -d  # -d to install dev dependencies also
 pre-commit
 
 ```
+
+Module headers
+---
+
+To generate a module header (ascii art), you need to run the following command:
+
+Enter python environment
+
+```shell
+python3
+```
+
+```python
+from art import tprint
+
+tprint("Whatever you want")
+```
+
+Copy and pase the ASCII art 🍻
