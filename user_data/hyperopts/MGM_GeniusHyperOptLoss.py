@@ -56,8 +56,7 @@ class MGM_GeniusHyperOptLoss(IHyperOptLoss):
         try:
             max_drawdown, _, _, _, _ = calculate_max_drawdown(results, value_col='profit_ratio')
         except ValueError:
-            # max_drawdown = 0.0
-            max_drawdown = 100  # ToDo: After reproduce tests uncomment above and remove this since I don't agree
+            max_drawdown = 0
 
         # Calculate the Average & Total Profit, Profit Threshold, Total Lose & Win, Average Trade Duration
         average_profit = results['profit_ratio'].mean() * 100
