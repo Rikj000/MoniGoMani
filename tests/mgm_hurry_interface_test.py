@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 # import pytest
 
-# This unit test file will help while splitting mgm-hurry
-# into more modular code.
+# This unit test file helps testing modular mgm-hurry code.
 #
 #   1. Create unit test for specific functionality
 #      - Verify unit test succeeds
