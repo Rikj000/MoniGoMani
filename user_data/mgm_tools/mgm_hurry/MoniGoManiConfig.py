@@ -27,7 +27,7 @@ from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
 class MoniGoManiConfig(object):
     """MoniGoManiConfig is responsible for all MGM Config related tasks.
-    
+
     Attributes:
         __config            Dictionary containing the configuration parameters.
         __basedir           The basedir where the monigomani install lives.

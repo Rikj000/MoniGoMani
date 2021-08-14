@@ -33,7 +33,7 @@ GIT_URL_FREQTRADE: str = 'https://github.com/freqtrade/freqtrade'
 
 class FreqtradeCli():
     """FreqtradeCli is responsible for all Freqtrade (installation) related tasks.
-    
+
     Attributes:
         basedir             The basedir where the monigomani install lives.
         freqtrade_binary    The abs path to the freqtrade executable.

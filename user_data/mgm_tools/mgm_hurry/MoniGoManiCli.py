@@ -30,7 +30,7 @@ GIT_URL_MONIGOMANI: str = 'https://github.com/Rikj000/MoniGoMani.git'
 
 class MoniGoManiCli(object):
     """Use this module to communicate with the mgm hyperstrategy.
-    
+
     Attributes:
         logger      The logger function of the MoniGoManiCli module.
     """
