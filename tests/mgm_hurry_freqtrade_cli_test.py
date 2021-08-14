@@ -11,23 +11,24 @@ def test_initialisation():
     fc = __get_instance('.')
     assert isinstance(fc, FreqtradeCli)
 
-
-def test_set_basedir():
+def test_default_basedir_is_cwd():
     fc = __get_instance('.')
     assert fc.basedir == '.'
-
 
 def test_set_install_type_to_source():
     fc = __get_instance('.')
     fc.install_type = 'source'
     assert fc.install_type == 'source'
 
-
 def test_set_incorrect_install_type_should_not_return_none():
     fc = __get_instance('.')
     fc.install_type = 'foobar'
     assert fc.install_type is not None
 
+def test_set_incorrect_install_type_should_return_docker():
+    fc = __get_instance('.')
+    fc.install_type = 'pytest'
+    assert fc.install_type == 'docker'
 
 def test_get_freqtrade_binary_path_unknown_install_type_should_return_docker_path():
     '''
@@ -43,7 +44,6 @@ def test_get_freqtrade_binary_path_unknown_install_type_should_return_docker_pat
     assert isinstance(cmd, str) and \
         cmd.find('docker-compose') > -1
 
-
 def test_get_freqtrade_binary_path_docker():
     '''
     Case:
@@ -56,7 +56,6 @@ def test_get_freqtrade_binary_path_docker():
     cmd = fc._get_freqtrade_binary_path('.', 'docker')
     assert isinstance(cmd, str) \
         and cmd.find('docker-compose') > -1
-
 
 def test_get_freqtrade_binary_path_source():
     '''
