@@ -8,7 +8,7 @@
 
 <p align="center">
     <a href="https://matrix.to/#/+moni-go-mani:matrix.org">
-        <img src="https://img.shields.io/matrix/MoniGoMani-Testing:matrix.org?label=Matrix&logo=matrix" alt="Join MoniGoMani on Matrix">
+        <img src="https://img.shields.io/matrix/MoniGoMani-Testing:matrix.org?label=Matrix%20Community&logo=matrix" alt="Join MoniGoMani on Matrix">
     </a> <a href="https://discord.gg/xFZ9bB6vEz">
         <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join CryptoStonksShallRise on Discord">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases">
@@ -47,7 +47,7 @@ Isn't that what we all want? Our money to go many? Well that's what this Freqtra
 
 Big thank you to xmatthias and everyone who helped on MoniGoMani, Freqtrade Discord support was also really helpful, so thank you as-well!
 
-If you like my work, feel free to donate or use one of my referral links, that would also greatly be appreciated:
+If you like my work, feel free to donate or use [one of my referral links](#supported-exchanges), that would also greatly be appreciated:
 
 <p align=center>
     <a href="https://www.iconomi.com/register?ref=JdFzz">
@@ -176,7 +176,7 @@ freqtrade plot-profit --export-filename ./user_data/backtest_results/<backtest-r
 ```
 
 ## Got Test Results - Ideas - Config Improvements?
-- Feel free to join our community [**CryptoStonksShallRise**](https://discord.gg/xFZ9bB6vEz) on Discord, there you can follow/participate in the **Official MoniGoMani Channels**:
+- Feel free to join our community [**MoniGoMani** on Matrix](https://matrix.to/#/+moni-go-mani:matrix) or [**CryptoStonksShallRise** on Discord](https://discord.gg/xFZ9bB6vEz), there you can follow/participate in the **Official MoniGoMani Channels**:
   - `📢︱moni-go-mani` *(All Official MGM Releases & important messages can be followed here)*
   - `✨︱git-updates` *(All GitHub Commits can be followed here)*
   - `🗞︱github-discussions` *(All conversations tied to GitHub Issues & Pull Requests can be followed here)*

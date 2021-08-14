@@ -1,6 +1,6 @@
 <p align="left">
     <a href="https://matrix.to/#/+moni-go-mani:matrix.org">
-        <img src="https://img.shields.io/matrix/MoniGoMani-Testing:matrix.org?label=Matrix&logo=matrix" alt="Join MoniGoMani on Matrix">
+        <img src="https://img.shields.io/matrix/MoniGoMani-Testing:matrix.org?label=Matrix%20Community&logo=matrix" alt="Join MoniGoMani on Matrix">
     </a>  <a href="https://discord.gg/xFZ9bB6vEz">
         <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join CryptoStonksShallRise on Discord">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases">
