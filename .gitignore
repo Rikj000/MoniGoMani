@@ -72,7 +72,7 @@ freqtrade/
 junit/
 scripts/
 tests/
-!tests/mgm_*_test.py
+!tests/monigomani/
 
 freqtrade.service
 freqtrade.service.watchdog
