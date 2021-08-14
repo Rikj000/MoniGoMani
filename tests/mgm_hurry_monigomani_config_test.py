@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import pytest
 
 sys.path.append('.')
 sys.path.append('..')
