@@ -71,7 +71,7 @@ docs/
 freqtrade/
 junit/
 scripts/
-tests/
+tests/*
 !tests/monigomani/
 !tests/monigomani/*
 !tests/monigomani/*.py
