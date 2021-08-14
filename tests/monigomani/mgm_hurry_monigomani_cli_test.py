@@ -17,9 +17,9 @@ def test_initialisation():
     assert isinstance(cli, MoniGoManiCli)
 
 
-# --- ↓ 
+# --- ↓
 # --- ↓ Unit Testing .installation_exists(self) -> bool
-# --- ↓ 
+# --- ↓
 
 def test_installation_exists_without_installation():
     os.path.exists = MagicMock(return_value=False)

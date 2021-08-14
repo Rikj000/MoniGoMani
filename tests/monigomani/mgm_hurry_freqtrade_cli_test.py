@@ -8,9 +8,9 @@ sys.path.append('..')
 from user_data.mgm_tools.mgm_hurry.FreqtradeCli import FreqtradeCli  # noqa: E402
 
 
-# --- ↓ 
+# --- ↓
 # --- ↓ Unit Testing "initialisation"
-# --- ↓ 
+# --- ↓
 
 def test_initialisation():
     fc = __get_instance('.')
@@ -19,9 +19,9 @@ def test_initialisation():
 # --- ↑
 
 
-# --- ↓ 
+# --- ↓
 # --- ↓ Unit Testing "basedir attr"
-# --- ↓ 
+# --- ↓
 
 def test_default_basedir_is_cwd():
     fc = __get_instance('.')
@@ -30,9 +30,9 @@ def test_default_basedir_is_cwd():
 # --- ↑
 
 
-# --- ↓ 
+# --- ↓
 # --- ↓ Unit Testing "install_type"
-# --- ↓ 
+# --- ↓
 
 def test_set_install_type_to_source():
     fc = __get_instance('.')
@@ -66,9 +66,9 @@ def test_get_freqtrade_binary_path_unknown_install_type_should_return_docker_pat
 # --- ↑
 
 
-# --- ↓ 
+# --- ↓
 # --- ↓ Unit Testing "_get_freqtrade_binary_path"
-# --- ↓ 
+# --- ↓
 
 def test_get_freqtrade_binary_path_docker():
     '''
@@ -101,9 +101,9 @@ def test_get_freqtrade_binary_path_source():
 # --- ↑
 
 
-# --- ↓ 
+# --- ↓
 # --- ↓ Unit Testing "installation_exists"
-# --- ↓ 
+# --- ↓
 
 def test_installation_exists_should_return_bool():
     '''
@@ -133,9 +133,9 @@ def test_installation_exists_install_type_docker():
 # --- ↑
 
 
-# --- ↓ 
+# --- ↓
 # --- ↓ Helper methods
-# --- ↓ 
+# --- ↓
 def __get_instance(directory: str):
     """Create instance of freqtradecli."""
     return FreqtradeCli(directory)
