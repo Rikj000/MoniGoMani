@@ -41,6 +41,7 @@
     - [Trading During Trends](#trading-during-trends)
     - [Weighted Signal Spaces](#weighted-signal-spaces)
     - [Stoploss Spaces](#stoploss-spaces)
+    - [ROI Spaces](#roi-spaces)
     - [Open Trade Unclogger](#open-trade-unclogger)
       - [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries)
     - [Default Stub Values](#default-stub-values)
@@ -117,15 +118,15 @@ The main `MoniGoMani` settings can be found under `monigomani_settings`:
 | **timeframe** <br> **backtest_timeframe** | These values configure the `timeframe`s used in MoniGoMani. <br> **Documentation:** [TimeFrame-Zoom](#timeframe-zoom) <br> **Datatypes:** Integer |
 | **startup_candle_count** | Number of candles the strategy requires before producing valid signals during BackTesting/HyperOpting. <br> By default this is set to `400` since MoniGoMani uses a 200EMA, which needs 400 candles worth of data to be calculated. <br> **Datatype:** Integer |
 | **precision** | This value can be used to control the precision of HyperOpting. Default is `1`. <br> **Documentation:** [Precision Setting](#precision-setting) <br> **Datatype:** Integer |
-| **roi_table_step_size** | MoniGoMani generates a really long custom ROI-Table (Return of Interest), so it will have fewer gaps in it and be more continuous in it's decrease. <br> This setting alters the size of the steps (in minutes) to be used when calculating the long continuous ROI-Table. <br> **Datatype:** Integer |
 | **trading_during_trends** | The settings inside the `trading_during_trends` section are used to configure during which trends (Downwards/Sideways/Upwards) MGM will be allowed to trade (for Buys/Sells).<br> **Documentation:** [Trading During Trends](#trading-during-trends) <br> **Datatype:** Dictionary |
 | **weighted_signal_spaces** | The settings inside the `weighted_signal_spaces` section are used to control how MGM handles the HyperOpting of (Total) Weighted Signal Values during it's [optimization process](#how-to-optimize-monigomani).<br> **Documentation:** [Weighted Signal Spaces](#weighted-signal-spaces) <br> **Datatype:** Dictionary |
 | **stoploss_spaces** | The settings inside the `stoploss_spaces` section are used to refine the search spaces that MGM will use for the (trailing) stoploss during it's [optimization process](#how-to-optimize-monigomani).<br> **Documentation:** [Stoploss Spaces](#stoploss-spaces) <br> **Datatype:** Dictionary |
+| **roi_spaces** | The settings inside `mgm-config.json`'s `roi_spaces` section are used to tweak the ROI (Return Of Interest) search spaces that MGM will use for the ROI-Table generation during it's [optimization process](#how-to-optimize-monigomani).<br> **Documentation:** [ROI Spaces](#roi-spaces) <br> **Datatype:** Dictionary |
 | **unclogger_spaces** | The settings inside the `unclogger_spaces` section are used to refine the search spaces that MGM will use for the open trade unclogger during it's [optimization process](#how-to-optimize-monigomani).<br> **Documentation:** [Open Trade Unclogger](#open-trade-unclogger) <br> **Datatype:** Dictionary |
 | **default_stub_values** | The settings inside the `default_stub_values` section are **only used** to control some default startup values that MGM will use when no other values are found and/or used for them.<br> **Documentation:** [Default Stub Values](#default-stub-values) <br> **Datatype:** Dictionary |
 | **debuggable_weighted_signal_dataframe** | If set to `True` all Weighted Signal results will be added to the dataframe for easy debugging with BreakPoints. <br> **<span style="color:darkorange">WARNING:</span> Disable this for anything else then debugging in an IDE! (Integrated Development Environment)** <br> **Datatype:** Boolean |
 | **use_mgm_logging** | If set to `True` MoniGoMani logging will be displayed to the console and be integrated in Freqtrades native logging, further logging configuration can be done by setting individual `mgm_log_levels_enabled`. <br> It's recommended to set this to `False` for HyperOpting/BackTesting unless you are testing with breakpoints. <br> **Datatype:** Boolean |
-| **mgm_log_levels_enabled** | It allows turning on/off individual `info`, `warning`, `error` and `debug` logging <br> For Live Runs it's recommended to disable at least `info` and `debug` logging, to keep MGM as lightweight as possible! <br> `debug` is very verbose! Always set it to `False` when BackTesting/HyperOpting! <br> **Datatype:** Dictionary |
+| **mgm_log_levels_enabled** | It allows turning on/off individual `info`, `warning`, `error`, `debug` and `custom` logging <br> For Live Runs it's recommended to disable at least `info` and `debug` logging, to keep MGM as lightweight as possible! <br> `debug` is very verbose! Always set it to `False` when BackTesting/HyperOpting! <br> **Datatype:** Dictionary |
 
 ### TimeFrame-Zoom
 To prevent profit exploitation during BackTesting/HyperOpting we BackTest/HyperOpt MoniGoMani using TimeFrame-Zoom.
@@ -204,6 +205,15 @@ The settings inside `mgm-config.json`'s `stoploss_spaces` section are used to re
 | **trailing_stop_positive_max_value** | Maximum value used in the HyperOpt Space for the `trailing_stop_positive`.<br> **Datatype:** Decimal |
 | **trailing_stop_positive_offset_min_value** | Minimal value used for the intermediate offset parameter used to calculate the HyperOpt Space for the `trailing_stop_positive_offset`.<br> **Datatype:** Decimal |
 | **trailing_stop_positive_offset_max_value** | Maximum value used for the intermediate offset parameter used to calculate the HyperOpt Space for the `trailing_stop_positive_offset`.<br> **Datatype:** Decimal |
+
+### ROI Spaces
+The settings inside `mgm-config.json`'s `roi_spaces` section are used to tweak the ROI (Return of Interest) search spaces that MGM will use for the ROI Table generation during it's [optimization process](#how-to-optimize-monigomani).
+
+| Parameter | Description |
+| --- | --- |
+| **roi_table_step_size** | MoniGoMani generates a really long custom ROI-Table (Return of Interest), so it will have fewer gaps in it and be more continuous in it's decrease.<br> This setting alters the size of the steps (in minutes) to be used when calculating the long continuous ROI-Table. <br> **Datatype:** Integer |
+| **roi_time_interval_scaling** | Default scaling coefficients for the ROI HyperSpace. Can be changed to adjust resulting ranges of the ROI tables.<br> Increase if you need wider ranges in the ROI HyperSpace, decrease if shorter ranges are needed. Limits for the time intervals in the ROI tables. Components are scaled linearly.<br> **Datatype:** Decimal |
+| **roi_value_step_scaling** | Limits for the ROI value steps. Components are scaled logarithmically.<br> **Datatype:** Decimal |
 
 ### Open Trade Unclogger
 When the Open Trade Unclogger is enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades.   

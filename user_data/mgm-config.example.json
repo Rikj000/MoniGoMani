@@ -4,7 +4,6 @@
     "backtest_timeframe": "5m",
     "startup_candle_count": 400,
     "precision": 1,
-    "roi_table_step_size": 5,
     "trading_during_trends": {
       "buy_trades_when_downwards": true,
       "buy_trades_when_sideways": true,
@@ -32,6 +31,11 @@
       "trailing_stop_positive_max_value": 0.35,
       "trailing_stop_positive_offset_min_value": 0.011,
       "trailing_stop_positive_offset_max_value": 0.1
+    },
+    "roi_spaces": {
+      "roi_table_step_size": 5,
+      "roi_time_interval_scaling": 1.0,
+      "roi_value_step_scaling": 1.0
     },
     "unclogger_spaces": {
       "unclogger_buy_cooldown_minutes_window": {

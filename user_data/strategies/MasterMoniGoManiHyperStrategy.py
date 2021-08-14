@@ -107,7 +107,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 'search_threshold_trend_total_signal_needed_candles_lookback_window_value']
         search_threshold_trend_signal_triggers_needed = \
             mgm_config['weighted_signal_spaces']['search_threshold_trend_signal_triggers_needed']
-        roi_table_step_size = mgm_config['roi_table_step_size']
+        roi_table_step_size = mgm_config['roi_spaces']['roi_table_step_size']
+        roi_time_interval_scaling = mgm_config['roi_spaces']['roi_time_interval_scaling']
+        roi_value_step_scaling = mgm_config['roi_spaces']['roi_value_step_scaling']
         stoploss_min_value = mgm_config['stoploss_spaces']['stoploss_min_value']
         stoploss_max_value = mgm_config['stoploss_spaces']['stoploss_max_value']
         trailing_stop_positive_min_value = mgm_config['stoploss_spaces']['trailing_stop_positive_min_value']
@@ -196,7 +198,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         @staticmethod
         def generate_roi_table(params: Dict) -> Dict[int, float]:
             """
-            Generates a Custom Long Continuous ROI-Table with less gaps in it.
+            Generates a Custom Long Continuous ROI Table with less gaps in it.
             Configurable step_size is loaded in from the Master MGM Framework.
 
             :param params: (Dict) Base Parameters used for the ROI Table calculation
@@ -222,18 +224,18 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         def roi_space() -> List[Dimension]:
             """
             Create a ROI space. Defines values to search for each ROI steps.
-            This method implements adaptive roi hyperspace with varied ranges for parameters which automatically adapts
+            This method implements adaptive roi HyperSpace with varied ranges for parameters which automatically adapts
             to the un-zoomed informative_timeframe used by the MGM Framework during BackTesting & HyperOpting.
 
             :return List: Generated ROI Space
             """
 
-            # Default scaling coefficients for the roi hyperspace. Can be changed to adjust resulting ranges of the ROI
-            # tables. Increase if you need wider ranges in the roi hyperspace, decrease if shorter ranges are needed:
-            # roi_t_alpha: Limits for the time intervals in the ROI tables. Components are scaled linearly.
-            roi_t_alpha = 1.0
+            # Default scaling coefficients for the ROI HyperSpace. Can be changed to adjust resulting ranges of the ROI
+            # tables. Increase if you need wider ranges in the ROI HyperSpace, decrease if shorter ranges are needed:
+            # roi_t_alpha: Limits for the time intervals in the ROI Tables. Components are scaled linearly.
+            roi_t_alpha = MasterMoniGoManiHyperStrategy.roi_time_interval_scaling
             # roi_p_alpha: Limits for the ROI value steps. Components are scaled logarithmically.
-            roi_p_alpha = 1.0
+            roi_p_alpha = MasterMoniGoManiHyperStrategy.roi_value_step_scaling
 
             # Load in the un-zoomed timeframe size from the Master MGM Framework
             timeframe_min = timeframe_to_minutes(MasterMoniGoManiHyperStrategy.informative_timeframe)
@@ -258,7 +260,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             }
 
             # Generate MGM's custom long continuous ROI table
-            logger.debug(f'Using roi space limits: {roi_limits}')
+            logger.debug(f'Using ROI space limits: {roi_limits}')
             p = {
                 'roi_t1': roi_limits['roi_t1_min'],
                 'roi_t2': roi_limits['roi_t2_min'],
@@ -267,7 +269,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 'roi_p2': roi_limits['roi_p2_min'],
                 'roi_p3': roi_limits['roi_p3_min']
             }
-            logger.info(f'Min roi table: {round_dict(MasterMoniGoManiHyperStrategy.HyperOpt.generate_roi_table(p), 3)}')
+            logger.info(f'Min ROI table: {round_dict(MasterMoniGoManiHyperStrategy.HyperOpt.generate_roi_table(p), 3)}')
             p = {
                 'roi_t1': roi_limits['roi_t1_max'],
                 'roi_t2': roi_limits['roi_t2_max'],
@@ -276,7 +278,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 'roi_p2': roi_limits['roi_p2_max'],
                 'roi_p3': roi_limits['roi_p3_max']
             }
-            logger.info(f'Max roi table: {round_dict(MasterMoniGoManiHyperStrategy.HyperOpt.generate_roi_table(p), 3)}')
+            logger.info(f'Max ROI table: {round_dict(MasterMoniGoManiHyperStrategy.HyperOpt.generate_roi_table(p), 3)}')
 
             return [
                 Integer(roi_limits['roi_t1_min'], roi_limits['roi_t1_max'], name='roi_t1'),
