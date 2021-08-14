@@ -73,6 +73,8 @@ junit/
 scripts/
 tests/
 !tests/monigomani/
+!tests/monigomani/*
+!tests/monigomani/*.py
 
 freqtrade.service
 freqtrade.service.watchdog
