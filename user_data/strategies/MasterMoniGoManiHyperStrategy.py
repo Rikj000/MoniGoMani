@@ -17,6 +17,7 @@ from numpy import timedelta64
 from pandas import DataFrame
 from scipy.interpolate import interp1d
 
+from freqtrade.data.history import load_pair_history
 from freqtrade.enums import RunMode
 from freqtrade.exchange import timeframe_to_prev_date
 from freqtrade.misc import deep_merge_dicts, round_dict
@@ -346,14 +347,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             self.mgm_logger('info', initialization, f'Current run mode detected as: HyperOpting/BackTesting. '
                                                     f'Auto updated is_dry_live_run_detected to: False')
 
-            self.mgm_logger('info', initialization,
-                            f'Calculating and storing "timeframe_multiplier" + Updating startup_candle_count"')
+            self.mgm_logger('info', initialization, f'Calculating and storing "timeframe_multiplier"')
             self.timeframe_multiplier = \
                 int(timeframe_to_minutes(self.informative_timeframe) / timeframe_to_minutes(self.timeframe))
             if self.timeframe_multiplier < 1:
                 raise SystemExit(f'MoniGoManiHyperStrategy - ERROR - TimeFrame-Zoom - "timeframe" must be bigger than '
                                  f'"backtest_timeframe"')
-            self.startup_candle_count *= self.timeframe_multiplier
 
         else:
             if os.path.isfile(self.mgm_config_hyperopt_path) is False:
@@ -472,9 +471,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                                     f'informative_timeframe ({self.informative_timeframe} candles) and '
                                                     f'a zoomed backtest_timeframe ({self.backtest_timeframe} candles)')
 
-            # Warning! This method gets ALL downloaded data that you have (when in backtesting mode).
+            # Warning! This method gets ALL downloaded data for the given timeframe (when in BackTesting mode).
             # If you have many months or years downloaded for this pair, this will take a long time!
-            informative = self.dp.get_pair_dataframe(pair=metadata['pair'], timeframe=self.informative_timeframe)
+            informative = load_pair_history(pair=metadata['pair'],
+                                            datadir=self.config['datadir'],
+                                            timeframe=self.informative_timeframe,
+                                            startup_candles=self.startup_candle_count,
+                                            data_format=self.config.get('dataformat_ohlcv', 'json'))
 
             # Throw away older data that isn't needed.
             first_informative = dataframe['date'].min().floor('H')
