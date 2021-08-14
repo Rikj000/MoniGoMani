@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import os
 from logging import Logger
+from unittest.mock import MagicMock
 import pytest
 import sys
 
@@ -13,21 +15,28 @@ def test_initialisation():
     cli = __get_instance()
     assert isinstance(cli, MoniGoManiCli)
 
-@pytest.mark.skip(reason='Test not implemented. Mocking needed.')
 def test_installation_exists_without_installation():
-    assert NotImplemented
+    os.path.exists = MagicMock(return_value=False)
+    mgm_cli = __get_instance()
+    assert mgm_cli.installation_exists() == False
 
-@pytest.mark.skip(reason='Test not implemented. Mocking needed.')
 def test_installation_exists_with_config_without_strategy():
-    assert NotImplemented
+    mgm_cli = __get_instance()
+    mgm_cli._mgm_config_json_exists = MagicMock(return_value=True)
+    mgm_cli._mgm_hyperstrategy_file_exists = MagicMock(return_value=False)
+    assert mgm_cli.installation_exists() == False
 
-@pytest.mark.skip(reason='Test not implemented. Mocking needed.')
 def test_installation_exists_without_config_with_strategy():
-    assert NotImplemented
+    mgm_cli = __get_instance()
+    mgm_cli._mgm_hyperstrategy_file_exists = MagicMock(return_value=True)
+    mgm_cli._mgm_config_json_exists = MagicMock(return_value=False)
+    assert mgm_cli.installation_exists() == False
 
-@pytest.mark.skip(reason='Test not implemented. Mocking needed.')
 def test_installation_exists_with_valid_installation():
-    assert NotImplemented
+    mgm_cli = __get_instance()
+    mgm_cli._mgm_hyperstrategy_file_exists = MagicMock(return_value=True)
+    mgm_cli._mgm_config_json_exists = MagicMock(return_value=True)
+    assert mgm_cli.installation_exists() == True
 
 @pytest.mark.skip(reason='Test not implemented. Mocking needed.')
 def test_create_config_files_faulty_target_dir():
