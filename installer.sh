@@ -6,39 +6,98 @@
 # Freqtrade and the MoniGoMani HyperStrategy.
 # 
 # Usage: bash <(curl -s "https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/installer.sh")
-# Arguments (optional):
-#
-#   -fr | --freqtrade-repo
-#   -fb | --freqtrade-branch
-#   -fc | --freqtrade-commit
-#
-#   -mr | --mgm-repo
-#   -mb | --mgm-branch
-#   -mc | --mgm-commit
 #
 ##################
-# TODO: support arguments for branch and commit hash
-# TODO: test at *nix and *indows
 
 
+usage() {
+
+    cat << EOF
+
+Usage: 
+  sh installer.sh [options]
+
+Example:
+  sh installer.sh --dir="./targetdir" --ft_branch="feature/xyz" --mgm_commit="abcd1337"
+
+Optional options:
+  -h, --help                    Show this help.
+
+  --dir=<path>                  Path to directory to install Freqtrade with MGM. Will be created or overwritten when it's existing.
+
+  --ft_url=<url>                URL to Git repository. (eg. https://github.com/freqtrade/freqtrade.git)
+  --ft_branch=<branch>          Specific branch to checkout from Git repository. (eg. develop)
+  --ft_commit=<commit hash>     Specific commit hash to checkout from Git repository. (note: will skip --ft_branch if set)
+
+  --mgm_url=<url>               URL to Git repository. (eg. https://github.com/Rikj000/MoniGoMani.git)
+  --mgm_branch=<branch>         Specific branch to checkout from Git repository. (eg. development)
+  --mgm_commit=<commit hash>    Specific commit hash to checkout from Git repository. (note: will skip --mgm_branch if set)
+
+EOF
+    
+    exit 0
+}
+
+# Default values
 INSTALL_DIR="freqtrade-mgm"
 
-if ! [ "$FREQTRADE_REPO_URL" ]; then FREQTRADE_REPO_URL="https://github.com/freqtrade/freqtrade.git"; fi
-if ! [ "$FREQTRADE_BRANCH" ]; then FREQTRADE_BRANCH="develop"; fi
-if ! [ "$FREQTRADE_COMMIT" ]; then FREQTRADE_COMMIT="1337"; fi
-if ! [ "$MGM_REPO_URL" ]; then MGM_REPO_URL="https://github.com/topscoder/MoniGoMani.git"; fi
-if ! [ "$MGM_BRANCH" ]; then MGM_BRANCH="feature/optimizations"; fi
-if ! [ "$MGM_COMMIT" ]; then MGM_COMMIT=""; fi
+FREQTRADE_REPO_URL="https://github.com/freqtrade/freqtrade.git"
+FREQTRADE_BRANCH="develop"
+FREQTRADE_COMMIT=""
 
-echo $FREQTRADE_REPO_URL
-echo $FREQTRADE_BRANCH
-echo $FREQTRADE_COMMIT
+MGM_REPO_URL="https://github.com/topscoder/MoniGoMani.git"
+MGM_BRANCH="feature/optimizations"
+MGM_COMMIT=""
 
-echo $MGM_REPO_URL
-echo $MGM_BRANCH
-echo $MGM_COMMIT
+CWD=`pwd`
 
-exit 1
+# Loop through arguments and process them
+for arg in "$@"
+do
+    case $arg in
+        --dir=*)
+        INSTALL_DIR="${arg#*=}"
+        shift
+        ;;
+        --ft_url=*)
+        FREQTRADE_REPO_URL="${arg#*=}"
+        shift
+        ;;
+        --ft_branch=*)
+        FREQTRADE_BRANCH="${arg#*=}"
+        shift
+        ;;
+        --ft_commit=*)
+        FREQTRADE_COMMIT="${arg#*=}"
+        shift
+        ;;
+
+        --mgm_url=*)
+        MGM_REPO_URL="${arg#*=}"
+        shift
+        ;;
+        --mgm_branch=*)
+        MGM_BRANCH="${arg#*=}"
+        shift
+        ;;
+        --mgm_commit=*)
+        MGM_COMMIT="${arg#*=}"
+        shift
+        ;;
+        -h|--help)
+        usage
+        shift
+        ;;
+        *)
+        echo ""
+        echo "installer.sh -- illegal argument(s)"
+        echo ""
+        echo "="
+        usage
+        shift # Remove generic argument from processing
+        ;;
+    esac
+done
 
 ##################
 
@@ -152,7 +211,17 @@ fi
 
 if [ "$INSTALL_FT" == "true" ]
 then
-    eval 'git clone -b "$FREQTRADE_BRANCH" "$FREQTRADE_REPO_URL" "$INSTALL_DIR"';
+    git clone -n "$FREQTRADE_REPO_URL" "$INSTALL_DIR"
+    
+    if [ "$FREQTRADE_COMMIT" != "" ]; then
+        cd $INSTALL_DIR \
+            && git checkout -b "detached_by_installer" "$FREQTRADE_COMMIT" \
+            && cd $CWD
+    else
+        cd $INSTALL_DIR \
+            && git checkout "$FREQTRADE_BRANCH" \
+            && cd $CWD
+    fi
 else
     echo "${GREEN} SKIP."
 fi
@@ -164,7 +233,17 @@ echo "${WHITE}  ⚙️  Downloading MoniGoMani..."
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
 
-eval 'git clone -b "$MGM_BRANCH" "$MGM_REPO_URL" "$TEMP_DIR"'
+git clone -n "$MGM_REPO_URL" "$TEMP_DIR"
+
+if [ "$MGM_COMMIT" != "" ]; then
+    cd $TEMP_DIR \
+        && git checkout -b "detached_by_installer" "$MGM_COMMIT" \
+        && cd $CWD
+else
+    cd $TEMP_DIR \
+        && git checkout "$MGM_BRANCH" \
+        && cd $CWD
+fi
 
 install_files=(
     'mgm-hurry' 
