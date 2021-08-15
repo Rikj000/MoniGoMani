@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from logging import Logger
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 import pytest
 import sys
 
@@ -9,7 +9,6 @@ sys.path.append('.')
 sys.path.append('..')
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
-from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
 
 def test_initialisation():
@@ -86,13 +85,10 @@ def test_run_command():
 # --- ↓
 # --- ↓ Helper methods
 # --- ↓
-@patch('MoniGoManiLogger.logging')
-@patch('MoniGoManiLogger.logger')
 def __get_instance(basedir='.'):
     cli = MoniGoManiCli(basedir)
+    cli.cli_logger = MagicMock()
     return cli
 
-@patch('MoniGoManiLogger.logging')
-@patch('MoniGoManiLogger.logger')
 def __get_logger(basedir='.') -> Logger:
-    return MoniGoManiLogger(basedir).get_logger()
+    return MagicMock()

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
-import pytest
+
+from unittest.mock import MagicMock
 
 sys.path.append('.')
 sys.path.append('..')
@@ -139,4 +140,6 @@ def test_installation_exists_install_type_docker():
 # --- ↓
 def __get_instance(directory: str):
     """Create instance of freqtradecli."""
-    return FreqtradeCli(directory)
+    fc = FreqtradeCli(directory)
+    fc.cli_logger = MagicMock()
+    return fc

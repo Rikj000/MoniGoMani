@@ -2,13 +2,10 @@
 import sys
 import pytest
 
-from unittest.mock import patch
-
 sys.path.append('.')
 sys.path.append('..')
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
-from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
 
 def test_initialisation():
@@ -83,38 +80,6 @@ def test_get_config_filename():
 
 # --- ↑
 
-# --- ↓
-# --- ↓ Unit Testing "load_config_files"
-# --- ↓
-
-@pytest.mark.skip(reason='Test not implemented.')
-def test_load_config_files():
-	assert NotImplemented
-
-# --- ↑
-
-
-# --- ↓
-# --- ↓ Unit Testing "read_hurry_config"
-# --- ↓
-
-@pytest.mark.skip(reason='Test not implemented.')
-def test_read_hurry_config():
-	assert NotImplemented
-
-# --- ↑
-
-
-# --- ↓
-# --- ↓ Unit Testing "get_config_filename"
-# --- ↓
-
-@pytest.mark.skip(reason='Test not implemented.')
-def test_get_config_filename():
-	assert NotImplemented
-
-# --- ↑
-
 
 # --- ↓
 # --- ↓ Unit Testing "load_config_file"
@@ -141,10 +106,7 @@ def test_write():
 # --- ↓
 # --- ↓ Helper methods
 # --- ↓
-@patch('MoniGoManiLogger.logging')
-@patch('MoniGoManiLogger.logger')
 def __get_instance():
     basedir = '.'
     obj = MoniGoManiConfig(basedir)
     return obj
-

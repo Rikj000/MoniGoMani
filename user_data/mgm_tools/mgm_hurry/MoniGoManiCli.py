@@ -96,7 +96,7 @@ class MoniGoManiCli(object):
         """
         ho_json = '{0}/user_data/strategies/{1}.json'.format(self.basedir, strategy)
         # TODO use the filename as specified in configuration
-        ho_config = '{0}/user_data/mgm-config-hyperopt.json'.format(self.basedir)  
+        ho_config = '{0}/user_data/mgm-config-hyperopt.json'.format(self.basedir)
 
         if os.path.isfile(ho_json) is False:
             self.logger.error('🤷 Failed applying best results because the results file {0} does not exist.'.format(ho_json))
