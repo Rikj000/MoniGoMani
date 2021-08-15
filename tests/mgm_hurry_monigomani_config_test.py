@@ -2,6 +2,8 @@
 import sys
 import pytest
 
+from unittest.mock import patch
+
 sys.path.append('.')
 sys.path.append('..')
 
@@ -138,6 +140,8 @@ def test_write():
 # --- ↓
 # --- ↓ Helper methods
 # --- ↓
+@patch(MoniGoManiConfig.__mgm_logger)
+@patch(MoniGoManiConfig.logger)
 def __get_instance():
     basedir = '.'
     return MoniGoManiConfig(basedir)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from logging import Logger
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import pytest
 import sys
 
@@ -65,6 +65,10 @@ def test_download_setup_mgm():
 def test_apply_best_results():
     assert NotImplemented
 
+def test_apply_best_results_should_return_false_without_ho_json():
+    mgm_cli = __get_instance()
+    assert mgm_cli.apply_best_results('foobar-non-existing-strat') is False
+
 # --- ↑
 
 
@@ -86,9 +90,8 @@ def __get_instance(basedir='.'):
     cli = MoniGoManiCli(basedir)
     return cli
 
+
+@patch('MoniGoManiLogger.logging')
+@patch('MoniGoManiLogger.logger')
 def __get_logger(basedir='.') -> Logger:
-    '''
-    Todo:
-        - Implement a mock-object.
-    '''
     return MoniGoManiLogger(basedir).get_logger()

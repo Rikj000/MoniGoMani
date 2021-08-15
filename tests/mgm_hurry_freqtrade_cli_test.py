@@ -44,10 +44,11 @@ def test_set_incorrect_install_type_should_not_return_none():
     fc.install_type = 'foobar'
     assert fc.install_type is not None
 
-def test_set_incorrect_install_type_should_return_docker():
+def test_set_incorrect_install_type_should_return_source():
     fc = __get_instance('.')
+
     fc.install_type = 'pytest'
-    assert fc.install_type == 'docker'
+    assert fc.install_type == 'source'
 
 def test_get_freqtrade_binary_path_unknown_install_type_should_return_docker_path():
     '''
