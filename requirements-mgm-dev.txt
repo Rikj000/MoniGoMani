@@ -1,7 +1,0 @@
--r requirements-mgm.txt
-
-flake8==3.9.2
-pre-commit==2.10.0
-pylint==2.6.0
-pytest==6.2.4
-pytest-cov==2.12.1

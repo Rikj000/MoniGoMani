@@ -34,8 +34,8 @@ git clone -b $MGM_GIT_BRANCH $MGM_GIT_REPO $MGM_TARGET_FOLDER
 cd "$MGM_TARGET_FOLDER"
 
 python3 -m pip install --upgrade pip
-# python3 -m pip install -r requirements-mgm-dev.txt # For developers who commit code.
-python3 -m pip install -r requirements-mgm.txt # For every other user.
+# python3 -m pip install -r requirements-dev.txt # For developers who commit code.
+python3 -m pip install -r requirements.txt # For every other user.
 
 
 echo ""
