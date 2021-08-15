@@ -34,12 +34,15 @@ NC='\033[0m'
 confirm() {
     local _prompt _default _response
 
-    if [ "$1" ]; then _prompt="$1"; else _prompt="Are you sure?"; fi
-    if [ "$2" ]; then _prompt="$_prompt $2"; else _prompt="$_prompt [y/n]"; fi
+    _prompt="Are you sure?"
+    if [ "$1" ]; then _prompt="$1"; fi
+
+    _prompt2="$_prompt [y/n]"
+    if [ "$2" ]; then _prompt2="$_prompt $2"; fi
 
     # Loop forever until the user enters a valid response (Y/N or Yes/No).
     while true; do
-        read -r -p "$_prompt " _response        
+        read -r -p "$_prompt2 " _response        
         case "$_response" in
         [Yy][Ee][Ss]|[Yy]) # Yes or Y (case-insensitive).
             REPLY="0"
@@ -109,7 +112,8 @@ if [ -d "$INSTALL_DIR" ]; then
     then
         # Can't turn back times!
         echo "${WHITE}  🚮  Removing '$INSTALL_DIR' ... "
-        rm -Rf "$INSTALL_DIR"
+        echo ""
+        eval 'rm -Rf "$INSTALL_DIR"';
     fi
 
     if [ "$REPLY" == "1" ] # 1 = No
@@ -130,7 +134,7 @@ fi
 
 if [ "$INSTALL_FT" == "true" ]
 then
-    git clone -b "$FREQTRADE_BRANCH" "$FREQTRADE_REPO_URL" "$INSTALL_DIR"
+    eval 'git clone -b "$FREQTRADE_BRANCH" "$FREQTRADE_REPO_URL" "$INSTALL_DIR"';
 else
     echo "${GREEN} SKIP."
 fi
@@ -142,7 +146,7 @@ echo "${WHITE}  ⚙️  Downloading MoniGoMani..."
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
 
-git clone -b "$MGM_BRANCH" "$MGM_REPO_URL" "$TEMP_DIR"
+eval 'git clone -b "$MGM_BRANCH" "$MGM_REPO_URL" "$TEMP_DIR"'
 
 install_files=(
     'mgm-hurry' 
@@ -185,10 +189,10 @@ do
         echo "  Copy $mgm_file_entry ... "
 
         # force overwrite
-        cp -rf "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"    
+        eval 'cp -rf "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"'
     else
         # -i asks per file to overwrite or not
-        cp -ri "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"
+        eval 'cp -ri "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"'
     fi
 done
 
