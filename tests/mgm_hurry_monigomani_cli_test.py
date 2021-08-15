@@ -86,10 +86,11 @@ def test_run_command():
 # --- ↓
 # --- ↓ Helper methods
 # --- ↓
+@patch('MoniGoManiLogger.logging')
+@patch('MoniGoManiLogger.logger')
 def __get_instance(basedir='.'):
     cli = MoniGoManiCli(basedir)
     return cli
-
 
 @patch('MoniGoManiLogger.logging')
 @patch('MoniGoManiLogger.logger')
