@@ -5,9 +5,16 @@
 # This file contains the installation procedure to get up and running with
 # Freqtrade and the MoniGoMani HyperStrategy.
 # 
-# Usage: curl -s "https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/installer.sh" | bash
+# Usage: bash <(curl -s "https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/installer.sh")
 # Arguments (optional):
-# -fr (freqtrade)
+#
+#   -fr | --freqtrade-repo
+#   -fb | --freqtrade-branch
+#   -fc | --freqtrade-commit
+#
+#   -mr | --mgm-repo
+#   -mb | --mgm-branch
+#   -mc | --mgm-commit
 #
 ##################
 # TODO: support arguments for branch and commit hash
@@ -16,11 +23,22 @@
 
 INSTALL_DIR="freqtrade-mgm"
 
-FREQTRADE_REPO_URL="https://github.com/freqtrade/freqtrade.git"
-FREQTRADE_BRANCH="develop"
+if ! [ "$FREQTRADE_REPO_URL" ]; then FREQTRADE_REPO_URL="https://github.com/freqtrade/freqtrade.git"; fi
+if ! [ "$FREQTRADE_BRANCH" ]; then FREQTRADE_BRANCH="develop"; fi
+if ! [ "$FREQTRADE_COMMIT" ]; then FREQTRADE_COMMIT="1337"; fi
+if ! [ "$MGM_REPO_URL" ]; then MGM_REPO_URL="https://github.com/topscoder/MoniGoMani.git"; fi
+if ! [ "$MGM_BRANCH" ]; then MGM_BRANCH="feature/optimizations"; fi
+if ! [ "$MGM_COMMIT" ]; then MGM_COMMIT=""; fi
 
-MGM_REPO_URL="https://github.com/topscoder/MoniGoMani.git"
-MGM_BRANCH="feature/optimizations"
+echo $FREQTRADE_REPO_URL
+echo $FREQTRADE_BRANCH
+echo $FREQTRADE_COMMIT
+
+echo $MGM_REPO_URL
+echo $MGM_BRANCH
+echo $MGM_COMMIT
+
+exit 1
 
 ##################
 
