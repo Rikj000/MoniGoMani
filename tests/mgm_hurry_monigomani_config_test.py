@@ -2,12 +2,13 @@
 import sys
 import pytest
 
-from unittest.mock import MagicMock
+from unittest.mock import patch
 
 sys.path.append('.')
 sys.path.append('..')
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
+from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
 
 def test_initialisation():
@@ -140,11 +141,10 @@ def test_write():
 # --- ↓
 # --- ↓ Helper methods
 # --- ↓
-#@patch(MoniGoManiConfig.logger)
+@patch('MoniGoManiLogger.logging')
+@patch('MoniGoManiLogger.logger')
 def __get_instance():
     basedir = '.'
     obj = MoniGoManiConfig(basedir)
-    # @patch('MoniGoManiLogger.logging')
-    # @patch('MoniGoManiLogger.logger')
     return obj
 
