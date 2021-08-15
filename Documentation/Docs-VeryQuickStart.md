@@ -1,5 +1,7 @@
 <p align="left">
-    <a href="https://discord.gg/xFZ9bB6vEz">
+    <a href="https://matrix.to/#/+moni-go-mani:matrix.org">
+        <img src="https://img.shields.io/matrix/MoniGoMani-Testing:matrix.org?label=Matrix%20Community&logo=matrix" alt="Join MoniGoMani on Matrix">
+    </a> <a href="https://discord.gg/xFZ9bB6vEz">
         <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join CryptoStonksShallRise on Discord">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases">
         <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
@@ -7,8 +9,8 @@
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md">
-        <img src="https://img.shields.io/badge/Docs-MGM__DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/wiki">
+        <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
     </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
     </a> <a href="https://www.iconomi.com/register?ref=JdFzz">
@@ -19,60 +21,50 @@
 </p>
 
 ## ⚠️ Disclaimer
- - This strategy is under development. It is not recommended running it live at this moment.
- - Always test this strategy before using it!
- - I am in no way responsible for your live results! This strategy is still experimental and under heavy development!
- - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) after doing manual changes!
- - You need to [optimize](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
+ - This Framework & Strategy are still experimental and under heavy development. It is not recommended running it live at this moment.
+ - Always make sure to understand & test your MoniGoMani configuration until you trust it, before even thinking about going live!
+ - I am in no way responsible for your live results! You are always responsible for your own MoniGoMani configuration!
+ - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) after doing manual changes!
+ - You need to [optimized](https://github.com/Rikj000/MoniGoMani/blob/main/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
 <hr>
    
-**<span style="color:blue">TIP:</span> Native installation is recommended since MoniGoMani sometimes requires a specific Freqtrade commit. It's also faster/better than a Docker VM, but Docker is easier to install**   
+**<span style="color:blue">TIP:</span> Native installation is recommended since MoniGoMani sometimes requires a specific Freqtrade commit. It's also faster/better than a Docker Container, but Docker is easier to install**   
 
+## Requirements
+Make sure that you have all of the following available on your system before proceeding:
+- Python 3.8+ is required
+- [Pip](https://pypi.org/project/pip/) *(Package manager to install & manage Python packages)*
+- [Git](https://git-scm.com/downloads) *(Software version management)*
+- [Jq](https://stedolan.github.io/jq/) *(Command-line `.json` processor)*
+- [Curl](https://curl.se/) *(Command line data transferring through URLs)*
+- [Docker](https://www.docker.com/get-started) *(If you really can't go for a source installation)*
+- [VSCodium](https://vscodium.com/) *(Optional - A light weight open-source IDE that comes pre-installed with good color codes to make it easier to read `.json` and `.log` files & many more great features)*
 
-# Very Quick Start (From Source Code):   
+# Very Quick Start:
 *Need a more detailed guide? Checkout the [**Official Freqtrade Installation Guide**](https://www.freqtrade.io/en/latest/installation/)!*    
 
-1) Install [Git](https://git-scm.com/downloads)   
-2) Install [jq](https://stedolan.github.io/jq/) (command-line JSON processor)   
-3) Open a terminal window and navigate to where you want to put `freqtrade`   
-4) Type `git clone https://github.com/freqtrade/freqtrade.git` to clone the Freqtrade repo    
-5) Type `cd freqtrade`   
-6) Type `git checkout remotes/origin/develop` to switch to the development branch (MoniGoMani often uses some of the latest versions of Freqtrade)   
-7) Type `./setup.sh -i` to install Freqtrade from scratch   
-8) Type `source ./.env/bin/activate` to activate your virtual environment (Needs to be done every time you open the terminal)   
-9) *(Type `./setup.sh -u` to update freqtrade with git pull)*   
-10) *(Type `./setup.sh -r` to hard reset the branch)*   
-11) [Download](https://github.com/Rikj000/MoniGoMani/releases) the latest `MoniGoMani` release and unzip it in the `Freqtrade` folder. Or clone the `main` branch through git & copy the files over.   
-12) Type `cp ./user_data/mgm-config.example.json ./user_data/mgm-config.json && cp ./user_data/mgm-config-private.example.json ./user_data/mgm-config-private.json
-` to setup your initial config files
-13) Type `freqtrade install-ui` to install FreqUI   
-14) Follow all of `Step 3` from the *Very Quick Start (With Docker)* below   
 
-That's it you successfully set up Freqtrade natively, connected to Telegram, with FreqUI!   
-You can now start using `MoniGoManiHyperStrategy` for HyperOpting/BackTesting/Dry/Live-running! Congratulations :tada:   
-But this is only the beginning, now please read the [MGM_DOCUMENTATION](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md) to learn how to use it properly!   
+1) Install the required Python packages
+    *(Command may vary a bit depending on your systems version of `python` & `pip`)*
+    ```powershell
+    pip3 install -r https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/requirements.txt
+    ```
+2) Download `mgm-hurry` in the folder where you want to install `MoniGoMani` and/or `Freqtrade`
+    ```powershell
+    curl "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/mgm-hurry" --output "mgm-hurry"
+    ```
+3) Install & setup `MoniGoMani` and/or `Freqtrade`
+    ```powershell
+    python3 mgm-hurry up
+    ```
 
-# Very Quick Start (With Docker):   
-*Need a more detailed guide? Checkout the [**Official Freqtrade Docker Quickstart**](https://www.freqtrade.io/en/stable/docker_quickstart/)!*    
+That's it you successfully installed `MoniGoMani` and/or `Freqtrade`!
+You can now start using `MoniGoMani` for HyperOpting/BackTesting/Dry/Live-running! Congratulations :tada:
+This is only the beginning though, now please read the [Docs-MoniGoMani.md](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md) & [Docs-MGM-Hurry.md](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md) to learn how to use it properly!
 
-1) [Download](https://github.com/Rikj000/MoniGoMani/releases) the latest `MoniGoMani` release and unzip it somewhere. Or clone the `main` branch through git.
-2) Type `cp ./user_data/mgm-config.example.json ./user_data/mgm-config.json && cp ./user_data/mgm-config-private.example.json ./user_data/mgm-config-private.json
-` to setup your initial config files
-3) Install [Docker Desktop](https://www.docker.com/get-started)
-4) Open and edit `MoniGoMani/user_data/mgm-config-private.json` & `MoniGoMani/user_data/mgm-config.json`   
-([VSCodium](https://vscodium.com/) is open source and comes pre-installed with good color codes to make it easier to read `.json` or `.log` files, and many more too)   
-    3.A. Follow [these 4 easy steps](https://www.siteguarding.com/en/how-to-get-telegram-bot-api-token) to create your own Telegram bot and fetch it's api-token, fill `token` under `telegram` up in `mgm-config-private.json` with this. Make sure to start a conversation with your bot before continuing!   
-    3.B. Say `/start` to `@userinfobot` on Telegram to get your Chat ID, fill `chat_id` under `telegram` up in `mgm-config-private.json` with this.   
-    3.C. Generate a strong key/password for `jwt_secret_key` under `api_server` in `mgm-config-private.json`   
-    3.D. Choose and fill in a `username` and strong `password` also under `api_server` in `mgm-config-private.json`   
-4) Open a terminal window and navigate to where you put `MoniGoMani` and type on of the following:   
-    - `docker-compose pull` to pull in any updates to the Image if there are any
-    - `docker-compose up --build` to build and start the bot & view its log or   
-    - `docker-compose up -d`  to build and start the bot in the background.   
-    - `docker-compose stop` to stop the bot.   
-5) When running the included compose file FreqUI is already included and can be accessed from localhost:8080, 
-   login is possible using the `username` and `password` from step 3.D.
-
-That's it you successfully set up Freqtrade through Docker, connected to Telegram, with FreqUI!   
-You can now start using `MoniGoManiHyperStrategy` for HyperOpting/BackTesting/Dry/Live-running! Congratulations! :tada:   
-But this is only the beginning, now please read the [MGM_DOCUMENTATION](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md) to learn how to use it properly!   
+### Pro tip
+Add an alias in the config file of your shell *(eg. ~/.zshrc)* so you can use MGM-Hurry as `mgm-hurry` without the need of pre-fixing Python in your commands anymore! :smile:
+Following is a non-sticking example line, this needs to be added to your shell config:
+```powershell
+alias mgm-hurry="python3 /path/to/MoniGoMani/mgm-hurry"
+```

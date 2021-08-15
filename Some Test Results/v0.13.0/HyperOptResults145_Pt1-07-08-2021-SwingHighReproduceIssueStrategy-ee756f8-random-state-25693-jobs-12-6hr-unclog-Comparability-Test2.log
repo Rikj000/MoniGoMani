@@ -1,0 +1,115 @@
+INFO - Using config: ./user_data/mgm-config.json ...
+INFO - Using config: ./user_data/mgm-config-private.json ...
+INFO - Parameter --enable-protections detected, enabling Protections. ...
+INFO - Using max_open_trades: -1 ...
+INFO - Parameter --timerange detected: 20210501-20210616 ...
+INFO - Parameter --epochs detected ... Will run Hyperopt with for 1000 epochs ...
+INFO - Parameter -s/--spaces detected: ['all']
+INFO - Parameter --min-trades detected: 1
+INFO - Using Hyperopt loss class name: MGM_WinRatioAndProfitRatioHyperOptLoss
+INFO - Using resolved strategy SwingHighReproduceIssueStrategy from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/strategies/SwingHighReproduceIssueStrategy.py'...
+INFO - Strategy Parameter: buy_cci_max = -112
+INFO - Strategy Parameter: buy_use_cci = 1
+INFO - Strategy Parameter: sell_cci_min = -190
+INFO - Strategy Parameter(default): sell_unclogger_buy_cooldown_minutes_window = 270
+INFO - Strategy Parameter: sell_use_cci = no-use
+INFO - Override strategy 'order_types' with value in config file: {'buy': 'limit', 'sell': 'limit', 'emergencysell': 'market', 'forcesell': 'market', 'forcebuy': 'market', 'stoploss': 'market', 'stoploss_on_exchange': False, 'stoploss_on_exchange_interval': 60}.
+INFO - Override strategy 'order_time_in_force' with value in config file: {'buy': 'gtc', 'sell': 'gtc'}.
+INFO - Override strategy 'stake_currency' with value in config file: USDT.
+INFO - Override strategy 'stake_amount' with value in config file: 45.
+INFO - Override strategy 'protections' with value in config file: [{'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 10, 'stop_duration': 1440, 'only_per_pair': False}, {'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 2, 'stop_duration': 1440, 'only_per_pair': True}].
+INFO - Override strategy 'unfilledtimeout' with value in config file: {'buy': 10, 'sell': 30, 'unit': 'minutes'}.
+INFO - Override strategy 'use_sell_signal' with value in config file: True.
+INFO - Override strategy 'sell_profit_only' with value in config file: False.
+INFO - Override strategy 'ignore_roi_if_buy_signal' with value in config file: True.
+INFO - Override strategy 'sell_profit_offset' with value in config file: 0.
+INFO - Override strategy 'disable_dataframe_checks' with value in config file: False.
+INFO - Strategy using minimal_roi: {'0': 0.30813, '127': 0.14381, '370': 0.07412, '1038': 0}
+INFO - Strategy using timeframe: 5m
+INFO - Strategy using stoploss: -0.04175
+INFO - Strategy using trailing_stop: True
+INFO - Strategy using trailing_stop_positive: 0.1202
+INFO - Strategy using trailing_stop_positive_offset: 0.1645
+INFO - Strategy using trailing_only_offset_is_reached: True
+INFO - Strategy using use_custom_stoploss: False
+INFO - Strategy using process_only_new_candles: False
+INFO - Strategy using startup_candle_count: 0
+INFO - Strategy using ignore_buying_expired_candle_after: 0
+INFO - Using resolved protection StoplossGuard from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/freqtrade/plugins/protections/stoploss_guard.py'...
+INFO - Using resolved protection StoplossGuard from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/freqtrade/plugins/protections/stoploss_guard.py'...
+INFO - Using optimizer random state: 25693
+INFO - Min roi table: {0: 0.03, 10: 0.02, 20: 0.01, 30: 0}
+INFO - Max roi table: {0: 0.31, 40: 0.11, 100: 0.04, 220: 0}
+INFO - Loading data from 2021-05-01 00:00:00 up to 2021-06-16 00:00:00 (46 days).
+INFO - Hyperopting with data from 2021-05-01 00:00:00 up to 2021-06-16 00:00:00 (46 days)..
++--------+-----------+----------+------------------+--------------+-------------------------------+-----------------+-------------------------------+-------------+
+|   Best |     Epoch |   Trades |    Win Draw Loss |   Avg profit |                        Profit |    Avg duration |                  Max Drawdown |   Objective |
+|--------+-----------+----------+------------------+--------------+-------------------------------+-----------------+-------------------------------+-------------|
+
+|   Best |   31/1000 |      114 |     38    0   76 |        0.03% |         1.617 USDT    (0.32%) | 0 days 00:22:00 |         9.153 USDT   (20.32%) |    -119.649 |
+|   Best |   87/1000 |       12 |      5    0    7 |        0.35% |         1.896 USDT    (0.38%) | 0 days 00:25:00 |         0.360 USDT    (0.80%) |    -175.367 |
+|   Best |   94/1000 |       17 |      7    0   10 |        0.26% |         2.003 USDT    (0.40%) | 0 days 00:29:00 |         0.608 USDT    (1.35%) |    -183.075 |
+|   Best |  102/1000 |       12 |      5    0    7 |        0.43% |         2.319 USDT    (0.46%) | 0 days 00:16:00 |         0.360 USDT    (0.80%) |    -214.493 |
+|   Best |  103/1000 |       14 |      6    0    8 |        0.48% |         3.011 USDT    (0.60%) | 0 days 00:17:00 |         0.545 USDT    (1.21%) |    -286.493 |
+|   Best |  115/1000 |       23 |     10    0   13 |        0.38% |         3.966 USDT    (0.79%) | 0 days 00:18:00 |         0.532 USDT    (1.18%) |    -382.789 |
+|   Best |  116/1000 |       19 |      8    0   11 |        0.51% |         4.383 USDT    (0.88%) | 0 days 00:34:00 |         0.478 USDT    (1.06%) |    -409.684 |
+|   Best |  145/1000 |       36 |     24    0   12 |        0.69% |        11.174 USDT    (2.23%) | 0 days 00:54:00 |         3.016 USDT    (6.69%) | -1,653.75267 |
+|   Best |  161/1000 |       51 |     30   16    5 |        0.58% |        13.284 USDT    (2.66%) | 0 days 02:08:00 |         6.653 USDT   (14.77%) | -1,734.67165 |
+|   Best |  162/1000 |       36 |     21   11    4 |        0.85% |        13.758 USDT    (2.75%) | 0 days 02:33:00 |         6.653 USDT   (14.77%) | -1,781.62495 |
+|   Best |  169/1000 |       51 |     32   11    8 |        0.75% |        17.143 USDT    (3.43%) | 0 days 02:24:00 |         5.158 USDT   (11.45%) | -2,387.86202 |
+|   Best |  170/1000 |       85 |     52   20   13 |        0.59% |        22.452 USDT    (4.49%) | 0 days 02:30:00 |         7.457 USDT   (16.55%) | -3,049.29144 |
+|   Best |  177/1000 |       99 |     66   19   14 |        0.74% |        32.859 USDT    (6.57%) | 0 days 02:24:00 |         7.716 USDT   (17.13%) | -4,863.19973 |
+|   Best |  193/1000 |      488 |    271  152   65 |        0.27% |        58.756 USDT   (11.75%) | 0 days 01:55:00 |        41.361 USDT   (91.82%) | -7,243.66673 |
+|   Best |  242/1000 |      457 |    238  105  114 |        0.30% |        62.705 USDT   (12.54%) | 0 days 03:43:00 |        48.592 USDT  (107.87%) | -7,249.61405 |
+|   Best |  264/1000 |      515 |    257  134  124 |        0.33% |        75.486 USDT   (15.10%) | 0 days 03:42:00 |        50.492 USDT  (112.09%) | -8,362.65385 |
+|   Best |  277/1000 |      569 |    297  141  131 |        0.31% |        79.725 USDT   (15.94%) | 0 days 03:31:00 |        49.615 USDT  (110.15%) | -9,238.27212 |
+|   Best |  411/1000 |      461 |    253   98  110 |        0.43% |        88.520 USDT   (17.70%) | 0 days 03:32:00 |        48.389 USDT  (107.42%) | -10,784.87220 |
+|   Best |  555/1000 |      553 |    295  134  124 |        0.38% |        94.488 USDT   (18.90%) | 0 days 03:27:00 |        49.533 USDT  (109.96%) | -11,189.92010 |
+|   Best |  739/1000 |      540 |    301  116  123 |        0.45% |       108.891 USDT   (21.78%) | 0 days 03:32:00 |        49.267 USDT  (109.37%) | -13,474.67096 |
+
+Elapsed Time: 0:38:31
+INFO - 1000 epochs saved to '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/hyperopt_results/strategy_SwingHighReproduceIssueStrategy_2021-08-07_07-18-12.fthypt'.
+INFO - Dumping parameters to user_data/strategies/SwingHighReproduceIssueStrategy.json
+
+Best result:
+
+   739/1000:
+    540 trades. 
+     301/116/123 Wins/Draws/Losses. 
+     Avg profit   0.45%. 
+     Median profit   0.59%. 
+     Total profit  108.89103983 USDT (  21.78%). 
+     Avg duration 3:32:00 min. 
+     Objective: -13474.67096
+
+
+    # Buy hyperspace params:
+    buy_params = {
+        "buy_cci_max": -125.95384,
+        "buy_use_cci": True,
+    }
+
+    # Sell hyperspace params:
+    sell_params = {
+        "sell_cci_min": 230.37474,
+        "sell_unclogger_buy_cooldown_minutes_window": 297,
+        "sell_use_cci": "use",
+    }
+
+    # ROI table:
+    minimal_roi = {
+        "0": 0.139,
+        "33": 0.078,
+        "93": 0.025,
+        "195": 0
+    }
+
+    # Stoploss:
+    stoploss = -0.349
+
+    # Trailing stop:
+    trailing_stop = True
+    trailing_stop_positive = 0.295
+    trailing_stop_positive_offset = 0.382
+    trailing_only_offset_is_reached = True
+    

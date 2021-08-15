@@ -442,27 +442,33 @@ class MGMHurry:
 
         self.__setup_telegram()
 
-    def cleanup(self):
+    def cleanup(self, strategy: str = 'MoniGoManiHyperStrategy'):
         """
-        Deletes stored hyperopt config from previous run(s)
+        Deletes stored HyperOpt config(s) from previous run(s)
+
+        :param strategy: (Optional, string) Name of the Strategy to cleanup, defaults to 'MoniGoManiHyperStrategy'
         """
-        self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Cleanup')
-        self._logger.info('💨 💨 💨')
+        cleaned_up = False
+        logger.info('💨 💨 💨')
+        logger.info('👉 Cleanup')
+        logger.info('💨 💨 💨')
 
-        self._logger.info('👉 Removing "mgm-config-hyperopt.json"')
-        mgm_config_hyperopt_path = f'{self._basedir}/user_data/mgm-config-hyperopt.json'
+        if strategy == 'MoniGoManiHyperStrategy':
+            mgm_config_hyperopt_path = \
+                f'{self._basedir}/user_data/{self.config["mgm_config_names"]["mgm-config-hyperopt"]}'
+            if os.path.exists(mgm_config_hyperopt_path):
+                logger.info(f'👉 Removing "{self.config["mgm_config_names"]["mgm-config-hyperopt"]}"')
+                os.remove(mgm_config_hyperopt_path)
+                cleaned_up = True
 
-        if os.path.exists(mgm_config_hyperopt_path):
-            os.remove(mgm_config_hyperopt_path)
+        strategy_config_hyperopt_path = f'{self._basedir}/user_data/strategies/{strategy}.json'
+        if os.path.exists(strategy_config_hyperopt_path):
+            logger.info(f'👉 Removing "{strategy}.json"')
+            os.remove(strategy_config_hyperopt_path)
+            cleaned_up = True
 
-        self._logger.info('👉 Removing "MoniGoManiHyperStrategy.json"')
-        mgm_strategy_config_hyperopt_path = f'{self._basedir}./user_data/strategies/MoniGoManiHyperStrategy.json'
-
-        if os.path.exists(mgm_strategy_config_hyperopt_path):
-            os.remove(mgm_strategy_config_hyperopt_path)
-
-        self._logger.info('🍺 Reset successful, MoniGoMani HyperOpt configs removed...')
+        logger.info(f'🍺 Cleanup successful, {strategy} ready for a fresh HyperOpt Run...') if cleaned_up is True \
+            else logger.info(f'🍺 No Cleanup was needed, {strategy} ready for a fresh HyperOpt Run...')
 
     def download_candle_data(self, timerange: str = None):
         """
@@ -583,27 +589,37 @@ class MGMHurry:
             json.dump(mgm_config_object, mgm_config, indent=4)
             mgm_config.close()
 
-    def hyperopt(self, timerange: str = None, strategy: str = None, spaces: str = None, enable_protections: bool = True,
-                 random_state: int = None, apply_best_results: bool = True, clean_start: bool = False,
-                 output_file_name: str = None):
+    def hyperopt(self, timerange: str = None, strategy: str = None, loss: str = None, spaces: str = None,
+                 enable_protections: bool = True, random_state: int = None, apply_best_results: bool = True,
+                 clean_start: bool = False, save_output: bool = True, output_path: str = None,
+                 output_file_name: str = None, jobs: int = None):
         """
         HyperOpt Magic. Runs HyperOpt process to find out the most positive settings.
 
         :param timerange: (str, Optional): timerange from/to in format (start-end): yyyymmdd-yyyymmdd
             or preset [up, down, side]. Defaults to value in '.hurry'
         :param strategy: (str, Optional): Hyper Opt strategy to use. Defaults to value in '.hurry'
+        :param loss: (str, Optional): Specify the HyperOptLoss which you want to use. Defaults to value in '.hurry'
         :param spaces: (str, Optional): Spaces (space delimited) to optimize
             for [default, all, buy, sell, roi, stoploss, etc]. Defaults to value in '.hurry'
         :param enable_protections: (bool, Optional): Add '--enable-protections' flag to HO-command. Defaults to True.
         :param random_state: (int, Optional): Add '--random-state random_state' flag to HO-command. Defaults to None.
         :param apply_best_results: (bool, Optional): Apply 'best' HO results direct after HO? Defaults to True.
         :param clean_start: (bool, Optional): Cleanup MoniGoMani before starting the HO? Defaults to False.
+        :param save_output: (bool, Optional) Save the output to a '.log' file. Defaults to True
+        :param output_path: (str) Path to the output of the '.log' file.
+            Defaults to 'Some Test Results/<mgm-config-private-bot_name>/'
         :param output_file_name: (str, Optional) Name of the '.log' file.
             Defaults to 'HyperOptResults-<Current-DateTime>.log'
+        :param jobs: Amount of parallel workers (CPU cores) to use, gets set automatically by default
         """
 
+        strategy = self.config['hyperopt']['strategy'] if strategy is None else strategy
+        spaces = self.config['hyperopt']['spaces'] if spaces is None else spaces
+        loss = self.config['hyperopt']['loss'] if loss is None else loss
+
         if clean_start is True:
-            self.cleanup()
+            self.cleanup(strategy)
 
         self._logger.info('💨 💨 💨')
         self._logger.info('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
@@ -627,15 +643,18 @@ class MGMHurry:
         if random_state is not None:
             cmd = f'{cmd.strip()} --random-state $random_state'
 
-        # Execute freqtrade hyperopt command. Will take some time!
+        if jobs is not None:
+            cmd = f'{cmd.strip()} -j $jobs'
+
         cmd = Template(cmd).substitute(
             ft_binary=self.monigomani_config.config['ft_binary'],
             ho_strategy=strategy,
-            ho_loss=self.monigomani_config.config['hyperopt']['loss'],
+            ho_loss=loss,
             ho_spaces=spaces,
             ho_epochs=self.monigomani_config.config['hyperopt']['epochs'],
             timerange=timerange,
-            random_state=random_state)
+            random_state=random_state,
+            jobs=jobs)
 
         self._logger.debug(cmd)
 
@@ -696,6 +715,11 @@ class MGMHurry:
         Shows the HyperOpt results for given epoch.
 
         :param epoch: (int) The epoch number to show the results from.
+
+        ToDo:
+            - Add `--apply` (defaults to `True`)
+            - Scrap `hyperopt_apply_epoch`
+            - Add `--fthypt` (defaults to last known)
         """
         self._logger.info('💨 💨 💨')
         self._logger.info('👉 Hyperopt show results')
@@ -763,11 +787,11 @@ class MGMHurry:
 
         self._logger.info('🍺 Backtesting ready... 🤑')
 
-    def start_trader(self, dry_run: bool = False):
+    def start_trader(self, dry_run: bool = True):
         """
         Start the trader. Your ultimate goal!
 
-        :param dry_run: (bool, Optional): Use dry_run mode. Defaults to False
+        :param dry_run: (bool, Optional): Use dry_run mode. Defaults to True
         """
         self._logger.info('💨 💨 💨')
         self._logger.info('👉 Start trader')
@@ -834,6 +858,329 @@ class MGMHurry:
             self.monigomani_config._save_telegram_credentials(opt)
 
         return True
+
+    # FIXME; apply next methods to self.monigomani_config
+    # rikj000 made changes to these methods, but topscoder
+    # already moved these to monigomani_config.
+    def _save_exchange_credentials(self, cred: dict):
+        """
+        Save exchange credentials to "mgm-config-private.json"
+
+        :param cred: (dict) - List containing values for [exchange,api_key,api_secret]
+        """
+        if len(cred) == 0:
+            logger.warning(
+                'Did not write exchange credentials to "mgm-config-private.json" because no data was passed.')
+            return False
+
+        with open(self._basedir + '/user_data/mgm-config-private.json', ) as file:
+            data = json.load(file)
+
+        data['exchange'] = {
+            'name': cred['exchange'],
+            'key': cred['api_key'],
+            'secret': cred['api_secret']
+        }
+
+        with open(f'{self._basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
+            json.dump(data, outfile, indent=4)
+
+        logger.info('🍺 Exchange settings written to "mgm-config-private.json"')
+
+    def _save_telegram_credentials(self, opt: dict):
+        """
+        Save Telegram bot settings
+
+        :param opt: (dict): list containing values for [enable_telegram,telegram_token,telegram_chat_id]
+        """
+        if len(opt) == 0:
+            logger.warning(
+                'Did not write telegram credentials to "mgm-config-private.json" because no data was passed.')
+            return False
+
+        with open(f'{self._basedir}/user_data/mgm-config-private.json', ) as file:
+            data = json.load(file)
+
+        data['telegram'] = {
+            'enabled': opt['enable_telegram'],
+            'token': opt['telegram_token'],
+            'chat_id': opt['telegram_chat_id']
+        }
+
+        with open(f'{self._basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
+            json.dump(data, outfile, indent=4)
+
+        logger.info('🍺 Telegram bot settings written to "mgm-config-private.json"')
+
+    def __get_preset_timerange(self, timerange: str) -> str:
+        """
+        Parses given timerange-string into according timerange dates
+
+        :param timerange: (str) The timerange-string to parse [up, down, side]
+        :return str: The parsed timerange string in yyyymmdd-yyyymmdd format
+        """
+
+        tr_input = timerange
+
+        if timerange is None:
+            timerange = self.config['timerange']
+        if timerange == 'down':
+            timerange = '20210509-20210524'
+        if timerange == 'side':
+            timerange = '20210518-20210610'
+        if timerange == 'up':
+            timerange = '20210127-20210221'
+
+        tr_output = timerange
+
+        logger.info(f'☀️ Timerange string parsed from "{tr_input}" to "{tr_output}"')
+
+        return timerange
+
+    @staticmethod
+    def filter_line(line: str) -> bool:
+        """
+        Checks if line needs to be filtered out.
+
+        :param line: Line to check if it needs to be filtered out
+        :return bool: True if line needs to be filtered out. False if it's allowed to be printed out
+        """
+
+        ignored_lines = {
+            'INFO - Verbosity set to',
+            'INFO - Using user-data directory:',
+            'INFO - Using data directory:',
+            'INFO - Parameter -j/--job-workers detected:',
+            'INFO - Parameter --random-state detected:',
+            'INFO - Checking exchange...',
+            'INFO - Exchange "',
+            'INFO - Using pairlist from configuration.',
+            'INFO - Validating configuration ...',
+            'INFO - Starting freqtrade in',
+            'INFO - Lock',
+            'INFO - Instance is running with',
+            'INFO - Using CCXT',
+            'INFO - Applying additional ccxt config:',
+            'INFO - Using Exchange',
+            'INFO - Using resolved exchange',
+            'INFO - Found no parameter file.',
+            'INFO - Strategy using order_types:',
+            'INFO - Strategy using order_time_in_force:',
+            'INFO - Strategy using stake_currency:',
+            'INFO - Strategy using stake_amount:',
+            'INFO - Strategy using protections:',
+            'INFO - Strategy using unfilledtimeout:',
+            'INFO - Strategy using use_sell_signal:',
+            'INFO - Strategy using sell_profit_only:',
+            'INFO - Strategy using ignore_roi_if_buy_signal:',
+            'INFO - Strategy using sell_profit_offset:',
+            'INFO - Strategy using disable_dataframe_checks:',
+            'INFO - Using resolved pairlist StaticPairList from',
+            'INFO - Using resolved hyperoptloss',
+            'INFO - Removing `',
+            'INFO - Using indicator startup period:',
+            'INFO - Note: NumExpr detected',
+            'INFO - NumExpr defaulting to',
+            'INFO - Dataload complete. Calculating indicators',
+            'INFO - Found',
+            'INFO - Number of parallel jobs set as:',
+            'INFO - Effective number of parallel workers used:',
+            'user_data.mgm_tools.mgm_hurry.LeetLogger['
+        }
+
+        matches = '\n'.join(ignored_line for ignored_line in ignored_lines if ignored_line.lower() in line.lower())
+        if len(matches) > 0:
+            return True
+
+        return False
+
+    @staticmethod
+    def modify_line(line: str) -> str:
+        """
+        Modifies passed line if needed
+
+        :param line: Line to check if it needs to be modified
+        :return str: Returns modified string
+        """
+
+        # Remove weird unicode characters
+        remove_substrings = {'[32m', '[39m'}
+
+        for remove_substring in remove_substrings:
+            if remove_substring in line:
+                line = line.replace(remove_substring, '')
+
+        # Add in newline pre/suf-fixes where needed
+        prefix_newlines = {'Avg profit', 'Median profit', 'Total profit', 'Avg duration', 'Objective'}
+        if 'Wins/Draws/Losses. Avg profit' in line:
+            line = line.replace(':', ':\n', 1)
+
+            for prefix_newline in prefix_newlines:
+                if prefix_newline in line:
+                    line = line.replace(prefix_newline, f'\n     {prefix_newline}')
+
+            if 'trades. ' in line:
+                line = line.replace('trades. ', f'trades. \n     ')
+
+        prefix_other_newlines = {'Elapsed Time:', 'Best result:', '# Buy hyperspace params:',
+                                 '# Sell hyperspace params:', '# ROI table:', '# Stoploss:', '# Trailing stop:'}
+
+        for prefix_other_newline in prefix_other_newlines:
+            if prefix_other_newline in line:
+                line = line.replace(line, f'\n{line}')
+                line = line[1: len(line)]
+
+        if ' (100%)] ||       | [Time:  ' in line:
+            line = line[line.index(', ') + 2: len(line)].replace(']', '')
+            line = line.replace(line, f'\n{line}')
+
+        return line
+
+    @staticmethod
+    def store_hyperopt_results(hyperopt_results: list, line: str) -> dict:
+        """
+        Filters out and stores HyperOpt Results line
+
+        :param hyperopt_results: List to which the HyperOpt Result will be appended
+        :param line: String to check if it needs to be appended to the hyperopt_results
+        :return dict: Response dictionary containing:
+            - 'hyperopt_results': The updated hyperopt_results list
+            - 'results_updated': Boolean stating if the results got updated or not
+        """
+
+        response = {
+            'hyperopt_results': hyperopt_results,
+            'results_updated': False
+        }
+
+        for hyperopt_results_detector in {'+-----------+', '|   Best |'}:
+            if hyperopt_results_detector in line:
+                response['hyperopt_results'].append(line)
+                response['results_updated'] = True
+
+        return response
+
+    def __exec_cmd(self, cmd: str, save_output: bool = False,
+                   output_path: str = None, output_file_name: str = None) -> int:
+        """
+        Executes shell command and logs output as debug output.
+
+        :param cmd: (str) The command, sir
+        :param save_output: (bool) Save the output to a '.log' file. Defaults to False
+        :param output_path: (str) Path to the output of the '.log' file.
+            Defaults to 'Some Test Results/MoniGoMani_version_number/'
+        :param output_file_name: (str) Name of the '.log' file. Defaults to 'Results-<Current-DateTime>.log'
+        :return returncode: (int) The returncode of the subprocess
+        """
+
+        if cmd is None or cmd == '':
+            logger.error('🤷 Please pass a command through. Without command no objective, sir!')
+            sys.exit(1)
+
+        return_code = 1
+
+        if save_output is True:
+            if output_path is None:
+                output_path = f'{self._basedir}/Some Test Results/'
+                if not os.path.isdir(output_path):
+                    os.mkdir(output_path)
+
+                mgm_config_files = self.monigomani_cli.load_config_files()
+                output_path = f'{output_path}{mgm_config_files["mgm-config-private"]["bot_name"]}/'
+
+            if output_file_name is None:
+                output_file_name = f'MGM-Hurry-Command-Results-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.log'
+
+            if not os.path.isdir(output_path):
+                os.mkdir(output_path)
+
+            output_file = open(output_path + output_file_name, 'w')
+
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT, encoding='utf-8')
+
+        hyperopt_results = []
+
+        for line in process.stdout:
+            # Split off the Datetime + Code Sections if needed to keep things clean
+            if line.count(' - ') >= 3:
+                second_splitter = line.find(' - ', line.find(' - ') + 1) + 3
+                final_line = line[second_splitter:len(line)]
+            else:
+                final_line = line
+
+            # Filter out unwanted - unneeded - double lines
+            if self.filter_line(final_line) is False:
+                # Modify line output to MoniGoMani's preferred format
+                final_line = self.modify_line(final_line)
+
+                # Save the output to a '.log' file if enabled
+                if (save_output is True) and ('| [ETA:' not in final_line):
+                    output_file.write(final_line)
+
+            # Check if a new HyperOpt Results line is found, store it in RAM and re-print the whole HyperOpt Table if so
+            response = self.store_hyperopt_results(hyperopt_results, final_line)
+            if (response['results_updated'] is True) or \
+                    ('| [ETA:' not in final_line) and ('Elapsed Time:' in final_line):
+                hyperopt_results = response['hyperopt_results']
+                # Skip the initial header
+                if len(hyperopt_results) > 3:
+                    for hyperopt_results_line in hyperopt_results:
+                        sys.stdout.write(hyperopt_results_line)
+                if ('| [ETA:' not in final_line) and ('Elapsed Time:' in final_line):
+                    sys.stdout.write(final_line)
+            else:
+                sys.stdout.write(final_line)
+
+        process.wait()
+
+        return return_code
+
+    def __read_config(self):
+        """
+        Reads config values out of ".hurry" config file.
+
+        :return config (dict) Dictionary containing all config key/value pairs. Or returns None.
+        """
+        with open('.hurry', 'r') as yml_file:
+            config = yaml.full_load(yml_file) or {}
+
+        if 'config' in config:
+            return config['config']
+
+        # Something happened on the way to heaven. Let's fix it to create a default ".hurry" config file
+        self.__write_config()
+        return None
+
+    def __write_config(self, config: dict = None):
+        """
+        Write config-array to ".hurry" config file.
+        Writes the passed config dictionary or if nothing passed, it will write default values.
+
+        :param config: (dict, Optional) The config values to store. Defaults to None.
+        """
+        if config is None:
+            config = {
+                'config': {
+                    'install_type': 'docker',
+                    'timerange': '20210501-20210616',
+                    'exchange': 'binance',
+                    'hyperopt': {
+                        'strategy': 'MoniGoManiHyperStrategy',
+                        'loss': 'WinRatioAndProfitRatioLoss',
+                        'spaces': 'buy sell',
+                        'quote': 'USDT',
+                        'epochs': 1000
+                    }
+                }
+            }
+
+        with open('.hurry', 'w+') as file:
+            yaml.dump(config, file)
+
+        self.__reload_config()
+
+        logger.info('🍺 Configuration data written to ".hurry" file')
 
 
 if __name__ == '__main__':

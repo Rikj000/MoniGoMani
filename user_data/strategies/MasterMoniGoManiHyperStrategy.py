@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # --- ↓ Do not remove these libs ↓ -------------------------------------------------------------------------------------
+import copy
 import json
 import logging
 import math
@@ -8,7 +9,7 @@ import sys
 from abc import ABC
 from datetime import datetime, timedelta
 from functools import reduce
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np  # noqa
 import pandas as pd  # noqa
@@ -17,6 +18,7 @@ from numpy import timedelta64
 from pandas import DataFrame
 from scipy.interpolate import interp1d
 
+from freqtrade.data.history import load_pair_history
 from freqtrade.enums import RunMode
 from freqtrade.exchange import timeframe_to_prev_date
 from freqtrade.misc import deep_merge_dicts, round_dict
@@ -107,7 +109,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 'search_threshold_trend_total_signal_needed_candles_lookback_window_value']
         search_threshold_trend_signal_triggers_needed = \
             mgm_config['weighted_signal_spaces']['search_threshold_trend_signal_triggers_needed']
-        roi_table_step_size = mgm_config['roi_table_step_size']
+        roi_table_step_size = mgm_config['roi_spaces']['roi_table_step_size']
+        roi_time_interval_scaling = mgm_config['roi_spaces']['roi_time_interval_scaling']
+        roi_value_step_scaling = mgm_config['roi_spaces']['roi_value_step_scaling']
         stoploss_min_value = mgm_config['stoploss_spaces']['stoploss_min_value']
         stoploss_max_value = mgm_config['stoploss_spaces']['stoploss_max_value']
         trailing_stop_positive_min_value = mgm_config['stoploss_spaces']['trailing_stop_positive_min_value']
@@ -147,34 +151,36 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Convert the loaded 'mgm-config-hyperopt.json' data to the needed HyperOpt Results format if it's found
         # Default stub values from 'mgm-config.json' are used otherwise.
-        for space in mgm_config_hyperopt['params']:
-            if space in ['buy', 'sell']:
-                for param, param_value in mgm_config_hyperopt['params'][space].items():
-                    if param.startswith('buy'):
-                        buy_params[param] = param_value
-                    else:
-                        sell_params[param] = param_value
+        if mgm_config_hyperopt != {}:
+            for space in mgm_config_hyperopt['params']:
+                if space in ['buy', 'sell']:
+                    for param, param_value in mgm_config_hyperopt['params'][space].items():
+                        if param.startswith('buy'):
+                            buy_params[param] = param_value
+                        else:
+                            sell_params[param] = param_value
 
-            if space == 'roi':
-                minimal_roi = mgm_config_hyperopt['params'][space]
+                if space == 'roi':
+                    minimal_roi = mgm_config_hyperopt['params'][space]
 
-            if space == 'stoploss':
-                stoploss = mgm_config_hyperopt['params'][space][space]
+                if space == 'stoploss':
+                    stoploss = mgm_config_hyperopt['params'][space][space]
 
-            if space == 'trailing':
-                trailing_stop = mgm_config_hyperopt['params'][space]['trailing_stop']
-                trailing_stop_positive = mgm_config_hyperopt['params'][space]['trailing_stop_positive']
-                trailing_stop_positive_offset = mgm_config_hyperopt['params'][space]['trailing_stop_positive_offset']
-                trailing_only_offset_is_reached = \
-                    mgm_config_hyperopt['params'][space]['trailing_only_offset_is_reached']
+                if space == 'trailing':
+                    trailing_stop = mgm_config_hyperopt['params'][space]['trailing_stop']
+                    trailing_stop_positive = mgm_config_hyperopt['params'][space]['trailing_stop_positive']
+                    trailing_stop_positive_offset = mgm_config_hyperopt['params'][space]['trailing_stop_positive_offset']
+                    trailing_only_offset_is_reached = \
+                        mgm_config_hyperopt['params'][space]['trailing_only_offset_is_reached']
     else:
         mgm_config_hyperopt = {}
 
     # Create dictionary to store custom information MoniGoMani will be using in RAM
-    custom_info = {
+    initial_custom_info: dict = {
         'open_trades': {},
         'unclogger_cooldown_pairs': {}
     }
+    custom_info: dict = copy.deepcopy(initial_custom_info)
 
     # Initialize some parameters which will be automatically configured/used by MoniGoMani
     use_custom_stoploss = True  # Leave this enabled (Needed for open_trade custom_information_storage)
@@ -194,7 +200,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         @staticmethod
         def generate_roi_table(params: Dict) -> Dict[int, float]:
             """
-            Generates a Custom Long Continuous ROI-Table with less gaps in it.
+            Generates a Custom Long Continuous ROI Table with less gaps in it.
             Configurable step_size is loaded in from the Master MGM Framework.
 
             :param params: (Dict) Base Parameters used for the ROI Table calculation
@@ -220,18 +226,18 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         def roi_space() -> List[Dimension]:
             """
             Create a ROI space. Defines values to search for each ROI steps.
-            This method implements adaptive roi hyperspace with varied ranges for parameters which automatically adapts
+            This method implements adaptive roi HyperSpace with varied ranges for parameters which automatically adapts
             to the un-zoomed informative_timeframe used by the MGM Framework during BackTesting & HyperOpting.
 
             :return List: Generated ROI Space
             """
 
-            # Default scaling coefficients for the roi hyperspace. Can be changed to adjust resulting ranges of the ROI
-            # tables. Increase if you need wider ranges in the roi hyperspace, decrease if shorter ranges are needed:
-            # roi_t_alpha: Limits for the time intervals in the ROI tables. Components are scaled linearly.
-            roi_t_alpha = 1.0
+            # Default scaling coefficients for the ROI HyperSpace. Can be changed to adjust resulting ranges of the ROI
+            # tables. Increase if you need wider ranges in the ROI HyperSpace, decrease if shorter ranges are needed:
+            # roi_t_alpha: Limits for the time intervals in the ROI Tables. Components are scaled linearly.
+            roi_t_alpha = MasterMoniGoManiHyperStrategy.roi_time_interval_scaling
             # roi_p_alpha: Limits for the ROI value steps. Components are scaled logarithmically.
-            roi_p_alpha = 1.0
+            roi_p_alpha = MasterMoniGoManiHyperStrategy.roi_value_step_scaling
 
             # Load in the un-zoomed timeframe size from the Master MGM Framework
             timeframe_min = timeframe_to_minutes(MasterMoniGoManiHyperStrategy.informative_timeframe)
@@ -256,7 +262,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             }
 
             # Generate MGM's custom long continuous ROI table
-            logger.debug(f'Using roi space limits: {roi_limits}')
+            logger.debug(f'Using ROI space limits: {roi_limits}')
             p = {
                 'roi_t1': roi_limits['roi_t1_min'],
                 'roi_t2': roi_limits['roi_t2_min'],
@@ -265,7 +271,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 'roi_p2': roi_limits['roi_p2_min'],
                 'roi_p3': roi_limits['roi_p3_min']
             }
-            logger.info(f'Min roi table: {round_dict(MasterMoniGoManiHyperStrategy.HyperOpt.generate_roi_table(p), 3)}')
+            logger.info(f'Min ROI table: {round_dict(MasterMoniGoManiHyperStrategy.HyperOpt.generate_roi_table(p), 3)}')
             p = {
                 'roi_t1': roi_limits['roi_t1_max'],
                 'roi_t2': roi_limits['roi_t2_max'],
@@ -274,7 +280,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 'roi_p2': roi_limits['roi_p2_max'],
                 'roi_p3': roi_limits['roi_p3_max']
             }
-            logger.info(f'Max roi table: {round_dict(MasterMoniGoManiHyperStrategy.HyperOpt.generate_roi_table(p), 3)}')
+            logger.info(f'Max ROI table: {round_dict(MasterMoniGoManiHyperStrategy.HyperOpt.generate_roi_table(p), 3)}')
 
             return [
                 Integer(roi_limits['roi_t1_min'], roi_limits['roi_t1_max'], name='roi_t1'),
@@ -344,8 +350,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             self.mgm_logger('info', initialization, f'Current run mode detected as: HyperOpting/BackTesting. '
                                                     f'Auto updated is_dry_live_run_detected to: False')
 
-            self.mgm_logger('info', initialization,
-                            f'Calculating and storing "timeframe_multiplier" + Updating startup_candle_count"')
+            self.mgm_logger('info', initialization, f'Calculating and storing "timeframe_multiplier"')
             self.timeframe_multiplier = \
                 int(timeframe_to_minutes(self.informative_timeframe) / timeframe_to_minutes(self.timeframe))
             if self.timeframe_multiplier < 1:
@@ -469,9 +474,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                                     f'informative_timeframe ({self.informative_timeframe} candles) and '
                                                     f'a zoomed backtest_timeframe ({self.backtest_timeframe} candles)')
 
-            # Warning! This method gets ALL downloaded data that you have (when in backtesting mode).
+            # Warning! This method gets ALL downloaded data for the given timeframe (when in BackTesting mode).
             # If you have many months or years downloaded for this pair, this will take a long time!
-            informative = self.dp.get_pair_dataframe(pair=metadata['pair'], timeframe=self.informative_timeframe)
+            informative = load_pair_history(pair=metadata['pair'],
+                                            datadir=self.config['datadir'],
+                                            timeframe=self.informative_timeframe,
+                                            startup_candles=self.startup_candle_count,
+                                            data_format=self.config.get('dataformat_ohlcv', 'json'))
 
             # Throw away older data that isn't needed.
             first_informative = dataframe['date'].min().floor('H')
@@ -531,7 +540,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return all_open_trades
 
-    def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
+    def custom_stoploss(self, pair: str, trade: Trade, current_time: datetime,
                         current_rate: float, current_profit: float, **kwargs) -> float:
         """
         Open Trade Custom Information Storage & Garbage Collector
@@ -598,26 +607,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                         f'Successfully removed garbage_trade {str(garbage_trade)} from custom_info!')
                         break
 
-        # Check if any old unclogger_cooldown_pairs data needs to be removed
-        if len(self.custom_info['unclogger_cooldown_pairs']) > 0:
-            for stored_cooldown_pair, start_cooldown_time in self.custom_info['unclogger_cooldown_pairs'].copy().items():
-                self.mgm_logger('debug', garbage_collector, f'Checking if cooldown period for unclogged pair '
-                                                            f'({stored_cooldown_pair}) has expired...')
-
-                minimal_cooldown_time = current_time.replace(tzinfo=None) - timedelta(minutes=round(
-                    self.sell___unclogger_buy_cooldown_minutes_window.value / self.precision))
-
-                self.mgm_logger('debug', garbage_collector, f' Minimal cooldown time currently needed: '
-                                                            f'{str(minimal_cooldown_time)}')
-                self.mgm_logger('debug', garbage_collector, f' Start of cooldown period for pair '
-                                                            f'({stored_cooldown_pair}): {str(start_cooldown_time)}')
-
-                if start_cooldown_time < minimal_cooldown_time:
-                    self.mgm_logger('debug', garbage_collector,
-                                    f'Cooldown period for unclogged pair ({stored_cooldown_pair}) has expired, '
-                                    f'removing from custom_info!')
-                    self.custom_info['unclogger_cooldown_pairs'].pop(stored_cooldown_pair)
-
         # Print all stored open trade info in custom_storage
         self.mgm_logger('debug', custom_information_storage,
                         f'Open trades ({str(len(self.custom_info["open_trades"]))}) in custom_info updated '
@@ -625,19 +614,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         self.mgm_logger('debug', custom_information_storage,
                         f'custom_info["open_trades"] contents: {repr(self.custom_info["open_trades"])}')
 
-        # Print all unclogger cooldown pair info in custom_storage
-        self.mgm_logger('debug', custom_information_storage,
-                        f'Unclogger cooldown pairs ({str(len(self.custom_info["unclogger_cooldown_pairs"]))}) in '
-                        f'custom_info updated successfully!')
-        self.mgm_logger('debug', custom_information_storage, f'custom_info["unclogger_cooldown_pairs"] contents: '
-                                                             f'{repr(self.custom_info["unclogger_cooldown_pairs"])}')
-
         # Always return a value bigger than the initial stoploss to keep using the initial stoploss.
         # Since we (currently) only want to use this function for custom information storage!
         return -1
 
-    def custom_sell(self, pair: str, trade: 'Trade', current_time: 'datetime',
-                    current_rate: float, current_profit: float, **kwargs):
+    def custom_sell(self, pair: str, trade: Trade, current_time: datetime, current_rate: float,
+                    current_profit: float, **kwargs) -> Optional[Union[str, bool]]:
         """
         Open Trade Unclogger:
         ---------------------
@@ -661,15 +643,14 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param current_rate: Rate, calculated based on pricing settings in ask_strategy.
         :param current_profit: Current profit (as ratio), calculated based on current_rate.
         :param **kwargs: Ensure to keep this here so updates to this won't break MoniGoMani.
-        :return float: New stoploss value, relative to the current-rate
+        :return: True or string if a custom sell should occur, otherwise None
         """
 
         open_trade_unclogger = 'Open Trade Unclogger'
         custom_information_storage = 'custom_sell - Custom Information Storage'
 
         if (self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True) and \
-                (pair not in self.custom_info['unclogger_cooldown_pairs']) and \
-                (len(self.custom_info['open_trades']) > 0):
+                (pair in self.custom_info['open_trades']) and (self.custom_info['open_trades'][pair] != {}):
             try:
                 # Open Trade Custom Information Storage
                 # -------------------------------------
@@ -857,15 +838,23 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                             # Calculate the percentage of the lookback window currently satisfied
                                             temp = self.sell___unclogger_trend_lookback_candles_window.value
                                             unclogger_candles_percentage_satisfied = \
-                                                (unclogger_weighted_candles_satisfied / round(temp / self.precision)) * 100
+                                                (unclogger_weighted_candles_satisfied /
+                                                 round(temp / self.precision)) * 100
 
                                             # Override Sell Signal: Unclog trade by forcing a sell & attempt to continue
                                             # the profit climb with the "freed up trading slot"
                                             temp = self.sell___unclogger_trend_lookback_candles_window_percentage_needed.value
                                             if unclogger_candles_percentage_satisfied >= round(temp / self.precision):
                                                 # Buy Cooldown Window Custom Information Storage
-                                                self.custom_info['unclogger_cooldown_pairs'][pair] = \
-                                                    current_time.replace(tzinfo=None)
+                                                if pair not in self.custom_info['unclogger_cooldown_pairs']:
+                                                    self.custom_info['unclogger_cooldown_pairs'][pair] = []
+
+                                                self.custom_info['unclogger_cooldown_pairs'][pair].append({
+                                                    'start_time': current_time,
+                                                    'end_time': current_time + timedelta(minutes=round(
+                                                        self.sell___unclogger_buy_cooldown_minutes_window.value /
+                                                        self.precision))
+                                                })
 
                                                 self.mgm_logger('info', open_trade_unclogger,
                                                                 f'Unclogging losing trade...')
@@ -881,8 +870,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return None  # By default we don't want a force sell to occur
 
-    def confirm_trade_entry(self, pair: str, order_type: str, amount: float,
-                            rate: float, time_in_force: str, **kwargs) -> bool:
+    def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
+                            time_in_force: str, current_time: datetime, **kwargs) -> bool:
         """
         Open Trade Unclogger Buy Cooldown Window
         ----------------------------------------
@@ -897,18 +886,37 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param amount: Amount in target (quote) currency that's going to be traded.
         :param rate: Rate that's going to be used when using limit orders
         :param time_in_force: Time in force. Defaults to GTC (Good-til-cancelled).
+        :param current_time: datetime object, containing the current datetime
         :param **kwargs: Ensure to keep this here so updates to this won't break MoniGoMani.
         :return bool: When True is returned, then the buy-order is placed on the exchange. False aborts the process
         """
 
+        unclogger_cooldown = 'Unclogger Cooldown'
+
         if (self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True) and \
                 (pair in self.custom_info['unclogger_cooldown_pairs']):
-            return False
+            for cooldown_period in self.custom_info['unclogger_cooldown_pairs'][pair][:]:
+                self.mgm_logger('debug', unclogger_cooldown,
+                                f'{pair} CoolDown Period:\n'
+                                f'    Cooldown Start Time: {cooldown_period["start_time"]}\n'
+                                f'    Cooldown End Time: {cooldown_period["end_time"]}\n'
+                                f'    Current Time: {current_time}')
 
-        return True  # By default we want the buy signal to go through
+                if cooldown_period['end_time'] < current_time:
+                    self.mgm_logger('debug', unclogger_cooldown,
+                                    f'Cooldown period for unclogged pair ({pair}) has expired, '
+                                    f'removing from custom_info! (CurrentTime: {current_time})')
+                    self.custom_info['unclogger_cooldown_pairs'][pair].remove(cooldown_period)
+                elif cooldown_period['start_time'] < current_time < cooldown_period['end_time']:
+                    self.mgm_logger('debug', unclogger_cooldown,
+                                    f'Blocking buy signal since pair is cooling down...')
+                    return False  # Block the buy signal from going through when the pair is still under cooldown
+
+        return True  # Allow the buy signal to go through if the pair is not under cooldown
 
     def confirm_trade_exit(self, pair: str, trade: Trade, order_type: str, amount: float,
-                           rate: float, time_in_force: str, sell_reason: str, **kwargs) -> bool:
+                           rate: float, time_in_force: str, sell_reason: str,
+                           current_time: datetime, **kwargs) -> bool:
         """
         Weighted Signals Sell Profit Only
         ---------------------------------
@@ -918,13 +926,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         Timing for this function is critical, it's needed to avoid doing heavy tasks or network requests in this method.
 
         :param pair: Pair that's about to be sold.
+        :param trade: trade object.
         :param order_type: Order type (as configured in order_types). usually limit or market.
         :param amount: Amount in quote currency.
         :param rate: Rate that's going to be used when using limit orders
         :param time_in_force: Time in force. Defaults to GTC (Good-til-cancelled).
         :param sell_reason: Sell reason, can be any of ['MGM_unclogging_losing_trade', 'sell_signal', 'force_sell',
             'emergency_sell', 'roi', 'stop_loss', 'stoploss_on_exchange', 'trailing_stop_loss']
-        :param **kwargs: Ensure to keep this here so updates to this won't break your strategy.
+        :param current_time: datetime object, containing the current datetime
+        :param **kwargs: Ensure to keep this here so updates to this won't break MoniGoMani.
         :return bool: When True is returned, then the sell-order is placed on the exchange. False aborts the process
         """
 
@@ -942,7 +952,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         - The timestamp of logging + the message_type provided + the message provided
         - To the console & To "./user_data/logs/freqtrade.log"
 
-        :param message_type: The type of the message (INFO, DEBUG, WARNING, ERROR)
+        :param message_type: The type of the message (INFO, DEBUG, WARNING, ERROR, CUSTOM)
         :param code_section: The section in the code where the message occurred
         :param message: The log message to be displayed
         """
@@ -960,6 +970,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             elif (self.mgm_log_levels_enabled['error'] is True) and (message_type.upper() == 'ERROR'):
                 logger.setLevel(logging.ERROR)
                 logger.error(code_section + ' - ' + message)
+            elif (self.mgm_log_levels_enabled['custom'] is True) and (message_type.upper() == 'CUSTOM'):
+                logger.setLevel(logging.DEBUG)
+                logger.debug(f'CUSTOM - {code_section} - {message}')
 
     def _generate_weight_condition(self, dataframe: DataFrame, space: str) -> DataFrame:
         """
@@ -1213,10 +1226,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: DataFrame with debug signals
         """
 
-        # Reset the total signals possible when a new BackTest starts (during HyperOpting)
+        # Reset some parameters when a new BackTest starts (during HyperOpting)
         if self.is_dry_live_run_detected is False:
+            # Reset the total signals possible
             for total_signal_possible in self.total_signals_possible:
                 self.total_signals_possible[total_signal_possible] = 0
+
+            # If needed, reset the custom_info dictionary when a new BackTest starts (during HyperOpting)
+            if self.custom_info != self.initial_custom_info:
+                self.custom_info = copy.deepcopy(self.initial_custom_info)
 
         signals = getattr(self, f'{space}_signals')
 
@@ -1225,7 +1243,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             self._add_signal(signal_name, space, dataframe, condition_func(dataframe))
 
         # Generates the conditions responsible for searching and comparing the weights needed to activate a buy or sell
-        dataframe.loc[(self._generate_weight_condition(dataframe=dataframe, space=space)), space] = 1
+        dataframe.loc[self._generate_weight_condition(dataframe=dataframe, space=space), space] = 1
 
         # Check if total signals needed are possible, if not force the bot to do nothing
         if self.is_dry_live_run_detected is False:

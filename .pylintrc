@@ -2,8 +2,14 @@
 
 # A comma-separated list of package or module names from where C extensions may
 # be loaded. Extensions are loading into the active Python interpreter and may
-# run arbitrary code
-extension-pkg-whitelist=
+# run arbitrary code.
+extension-pkg-allow-list=
+
+# A comma-separated list of package or module names from where C extensions may
+# be loaded. Extensions are loading into the active Python interpreter and may
+# run arbitrary code. (This is an alternative name to extension-pkg-allow-list
+# for backward compatibility.)
+extension-pkg-whitelist=numpy,talib,talib.abstract
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
@@ -194,7 +200,7 @@ ignored-classes=optparse.Values,thread._local,_thread._local
 # (useful for modules/projects where namespaces are manipulated during runtime
 # and thus existing member attributes cannot be deduced by static analysis. It
 # supports qualified module names, as well as Unix pattern matching.
-ignored-modules=flask setproctitle usb1 flask.ext.socketio smbus2 usb1.*
+ignored-modules=numpy,talib,talib.abstract
 
 # Show a hint with possible names when a member name was not found. The aspect
 # of finding the hint is based on edit distance.
@@ -340,7 +346,8 @@ good-names=i,
            k,
            ex,
            Run,
-           _
+           _,
+           logger
 
 # Include a hint for the correct naming format with invalid-name
 include-naming-hint=no

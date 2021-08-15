@@ -4,7 +4,6 @@
     "backtest_timeframe": "5m",
     "startup_candle_count": 400,
     "precision": 1,
-    "roi_table_step_size": 5,
     "trading_during_trends": {
       "buy_trades_when_downwards": true,
       "buy_trades_when_sideways": true,
@@ -32,6 +31,11 @@
       "trailing_stop_positive_max_value": 0.35,
       "trailing_stop_positive_offset_min_value": 0.011,
       "trailing_stop_positive_offset_max_value": 0.1
+    },
+    "roi_spaces": {
+      "roi_table_step_size": 5,
+      "roi_time_interval_scaling": 1.0,
+      "roi_value_step_scaling": 1.0
     },
     "unclogger_spaces": {
       "unclogger_buy_cooldown_minutes_window": {
@@ -79,10 +83,67 @@
     "debuggable_weighted_signal_dataframe": false,
     "use_mgm_logging": false,
     "mgm_log_levels_enabled": {
-      "info": true,
-      "warning": true,
-      "error": true,
-      "debug": true
+      "info": false,
+      "warning": false,
+      "error": false,
+      "debug": false,
+      "custom": true
+    }
+  },
+  "monigomani_hyperoptloss_settings": {
+    "MGM_GeniusHyperOptLoss": {
+      "sortino": {
+        "expected_max_profit": 3.0,
+        "max_accepted_trade_duration": 1800
+      },
+      "weight": {
+        "average_profit_weight": 20,
+        "drawdown_weight": 75,
+        "duration_weight": 1,
+        "sortino_weight": 0.02,
+        "total_profit_weight": 100,
+        "win_loss_weight": 50
+      },
+      "other": {
+        "average_profit_threshold": 1,
+        "ignore_small_profits": false,
+        "small_profits_threshold": 0.001
+      }
+    },
+    "MGM_UncloggedWinRatioAndProfitRatioHyperOptLoss": {
+      "unclogger_profit_ratio_loss_tolerance": -0.02
+    },
+    "MGM_WeightedMultiParameterHyperOptLoss": {
+      "drawdown": {
+        "expected_drawdown": 0.8,
+        "drawdown_weight": 1.7,
+        "drawdown_threshold_high": 2.0,
+        "drawdown_threshold_low": 0.2
+      },
+      "duration": {
+        "expected_duration_minutes": 60,
+        "duration_weight": 1.2,
+        "duration_threshold_high": 9000000000,
+        "duration_threshold_low": 0
+      },
+      "profit": {
+        "expected_profit": 12.0,
+        "profit_weight": 1.6,
+        "profit_threshold_high": 1000.0,
+        "profit_threshold_low": 0.42
+      },
+      "sortino": {
+        "expected_sortino": 42,
+        "sortino_weight": 0.8,
+        "sortino_threshold_high": 2.5,
+        "sortino_threshold_low": 0.2
+      },
+      "trades": {
+        "expected_trades": 1500,
+        "trades_weight": 0.8,
+        "trades_threshold_high": 2.0,
+        "trades_threshold_low": 0.55
+      }
     }
   },
   "dry_run": true,

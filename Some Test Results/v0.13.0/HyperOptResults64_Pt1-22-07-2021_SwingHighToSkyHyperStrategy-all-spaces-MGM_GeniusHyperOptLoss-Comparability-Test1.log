@@ -1,0 +1,101 @@
+INFO - Using config: ./user_data/mgm-config.json ...
+INFO - Using config: ./user_data/mgm-config-private.json ...
+INFO - Parameter --enable-protections detected, enabling Protections. ...
+INFO - Using max_open_trades: -1 ...
+INFO - Parameter --timerange detected: 20210501-20210616 ...
+INFO - Parameter --epochs detected ... Will run Hyperopt with for 1000 epochs ...
+INFO - Parameter -s/--spaces detected: ['all']
+INFO - Parameter --min-trades detected: 1
+INFO - Using Hyperopt loss class name: MGM_GeniusHyperOptLoss
+INFO - Using resolved strategy SwingHighToSkyHyperStrategy from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/strategies/SwingHighToSkyHyperStrategy.py'...
+INFO - Strategy Parameter: buy_cci_max = -112
+INFO - Strategy Parameter: buy_use_cci = 1
+INFO - Strategy Parameter: sell_cci_min = -190
+INFO - Strategy Parameter: sell_use_cci = no-use
+INFO - Override strategy 'order_types' with value in config file: {'buy': 'limit', 'sell': 'limit', 'emergencysell': 'market', 'forcesell': 'market', 'forcebuy': 'market', 'stoploss': 'market', 'stoploss_on_exchange': False, 'stoploss_on_exchange_interval': 60}.
+INFO - Override strategy 'order_time_in_force' with value in config file: {'buy': 'gtc', 'sell': 'gtc'}.
+INFO - Override strategy 'stake_currency' with value in config file: USDT.
+INFO - Override strategy 'stake_amount' with value in config file: 45.
+INFO - Override strategy 'protections' with value in config file: [{'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 10, 'stop_duration': 1440, 'only_per_pair': False}, {'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 2, 'stop_duration': 1440, 'only_per_pair': True}].
+INFO - Override strategy 'unfilledtimeout' with value in config file: {'buy': 10, 'sell': 30, 'unit': 'minutes'}.
+INFO - Override strategy 'use_sell_signal' with value in config file: True.
+INFO - Override strategy 'sell_profit_only' with value in config file: False.
+INFO - Override strategy 'ignore_roi_if_buy_signal' with value in config file: True.
+INFO - Override strategy 'sell_profit_offset' with value in config file: 0.
+INFO - Override strategy 'disable_dataframe_checks' with value in config file: False.
+INFO - Strategy using minimal_roi: {'0': 0.30813, '127': 0.14381, '370': 0.07412, '1038': 0}
+INFO - Strategy using timeframe: 5m
+INFO - Strategy using stoploss: -0.04175
+INFO - Strategy using trailing_stop: True
+INFO - Strategy using trailing_stop_positive: 0.1202
+INFO - Strategy using trailing_stop_positive_offset: 0.1645
+INFO - Strategy using trailing_only_offset_is_reached: True
+INFO - Strategy using use_custom_stoploss: False
+INFO - Strategy using process_only_new_candles: False
+INFO - Strategy using startup_candle_count: 0
+INFO - Strategy using ignore_buying_expired_candle_after: 0
+INFO - Using resolved protection StoplossGuard from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/freqtrade/plugins/protections/stoploss_guard.py'...
+INFO - Using resolved protection StoplossGuard from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/freqtrade/plugins/protections/stoploss_guard.py'...
+INFO - No "mgm-config-hyperopt" file found in the "user_data" directory.
+INFO - Using optimizer random state: 49187
+INFO - Min roi table: {0: 0.03, 10: 0.02, 20: 0.01, 30: 0}
+INFO - Max roi table: {0: 0.31, 40: 0.11, 100: 0.04, 220: 0}
+INFO - Loading data from 2021-05-01 00:00:00 up to 2021-06-16 00:00:00 (46 days).
+INFO - Hyperopting with data from 2021-05-01 00:00:00 up to 2021-06-16 00:00:00 (46 days)..
++--------+-----------+----------+------------------+--------------+-------------------------------+-----------------+-------------------------------+-------------+
+|   Best |     Epoch |   Trades |    Win Draw Loss |   Avg profit |                        Profit |    Avg duration |                  Max Drawdown |   Objective |
+|--------+-----------+----------+------------------+--------------+-------------------------------+-----------------+-------------------------------+-------------|
+|   Best |   38/1000 |        5 |      3    0    2 |       -0.04% |        -0.084 USDT   (-0.02%) | 0 days 00:06:00 |         0.103 USDT    (0.23%) |     77.0001 |
+|   Best |   49/1000 |        5 |      3    0    2 |        0.00% |         0.005 USDT    (0.00%) | 0 days 00:08:00 |         0.268 USDT    (0.59%) |     76.4191 |
+|   Best |   58/1000 |        5 |      3    0    2 |        0.71% |         1.590 USDT    (0.32%) | 0 days 00:19:00 |         0.051 USDT    (0.11%) |     60.2424 |
+|   Best |  322/1000 |       30 |     19    1   10 |        0.58% |         7.776 USDT    (1.56%) | 0 days 00:56:00 |         2.949 USDT    (6.55%) |     52.1904 |
+|   Best |  343/1000 |       33 |     21    6    6 |        0.93% |        13.797 USDT    (2.76%) | 0 days 03:51:00 |         6.040 USDT   (13.41%) |     44.7818 |
+|   Best |  350/1000 |       34 |     27    0    7 |        0.72% |        11.074 USDT    (2.21%) | 0 days 01:16:00 |         3.302 USDT    (7.33%) |    -59.1596 |
+|   Best |  361/1000 |       36 |     29    5    2 |        0.92% |        14.869 USDT    (2.97%) | 0 days 02:12:00 |         3.346 USDT    (7.43%) |    -80.0286 |
+|   Best |  958/1000 |       33 |     26    7    0 |        1.06% |        15.766 USDT    (3.15%) | 0 days 04:51:00 |                            -- |    -80.9977 |
+
+Elapsed Time: 0:29:08
+INFO - 1000 epochs saved to '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/hyperopt_results/strategy_SwingHighToSkyHyperStrategy_2021-07-22_13-00-26.fthypt'.
+INFO - Dumping parameters to user_data/strategies/SwingHighToSkyHyperStrategy.json
+
+Best result:
+
+   958/1000:
+     33 trades. 
+     26/7/0 Wins/Draws/Losses. 
+     Avg profit   1.06%. 
+     Median profit   1.20%. 
+     Total profit  15.76632101 USDT (   3.15%). 
+     Avg duration 4:51:00 min. 
+     Objective: -80.99774
+
+
+    # Buy hyperspace params:
+    buy_params = {
+        "buy_cci_max": -233.29971,
+        "buy_use_cci": True,
+    }
+
+    # Sell hyperspace params:
+    sell_params = {
+        "sell_cci_min": 294.62477,
+        "sell_use_cci": "use",
+    }
+
+    # ROI table:
+    minimal_roi = {
+        "0": 0.241,
+        "35": 0.081,
+        "52": 0.012,
+        "167": 0
+    }
+
+    # Stoploss:
+    stoploss = -0.208
+
+    # Trailing stop:
+    trailing_stop = True
+    trailing_stop_positive = 0.212
+    trailing_stop_positive_offset = 0.244
+    trailing_only_offset_is_reached = True
+    

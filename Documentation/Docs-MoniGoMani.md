@@ -1,5 +1,7 @@
 <p align="left">
-    <a href="https://discord.gg/xFZ9bB6vEz">
+    <a href="https://matrix.to/#/+moni-go-mani:matrix.org">
+        <img src="https://img.shields.io/matrix/MoniGoMani-Testing:matrix.org?label=Matrix%20Community&logo=matrix" alt="Join MoniGoMani on Matrix">
+    </a>  <a href="https://discord.gg/xFZ9bB6vEz">
         <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join CryptoStonksShallRise on Discord">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases">
         <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
@@ -7,8 +9,8 @@
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md">
-        <img src="https://img.shields.io/badge/Docs-MGM__DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/wiki">
+        <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
     </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
     </a> <a href="https://www.iconomi.com/register?ref=JdFzz">
@@ -19,16 +21,15 @@
 </p>
 
 ## ⚠️ Disclaimer
- - This strategy is under development. It is not recommended running it live at this moment.
- - Always test this strategy before using it!
- - I am in no way responsible for your live results! This strategy is still experimental and under heavy development!
+ - This Framework & Strategy are still experimental and under heavy development. It is not recommended running it live at this moment.
+ - Always make sure to understand & test your MoniGoMani configuration until you trust it, before even thinking about going live!
+ - I am in no way responsible for your live results! You are always responsible for your own MoniGoMani configuration!
  - MoniGoMani should always be [re-optimized](#how-to-optimize-monigomani) after doing manual changes!
  - You need to [optimize](#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
 <hr>
 
 
-# Table of Contents
-- [Table of Contents](#table-of-contents)
+## Table of Contents
 - [Freqtrade Installation](#freqtrade-installation)
 - [How to Optimize MoniGoMani](#how-to-optimize-monigomani)
 - [How to Configure MoniGoMani](#how-to-configure-monigomani)
@@ -40,6 +41,7 @@
     - [Trading During Trends](#trading-during-trends)
     - [Weighted Signal Spaces](#weighted-signal-spaces)
     - [Stoploss Spaces](#stoploss-spaces)
+    - [ROI Spaces](#roi-spaces)
     - [Open Trade Unclogger](#open-trade-unclogger)
       - [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries)
     - [Default Stub Values](#default-stub-values)
@@ -70,7 +72,7 @@
 This guide now assumes you have **Freqtrade** and **jq** already installed, if you haven't yet, then please see [VERYQUICKSTART_FREQTRADE.md](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART_FREQTRADE.md)
 
 # How to Optimize MoniGoMani
-*(These are just my ideas/theories, if you have other ideas, please test them & report your results to [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can learn and improve this flow!)*   
+*(These are just my ideas/theories, if you have other ideas, please test them & report your results to [`🛠 MoniGoMani - Testing` on Matrix](https://matrix.to/#/#MoniGoMani-Testing:matrix.org) or [`#🛠︱testing` on Discord](https://discord.gg/xFZ9bB6vEz) so we can learn and improve this flow!)*   
 **<span style="color:darkorange">WARNING:</span> It's strongly advised to not do any manual alterations to an already optimized MGM setup! The recommended way to do manual alterations is by [Configuring MoniGoMani](#how-to-configure-monigomani), and then following this optimization process to apply them!**   
    
 
@@ -93,7 +95,7 @@ This guide now assumes you have **Freqtrade** and **jq** already installed, if y
        - Refined search spaces ranging between the values found during the 1st Run (Loaded from `mgm-config-hyperopt.json`) plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json` (This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)   
        - Weak weighted signals weeded out by overriding them to their respective `min_` value (Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
        - Strong weighted signals are boosted by overriding them to their respective `max_` value (Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)   
-**7)** Load your results into the `TotalOverallSignalImportanceCalculator.py` and run it's [Go-To Command](#go-to-commands) to receive a nice weighted signal report for sharing in the [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.  
+**7)** Load your results into the `TotalOverallSignalImportanceCalculator.py` and run it's [Go-To Command](#go-to-commands) to receive a nice weighted signal report for sharing in the [Matrix Community](https://matrix.to/#/+moni-go-mani:matrix.org) or [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.  
 
 
 # How to Configure MoniGoMani
@@ -116,15 +118,15 @@ The main `MoniGoMani` settings can be found under `monigomani_settings`:
 | **timeframe** <br> **backtest_timeframe** | These values configure the `timeframe`s used in MoniGoMani. <br> **Documentation:** [TimeFrame-Zoom](#timeframe-zoom) <br> **Datatypes:** Integer |
 | **startup_candle_count** | Number of candles the strategy requires before producing valid signals during BackTesting/HyperOpting. <br> By default this is set to `400` since MoniGoMani uses a 200EMA, which needs 400 candles worth of data to be calculated. <br> **Datatype:** Integer |
 | **precision** | This value can be used to control the precision of HyperOpting. Default is `1`. <br> **Documentation:** [Precision Setting](#precision-setting) <br> **Datatype:** Integer |
-| **roi_table_step_size** | MoniGoMani generates a really long custom ROI-Table (Return of Interest), so it will have fewer gaps in it and be more continuous in it's decrease. <br> This setting alters the size of the steps (in minutes) to be used when calculating the long continuous ROI-Table. <br> **Datatype:** Integer |
 | **trading_during_trends** | The settings inside the `trading_during_trends` section are used to configure during which trends (Downwards/Sideways/Upwards) MGM will be allowed to trade (for Buys/Sells).<br> **Documentation:** [Trading During Trends](#trading-during-trends) <br> **Datatype:** Dictionary |
 | **weighted_signal_spaces** | The settings inside the `weighted_signal_spaces` section are used to control how MGM handles the HyperOpting of (Total) Weighted Signal Values during it's [optimization process](#how-to-optimize-monigomani).<br> **Documentation:** [Weighted Signal Spaces](#weighted-signal-spaces) <br> **Datatype:** Dictionary |
 | **stoploss_spaces** | The settings inside the `stoploss_spaces` section are used to refine the search spaces that MGM will use for the (trailing) stoploss during it's [optimization process](#how-to-optimize-monigomani).<br> **Documentation:** [Stoploss Spaces](#stoploss-spaces) <br> **Datatype:** Dictionary |
+| **roi_spaces** | The settings inside `mgm-config.json`'s `roi_spaces` section are used to tweak the ROI (Return Of Interest) search spaces that MGM will use for the ROI-Table generation during it's [optimization process](#how-to-optimize-monigomani).<br> **Documentation:** [ROI Spaces](#roi-spaces) <br> **Datatype:** Dictionary |
 | **unclogger_spaces** | The settings inside the `unclogger_spaces` section are used to refine the search spaces that MGM will use for the open trade unclogger during it's [optimization process](#how-to-optimize-monigomani).<br> **Documentation:** [Open Trade Unclogger](#open-trade-unclogger) <br> **Datatype:** Dictionary |
 | **default_stub_values** | The settings inside the `default_stub_values` section are **only used** to control some default startup values that MGM will use when no other values are found and/or used for them.<br> **Documentation:** [Default Stub Values](#default-stub-values) <br> **Datatype:** Dictionary |
 | **debuggable_weighted_signal_dataframe** | If set to `True` all Weighted Signal results will be added to the dataframe for easy debugging with BreakPoints. <br> **<span style="color:darkorange">WARNING:</span> Disable this for anything else then debugging in an IDE! (Integrated Development Environment)** <br> **Datatype:** Boolean |
 | **use_mgm_logging** | If set to `True` MoniGoMani logging will be displayed to the console and be integrated in Freqtrades native logging, further logging configuration can be done by setting individual `mgm_log_levels_enabled`. <br> It's recommended to set this to `False` for HyperOpting/BackTesting unless you are testing with breakpoints. <br> **Datatype:** Boolean |
-| **mgm_log_levels_enabled** | It allows turning on/off individual `info`, `warning`, `error` and `debug` logging <br> For Live Runs it's recommended to disable at least `info` and `debug` logging, to keep MGM as lightweight as possible! <br> `debug` is very verbose! Always set it to `False` when BackTesting/HyperOpting! <br> **Datatype:** Dictionary |
+| **mgm_log_levels_enabled** | It allows turning on/off individual `info`, `warning`, `error`, `debug` and `custom` logging <br> For Live Runs it's recommended to disable at least `info` and `debug` logging, to keep MGM as lightweight as possible! <br> `debug` is very verbose! Always set it to `False` when BackTesting/HyperOpting! <br> **Datatype:** Dictionary |
 
 ### TimeFrame-Zoom
 To prevent profit exploitation during BackTesting/HyperOpting we BackTest/HyperOpt MoniGoMani using TimeFrame-Zoom.
@@ -203,6 +205,15 @@ The settings inside `mgm-config.json`'s `stoploss_spaces` section are used to re
 | **trailing_stop_positive_max_value** | Maximum value used in the HyperOpt Space for the `trailing_stop_positive`.<br> **Datatype:** Decimal |
 | **trailing_stop_positive_offset_min_value** | Minimal value used for the intermediate offset parameter used to calculate the HyperOpt Space for the `trailing_stop_positive_offset`.<br> **Datatype:** Decimal |
 | **trailing_stop_positive_offset_max_value** | Maximum value used for the intermediate offset parameter used to calculate the HyperOpt Space for the `trailing_stop_positive_offset`.<br> **Datatype:** Decimal |
+
+### ROI Spaces
+The settings inside `mgm-config.json`'s `roi_spaces` section are used to tweak the ROI (Return of Interest) search spaces that MGM will use for the ROI Table generation during it's [optimization process](#how-to-optimize-monigomani).
+
+| Parameter | Description |
+| --- | --- |
+| **roi_table_step_size** | MoniGoMani generates a really long custom ROI-Table (Return of Interest), so it will have fewer gaps in it and be more continuous in it's decrease.<br> This setting alters the size of the steps (in minutes) to be used when calculating the long continuous ROI-Table. <br> **Datatype:** Integer |
+| **roi_time_interval_scaling** | Default scaling coefficients for the ROI HyperSpace. Can be changed to adjust resulting ranges of the ROI tables.<br> Increase if you need wider ranges in the ROI HyperSpace, decrease if shorter ranges are needed. Limits for the time intervals in the ROI tables. Components are scaled linearly.<br> **Datatype:** Decimal |
+| **roi_value_step_scaling** | Limits for the ROI value steps. Components are scaled logarithmically.<br> **Datatype:** Decimal |
 
 ### Open Trade Unclogger
 When the Open Trade Unclogger is enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades.   
@@ -389,7 +400,7 @@ Once you defined them you can load them in FreqUI as following:
 # Total Overall Signal Importance Calculator
 Execute: `python ./user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py` from your favorite terminal / CLI to calculate the overall importance of the signals being used.   
 The higher the score of a signal the better! It will also export to a `./user_data/Total-Average-Signal-Importance-Report.log` file for easy sharing!   
-Share these results in [#moni-go-mani-testing](https://discord.gg/xFZ9bB6vEz) so we can improve the signals!   
+Share these results in [`🛠 MoniGoMani - Testing` on Matrix](https://matrix.to/#/#MoniGoMani-Testing:matrix.org) or [`#🛠︱testing` on Discord](https://discord.gg/xFZ9bB6vEz) so we can improve the signals!   
 
 The calculator file also has 2 settings you can configure marked under the `CONFIG NAMES SECTION` section inside the file:
     - **mgm_config_name**: Provide a custom file name for `mgm-config.json`
@@ -523,7 +534,7 @@ You can also do this for  **2nd HyperOpt Runs**, but this is a little more diffi
 - Compare if the HyperOpt Run 2b Results are better then on your Run 2a attempt
 
 # How to share your test results properly
-The easiest way to share how your MGM setup has been doing would be by posting a screenshot in the [Discord Server](https://discord.gg/xFZ9bB6vEz) with the output of the `/status table` and `/profit` commands (Using the Telegram connection of the bot) + The complete output of the log being printed while HyperOpting (See [Some Test Results]() for examples).   
+The easiest way to share how your MGM setup has been doing would be by posting a screenshot in the [Matrix Community](https://matrix.to/#/+moni-go-mani:matrix.org) or [Discord server](https://discord.gg/xFZ9bB6vEz) with the output of the `/status table` and `/profit` commands (Using the Telegram connection of the bot) + The complete output of the log being printed while HyperOpting (See [Some Test Results](https://github.com/Rikj000/MoniGoMani/tree/main/Some%20Test%20Results) for examples).   
    
 Also, one of the other most welcome things is the results from the `TotalOverallSignalImportanceCalculator`, but you'll have to paste your own fresh HyperOpt results in it first before it can make you a nice report that can help us find better signals for MGM !:rocket:   
 
