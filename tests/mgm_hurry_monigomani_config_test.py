@@ -2,7 +2,7 @@
 import sys
 import pytest
 
-from unittest.mock import patch
+from unittest.mock import MagicMock
 
 sys.path.append('.')
 sys.path.append('..')
@@ -140,7 +140,11 @@ def test_write():
 # --- ↓
 # --- ↓ Helper methods
 # --- ↓
-@patch(MoniGoManiConfig.logger)
+#@patch(MoniGoManiConfig.logger)
 def __get_instance():
     basedir = '.'
-    return MoniGoManiConfig(basedir)
+    obj = MoniGoManiConfig(basedir)
+    # @patch('MoniGoManiLogger.logging')
+    # @patch('MoniGoManiLogger.logger')
+    return obj
+
