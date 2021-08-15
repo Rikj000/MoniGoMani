@@ -2,10 +2,17 @@
 #
 ##################
 #
+# This file contains the installation procedure to get up and running with
+# Freqtrade and the MoniGoMani HyperStrategy.
+# 
 # Usage: curl -s "https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/installer.sh" | bash
+# Arguments (optional):
+# -fr (freqtrade)
 #
 ##################
-# TODO: think about windows/unix/mac support
+# TODO: support arguments for branch and commit hash
+# TODO: test at *nix and *indows
+
 
 INSTALL_DIR="freqtrade-mgm"
 
@@ -97,14 +104,14 @@ if [ -d "$INSTALL_DIR" ]; then
     confirm "  👉  What do you want to do?" "(y/h/n)"
     echo ""
 
-    if [ $REPLY = "0" ] # 0 = Yes
+    if [ "$REPLY" == "0" ] # 0 = Yes
     then
         # Can't turn back times!
         echo "${WHITE}  🚮  Removing '$INSTALL_DIR' ... "
         rm -Rf "$INSTALL_DIR"
     fi
 
-    if [ $REPLY = "1" ] # 1 = No
+    if [ "$REPLY" == "1" ] # 1 = No
     then
         echo "      cancel."
         echo ""
@@ -114,14 +121,14 @@ if [ -d "$INSTALL_DIR" ]; then
     fi
 
     INSTALL_FT=true
-    if [ $REPLY = "2" ] # 2 = Half
+    if [ "$REPLY" == "2" ] # 2 = Half
     then
         # Skip installing freqtrade
-        INSTALL_FT=false
+        INSTALL_FT="false"
     fi
 fi
 
-if [ $INSTALL_FT = true ]; 
+if [ "$INSTALL_FT" == "true" ]
 then
     git clone -b "$FREQTRADE_BRANCH" "$FREQTRADE_REPO_URL" "$INSTALL_DIR"
 else
@@ -134,6 +141,7 @@ echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 echo "${WHITE}  ⚙️  Downloading MoniGoMani..."
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
+
 git clone -b "$MGM_BRANCH" "$MGM_REPO_URL" "$TEMP_DIR"
 
 install_files=(
@@ -153,27 +161,27 @@ echo "${WHITE}  ⚙️  Installing MoniGoMani Strategy..."
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
 
-OVERWRITE_ALL=false
-USER_CHOSEN=false
+OVERWRITE_ALL="false"
+USER_CHOSEN="false"
 
 for mgm_file_entry in "${install_files[@]}";
 do
     if [ -e "$mgm_file_entry" ]; 
     then 
-        if [ $USER_CHOSEN = false ]; 
+        if [ "$USER_CHOSEN" == "false" ]; 
         then
             confirm "It looks like some of the MGM files already exist. Do you want to overwrite all?" "(y/n)"
         
-            if [ $REPLY = "0" ]; # 0 = Yes
+            if [ "$REPLY" == "0" ]; # 0 = Yes
             then
-                OVERWRITE_ALL=true
+                OVERWRITE_ALL="true"
             fi
 
-            USER_CHOSEN=true
+            USER_CHOSEN="true"
         fi
     fi
 
-    if [ $OVERWRITE_ALL = true ];
+    if [ "$OVERWRITE_ALL" == "true" ];
     then
         echo "  Copy $mgm_file_entry ... "
 
@@ -190,7 +198,7 @@ echo ""
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
 echo "  🎉  ${CYAN}Freqtrade and MoniGoMani are installed! We hope you enjoy your ride."
-echo "  🎉  ${CYAN}Get started with: ${WHITE}python3 $INSTALL_DIR/mgm-hurry up"
+echo "  🎉  ${CYAN}Get started with: ${YELLOW}python3 $INSTALL_DIR/mgm-hurry up"
 echo ""
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
