@@ -95,6 +95,7 @@ echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 echo ""
 
 # Figure out to overwrite install-folder or not.
+INSTALL_FT="true"
 if [ -d "$INSTALL_DIR" ]; then
     echo "${RED}  ⚠️  Target folder '$INSTALL_DIR' already exists."
     echo "${WHITE}      [y] to overwrite (Warning: '$INSTALL_DIR' will be truncated without another warning!)"
@@ -120,7 +121,6 @@ if [ -d "$INSTALL_DIR" ]; then
         exit 1
     fi
 
-    INSTALL_FT=true
     if [ "$REPLY" == "2" ] # 2 = Half
     then
         # Skip installing freqtrade
