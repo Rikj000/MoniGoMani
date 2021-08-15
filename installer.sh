@@ -176,9 +176,8 @@ do
             then
                 OVERWRITE_ALL="true"
             fi
-
-            USER_CHOSEN="true"
         fi
+        USER_CHOSEN="true"
     fi
 
     if [ "$OVERWRITE_ALL" == "true" ];
