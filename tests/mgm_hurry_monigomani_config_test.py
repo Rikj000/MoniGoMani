@@ -140,7 +140,6 @@ def test_write():
 # --- ↓
 # --- ↓ Helper methods
 # --- ↓
-@patch(MoniGoManiConfig.__mgm_logger)
 @patch(MoniGoManiConfig.logger)
 def __get_instance():
     basedir = '.'
