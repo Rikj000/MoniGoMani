@@ -46,7 +46,7 @@ MGM provides an all-in-one setup tool. It will guide you through the entire inst
 Just run the following command:
 
 ```shell
-  curl -s "https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/mgm-launcher.sh" | bash
+  bash <(curl -s "https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/installer.sh")
 ```
 
 ## Wait, what is happening?
