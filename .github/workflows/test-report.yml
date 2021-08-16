@@ -1,0 +1,25 @@
+# This workflow is separated from pytest-unit-tests.yml
+# to bypass a security restriction in GitHub Actions
+# which resulted in failing workflows at PR's
+# See & read: https://github.com/dorny/test-reporter#README
+name: Test Report
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types:
+      - completed
+
+jobs:
+  report:
+    name: Workflow test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./
+      with:
+        artifact: test-results
+        name: Workflow Report
+        path: '*.xml'
+        reporter: jest-junit
+        

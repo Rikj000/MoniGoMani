@@ -1,13 +1,12 @@
-name: "pytest-unit-tests"
-
+# This workflow is used by test-report.yml
+# to bypass a security restriction in GitHub Actions
+# which resulted in failing workflows at PR's
+# See & read: https://github.com/dorny/test-reporter#README
+name: "CI"
 on:
-  push:
-    branches: [ master, development, feature/* ]
   pull_request:
     branches: [ master, development ]
-  schedule:
-    - cron: '17 11 * * 4'
-
+  
 jobs:
   analyze:
     name: Unit testing
