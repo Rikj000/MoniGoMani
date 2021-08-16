@@ -242,7 +242,7 @@ class MoniGoManiConfig(object):
                     'exchange': 'binance',
                     'hyperopt': {
                         'strategy': 'MoniGoManiHyperStrategy',
-                        'loss': 'WinRatioAndProfitRatioLoss',
+                        'loss': 'MGM_WinRatioAndProfitRatioHyperOptLoss',
                         'spaces': 'buy sell',
                         'quote': 'USDT',
                         'epochs': 1000
