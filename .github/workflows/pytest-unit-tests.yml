@@ -2,7 +2,9 @@
 # to bypass a security restriction in GitHub Actions
 # which resulted in failing workflows at PR's
 # See & read: https://github.com/dorny/test-reporter#README
-name: "CI"
+
+# This workflow runs only on pull_requests.
+name: "CI Pull Request"
 on:
   pull_request:
     branches: [ master, development ]
@@ -34,10 +36,10 @@ jobs:
           name: pytest-results
           path: tests/junit/test-results.xml
         if: ${{ always() }}
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
-        with:
-          name: Test Report
-          path: tests/junit/test-results*.xml
-          reporter: java-junit
+      # - name: Test Report
+      #   uses: dorny/test-reporter@v1
+      #   if: success() || failure()
+      #   with:
+      #     name: Test Report
+      #     path: tests/junit/test-results*.xml
+      #     reporter: java-junit
