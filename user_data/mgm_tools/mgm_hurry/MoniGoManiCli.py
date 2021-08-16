@@ -99,7 +99,7 @@ class MoniGoManiCli(object):
         ho_config = '{0}/user_data/mgm-config-hyperopt.json'.format(self.basedir)
 
         if os.path.isfile(ho_json) is False:
-            self.logger.error('🤷 Failed applying best results because the results file {0} does not exist.'.format(ho_json))
+            self.logger.error('🤷 Failed applying best results because the results file {} does not exist.'.format(ho_json))
             return False
 
         # Apply best results from MoniGoManiHyperStrategy.json to mgm-config-hyperopt.json
@@ -116,7 +116,7 @@ class MoniGoManiCli(object):
         """Execute shell command and log output to mgm logfile.
 
         :param command (str): Shell command to execute, sir!
-        :param output_file_name: (str) Name of the '.log' file. 
+        :param output_file_name: (str) Name of the '.log' file.
             Defaults to 'Results-<Current-DateTime>.log'
         :return returncode: (int) The returncode of the subprocess
         """
