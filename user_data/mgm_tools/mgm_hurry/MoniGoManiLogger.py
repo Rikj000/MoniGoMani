@@ -16,168 +16,53 @@
 #
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 
-import logging
 import os
+import logging
+
+from logging import Formatter
+from Logging.handlers import RotatingFileHandler
 from datetime import datetime
 
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
-class MoniGoManiLogger():
-    """
-    Let's Log and Roll.
+class mgmConsoleFormatter(Formatter):
+    def __init__(self):
+        log_file_format = "[%(levelname)s] - : %(message)s"
+        datefmt = '%F %A %T' # in fact this is not used if no %(asctime)s exists in log_file_format
+        super(mgmConsoleFormatter, self).__init__(log_file_format, datefmt)
+        
 
-    More information at https://docs.python.org/3/howto/logging.html
+class mgmFileFormatter(Formatter):
+    def __init__(self):
+        log_file_format = "[%(levelname)s] - %(asctime)s - %(name)s - : %(message)s in %(pathname)s:%(lineno)d"
+        datefmt = '%F %A %T'
+        super(mgmFileFormatter, self).__init__(log_file_format, datefmt)
 
-    Attributes:
-        basedir             The basedir where the monigomani install lives.
-        logger              The logger function of the MoniGoManiCli module.
-        output_path         Absolute path to the directory where logs are stored.
-        output_file_name    The logfile name.log
-    """
-    basedir: str
-    logger: logging
-    output_path: str
-    output_file_name: str
 
-    def __init__(self, basedir: str, print_output: bool = True):
-        """
-        Wrapper object around the logger function that logs messages like we want.
+class MGMLogger(logging.Logger):
+    def makeRecord(self, *args, **kwargs):
+        rv = super(MGMLogger, self).makeRecord(*args, **kwargs)
+        
+        # TODO Filter as we like it
+        rv.__dict__['message'] = self.clean_line(rv.__dict__['message'])
+        
+        return rv
 
-        :param basedir (str): The basedir of MGM
-        :param print_output (bool, optional): Print output or log to file. Defaults to True (so, printing output)
-        """
-        self.basedir = basedir
-        self.output_path = '{0}/Some Test Results/'.format(self.basedir)
-        self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
-
-        logging_format = '%(asctime)s = %(levelname)s: %(message)s'
-        logging_file = os.path.join(self.output_path, self.output_file_name)
-
-        if print_output is True:
-            logging.basicConfig(
-                format=logging_format,
-                datefmt='%F %A %T',
-                level=logging.DEBUG)
+    def clean_line(self, line: str) -> str:
+        # Split off the Datetime + Code Sections if needed to keep things clean
+        if line.count(' - ') >= 3:
+            second_splitter = line.find(' - ', line.find(' - ') + 1) + 3
+            final_line = line[second_splitter:len(line)]
         else:
-            logging.basicConfig(
-                handlers=[logging.FileHandler(filename=logging_file, encoding='utf-8', mode='a+')],
-                format=logging_format,
-                datefmt='%F %A %T',
-                level=logging.DEBUG)
+            final_line = line
 
-        self.logger = logging
+        # Filter out unwanted - unneeded - double lines
+        if self.filter_line(final_line) is False:
+            # Modify line output to MoniGoMani's preferred format
+            final_line = self.modify_line(final_line)
 
-    def get_logger(self) -> logging:
-        """Return the logging object."""
-        return self.logger
-
-    # FIXME this method needs to find its place in here.
-    # It's copied from mgm-hurry (Rikj000/MoniGoMani:development)
-    def _parse_line(self, line: str) -> str:
-        hyperopt_results = []
-
-        for line in process.stdout:
-            # Split off the Datetime + Code Sections if needed to keep things clean
-            if line.count(' - ') >= 3:
-                second_splitter = line.find(' - ', line.find(' - ') + 1) + 3
-                final_line = line[second_splitter:len(line)]
-            else:
-                final_line = line
-
-            # Filter out unwanted - unneeded - double lines
-            if self.filter_line(final_line) is False:
-                # Modify line output to MoniGoMani's preferred format
-                final_line = self.modify_line(final_line)
-
-                # Save the output to a '.log' file if enabled
-                if (save_output is True) and ('| [ETA:' not in final_line):
-                    output_file.write(final_line)
-
-            # Check if a new HyperOpt Results line is found, store it in RAM and re-print the whole HyperOpt Table if so
-            response = self.store_hyperopt_results(hyperopt_results, final_line)
-            if (response['results_updated'] is True) or \
-                    ('| [ETA:' not in final_line) and ('Elapsed Time:' in final_line):
-                hyperopt_results = response['hyperopt_results']
-                # Skip the initial header
-                if len(hyperopt_results) > 3:
-                    for hyperopt_results_line in hyperopt_results:
-                        sys.stdout.write(hyperopt_results_line)
-                if ('| [ETA:' not in final_line) and ('Elapsed Time:' in final_line):
-                    sys.stdout.write(final_line)
-            else:
-                sys.stdout.write(final_line)
-
-        process.wait()
-
-    @staticmethod
-    def store_hyperopt_results(hyperopt_results: list, line: str) -> dict:
-        """
-        Filters out and stores HyperOpt Results line
-
-        :param hyperopt_results: List to which the HyperOpt Result will be appended
-        :param line: String to check if it needs to be appended to the hyperopt_results
-        :return dict: Response dictionary containing:
-            - 'hyperopt_results': The updated hyperopt_results list
-            - 'results_updated': Boolean stating if the results got updated or not
-        """
-
-        response = {
-            'hyperopt_results': hyperopt_results,
-            'results_updated': False
-        }
-
-        for hyperopt_results_detector in {'+-----------+', '|   Best |'}:
-            if hyperopt_results_detector in line:
-                response['hyperopt_results'].append(line)
-                response['results_updated'] = True
-
-        return response
-
-    # FIXME; apply next methods to self.monigomani_config
-    # rikj000 made changes to these methods, but topscoder
-    # already moved these to monigomani_config.
-    @staticmethod
-    def modify_line(line: str) -> str:
-        """
-        Modifies passed line if needed
-
-        :param line: Line to check if it needs to be modified
-        :return str: Returns modified string
-        """
-
-        # Remove weird unicode characters
-        remove_substrings = {'[32m', '[39m'}
-
-        for remove_substring in remove_substrings:
-            if remove_substring in line:
-                line = line.replace(remove_substring, '')
-
-        # Add in newline pre/suf-fixes where needed
-        prefix_newlines = {'Avg profit', 'Median profit', 'Total profit', 'Avg duration', 'Objective'}
-        if 'Wins/Draws/Losses. Avg profit' in line:
-            line = line.replace(':', ':\n', 1)
-
-            for prefix_newline in prefix_newlines:
-                if prefix_newline in line:
-                    line = line.replace(prefix_newline, f'\n     {prefix_newline}')
-
-            if 'trades. ' in line:
-                line = line.replace('trades. ', f'trades. \n     ')
-
-        prefix_other_newlines = {'Elapsed Time:', 'Best result:', '# Buy hyperspace params:',
-                                 '# Sell hyperspace params:', '# ROI table:', '# Stoploss:', '# Trailing stop:'}
-
-        for prefix_other_newline in prefix_other_newlines:
-            if prefix_other_newline in line:
-                line = line.replace(line, f'\n{line}')
-                line = line[1: len(line)]
-
-        if ' (100%)] ||       | [Time:  ' in line:
-            line = line[line.index(', ') + 2: len(line)].replace(']', '')
-            line = line.replace(line, f'\n{line}')
-
-        return line
-
+        return final_line
+    
     @staticmethod
     def filter_line(line: str) -> bool:
         """
@@ -234,3 +119,143 @@ class MoniGoManiLogger():
             return True
 
         return False
+
+    @staticmethod
+    def modify_line(line: str) -> str:
+        """
+        Modifies passed line if needed
+
+        :param line: Line to check if it needs to be modified
+        :return str: Returns modified string
+        """
+
+        # Remove weird unicode characters
+        remove_substrings = {'[32m', '[39m'}
+
+        for remove_substring in remove_substrings:
+            if remove_substring in line:
+                line = line.replace(remove_substring, '')
+
+        # Add in newline pre/suf-fixes where needed
+        prefix_newlines = {'Avg profit', 'Median profit', 'Total profit', 'Avg duration', 'Objective'}
+        if 'Wins/Draws/Losses. Avg profit' in line:
+            line = line.replace(':', ':\n', 1)
+
+            for prefix_newline in prefix_newlines:
+                if prefix_newline in line:
+                    line = line.replace(prefix_newline, f'\n     {prefix_newline}')
+
+            if 'trades. ' in line:
+                line = line.replace('trades. ', f'trades. \n     ')
+
+        prefix_other_newlines = {'Elapsed Time:', 'Best result:', '# Buy hyperspace params:',
+                                 '# Sell hyperspace params:', '# ROI table:', '# Stoploss:', '# Trailing stop:'}
+
+        for prefix_other_newline in prefix_other_newlines:
+            if prefix_other_newline in line:
+                line = line.replace(line, f'\n{line}')
+                line = line[1: len(line)]
+
+        if ' (100%)] ||       | [Time:  ' in line:
+            line = line[line.index(', ') + 2: len(line)].replace(']', '')
+            line = line.replace(line, f'\n{line}')
+
+        return line
+
+
+class MoniGoManiLogger():
+    """
+    Let's Log and Roll.
+
+    More information at https://docs.python.org/3/howto/logging.html
+
+    Attributes:
+        basedir             The basedir where the monigomani install lives.
+        logger              The logger function of the MoniGoManiCli module.
+        output_path         Absolute path to the directory where logs are stored.
+        output_file_name    The logfile name.log
+    """
+    basedir: str
+    logger: logging
+    output_path: str
+    output_file_name: str
+
+    def __init__(self, basedir: str, print_output: bool = True):
+        """
+        Wrapper object around the logger function that logs messages like we want.
+
+        :param basedir (str): The basedir of MGM
+        :param print_output (bool, optional): Print output or log to file. Defaults to True (so, printing output)
+        """
+        self.basedir = basedir
+        self.output_path = '{0}/Some Test Results/'.format(self.basedir)
+        self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
+        
+        # TODO is this switch still needed?
+        # if print_output is True:
+
+        self._setup_logging()
+
+    def _setup_logging(self):
+        # Use our own Logging setup to log what we want. 
+        # And probably more important: how we want it!
+
+        logging_file_debug = os.path.join(self.output_path, 'MGM-Hurry-Command-Debug-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S')))
+        logging_file_error = os.path.join(self.output_path, 'MGM-Hurry-Command-Error-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S')))
+
+        # Here is configured how log lines are formatted for each Handler.
+        logging.setLoggerClass(MGMLogger)
+
+        mgm_logger = logging.getLogger()
+        mgm_logger.setLevel(logging.INFO)
+
+        # How to log to console
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
+        console_handler.setFormatter(mgmConsoleFormatter())
+
+        # How to log to log file (debug)
+        exp_file_handler = RotatingFileHandler(logging_file_debug, maxBytes=10**6, backupCount=5)
+        exp_file_handler.setLevel(logging.DEBUG)
+        exp_file_handler.setFormatter(mgmFileFormatter())
+
+        # How to log to log file (error)
+        exp_errors_file_handler = RotatingFileHandler(logging_file_error, maxBytes=10**6, backupCount=5)
+        exp_errors_file_handler.setLevel(logging.WARNING)
+        exp_errors_file_handler.setFormatter(mgmFileFormatter())
+
+        mgm_logger.addHandler(console_handler)
+        mgm_logger.addHandler(exp_file_handler)
+        mgm_logger.addHandler(exp_errors_file_handler)
+
+        self.logger = mgm_logger
+
+    def get_logger(self) -> logging:
+        """Return the logging object."""
+        return self.logger
+
+    @staticmethod
+    def store_hyperopt_results(hyperopt_results: list, line: str) -> dict:
+        """
+        Filters out and stores HyperOpt Results line
+
+        :param hyperopt_results: List to which the HyperOpt Result will be appended
+        :param line: String to check if it needs to be appended to the hyperopt_results
+        :return dict: Response dictionary containing:
+            - 'hyperopt_results': The updated hyperopt_results list
+            - 'results_updated': Boolean stating if the results got updated or not
+        """
+
+        response = {
+            'hyperopt_results': hyperopt_results,
+            'results_updated': False
+        }
+
+        for hyperopt_results_detector in {'+-----------+', '|   Best |'}:
+            if hyperopt_results_detector in line:
+                response['hyperopt_results'].append(line)
+                response['results_updated'] = True
+
+        return response
+
+    
