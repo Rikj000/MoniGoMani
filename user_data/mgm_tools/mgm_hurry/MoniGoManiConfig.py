@@ -19,6 +19,7 @@ import json
 import sys
 import shutil
 import yaml
+from operator import xor
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
@@ -250,12 +251,11 @@ class MoniGoManiConfig(object):
                 }
             }
 
-        # Protection to prevent from writing
-        # no data at all to mgm-config.
+        # Protection to prevent from writing no data at all to mgm-config.
         if len(config) == 0 or 'config' not in config or 'mgm_config_names' not in config['config']:
             self.logger.error(
                 '🤯 Sorry, but looks like no configuration data would have been written, '
-                'resulting in an empty config file I quit.')
+                'resulting in an empty config file. I quit.')
             sys.exit(1)
 
         with open(self.__full_path_config, 'w+') as cfg_file:
@@ -264,6 +264,38 @@ class MoniGoManiConfig(object):
         self.reload()
 
         self.logger.info('🍺 Configuration data written to ".hurry" file')
+
+    def cleanup_hyperopt_files(self) -> bool:
+        """Cleanup leftover ho files of MoniGoManiHyperStrategy.
+
+        - mgm-config-hyperopt.json (applied results file)
+        - MoniGoManiHyperStrategy.json (intermediate results file)
+
+        :return bool: True if one of these files is cleaned up with success. 
+                      False if no file was cleaned up.
+        """
+        file_abspath = self._get_full_path_for_config_name('mgm-config-hyperopt')
+        cleaned_up_cfg = self._remove_file(file_abspath)
+
+        # Remove the intermediate ho file if exists
+        # strategy doesn't need to be dynamic as we are "MoniGoManiConfig.py".
+        strategy_ho_intmd_path = '{0}/user_data/strategies/MoniGoManiHyperStrategy.json'.format(self.basedir)
+        cleaned_up_intmd = self._remove_file(strategy_ho_intmd_path)
+
+        # return true if one of these is true
+        return xor( 
+            bool(cleaned_up_cfg), 
+            bool(cleaned_up_intmd) 
+        )
+
+    def _remove_file(self, fil: str) -> bool:
+        if os.path.exists(fil) is False:
+            return False
+
+        self.logger.info('👉 Removing "{0}"'.format( os.path.basename(fil) ))
+        os.remove(fil)
+
+        return True
 
     def _get_full_path_for_config_name(self, hurry_config: dict,
                                        cfg_name: str) -> str:
@@ -291,7 +323,10 @@ class MoniGoManiConfig(object):
         if 'config' in config:
             return config['config']
 
-        # Something happened on the way to heaven.
+        # Something happened on the way to heaven. Let's fix it to create a default ".hurry" config file
+        # FIXME this is copied from mgm-hurry Rikj000/MoniGoMani:development
+        # but needs to be checked if it's still needed.
+        self.write()
 
         return None
 
@@ -299,30 +334,33 @@ class MoniGoManiConfig(object):
         """ Creates default .hurry config file with default values. """
         self.write()
 
-    def _get_preset_timerange(self, timerange: str) -> str:
+    def _save_exchange_credentials(self, cred: dict):
         """
-        Parses given timerange-string into according timerange dates
+        Save exchange credentials to "mgm-config-private.json"
 
-        :param timerange: (str) The timerange-string to parse [up, down, side]
-        :return str: The parsed timerange string in yyyymmdd-yyyymmdd format
+        :param cred: (dict) - List containing values for [exchange,api_key,api_secret]
         """
+        if len(cred) == 0:
+            self.logger.warning(
+                'Did not write exchange credentials to "mgm-config-private.json" because no data was passed.')
+            return False
 
-        tr_input = timerange
+        try:
+            with open(self.basedir + '/user_data/mgm-config-private.json', 'a+') as file:
+                data = json.load(file)
+        except Exception:
+            data = {}
 
-        if timerange is None:
-            timerange = self.config['timerange']
-        if timerange == 'down':
-            timerange = '20210509-20210524'
-        if timerange == 'side':
-            timerange = '20210518-20210610'
-        if timerange == 'up':
-            timerange = '20210127-20210221'
+        data['exchange'] = {
+            'name': cred['exchange'],
+            'key': cred['api_key'],
+            'secret': cred['api_secret']
+        }
 
-        tr_output = timerange
+        with open(f'{self.basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
+            json.dump(data, outfile, indent=4)
 
-        self.logger.debug(f'☀️ Timerange string parsed from "{tr_input}" to "{tr_output}"')
-
-        return timerange
+        self.logger.info('🍺 Exchange settings written to "mgm-config-private.json"')
 
     def _save_telegram_credentials(self, opt: dict) -> bool:
         """
@@ -352,30 +390,27 @@ class MoniGoManiConfig(object):
 
         return True
 
-    def _save_exchange_credentials(self, cred: dict):
+    def _get_preset_timerange(self, timerange: str) -> str:
         """
-        Save exchange credentials to "mgm-config-private.json"
+        Parses given timerange-string into according timerange dates
 
-        :param cred: (dict) - List containing values for [exchange,api_key,api_secret]
+        :param timerange: (str) The timerange-string to parse [up, down, side]
+        :return str: The parsed timerange string in yyyymmdd-yyyymmdd format
         """
-        if len(cred) == 0:
-            self.logger.warning(
-                'Did not write exchange credentials to "mgm-config-private.json" because no data was passed.')
-            return False
 
-        try:
-            with open(self.basedir + '/user_data/mgm-config-private.json', 'a+') as file:
-                data = json.load(file)
-        except Exception:
-            data = {}
+        tr_input = timerange
 
-        data['exchange'] = {
-            'name': cred['exchange'],
-            'key': cred['api_key'],
-            'secret': cred['api_secret']
-        }
+        if timerange is None:
+            timerange = self.config['timerange']
+        if timerange == 'down':
+            timerange = '20210509-20210524'
+        if timerange == 'side':
+            timerange = '20210518-20210610'
+        if timerange == 'up':
+            timerange = '20210127-20210221'
 
-        with open(f'{self.basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
-            json.dump(data, outfile, indent=4)
+        tr_output = timerange
 
-        self.logger.info('🍺 Exchange settings written to "mgm-config-private.json"')
+        self.logger.debug(f'☀️ Timerange string parsed from "{tr_input}" to "{tr_output}"')
+
+        return timerange

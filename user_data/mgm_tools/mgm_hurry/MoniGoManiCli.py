@@ -115,8 +115,10 @@ class MoniGoManiCli(object):
     def run_command(self, command: str, output_file_name: str = None):
         """Execute shell command and log output to mgm logfile.
 
-        :param command (str): Shell command to execute.
-        :return int: return code zero (0) if all went ok. > 0 if there's an issue.
+        :param command (str): Shell command to execute, sir!
+        :param output_file_name: (str) Name of the '.log' file. 
+            Defaults to 'Results-<Current-DateTime>.log'
+        :return returncode: (int) The returncode of the subprocess
         """
         if command is None or command == '':
             self.logger.error(
