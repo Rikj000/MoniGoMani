@@ -51,10 +51,10 @@ class MoniGoManiConfig(object):
         self.__full_path_config = '{0}/.hurry'.format(self.__basedir)
 
         # if .hurry file does not exist
-        if self.valid_config_file_present() is False:
+        if self.valid_hurry_dotfile_present() is False:
             self.__create_default_config()
 
-        self.__config = self.__read_config()
+        self.__config = self.read_hurry_config()
 
     @property
     def config(self) -> dict:
@@ -83,15 +83,15 @@ class MoniGoManiConfig(object):
 
         :return bool: True if config is read, False if config could not be read.
         """
-        if self.valid_config_file_present() is not True:
-            self.logger.error('Failed to reload config. No valid config file present.')
+        if self.valid_hurry_dotfile_present() is not True:
+            self.logger.error('Failed to reload config. No valid hurry dotfile present.')
             return False
 
-        self.config = self.__read_config()
+        self.config = self.read_hurry_config()
 
         return True
 
-    def valid_config_file_present(self) -> bool:
+    def valid_hurry_dotfile_present(self) -> bool:
         """Check if the .hurry config file exists on disk."""
         if os.path.isfile(self.__full_path_config) is not True:
             self.logger.warning(
@@ -154,7 +154,11 @@ class MoniGoManiConfig(object):
             - mgm-config-hyperopt
 
         :return dict: Dictionary containing all the MoniGoMani Configuration files in format
-                      { mgm-config: dict, mgm-config-private: dict, mgm-config-hyperopt: dict }
+                        {
+                            mgm-config: dict,
+                            mgm-config-private: dict,
+                            mgm-config-hyperopt: dict
+                        }
         """
 
         hurry_config = self.read_hurry_config()
@@ -222,7 +226,7 @@ class MoniGoManiConfig(object):
             json_data = json.load(file_object)
             return json_data
 
-    def write(self, config: dict = None):
+    def write_hurry_dotfile(self, config: dict = None):
         """ Write config-array to ".hurry" config file and load its contents into config-property.
 
         Writes the passed config dictionary or if nothing passed, it will write default values.
@@ -271,10 +275,10 @@ class MoniGoManiConfig(object):
         - mgm-config-hyperopt.json (applied results file)
         - MoniGoManiHyperStrategy.json (intermediate results file)
 
-        :return bool: True if one of these files is cleaned up with success. 
+        :return bool: True if one of these files is cleaned up with success.
                       False if no file was cleaned up.
         """
-        file_abspath = self._get_full_path_for_config_name('mgm-config-hyperopt')
+        file_abspath = self._get_full_path_for_config_name(self.read_hurry_config(), 'mgm-config-hyperopt')
         cleaned_up_cfg = self._remove_file(file_abspath)
 
         # Remove the intermediate ho file if exists
@@ -283,9 +287,9 @@ class MoniGoManiConfig(object):
         cleaned_up_intmd = self._remove_file(strategy_ho_intmd_path)
 
         # return true if one of these is true
-        return xor( 
-            bool(cleaned_up_cfg), 
-            bool(cleaned_up_intmd) 
+        return xor(
+            bool(cleaned_up_cfg),
+            bool(cleaned_up_intmd)
         )
 
     def _remove_file(self, fil: str) -> bool:
@@ -314,7 +318,7 @@ class MoniGoManiConfig(object):
 
     def __create_default_config(self):
         """ Creates default .hurry config file with default values. """
-        self.write()
+        self.write_hurry_dotfile()
 
     def _save_exchange_credentials(self, cred: dict):
         """

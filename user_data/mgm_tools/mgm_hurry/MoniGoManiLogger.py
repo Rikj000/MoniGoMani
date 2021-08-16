@@ -20,32 +20,39 @@ import os
 import logging
 
 from logging import Formatter
-from Logging.handlers import RotatingFileHandler
+from logging.handlers import RotatingFileHandler
 from datetime import datetime
 
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
 class mgmConsoleFormatter(Formatter):
     def __init__(self):
-        log_file_format = "[%(levelname)s] - : %(message)s"
+        log_file_format = '[%(levelname)s] - : %(message)s'
         datefmt = '%F %A %T' # in fact this is not used if no %(asctime)s exists in log_file_format
         super(mgmConsoleFormatter, self).__init__(log_file_format, datefmt)
-        
+
 
 class mgmFileFormatter(Formatter):
     def __init__(self):
-        log_file_format = "[%(levelname)s] - %(asctime)s - %(name)s - : %(message)s in %(pathname)s:%(lineno)d"
+        log_file_format = '[%(levelname)s] - %(asctime)s - %(name)s - : %(message)s in %(pathname)s:%(lineno)d'
         datefmt = '%F %A %T'
         super(mgmFileFormatter, self).__init__(log_file_format, datefmt)
 
 
 class MGMLogger(logging.Logger):
-    def makeRecord(self, *args, **kwargs):
-        rv = super(MGMLogger, self).makeRecord(*args, **kwargs)
-        
-        # TODO Filter as we like it
+
+    def makeRecord(self, name, level, fn, lno, msg, args, exc_info,
+                   func=None, extra=None, sinfo=None):
+        """
+        A factory method which can be overridden in subclasses to create
+        specialized LogRecords.
+        """
+        rv = super(MGMLogger, self).makeRecord(name, level, fn, lno, msg, args, exc_info,
+                                                func=None, extra=None, sinfo=None)
+
+        # The magic filtering happens right here!
         rv.__dict__['message'] = self.clean_line(rv.__dict__['message'])
-        
+
         return rv
 
     def clean_line(self, line: str) -> str:
@@ -62,7 +69,7 @@ class MGMLogger(logging.Logger):
             final_line = self.modify_line(final_line)
 
         return final_line
-    
+
     @staticmethod
     def filter_line(line: str) -> bool:
         """
@@ -146,7 +153,7 @@ class MGMLogger(logging.Logger):
                     line = line.replace(prefix_newline, f'\n     {prefix_newline}')
 
             if 'trades. ' in line:
-                line = line.replace('trades. ', f'trades. \n     ')
+                line = line.replace('trades. ', 'trades. \n     ')
 
         prefix_other_newlines = {'Elapsed Time:', 'Best result:', '# Buy hyperspace params:',
                                  '# Sell hyperspace params:', '# ROI table:', '# Stoploss:', '# Trailing stop:'}
@@ -190,14 +197,14 @@ class MoniGoManiLogger():
         self.basedir = basedir
         self.output_path = '{0}/Some Test Results/'.format(self.basedir)
         self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
-        
+
         # TODO is this switch still needed?
         # if print_output is True:
 
         self._setup_logging()
 
     def _setup_logging(self):
-        # Use our own Logging setup to log what we want. 
+        # Use our own Logging setup to log what we want.
         # And probably more important: how we want it!
 
         logging_file_debug = os.path.join(self.output_path, 'MGM-Hurry-Command-Debug-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S')))
@@ -257,5 +264,3 @@ class MoniGoManiLogger():
                 response['results_updated'] = True
 
         return response
-
-    

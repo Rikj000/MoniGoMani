@@ -429,7 +429,7 @@ class MGMHurry:
             }
         }
 
-        self.monigomani_config.write(new_config)
+        self.monigomani_config.write_hurry_dotfile(new_config)
 
         if answers.get('proceed_exchange') is True:
             cred = {

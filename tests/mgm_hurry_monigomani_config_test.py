@@ -23,12 +23,12 @@ def test_reload_with_valid_config_file():
 # --- ↑
 
 # --- ↓
-# --- ↓ Unit Testing .valid_config_file_present(self) -> bool
+# --- ↓ Unit Testing .valid_hurry_dotfile_present(self) -> bool
 # --- ↓
 
-def test_valid_config_file_present_should_return_true():
+def test_valid_hurry_dotfile_present_should_return_true():
     obj = __get_instance()
-    assert obj.valid_config_file_present() is True
+    assert obj.valid_hurry_dotfile_present() is True
 
 # --- ↑
 
