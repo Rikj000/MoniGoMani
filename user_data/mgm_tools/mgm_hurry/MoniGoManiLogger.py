@@ -19,8 +19,7 @@
 import os
 import logging
 
-from logging import Formatter
-from logging.handlers import RotatingFileHandler
+from logging import Formatter, FileHandler
 from datetime import datetime
 
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
@@ -195,11 +194,8 @@ class MoniGoManiLogger():
         :param print_output (bool, optional): Print output or log to file. Defaults to True (so, printing output)
         """
         self.basedir = basedir
-        self.output_path = '{0}/Some Test Results/'.format(self.basedir)
+        self.output_path = '{0}/user_data/logs/'.format(self.basedir)
         self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
-
-        # TODO is this switch still needed?
-        # if print_output is True:
 
         self._setup_logging()
 
@@ -222,12 +218,12 @@ class MoniGoManiLogger():
         console_handler.setFormatter(mgmConsoleFormatter())
 
         # How to log to log file (debug)
-        exp_file_handler = RotatingFileHandler(logging_file_debug, maxBytes=10**6, backupCount=5)
+        exp_file_handler = FileHandler(logging_file_debug, mode="a")
         exp_file_handler.setLevel(logging.DEBUG)
         exp_file_handler.setFormatter(mgmFileFormatter())
 
         # How to log to log file (error)
-        exp_errors_file_handler = RotatingFileHandler(logging_file_error, maxBytes=10**6, backupCount=5)
+        exp_errors_file_handler = FileHandler(logging_file_error, mode="a")
         exp_errors_file_handler.setLevel(logging.WARNING)
         exp_errors_file_handler.setFormatter(mgmFileFormatter())
 
