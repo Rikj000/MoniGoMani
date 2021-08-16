@@ -50,7 +50,7 @@ class MoniGoManiConfig(object):
         self.__mgm_logger = MoniGoManiLogger(basedir).get_logger()
         self.__full_path_config = '{0}/.hurry'.format(self.__basedir)
 
-        # if .hurry file exists
+        # if .hurry file does not exist
         if self.valid_config_file_present() is False:
             self.__create_default_config()
 
@@ -311,24 +311,6 @@ class MoniGoManiConfig(object):
         )
 
         return mgm_config_filepath
-
-    def __read_config(self) -> dict:
-        """Reads config values out of ".hurry" config file.
-
-        :return config (dict) Dictionary containing all config key/value pairs. Or returns None.
-        """
-        with open(self.__full_path_config, 'r') as yml_file:
-            config = yaml.full_load(yml_file) or {}
-
-        if 'config' in config:
-            return config['config']
-
-        # Something happened on the way to heaven. Let's fix it to create a default ".hurry" config file
-        # FIXME this is copied from mgm-hurry Rikj000/MoniGoMani:development
-        # but needs to be checked if it's still needed.
-        self.write()
-
-        return None
 
     def __create_default_config(self):
         """ Creates default .hurry config file with default values. """
