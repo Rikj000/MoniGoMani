@@ -14,24 +14,24 @@ usage() {
 
     cat << EOF
 
-Usage: 
-  sh installer.sh [options]
+  Usage: 
+    sh installer.sh [options]
 
-Example:
-  sh installer.sh --dir="./targetdir" --ft_branch="feature/xyz" --mgm_commit="abcd1337"
+  Example:
+    sh installer.sh --dir="./targetdir" --ft_branch="feature/xyz" --mgm_commit="abcd1337"
 
-Optional options:
-  -h, --help                    Show this help.
+  Optional options:
+    -h, --help                    Show this help.
 
-  --dir=<path>                  Path to directory to install Freqtrade with MGM. Will be created or overwritten when it's existing.
+    --dir=<path>                  Path to directory to install Freqtrade with MGM. Will be created or overwritten when it's existing.
 
-  --ft_url=<url>                URL to Git repository. (eg. https://github.com/freqtrade/freqtrade.git)
-  --ft_branch=<branch>          Specific branch to checkout from Git repository. (eg. develop)
-  --ft_commit=<commit hash>     Specific commit hash to checkout from Git repository. (note: will skip --ft_branch if set)
+    --ft_url=<url>                URL to Git repository. (eg. https://github.com/freqtrade/freqtrade.git)
+    --ft_branch=<branch>          Specific branch to checkout from Git repository. (eg. develop)
+    --ft_commit=<commit hash>     Specific commit hash to checkout from Git repository. (note: will skip --ft_branch if set)
 
-  --mgm_url=<url>               URL to Git repository. (eg. https://github.com/Rikj000/MoniGoMani.git)
-  --mgm_branch=<branch>         Specific branch to checkout from Git repository. (eg. development)
-  --mgm_commit=<commit hash>    Specific commit hash to checkout from Git repository. (note: will skip --mgm_branch if set)
+    --mgm_url=<url>               URL to Git repository. (eg. https://github.com/Rikj000/MoniGoMani.git)
+    --mgm_branch=<branch>         Specific branch to checkout from Git repository. (eg. development)
+    --mgm_commit=<commit hash>    Specific commit hash to checkout from Git repository. (note: will skip --mgm_branch if set)
 
 EOF
     
@@ -39,7 +39,7 @@ EOF
 }
 
 # Default values
-INSTALL_DIR="freqtrade-mgm"
+INSTALL_DIR="./freqtrade-mgm"
 
 FREQTRADE_REPO_URL="https://github.com/freqtrade/freqtrade.git"
 FREQTRADE_BRANCH="develop"
@@ -119,7 +119,9 @@ confirm() {
 
     # Loop forever until the user enters a valid response (Y/N or Yes/No).
     while true; do
-        read -r -p "$_prompt2 " _response        
+        read -r -p "  $_prompt2 
+        
+  " _response        
         case "$_response" in
         [Yy][Ee][Ss]|[Yy]) # Yes or Y (case-insensitive).
             REPLY="0"
@@ -137,6 +139,14 @@ confirm() {
             ;;
         esac
     done
+}
+
+do_exit() {
+    echo "      cancel."
+    echo ""
+    echo "${WHITE}  😽  KTHXBAI  "
+    echo ""
+    exit 1
 }
 
 echo ""
@@ -165,7 +175,27 @@ fi
 
 echo "${GREEN}  ✅  Git is installed."
 
-TEMP_DIR=$(mktemp -d /tmp/mgm.XXXXXXXXX)
+echo ""
+echo "${WHITE}  What's the plan?"
+echo "${WHITE}  ================"
+echo ""
+echo "${WHITE}  1) Install Freqtrade: (You will be able to skip overwriting)"
+echo "${CYAN}       $FREQTRADE_REPO_URL => $INSTALL_DIR "
+echo "${CYAN}       GIT BRANCH => $FREQTRADE_BRANCH "
+echo "${CYAN}       GIT COMMIT => $FREQTRADE_COMMIT "
+echo "${WHITE}  2) Install MoniGoMani HyperStrategy: (You will be able to skip overwriting each file separate)"
+echo "${CYAN}       $MGM_REPO_URL => $INSTALL_DIR "
+echo "${CYAN}       GIT BRANCH => $MGM_BRANCH "
+echo "${CYAN}       GIT COMMIT => $MGM_COMMIT "
+echo "${WHITE}"
+
+confirm "Are you sure you want to continue?" "(y/n)"
+
+if [ "$REPLY" == "1" ] # 1 = No
+then
+    do_exit
+    exit 1
+fi
 
 echo ""
 echo ""
@@ -195,11 +225,7 @@ if [ -d "$INSTALL_DIR" ]; then
 
     if [ "$REPLY" == "1" ] # 1 = No
     then
-        echo "      cancel."
-        echo ""
-        echo "${WHITE}  😽  KTHXBAI  "
-        echo ""
-        exit 1
+        do_exit
     fi
 
     if [ "$REPLY" == "2" ] # 2 = Half
@@ -232,6 +258,8 @@ echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 echo "${WHITE}  ⚙️  Downloading MoniGoMani..."
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
+
+TEMP_DIR=$(mktemp -d /tmp/mgm.XXXXXXXXX)
 
 git clone -n "$MGM_REPO_URL" "$TEMP_DIR"
 
@@ -286,10 +314,10 @@ do
         echo "  Copy $mgm_file_entry ... "
 
         # force overwrite
-        eval 'cp -rf "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"'
+        cp -rf "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"
     else
         # -i asks per file to overwrite or not
-        eval 'cp -ri "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"'
+        cp -ri "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"
     fi
 done
 
