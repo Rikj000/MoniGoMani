@@ -243,8 +243,7 @@ class MGMHurry:
             result = prompt(questions)
 
             if result.get('proceed') is False:
-                self._logger.info(
-                    'Skipping overwriting MoniGoMani installation.')
+                self._logger.info('Skipping overwriting MoniGoMani installation.')
                 return False
 
             # Check if the private config file already exists.
