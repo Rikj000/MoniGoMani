@@ -13,7 +13,7 @@ from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger  # n
 
 def test_initialisation_logger():
     logger = MoniGoManiLogger('.', print_output=True)
-    assert isinstance(logger, MoniGoManiLogger)
+    assert logger is not None
 
 # --- ↑
 
