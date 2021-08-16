@@ -73,11 +73,8 @@ class FreqtradeCli():
         :return bool: True if freqtrade installation
                       is found and property is set. False otherwise.
         """
-        if os.path.exists('{0}/.env/bin/freqtrade'.format(self.basedir)) is False:
+        if (os.path.exists('{0}/.env/bin/freqtrade'.format(self.basedir)) is False) or (self.install_type is None):
             self.cli_logger.warning('🤷♂️ No Freqtrade installation found.')
-            return False
-
-        if self.install_type is None:
             return False
 
         self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
