@@ -5,7 +5,7 @@
 # This file contains the installation procedure to get up and running with
 # Freqtrade and the MoniGoMani HyperStrategy.
 # 
-# Usage: bash <(curl -s "https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/installer.sh")
+# Usage: sh <(curl -s "https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/installer.sh")
 #
 ##################
 
