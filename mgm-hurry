@@ -451,10 +451,8 @@ class MGMHurry:
         self._logger.info('👉 Cleanup')
         self._logger.info('💨 💨 💨')
 
-        cleaned_up = False
-        if strategy == 'MoniGoManiHyperStrategy':
-            # Remove mgm-config-hyperopt file to cleanup
-            cleaned_up = self.monigomani_config.cleanup_hyperopt_files()
+        # Remove hyperopt files to cleanup
+        cleaned_up = self.monigomani_config.cleanup_hyperopt_files(strategy)
 
         self._logger.info(f'🍺 Cleanup successful, {strategy} ready for a fresh HyperOpt Run...') if cleaned_up is True \
             else self._logger.info(f'🍺 No Cleanup was needed, {strategy} ready for a fresh HyperOpt Run...')

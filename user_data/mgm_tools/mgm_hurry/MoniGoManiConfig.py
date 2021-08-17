@@ -269,21 +269,23 @@ class MoniGoManiConfig(object):
 
         self.logger.info('🍺 Configuration data written to ".hurry" file')
 
-    def cleanup_hyperopt_files(self) -> bool:
-        """Cleanup leftover ho files of MoniGoManiHyperStrategy.
+    def cleanup_hyperopt_files(self, strategy: str = 'MoniGoManiHyperStrategy') -> bool:
+        """Cleanup leftover strategy HyperOpt files.
 
         - mgm-config-hyperopt.json (applied results file)
-        - MoniGoManiHyperStrategy.json (intermediate results file)
+        - {strategy}.json (intermediate results file)
 
+        :param strategy (str): The strategy used to find the corresponding files. Defaults to 'MoniGoManiHyperStrategy'.
         :return bool: True if one of these files is cleaned up with success.
                       False if no file was cleaned up.
         """
-        file_abspath = self._get_full_path_for_config_name(self.read_hurry_config(), 'mgm-config-hyperopt')
-        cleaned_up_cfg = self._remove_file(file_abspath)
+        cleaned_up_cfg = False
+        if strategy == 'MoniGoManiHyperStrategy':
+            file_abspath = self._get_full_path_for_config_name(self.read_hurry_config(), 'mgm-config-hyperopt')
+            cleaned_up_cfg = self._remove_file(file_abspath)
 
-        # Remove the intermediate ho file if exists
-        # strategy doesn't need to be dynamic as we are "MoniGoManiConfig.py".
-        strategy_ho_intmd_path = '{0}/user_data/strategies/MoniGoManiHyperStrategy.json'.format(self.basedir)
+        # Remove the intermediate ho results file if exists
+        strategy_ho_intmd_path = '{0}/user_data/strategies/{1}.json'.format(self.basedir, strategy)
         cleaned_up_intmd = self._remove_file(strategy_ho_intmd_path)
 
         # return true if one of these is true
