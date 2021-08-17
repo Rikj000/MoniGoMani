@@ -286,14 +286,15 @@ Here are some examples of timeranges for each different market type (bearish, bu
 ### Virtual Environment
 ---
 
-It's adviced to use a dedicated environment for this project. (Probably each project)
+It's adviced to use an isolated environment for this project. (Probably each project)
 Using `pipenv` makes this super easy.
 
 ```bash
 brew install pipenv
 ```
 
->Install pip packages from Pipfile
+>Install pip packages from Pipfile in isolated environment
+
 ```bash
 pipenv install -d  # -d to install dev dependencies also
 ```
@@ -316,17 +317,17 @@ brew install pre-commit
 
 > Install the pre-commit script.
 ```bash
-pre-commit install
+pipenv run pre-commit install
 ```
 
 > Run pre-commit only on files in current changeset.
 ```bash
-pre-commit run
+pipenv run pre-commit run
 ```
 
 > Run pre-commit on all files in the repo.
 ```bash
-pre-commit run -a
+pipenv run pre-commit run -a
 ```
 
 ### Module headers

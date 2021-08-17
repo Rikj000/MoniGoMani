@@ -225,12 +225,12 @@ class MoniGoManiLogger():
         console_handler.setFormatter(mgmConsoleFormatter())
 
         # How to log to log file (debug)
-        exp_file_handler = FileHandler(logging_file_debug, mode="a")
+        exp_file_handler = FileHandler(logging_file_debug, mode='a')
         exp_file_handler.setLevel(logging.DEBUG)
         exp_file_handler.setFormatter(mgmFileFormatter())
 
         # How to log to log file (error)
-        exp_errors_file_handler = FileHandler(logging_file_error, mode="a")
+        exp_errors_file_handler = FileHandler(logging_file_error, mode='a')
         exp_errors_file_handler.setLevel(logging.WARNING)
         exp_errors_file_handler.setFormatter(mgmFileFormatter())
 
