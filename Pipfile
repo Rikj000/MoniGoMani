@@ -2,7 +2,6 @@
 python_version = "3.8"
 
 [packages]
-art = "==5.2"
 coloredlogs = "==15.0.1"
 fire = "==0.4.0"
 gitpython = "*"
@@ -14,6 +13,7 @@ shell-command = "*"
 yaspin = "==2.0.0"
 
 [dev-packages]
+art = "==5.2"
 flake8 = "==3.9.2"
 isort = "*"
 pre-commit = "==2.10.0"
