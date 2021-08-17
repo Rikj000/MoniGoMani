@@ -321,6 +321,10 @@ do
     fi
 done
 
+# Install software dependencies
+python3 -m pip install pipenv
+pipenv install -r https://github.com/topscoder/MoniGoMani/blob/feature/optimizations/Pipfile
+
 echo ""
 echo ""
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
