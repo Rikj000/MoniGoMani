@@ -1,13 +1,31 @@
 #!/bin/bash
 #
-##################
+######################################################
 #
 # This file contains the installation procedure to get up and running with
 # Freqtrade and the MoniGoMani HyperStrategy.
-# 
-# Usage: sh <(curl -s "https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/installer.sh")
 #
-##################
+#######################################################
+#
+# Requirements
+#  - macOS, Unix distro or a POSIX compliant Windows WSL distro
+#    (bash, command, mktemp, pwd, rm, sh, /dev/null)
+#  - Python 3.8+
+#  - Git
+#  - Pip3 python package manager
+#  - Pipenv python env manager
+#
+# Windows Specific Notes
+#   This script uses UNIX command line tools to run.
+#   Please ensure you installed Windows Subsystem for Linux. 
+#   See: https://aka.ms/wslstore
+# 
+#######################################################
+#
+# Usage
+#   sh <(curl -s "https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/installer.sh")
+#
+######################################################
 
 
 usage() {
@@ -158,22 +176,44 @@ echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 echo ""
 
 # Ensure that python3 is installed
-command -v python3 > /dev/null 2>&1
+command -v python3 >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "${RED}  🙉  Python3 is not installed. Can't proceed. Sorry!"
+    echo "${RED}  🙉  Python3 is not installed. Can't proceed. See: https://realpython.com/installing-python/"
     exit 1
 fi
 
 echo "${GREEN}  ✅  Python3 is installed."
 
-# Ensure that git is installed
-command -v git > /dev/null 2>&1
+# Ensure that pip3 is installed
+command -v pip3 >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "${RED}  🙉  Git is not installed. Can't proceed. Sorry!"
+    echo "${RED}  🙉  Pip3 is not installed. Can't proceed. See: https://pypi.org/project/pip/"
+    exit 1
+fi
+
+echo "${GREEN}  ✅  Pip3 is installed."
+
+# Ensure that pipenv is installed
+command -v git >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "${RED}  🙉  Pipenv is not installed. Installing..."
+    
+    pip install pipenv
+    
+    exit 1
+fi
+
+echo "${GREEN}  ✅  Pipenv is installed."
+
+# Ensure that git is installed
+command -v git >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "${RED}  🙉  Git is not installed. Can't proceed. See: https://gist.github.com/derhuerst/1b15ff4652a867391f03"
     exit 1
 fi
 
 echo "${GREEN}  ✅  Git is installed."
+
 
 echo ""
 echo "${WHITE}  What's the plan?"
@@ -322,8 +362,15 @@ do
 done
 
 # Install software dependencies
-python3 -m pip install pipenv
-pipenv install -r https://github.com/topscoder/MoniGoMani/blob/feature/optimizations/Pipfile
+echo ""
+echo ""
+echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+echo "${WHITE}  ⚙️  Installing MoniGoMani dependencies..."
+echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+echo ""
+pipenv install --skip-lock \
+    -r https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/requirements.txt
+echo ""
 
 echo ""
 echo ""
