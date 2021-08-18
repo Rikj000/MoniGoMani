@@ -363,10 +363,13 @@ echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 echo "${WHITE}  ⚙️  Installing MoniGoMani dependencies..."
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
-cd $INSTALL_DIR
-curl -s https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/requirements.txt --output installer.tmp.requirements.txt
-pipenv install -r installer.tmp.requirements.txt
-rm installer.tmp.requirements.txt
+
+cd $INSTALL_DIR && \
+    echo `pwd` && \
+    curl -s https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/requirements.txt --output installer.tmp.requirements.txt && \
+    pipenv install -r installer.tmp.requirements.txt && \
+    rm installer.tmp.requirements.txt
+
 echo ""
 
 echo ""
