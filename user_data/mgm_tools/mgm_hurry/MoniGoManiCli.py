@@ -50,11 +50,11 @@ class MoniGoManiCli(object):
         :return success (bool): Whether or not the config and strategy files are found.
         """
         if self._mgm_config_json_exists() is False:
-            self.logger.warning('🤷♂️ No "mgm-config.json" file found.')
+            self.logger.warning('🤷 No "mgm-config.json" file found.')
             return False
 
         if self._mgm_hyperstrategy_file_exists() is False:
-            self.logger.warning('🤷♂️ No "MoniGoManiHyperStrategy.py" file found.')
+            self.logger.warning('🤷 No "MoniGoManiHyperStrategy.py" file found.')
             return False
 
         self.logger.debug('👉 MoniGoManiHyperStrategy and configuration found √')
