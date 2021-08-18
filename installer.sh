@@ -13,7 +13,6 @@
 #  - Python 3.8+
 #  - Git
 #  - Pip3 python package manager
-#  - Pipenv python env manager
 #
 # Windows Specific Notes
 #   This script uses UNIX command line tools to run.
@@ -198,18 +197,6 @@ fi
 
 echo "${GREEN}  ✅  Pip3 is installed."
 
-# Ensure that pipenv is installed
-command -v git >/dev/null 2>&1
-if [ $? -ne 0 ]; then
-    echo "${RED}  🙉  Pipenv is not installed. Installing..."
-    
-    pip install pipenv
-    
-    exit 1
-fi
-
-echo "${GREEN}  ✅  Pipenv is installed."
-
 # Ensure that git is installed
 command -v git >/dev/null 2>&1
 if [ $? -ne 0 ]; then
@@ -256,8 +243,8 @@ echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 echo ""
 
 cd $INSTALL_DIR && \
-    pipenv install -r requirements.txt && \
-    pipenv run python3 ./mgm-hurry up
+    pip install -r requirements.txt && \
+    python3 ./mgm-hurry up
 
 
 echo ""
