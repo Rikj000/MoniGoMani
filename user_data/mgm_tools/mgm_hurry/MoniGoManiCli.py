@@ -119,9 +119,7 @@ class MoniGoManiCli(object):
         :return returncode: (int) The returncode of the subprocess
         """
         if command is None or command == '':
-            self.logger.error(
-                '🤷 Please pass a command through. Without command no objective, sir!'
-            )
+            self.logger.error('🤷 Please pass a command through. Without command no objective, sir!')
             sys.exit(1)
 
         cmd = shlex.split(command)
