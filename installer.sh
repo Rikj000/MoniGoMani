@@ -335,10 +335,10 @@ install_files=(
     '.hurry'
     'user_data/mgm-config-private.example.json' 
     'user_data/mgm-config.example.json' 
-    'user_data/hyperopts'       # entire directory
-    'user_data/mgm_pair_lists'  # entire directory
-    'user_data/mgm_tools'       # entire directory
-    'user_data/strategies'
+    'user_data/hyperopts/'       # entire directory
+    'user_data/mgm_pair_lists/'  # entire directory
+    'user_data/mgm_tools/'       # entire directory
+    'user_data/strategies/'
 )
 
 echo ""
@@ -353,6 +353,7 @@ USER_CHOSEN="false"
 for mgm_file_entry in "${install_files[@]}";
 do    
     # -i asks per file to overwrite or not
+    # TODO: skip .git* files
     cp -ri "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"
 done
 
@@ -365,7 +366,6 @@ echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 echo ""
 
 cd $INSTALL_DIR && \
-    echo `pwd` && \
     curl -s https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/requirements.txt --output installer.tmp.requirements.txt && \
     pipenv install -r installer.tmp.requirements.txt && \
     rm installer.tmp.requirements.txt
@@ -377,7 +377,9 @@ echo ""
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
 echo "  🎉  ${CYAN}Freqtrade and MoniGoMani are installed! We hope you enjoy your ride."
-echo "  🎉  ${CYAN}Get started with: ${YELLOW}pipenv run python3 ./mgm-hurry up"
+echo "  🎉  ${CYAN}Get started with: "
+echo "  🎉  ${YELLOW}   cd $INSTALL_DIR "
+echo "  🎉  ${YELLOW}   pipenv run python3 ./mgm-hurry up"
 echo ""
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
