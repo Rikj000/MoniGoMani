@@ -334,31 +334,9 @@ OVERWRITE_ALL="false"
 USER_CHOSEN="false"
 
 for mgm_file_entry in "${install_files[@]}";
-do
-    if [ -e "$mgm_file_entry" ]; 
-    then 
-        if [ "$USER_CHOSEN" == "false" ]; 
-        then
-            confirm "It looks like some of the MGM files already exist. Do you want to overwrite all?" "(y/n)"
-        
-            if [ "$REPLY" == "0" ]; # 0 = Yes
-            then
-                OVERWRITE_ALL="true"
-            fi
-        fi
-        USER_CHOSEN="true"
-    fi
-
-    if [ "$OVERWRITE_ALL" == "true" ];
-    then
-        echo "  Copy $mgm_file_entry ... "
-
-        # force overwrite
-        cp -rf "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"
-    else
-        # -i asks per file to overwrite or not
-        cp -ri "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"
-    fi
+do    
+    # -i asks per file to overwrite or not
+    cp -ri "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"
 done
 
 # Install software dependencies
@@ -368,8 +346,10 @@ echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 echo "${WHITE}  ⚙️  Installing MoniGoMani dependencies..."
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
-pipenv install --skip-lock \
-    -r https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/requirements.txt
+cd $INSTALL_DIR
+curl -s https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/requirements.txt --output installer.tmp.requirements.txt
+pipenv install -r installer.tmp.requirements.txt
+rm installer.tmp.requirements.txt
 echo ""
 
 echo ""
@@ -377,7 +357,7 @@ echo ""
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
 echo "  🎉  ${CYAN}Freqtrade and MoniGoMani are installed! We hope you enjoy your ride."
-echo "  🎉  ${CYAN}Get started with: ${YELLOW}cd $INSTALL_DIR && python3 ./mgm-hurry up"
+echo "  🎉  ${CYAN}Get started with: ${YELLOW}python3 ./mgm-hurry up"
 echo ""
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
