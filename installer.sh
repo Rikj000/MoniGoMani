@@ -219,17 +219,28 @@ echo ""
 echo "${WHITE}  What's the plan?"
 echo "${WHITE}  ================"
 echo ""
-echo "${WHITE}  1) Install Freqtrade: (You will be able to skip overwriting)"
-echo "${CYAN}       $FREQTRADE_REPO_URL => $INSTALL_DIR "
-echo "${CYAN}       GIT BRANCH => $FREQTRADE_BRANCH "
-echo "${CYAN}       GIT COMMIT => $FREQTRADE_COMMIT "
-echo "${WHITE}  2) Install MoniGoMani HyperStrategy: (You will be able to skip overwriting each file separate)"
-echo "${CYAN}       $MGM_REPO_URL => $INSTALL_DIR "
-echo "${CYAN}       GIT BRANCH => $MGM_BRANCH "
-echo "${CYAN}       GIT COMMIT => $MGM_COMMIT "
+
+if [ "$FREQTRADE_COMMIT" == "" ]; then
+    FT_REPO="$FREQTRADE_BRANCH"
+else
+    FT_REPO="$FREQTRADE_COMMIT"
+fi
+
+echo "${WHITE}  + Install Freqtrade '$FT_REPO' into '$INSTALL_DIR'"
+echo "${CYAN}     (You will be able to skip overwriting)"
 echo "${WHITE}"
 
-confirm "Are you sure you want to continue?" "(y/n)"
+if [ "$MGM_COMMIT" == "" ]; then
+    MGM_REPO="$MGM_BRANCH"
+else
+    MGM_REPO="$MGM_COMMIT"
+fi
+
+echo "${WHITE}  + Install MoniGoMani HyperStrategy ('$MGM_REPO') into '$INSTALL_DIR'"
+echo "${CYAN}     (You will be able to skip overwriting each file separate)"
+echo "${WHITE}"
+
+confirm "Let's go?" "(y/n)"
 
 if [ "$REPLY" == "1" ] # 1 = No
 then
