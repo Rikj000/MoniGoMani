@@ -220,33 +220,7 @@ fi
 echo "${GREEN}  ✅  Git is installed."
 echo ""
 
-
-echo ""
-echo "${WHITE}  ℹ️  What's the plan?"
-echo "${WHITE}  ===================="
-echo ""
-
-if [ "$FREQTRADE_COMMIT" == "" ]; then
-    FT_REPO="$FREQTRADE_BRANCH"
-else
-    FT_REPO="$FREQTRADE_COMMIT"
-fi
-
-echo "${WHITE}  + Install Freqtrade '$FT_REPO' into '$INSTALL_DIR'"
-echo "${CYAN}     (You will be able to skip overwriting)"
-echo "${WHITE}"
-
-if [ "$MGM_COMMIT" == "" ]; then
-    MGM_REPO="$MGM_BRANCH"
-else
-    MGM_REPO="$MGM_COMMIT"
-fi
-
-echo "${WHITE}  + Install MoniGoMani HyperStrategy ('$MGM_REPO') into '$INSTALL_DIR'"
-echo "${CYAN}     (You will be able to skip overwriting each file separate)"
-echo "${WHITE}"
-
-confirm "👉  Let's go?" "(y/n)"
+confirm "👉  Are you ready to proceed?" "(y/n)"
 
 if [ "$REPLY" == "1" ] # 1 = No
 then
@@ -254,132 +228,43 @@ then
     exit 1
 fi
 
-echo ""
-echo ""
-echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-echo "${WHITE}  ⚙️  Downloading Freqtrade..."
-echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-echo ""
-
-# Figure out to overwrite install-folder or not.
-INSTALL_FT="true"
-if [ -d "$INSTALL_DIR" ]; then
-    echo "${RED}  ⚠️  Target folder '$INSTALL_DIR' already exists."
-    echo "${WHITE}      [y] to overwrite (Warning: '$INSTALL_DIR' will be truncated without another warning!)"
-    echo "${WHITE}      [h] to continue, skip overwrite '$INSTALL_DIR'"
-    echo "${WHITE}      [n] to cancel (You choose 🥚 for your 💰)"
-    echo ""
-    confirm "  👉  What do you want to do?" "(y/h/n)"
-    echo ""
-
-    if [ "$REPLY" == "0" ] # 0 = Yes
-    then
-        # Can't turn back times!
-        echo "${WHITE}  🚮  Removing '$INSTALL_DIR' ... "
-        echo ""
-        eval 'rm -Rf "$INSTALL_DIR"';
-    fi
-
-    if [ "$REPLY" == "1" ] # 1 = No
-    then
-        do_exit
-    fi
-
-    if [ "$REPLY" == "2" ] # 2 = Half
-    then
-        # Skip installing freqtrade
-        INSTALL_FT="false"
-    fi
-fi
-
-if [ "$INSTALL_FT" == "true" ]
-then
-    git clone -n "$FREQTRADE_REPO_URL" "$INSTALL_DIR"
-    
-    if [ "$FREQTRADE_COMMIT" != "" ]; then
-        cd $INSTALL_DIR \
-            && git checkout -b "detached_by_installer" "$FREQTRADE_COMMIT" \
-            && cd $CWD
-    else
-        cd $INSTALL_DIR \
-            && git checkout "$FREQTRADE_BRANCH" \
-            && cd $CWD
-    fi
-else
-    echo "${GREEN} SKIP."
-fi
 
 echo ""
 echo ""
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-echo "${WHITE}  ⚙️  Downloading MoniGoMani..."
+echo "${WHITE}  ⚙️  Downloading MGM-Hurry..."
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
 
-TEMP_DIR=$(mktemp -d /tmp/mgm.XXXXXXXXX)
-
-git clone -n "$MGM_REPO_URL" "$TEMP_DIR"
+git clone -n "$MGM_REPO_URL" "$INSTALL_DIR"
 
 if [ "$MGM_COMMIT" != "" ]; then
-    cd $TEMP_DIR \
+    cd $INSTALL_DIR \
         && git checkout -b "detached_by_installer" "$MGM_COMMIT" \
         && cd $CWD
 else
-    cd $TEMP_DIR \
+    cd $INSTALL_DIR \
         && git checkout "$MGM_BRANCH" \
         && cd $CWD
 fi
 
-install_files=(
-    'mgm-hurry' 
-    '.hurry'
-    'user_data/mgm-config-private.example.json' 
-    'user_data/mgm-config.example.json' 
-    'user_data/hyperopts/'       # entire directory
-    'user_data/mgm_pair_lists/'  # entire directory
-    'user_data/mgm_tools/'       # entire directory
-    'user_data/strategies/'
-)
 
 echo ""
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-echo "${WHITE}  ⚙️  Installing MoniGoMani Strategy..."
-echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-echo ""
-
-OVERWRITE_ALL="false"
-USER_CHOSEN="false"
-
-for mgm_file_entry in "${install_files[@]}";
-do    
-    # -i asks per file to overwrite or not
-    # TODO: skip .git* files
-    cp -ri "$TEMP_DIR/$mgm_file_entry" "$INSTALL_DIR/$mgm_file_entry"
-done
-
-# Install software dependencies
-echo ""
-echo ""
-echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-echo "${WHITE}  ⚙️  Installing MoniGoMani dependencies..."
+echo "${WHITE}  ⚙️  Installing MGM-Hurry..."
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
 
 cd $INSTALL_DIR && \
-    curl -s https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/requirements.txt --output installer.tmp.requirements.txt && \
-    pipenv install -r installer.tmp.requirements.txt && \
-    rm installer.tmp.requirements.txt
+    pipenv install -r requirements.txt && \
+    pipenv run python3 ./mgm-hurry up
 
-echo ""
 
 echo ""
 echo ""
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
-echo "  🎉  ${CYAN}Freqtrade and MoniGoMani are installed! We hope you enjoy your ride."
-echo "  🎉  ${CYAN}Get started with configuring your setup: "
-echo "  🎉  ${YELLOW}   cd $INSTALL_DIR "
-echo "  🎉  ${YELLOW}   pipenv run python3 ./mgm-hurry setup"
+echo "  🎉  ${CYAN}You are all set! We hope you enjoy your ride."
 echo ""
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""

@@ -145,27 +145,60 @@ class FreqtradeCli():
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
             with yaspin(text='Clone freqtrade repository', color='cyan') as YASPIN_INSTANCE:
-                repo = Repo.clone_from(GIT_URL_FREQTRADE, temp_dirname, branch=branch)
-
-                YASPIN_INSTANCE.write('Cloning freqtrade repository completed...')
-
+                repo = self.clone_repo(temp_dirname, branch)                
                 if not isinstance(repo, Repo):
-                    self.cli_logger.critical('Failed to clone freqtrade repo. I quit!')
+                    YASPIN_INSTANCE.error('Failed to clone Freqtrade repo. I quit!')
+                    self.cli_logger.critical('Failed to clone Freqtrade repo. I quit!')
                     os.sys.exit(1)
-
                 YASPIN_INSTANCE.ok('✔')
 
             with yaspin(text='Copy freqtrade installation', color='cyan') as YASPIN_INSTANCE:
-                self.monigomani_cli.run_command('cp -R {0}/* {1}'.format(temp_dirname, target_dir))
+                self.copy_installation_files(temp_dirname, target_dir)
                 YASPIN_INSTANCE.ok('✔')
 
-            if os.path.isfile('{0}/setup.sh'.format(target_dir)):
-                self.monigomani_cli.run_command('bash {0}/setup.sh --install'.format(target_dir))
-                YASPIN_INSTANCE.ok('✔ Freqtrade installation completed')
-            else:
-                self.cli_logger.error(
-                    'Could not run {0}/setup.sh for freqtrade because the file does not exist.'
-                    .format(target_dir))
+            with yaspin(text='Run Freqtrade setup', color='cyan') as YASPIN_INSTANCE:
+                result = self.run_setup_installer(target_dir)
+                if result is True:
+                    YASPIN_INSTANCE.ok('✔ Freqtrade installation completed')
+                    return True
+                
+            YASPIN_INSTANCE.error('Freqtrade installation failed')
+            return False
+
+    def clone_repo(self, temp_dirname: str, branch: str):
+        """Clone the Freqtrade Git repo to given directory.
+
+        :param temp_dirname (str): The target directory to clone to.
+        :param branch (str): The branch to checkout.
+        :return repo (Repo): The Repo object containing the results.
+        """
+        return Repo.clone_from(GIT_URL_FREQTRADE, temp_dirname, branch=branch)
+        
+    def copy_installation_files(self, temp_dirname: str, target_dir: str):
+        """Copy the installation files to the target directory.
+
+        :param temp_dirname (str): The source directory where installation files exist.
+        :param target_dir (str): The target directory where the installation files should be copied to.
+        """
+        self.monigomani_cli.run_command('cp -R {0}/* {1}'.format(temp_dirname, target_dir))
+
+    def run_setup_installer(self, target_dir: str) -> bool:
+        """
+        Run Freqtrade setup.sh --install.
+
+        :param target_dir (str): The target directory where freqtrade is installed.
+        :return result (bool): True if setup ran successfully. False otherwise.
+        """
+
+        if os.path.isfile('{0}/setup.sh'.format(target_dir)):
+            self.monigomani_cli.run_command('bash {0}/setup.sh --install'.format(target_dir))            
+            return True
+        
+        self.cli_logger.error(
+            'Could not run {0}/setup.sh for freqtrade because the file does not exist.'
+            .format(target_dir))
+
+        return False
 
     def download_static_pairlist(self, stake_currency: str, exchange: str) -> dict:
         """Use freqtrade test-pairlist command to download and test valid pair whitelist.
