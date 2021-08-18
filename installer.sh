@@ -174,6 +174,11 @@ echo "${WHITE}  ⛱️  Welcome aboard! Let's get started ..."
 echo ""
 echo "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
+echo ""
+echo "${WHITE}  🚦  Requirements check"
+echo "${WHITE}  ======================"
+echo ""
+
 
 # Ensure that python3 is installed
 command -v python3 >/dev/null 2>&1
@@ -213,11 +218,12 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "${GREEN}  ✅  Git is installed."
+echo ""
 
 
 echo ""
-echo "${WHITE}  What's the plan?"
-echo "${WHITE}  ================"
+echo "${WHITE}  ℹ️  What's the plan?"
+echo "${WHITE}  ===================="
 echo ""
 
 if [ "$FREQTRADE_COMMIT" == "" ]; then
@@ -240,7 +246,7 @@ echo "${WHITE}  + Install MoniGoMani HyperStrategy ('$MGM_REPO') into '$INSTALL_
 echo "${CYAN}     (You will be able to skip overwriting each file separate)"
 echo "${WHITE}"
 
-confirm "Let's go?" "(y/n)"
+confirm "👉  Let's go?" "(y/n)"
 
 if [ "$REPLY" == "1" ] # 1 = No
 then
