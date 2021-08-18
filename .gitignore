@@ -22,12 +22,8 @@ user_data/plot/
 # Ignore JetBrains Folder
 .idea/
 
-# Ignore VSCodium / Visual Studio Code related
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# Ignore VSCodium / Visual Studio Code Folder + WorkSpace Files
+.vscode/
 *.code-workspace
 
 # Ignore Logo Folder
