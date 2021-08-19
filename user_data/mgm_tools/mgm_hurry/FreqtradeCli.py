@@ -148,7 +148,7 @@ class FreqtradeCli():
                 repo = self.clone_repo(temp_dirname, branch)                
 
                 if not isinstance(repo, Repo):
-                    sp.error('😕  Failed to clone Freqtrade repo. I quit!')
+                    sp.red.write('😕  Failed to clone Freqtrade repo. I quit!')
                     self.cli_logger.critical('😕  Failed to clone Freqtrade repo. I quit!')
                     os.sys.exit(1)
 
@@ -170,7 +170,7 @@ class FreqtradeCli():
                     sp.green.ok('✔ Freqtrade setup completed')
                     return True
                 
-            sp.error('😕  Freqtrade setup failed')
+            sp.red.write('😕  Freqtrade setup failed')
             return False
 
     def clone_repo(self, temp_dirname: str, branch: str):

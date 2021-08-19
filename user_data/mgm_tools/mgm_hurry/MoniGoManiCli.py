@@ -57,12 +57,12 @@ class MoniGoManiCli(object):
         with yaspin(text='', color='cyan') as sp:
 
             if self._mgm_config_json_exists() is False:
-                sp.error('🤷 No "mgm-config.json" file found.')
+                sp.red.write('🤷 No "mgm-config.json" file found.')
                 self.logger.warning('🤷 No "mgm-config.json" file found.')
                 return False
 
             if self._mgm_hyperstrategy_file_exists() is False:
-                sp.error('🤷 No "MoniGoManiHyperStrategy.py" file found.')
+                sp.red.write('🤷 No "MoniGoManiHyperStrategy.py" file found.')
                 self.logger.warning('🤷 No "MoniGoManiHyperStrategy.py" file found.')
                 return False
 
@@ -91,7 +91,7 @@ class MoniGoManiCli(object):
                 repo = Repo.clone_from(GIT_URL_MONIGOMANI, temp_dirname, branch=branch)
 
             if not isinstance(repo, Repo):
-                sp.error('Failed to download MoniGoMani repo. I quit!')
+                sp.red.write('Failed to download MoniGoMani repo. I quit!')
                 self.logger.critical('Failed to clone MoniGoMani repo. I quit!')
                 os.sys.exit(1)
 
