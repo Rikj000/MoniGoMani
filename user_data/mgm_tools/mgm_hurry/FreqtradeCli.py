@@ -36,11 +36,11 @@ class FreqtradeCli():
 
     Attributes:
         basedir             The basedir where the monigomani install lives.
-        freqtrade_binary    The abs path to the freqtrade executable.
+        freqtrade_binary    The abs path to the Freqtrade executable.
         cli_logger          The logger function of the MoniGoManiCli module.
         monigomani_cli      The MoniGoManiCli object.
         monigomani_config   The MoniGoManiConfig object.
-        _install_type       The current install type of freqtrade. Either 'source' or default 'docker'
+        _install_type       The current install type of Freqtrade. Either 'source' or default 'docker'
     """
     basedir             : str
     freqtrade_binary    : str
@@ -70,7 +70,7 @@ class FreqtradeCli():
     def _init_freqtrade(self) -> bool:
         """Initialize self.freqtrade_binary property.
 
-        :return bool: True if freqtrade installation
+        :return bool: True if Freqtrade installation
                       is found and property is set. False otherwise.
         """
         if self.installation_exists() is False:
@@ -80,8 +80,7 @@ class FreqtradeCli():
 
         self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
 
-        self.cli_logger.debug('👉 Freqtrade binary: `{0}`'.format(
-            self.freqtrade_binary))
+        self.cli_logger.debug('👉 Freqtrade binary: `{0}`'.format(self.freqtrade_binary))
 
         return True
 
@@ -108,7 +107,7 @@ class FreqtradeCli():
     def installation_exists(self) -> bool:
         """Return true if all is setup correctly.
 
-        :return bool: True if install_type is docker or freqtrade is found. False otherwise.
+        :return bool: True if install_type is docker or Freqtrade is found. False otherwise.
         """
         if self.install_type is None:
             self.cli_logger.warning('FreqtradeCli::installation_exists() failed. No install_type.')
@@ -130,40 +129,48 @@ class FreqtradeCli():
             if os.path.exists('{0}/.env/bin/freqtrade'.format(self.basedir)):
                 return True
 
-            self.cli_logger.error(
-                'FreqtradeCli::installation_exists() failed. freqtrade binary not found in {0}/.env/bin/freqtrade.'
+            self.cli_logger.warning(
+                'FreqtradeCli::installation_exists() failed. Freqtrade binary not found in {0}/.env/bin/freqtrade.'
                 .format(self.basedir))
 
         return False
 
-    def download_setup_freqtrade(self, branch: str = 'develop', target_dir: str = None):
+    def download_setup_freqtrade(self, branch: str = 'develop', target_dir: str = None) -> bool:
         """
         Install Freqtrade using a git clone to target_dir.
 
         :param branch (str): Checkout a specific branch. Defaults to 'develop'.
         :param target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
-        :return None
+        :return bool: True if setup completed without errors, else False.
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
-            with yaspin(text='Clone freqtrade repository', color='cyan') as YASPIN_INSTANCE:
+            with yaspin(text='👉  Clone Freqtrade repository', color='cyan') as sp:
                 repo = self.clone_repo(temp_dirname, branch)                
+
                 if not isinstance(repo, Repo):
-                    YASPIN_INSTANCE.error('Failed to clone Freqtrade repo. I quit!')
-                    self.cli_logger.critical('Failed to clone Freqtrade repo. I quit!')
+                    sp.error('😕  Failed to clone Freqtrade repo. I quit!')
+                    self.cli_logger.critical('😕  Failed to clone Freqtrade repo. I quit!')
                     os.sys.exit(1)
-                YASPIN_INSTANCE.ok('✔')
 
-            with yaspin(text='Copy freqtrade installation', color='cyan') as YASPIN_INSTANCE:
+                sp.green.ok('✔')
+
+            with yaspin(text='👉  Copy Freqtrade installation', color='cyan') as sp:
                 self.copy_installation_files(temp_dirname, target_dir)
-                YASPIN_INSTANCE.ok('✔')
+                sp.green.ok('✔')
 
-            with yaspin(text='Run Freqtrade setup', color='cyan') as YASPIN_INSTANCE:
-                result = self.run_setup_installer(target_dir)
+            with yaspin(text='', color='cyan') as sp:                
+                sp.write('👉  Run Freqtrade setup')
+
+                # Hide the spinner as the Freqtrade installer 
+                # asks for user input.
+                with sp.hidden():
+                    result = self.run_setup_installer(target_dir)
+
                 if result is True:
-                    YASPIN_INSTANCE.ok('✔ Freqtrade installation completed')
+                    sp.green.ok('✔ Freqtrade setup completed')
                     return True
                 
-            YASPIN_INSTANCE.error('Freqtrade installation failed')
+            sp.error('😕  Freqtrade setup failed')
             return False
 
     def clone_repo(self, temp_dirname: str, branch: str):
@@ -187,7 +194,7 @@ class FreqtradeCli():
         """
         Run Freqtrade setup.sh --install.
 
-        :param target_dir (str): The target directory where freqtrade is installed.
+        :param target_dir (str): The target directory where Freqtrade is installed.
         :return result (bool): True if setup ran successfully. False otherwise.
         """
 
@@ -196,13 +203,13 @@ class FreqtradeCli():
             return True
         
         self.cli_logger.error(
-            'Could not run {0}/setup.sh for freqtrade because the file does not exist.'
+            'Could not run {0}/setup.sh for Freqtrade because the file does not exist.'
             .format(target_dir))
 
         return False
 
     def download_static_pairlist(self, stake_currency: str, exchange: str) -> dict:
-        """Use freqtrade test-pairlist command to download and test valid pair whitelist.
+        """Use Freqtrade test-pairlist command to download and test valid pair whitelist.
 
         :param stake_currency (str): The stake currency to find the list of. Eg. BTC
         :param exchange (str): The exchange to read the data from. Eg. Binance
@@ -229,11 +236,11 @@ class FreqtradeCli():
 
     @staticmethod
     def _get_freqtrade_binary_path(basedir: str, install_type: str):
-        """Determine the freqtrade binary path based on install_type.
+        """Determine the Freqtrade binary path based on install_type.
 
         :param basedir (str): basedir is used in case of source installation
         :param install_type (str): Either docker or source.
-        :return str: command to run freqtrade. defaults to docker.
+        :return str: command to run Freqtrade. defaults to docker.
         """
         freqtrade_binary = 'docker-compose run --rm freqtrade'
 
