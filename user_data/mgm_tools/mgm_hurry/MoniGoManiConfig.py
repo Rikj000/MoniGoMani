@@ -23,11 +23,13 @@ from operator import xor
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
+
 # --- ↑ Do not remove these libs ↑ ---------------------------------------------------------------
 
 
 class MoniGoManiConfig(object):
-    """MoniGoManiConfig is responsible for all MGM Config related tasks.
+    """
+    MoniGoManiConfig is responsible for all MoniGoMani Config related tasks.
 
     Attributes:
         __config            Dictionary containing the configuration parameters.
@@ -41,10 +43,10 @@ class MoniGoManiConfig(object):
     __mgm_logger: MoniGoManiLogger
 
     def __init__(self, basedir: str):
-        """MGM has configuration.
+        """
+        MoniGoMani has configuration.
 
-        Args:
-            basedir (str): The directory
+        :param basedir: (str) The base directory where Freqtrade & MoniGoMani are installed
         """
         self.__basedir = basedir
         self.__mgm_logger = MoniGoManiLogger(basedir).get_logger()
@@ -79,7 +81,8 @@ class MoniGoManiConfig(object):
         return self.__basedir
 
     def reload(self) -> bool:
-        """Reload config file and store as property in current object.
+        """
+        Reload config file and store as property in current object.
 
         :return bool: True if config is read, False if config could not be read.
         """
@@ -92,18 +95,19 @@ class MoniGoManiConfig(object):
         return True
 
     def valid_hurry_dotfile_present(self) -> bool:
-        """Check if the .hurry config file exists on disk."""
+        """
+        Check if the .hurry config file exists on disk.
+
+        :return bool: Return true if the config files exist, false if not
+        """
         if os.path.isfile(self.__full_path_config) is not True:
-            self.logger.warning(
-                'Could not find .hurry config file at {0}'.format(
-                    self.__full_path_config))
+            self.logger.warning('Could not find .hurry config file at {0}'.format(self.__full_path_config))
             return False
 
         with open(self.__full_path_config, 'r') as yml_file:
             config = yaml.full_load(yml_file) or {}
 
-        # Check if all required config keys
-        # are present in config file
+        # Check if all required config keys are present in config file
         for key in ['exchange', 'install_type', 'timerange']:
             if not config['config'][key]:
                 return False
@@ -111,10 +115,11 @@ class MoniGoManiConfig(object):
         return True
 
     def create_config_files(self, target_dir: str) -> bool:
-        """Copy example files as def files.
+        """
+        Copy example files as def files.
 
-        :param target_dir (str): The target dir where the "mgm-config.example.json" exists.
-        :return success (bool): True if files are created, false if something failed.
+        :param target_dir: (str) The target dir where the "mgm-config.example.json" exists.
+        :return bool: True if files are created successfully, false if something failed.
         """
         example_files = [
             {
@@ -131,7 +136,8 @@ class MoniGoManiConfig(object):
             src_file = target_dir + '/user_data/' + example_file['src']
 
             if not os.path.isfile(src_file):
-                self.logger.error('❌ Bummer. Cannot find the example file "{0}" to copy from.'.format(example_file['src']))
+                self.logger.error('❌ Bummer. Cannot find the example file "{0}" '
+                                  'to copy from.'.format(example_file['src']))
                 return False
 
             dest_file = target_dir + '/user_data/' + example_file['dest']
@@ -146,7 +152,8 @@ class MoniGoManiConfig(object):
         return True
 
     def load_config_files(self) -> dict:
-        """Load & Return all the MoniGoMani Configuration files.
+        """
+        Load & Return all the MoniGoMani Configuration files.
 
         Including:
             - mgm-config
@@ -177,9 +184,8 @@ class MoniGoManiConfig(object):
         for mgm_config_filename in mgm_config_files:
             # Check if the MoniGoMani config filename exist in the ".hurry" config file
             if 'mgm_config_names' not in hurry_config or mgm_config_filename not in hurry_config['mgm_config_names']:
-                self.logger.critical(
-                    '🤷 No "{0}" filename found in the ".hurry" config file. Please run: mgm-hurry setup'
-                    .format(mgm_config_filename))
+                self.logger.critical('🤷 No "{0}" filename found in the ".hurry" config file. '
+                                     'Please run: mgm-hurry setup'.format(mgm_config_filename))
                 sys.exit(1)
 
             # Full path to current config file
@@ -191,9 +197,10 @@ class MoniGoManiConfig(object):
         return mgm_config_files
 
     def read_hurry_config(self) -> dict:
-        """Read .hurry configuration dotfile and return its yaml contents as dict.
+        """
+        Read .hurry configuration dotfile and return its yaml contents as dict.
 
-        :return dictionary containing the config section of .hurry file. None if failed.
+        :return dict: dictionary containing the config section of .hurry file. None if failed.
         """
         with open('{0}/.hurry'.format(self.basedir), 'r') as yml_file:
             config = yaml.full_load(yml_file) or {}
@@ -203,22 +210,25 @@ class MoniGoManiConfig(object):
         return hurry_config
 
     def get_config_filename(self, cfg_key: str) -> str:
-        """Transforms given cfg_key into the corresponding config filename.
+        """
+        Transforms given cfg_key into the corresponding config filename.
 
-        :param cfg_key (str): the config name (key) to parse.
-        :return abs_path (str): the absolute path to the asked config file.
+        :param cfg_key: (str) the config name (key) to parse.
+        :return str: the absolute path to the asked config file.
         """
         hurry_config = self.read_hurry_config()
         return self._get_full_path_for_config_name(hurry_config, cfg_key)
 
     def load_config_file(self, filename: str) -> dict:
-        """Read json-file contents and return its data.
+        """
+        Read json-file contents and return its data.
 
-        :param filename (str): The absolute path + filename to the json config file.
+        :param filename: (str) The absolute path + filename to the json config file.
         :return dict: The json content of the file. json.load() return. None if failed.
         """
         if os.path.isfile(filename) is False:
-            self.logger.error('🤷 No "{0}" file found in the "user_data" directory. Please run: mgm-hurry setup'.format(filename))
+            self.logger.error('🤷 No "{0}" file found in the "user_data" directory. '
+                              'Please run: mgm-hurry setup'.format(filename))
             return None
 
         # Load the MoniGoMani config file as an object and parse it as a dictionary
@@ -227,8 +237,8 @@ class MoniGoManiConfig(object):
             return json_data
 
     def write_hurry_dotfile(self, config: dict = None):
-        """ Write config-array to ".hurry" config file and load its contents into config-property.
-
+        """
+        Write config-array to ".hurry" config file and load its contents into config-property.
         Writes the passed config dictionary or if nothing passed, it will write default values.
 
         :param config: (dict, Optional) The config values to store. Defaults to None.
@@ -257,9 +267,8 @@ class MoniGoManiConfig(object):
 
         # Protection to prevent from writing no data at all to mgm-config.
         if len(config) == 0 or 'config' not in config or 'mgm_config_names' not in config['config']:
-            self.logger.error(
-                '🤯 Sorry, but looks like no configuration data would have been written, '
-                'resulting in an empty config file. I quit.')
+            self.logger.error('🤯 Sorry, but looks like no configuration data would have been written, '
+                              'resulting in an empty config file. I quit.')
             sys.exit(1)
 
         with open(self.__full_path_config, 'w+') as cfg_file:
@@ -270,12 +279,13 @@ class MoniGoManiConfig(object):
         self.logger.info('🍺 Configuration data written to ".hurry" file')
 
     def cleanup_hyperopt_files(self, strategy: str = 'MoniGoManiHyperStrategy') -> bool:
-        """Cleanup leftover strategy HyperOpt files.
+        """
+        Cleanup leftover strategy HyperOpt files.
 
         - mgm-config-hyperopt.json (applied results file)
         - {strategy}.json (intermediate results file)
 
-        :param strategy (str): The strategy used to find the corresponding files. Defaults to 'MoniGoManiHyperStrategy'.
+        :param strategy: (str) The strategy used to find the corresponding files. Defaults to 'MoniGoManiHyperStrategy'.
         :return bool: True if one of these files is cleaned up with success.
                       False if no file was cleaned up.
         """
@@ -285,41 +295,37 @@ class MoniGoManiConfig(object):
             cleaned_up_cfg = self._remove_file(file_abspath)
 
         # Remove the intermediate ho results file if exists
-        strategy_ho_intmd_path = '{0}/user_data/strategies/{1}.json'.format(self.basedir, strategy)
-        cleaned_up_intmd = self._remove_file(strategy_ho_intmd_path)
+        strategy_ho_intermediate_path = '{0}/user_data/strategies/{1}.json'.format(self.basedir, strategy)
+        cleaned_up_intermediate = self._remove_file(strategy_ho_intermediate_path)
 
         # return true if one of these is true
-        return xor(
-            bool(cleaned_up_cfg),
-            bool(cleaned_up_intmd)
-        )
+        return xor(bool(cleaned_up_cfg), bool(cleaned_up_intermediate))
 
     def _remove_file(self, fil: str) -> bool:
         if os.path.exists(fil) is False:
             return False
 
-        self.logger.info('👉 Removing "{0}"'.format( os.path.basename(fil) ))
+        self.logger.info('👉 Removing "{0}"'.format(os.path.basename(fil)))
         os.remove(fil)
 
         return True
 
-    def _get_full_path_for_config_name(self, hurry_config: dict,
-                                       cfg_name: str) -> str:
-        """Parses the full path to given config file based on settings in .hurry.
+    def _get_full_path_for_config_name(self, hurry_config: dict, cfg_name: str) -> str:
+        """
+        Parses the full path to given config file based on settings in .hurry.
 
         :param hurry_config (dict): The dictionary containing the hurry dotfile yaml config.
         :return abs_path: The absolute path to the asked config file.
         """
         # Full path to current config file
-        mgm_config_filepath = '{0}/user_data/{1}'.format(
-            self.basedir,
-            hurry_config['mgm_config_names'][cfg_name],
-        )
+        mgm_config_filepath = '{0}/user_data/{1}'.format(self.basedir, hurry_config['mgm_config_names'][cfg_name])
 
         return mgm_config_filepath
 
     def __create_default_config(self):
-        """ Creates default .hurry config file with default values. """
+        """
+        Creates default .hurry config file with default values.
+        """
         self.write_hurry_dotfile()
 
     def _save_exchange_credentials(self, cred: dict):
@@ -329,8 +335,8 @@ class MoniGoManiConfig(object):
         :param cred: (dict) - List containing values for [exchange,api_key,api_secret]
         """
         if len(cred) == 0:
-            self.logger.warning(
-                'Did not write exchange credentials to "mgm-config-private.json" because no data was passed.')
+            self.logger.warning('Did not write exchange credentials to "mgm-config-private.json" '
+                                'because no data was passed.')
             return False
 
         try:
@@ -339,11 +345,7 @@ class MoniGoManiConfig(object):
         except Exception:
             data = {}
 
-        data['exchange'] = {
-            'name': cred['exchange'],
-            'key': cred['api_key'],
-            'secret': cred['api_secret']
-        }
+        data['exchange'] = {'name': cred['exchange'], 'key': cred['api_key'], 'secret': cred['api_secret']}
 
         with open(f'{self.basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
             json.dump(data, outfile, indent=4)
@@ -358,17 +360,15 @@ class MoniGoManiConfig(object):
         :return bool: True if json data is written. False otherwise.
         """
         if len(opt) == 0:
-            self.logger.warning(
-                'Did not write telegram credentials to "mgm-config-private.json" because no data was passed.')
+            self.logger.warning('Did not write telegram credentials to "mgm-config-private.json" '
+                                'because no data was passed.')
             return False
 
         with open(f'{self.basedir}/user_data/mgm-config-private.json', ) as file:
             data = json.load(file)
 
         data['telegram'] = {
-            'enabled': opt['enable_telegram'],
-            'token': opt['telegram_token'],
-            'chat_id': opt['telegram_chat_id']
+            'enabled': opt['enable_telegram'], 'token': opt['telegram_token'], 'chat_id': opt['telegram_chat_id']
         }
 
         with open(f'{self.basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
