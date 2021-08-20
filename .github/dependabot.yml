@@ -3,7 +3,7 @@ version: 2
 updates:
 
   # Maintain dependencies for Pipenv
-  - package-ecosystem: "pipenv"
+  - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "daily"
