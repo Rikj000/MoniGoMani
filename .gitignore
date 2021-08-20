@@ -22,12 +22,8 @@ user_data/plot/
 # Ignore JetBrains Folder
 .idea/
 
-# Ignore VSCodium / Visual Studio Code related
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# Ignore VSCodium / Visual Studio Code Folder + WorkSpace Files
+.vscode/
 *.code-workspace
 
 # Ignore Logo Folder
@@ -37,5 +33,49 @@ Logo/
 *.fthypt
 *.pickle
 
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+junit/
+test-results*.xml
+
 # Ignore pytest cache files
 .pytest_cache/
+
+# Ignore freqtrade installation
+.env/
+build_helpers/
+config_examples/
+docker/
+!docker/Dockerfile.MoniGoMani
+docs/
+freqtrade/
+junit/
+scripts/
+tests/junit/
+
+freqtrade.service
+freqtrade.service.watchdog
+freqtrade.egg-info
+MANIFEST.in
+mkdocs.yml
+pyproject.toml
+pyproject.yml
+setup.cfg
+setup.py
+setup.sh

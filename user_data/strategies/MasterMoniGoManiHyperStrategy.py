@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # --- ↓ Do not remove these libs ↓ -------------------------------------------------------------------------------------
 import copy
 import json
@@ -857,7 +858,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
                                                 self.mgm_logger('info', open_trade_unclogger,
                                                                 f'Unclogging losing trade...')
-                                                return "MGM_unclogging_losing_trade"
+                                                return 'MGM_unclogging_losing_trade'
                                             else:
                                                 self.mgm_logger('info', open_trade_unclogger,
                                                                 f'No need to unclog open trade...')

@@ -1,113 +1,157 @@
 # -*- coding: utf-8 -*-
 # -* vim: syntax=python -*-
+
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
-import json
+
+"""MoniGoManiCli is the responsible module to communicate with the mgm strategy."""
+
+# ___  ___               _  _____        ___  ___               _  _____  _  _
+# |  \/  |              (_)|  __ \       |  \/  |              (_)/  __ \| |(_)
+# | .  . |  ___   _ __   _ | |  \/  ___  | .  . |  __ _  _ __   _ | /  \/| | _
+# | |\/| | / _ \ | '_ \ | || | __  / _ \ | |\/| | / _` || '_ \ | || |    | || |
+# | |  | || (_) || | | || || |_\ \| (_) || |  | || (_| || | | || || \__/\| || |
+# \_|  |_/ \___/ |_| |_||_| \____/ \___/ \_|  |_/ \__,_||_| |_||_| \____/|_||_|
+
 import os
-import shutil
+from shell_command import shell_call, shell_output
+from git import Repo
+from yaspin import yaspin
+import tempfile
+
+import shlex
+from shutil import copytree, copy2
 import sys
-import yaml
+
+from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
+from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
+
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
+GIT_URL_MONIGOMANI: str = 'https://github.com/Rikj000/MoniGoMani.git'
 
-class MoniGoManiCli:
-    """
-    MoniGoManiCli is responsible for all MGM related tasks.
-    """
 
-    def __init__(self, basedir, logger):
+class MoniGoManiCli(object):
+    """
+    Use this module to communicate with the mgm hyperstrategy.
+
+    Attributes:
+        logger      The logger function of the MoniGoManiCli module.
+    """
+    logger: MoniGoManiLogger
+
+    def __init__(self, basedir):
+        """
+        Let's talk command-line-ish.
+
+        :param basedir (str): The directory
+        """
         self.basedir = basedir
-        self.logger = logger
+        self.logger = MoniGoManiLogger(self.basedir).get_logger()
 
     def installation_exists(self) -> bool:
         """
-        Checks if the MGM Hyper Strategy installation exists
+        Check if the MGM Hyper Strategy installation exists.
 
-        :return success: (bool)
+        :return success (bool): Whether or not the config and strategy files are found.
         """
-        if os.path.exists(f'{self.basedir}/user_data/mgm-config.json') is False:
-            self.logger.warning('🤷♂️ No "mgm-config.json" file found.')
-            return False
+        with yaspin(text='', color='cyan') as sp:
 
-        if os.path.exists(f'{self.basedir}/user_data/strategies/MoniGoManiHyperStrategy.py') is False:
-            self.logger.warning('🤷♂️ No "MoniGoManiHyperStrategy.py" file found.')
-            return False
+            if self._mgm_config_json_exists() is False:
+                sp.red.write('🤷 No "mgm-config.json" file found.')
+                self.logger.warning('🤷 No "mgm-config.json" file found.')
+                return False
 
-        self.logger.debug('👉 MoniGoManiHyperStrategy and configuration found √')
+            if self._mgm_hyperstrategy_file_exists() is False:
+                sp.red.write('🤷 No "MoniGoManiHyperStrategy.py" file found.')
+                self.logger.warning('🤷 No "MoniGoManiHyperStrategy.py" file found.')
+                return False
+
+            sp.green.ok('✔ MoniGoManiHyperStrategy and configuration found')
+
+
+        self.logger.debug('MoniGoManiHyperStrategy and configuration found √')
+
         return True
 
-    def create_config_files(self, target_dir: str) -> bool:
+    def _mgm_config_json_exists(self) -> bool:
+        return os.path.exists('{0}/user_data/mgm-config.json'.format(self.basedir))
+
+    def _mgm_hyperstrategy_file_exists(self) -> bool:
+        return os.path.exists('{0}/user_data/strategies/MoniGoManiHyperStrategy.py'.format(self.basedir))
+
+    def download_setup_mgm(self, branch: str = 'develop', target_dir: str = None):
         """
-        Copy example files as def files.
+        Install Freqtrade using a git clone to target_dir.
 
-        :param target_dir: (string) The target dir where the "mgm-config.example.json" exists.
-        :return success: (bool) True if files are created, false if something failed.
-        Todo: Check if the example files exist
+        :param branch (str): Checkout a specific branch. Defaults to 'develop'.
+        :param target_dir (str): Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         """
-        if os.path.exists(f'{target_dir}/user_data/mgm-config.json') is False:
-            shutil.copyfile(f'{target_dir}/user_data/mgm-config.example.json',
-                            f'{target_dir}/user_data/mgm-config.json')
+        with tempfile.TemporaryDirectory() as temp_dirname:
+            with yaspin(text='👉  Downloading MoniGoMani repository', color='cyan') as sp:
+                repo = Repo.clone_from(GIT_URL_MONIGOMANI, temp_dirname, branch=branch)
 
-        if os.path.exists(f'{target_dir}/user_data/mgm-config-private.json') is False:
-            shutil.copyfile(f'{target_dir}/user_data/mgm-config-private.example.json',
-                            f'{target_dir}/user_data/mgm-config-private.json')
+            if not isinstance(repo, Repo):
+                sp.red.write('Failed to download MoniGoMani repo. I quit!')
+                self.logger.critical('Failed to clone MoniGoMani repo. I quit!')
+                os.sys.exit(1)
 
-        self.logger.info('👉 MoniGoMani config files prepared √')
+            try:
+                sp.write('Copy MoniGoMani to target directory')
+                copytree(f'cp -rf {temp_dirname}/user_data/', f'{target_dir}/user_data/')
+            except Exception:
+                pass
+
+            sp.green.ok('✔ Downloading MoniGoMani completed')
+
+    def apply_best_results(self, strategy: str, config: MoniGoManiConfig = None) -> bool:
+        """
+        Apply HO results to the hyperopt.json file.
+
+        :param strategy (str): The name of the strategy. Is used to determine ho-results file.
+        :param config (MoniGoManiConfig, optional): Use the mgm-config-hyperopt path from config.
+        :return bool: True if ho-results file was successfully applied. False otherwise.
+        """
+        ho_json = '{0}/user_data/strategies/{1}.json'.format(self.basedir, strategy)
+        # TODO use the filename as specified in configuration
+        ho_config = '{0}/user_data/mgm-config-hyperopt.json'.format(self.basedir)
+
+        if os.path.isfile(ho_json) is False:
+            self.logger.error('🤷 Failed applying best results because the results file {} does not exist.'.format(ho_json))
+            return False
+
+        # Apply best results from MoniGoManiHyperStrategy.json to mgm-config-hyperopt.json
+        if strategy == 'MoniGoManiHyperStrategy':
+            copy2(ho_json, ho_config)
+
+        # Cleanup leftover file
+        if os.path.isfile(ho_json) is True:
+            os.remove(ho_json)
+
         return True
 
-    def load_config_files(self) -> dict:
+    def run_command(self, command: str, output_file_name: str = None):
         """
-        Loads & Returns all the MoniGoMani Configuration files including:
-        - mgm-config
-        - mgm-config-private
-        - mgm-config-hyperopt
-        - mgm-config-hurry
+        Execute shell command and log output to mgm logfile.
 
-        :return dict: Dictionary containing all the MoniGoMani Configuration files
+        :param command (str): Shell command to execute, sir!
+        :param output_file_name: (str) Name of the '.log' file.
+            Defaults to 'Results-<Current-DateTime>.log'
+        :return returncode: (int) The returncode of the subprocess
         """
+        if command is None or command == '':
+            self.logger.error('🤷 Please pass a command through. Without command no objective, sir!')
+            sys.exit(1)
 
-        # Load the MGM-Hurry Config file if it exists
-        with open('.hurry', 'r') as yml_file:
-            config = yaml.full_load(yml_file) or {}
-        hurry_config = config['config'] if 'config' in config else None
+        cmd = shlex.split(command)
+        cmd = ' '.join(cmd)
 
-        if hurry_config is None:
-            self.logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
-            sys.exit(0)
+        if output_file_name is not None:
+            output = shell_output(cmd, universal_newlines=True)
+            with open(output_file_name, 'w+') as output_file:
+                output_file.write(output)
+                output_file.close()
 
-        # Start loading the MoniGoMani config files
-        mgm_config_files = {
-            'mgm-config': {},
-            'mgm-config-private': {},
-            'mgm-config-hyperopt': {}
-        }
+            self.logger.debug(output)
+            return 0
 
-        for mgm_config_filename in mgm_config_files:
-            # Check if the MoniGoMani config filename exist in the ".hurry" config file
-            if ('mgm_config_names' not in hurry_config) or \
-                    (mgm_config_filename not in hurry_config['mgm_config_names']):
-                self.logger.error(f'🤷 No "{mgm_config_filename}" filename found in the ".hurry" \
-                                  config file. Please run: mgm-hurry setup')
-                sys.exit(0)
-
-            mgm_config_filepath = f'{self.basedir}/user_data/{hurry_config["mgm_config_names"][mgm_config_filename]}'
-
-            # Check if the mandatory MoniGoMani config files exist
-            if (os.path.isfile(mgm_config_filepath) is False) and \
-                    (mgm_config_filename in ['mgm-config', 'mgm-config-private']):
-                self.logger.error(f'🤷 No "{mgm_config_filename}" file found in the "user_data" \
-                                  directory. Please run: mgm-hurry setup')
-                sys.exit(0)
-
-            elif (os.path.isfile(mgm_config_filepath) is False) and (mgm_config_filename == 'mgm-config-hyperopt'):
-                self.logger.info(f'No "{mgm_config_filename}" file found in the "user_data" directory.')
-
-            # Load the MoniGoMani config file as an object and parse it as a dictionary
-            else:
-                file_object = open(mgm_config_filepath, )
-                json_data = json.load(file_object)
-                mgm_config_files[mgm_config_filename] = json_data
-
-        # Append the previously loaded MGM-Hurry config file
-        mgm_config_files['mgm-config-hurry'] = hurry_config
-
-        return mgm_config_files
+        return shell_call(cmd, shell=True)

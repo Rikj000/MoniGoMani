@@ -1,21 +1,21 @@
 {
-  "exchange": {
-    "pair_whitelist": [
-      "ETH/USDT",
-      "AXS/USDT",
-      "SAND/USDT",
-      "CHZ/USDT",
-      "CHR/USDT",
-      "DOT/USDT",
-      "MATIC/USDT",
-      "ENJ/USDT",
-      "SOL/USDT",
-      "LINK/USDT",
-      "AAVE/USDT",
-      "MANA/USDT",
-      "THETA/USDT",
-      "COMP/USDT",
-      "FIL/USDT"
-    ]
-  }
+    "exchange": {
+        "pair_whitelist": [
+            "BTC/USDT",
+            "ETH/USDT",
+            "ADA/USDT",
+            "XRP/USDT",
+            "DOGE/USDT",
+            "AXS/USDT",
+            "MATIC/USDT",
+            "DOT/USDT",
+            "CHZ/USDT",
+            "FIL/USDT",
+            "LTC/USDT",
+            "ETC/USDT",
+            "WIN/USDT",
+            "LINK/USDT",
+            "DENT/USDT"
+        ]
+    }
 }

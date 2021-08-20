@@ -1,4 +1,5 @@
 #!/user/bin/python3
+# -*- coding: utf-8 -*-
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 import argparse
 import json
@@ -15,7 +16,7 @@ class TotalOverallSignalImportanceCalculator:
     -----------------------------------------------------------------
     First do 1 or 2 HyperOpt Runs and extract your results to a 'mgm-config-hyperopt.json'
 
-    Then execute: 
+    Then execute:
     `python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py` from your favorite terminal / CLI
     to calculate the overall importance of the signals being used. The higher the score of a signal the better!
     """

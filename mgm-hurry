@@ -1,69 +1,70 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # -* vim: syntax=python -*-
+# pylint: disable=W0108
+
+#                                       _
+#                                      | |
+#  _ __ ___    __ _  _ __ ___   ______ | |__   _   _  _ __  _ __  _   _
+# | '_ ` _ \  / _` || '_ ` _ \ |______|| '_ \ | | | || '__|| '__|| | | |
+# | | | | | || (_| || | | | | |        | | | || |_| || |   | |   | |_| |
+# |_| |_| |_| \__, ||_| |_| |_|        |_| |_| \__,_||_|   |_|    \__, |
+#              __/ |                                               __/ |
+#             |___/                                               |___/
+#
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
+
+"""mgm-hurry is a CLI Tool for setting up and managing a Freqtrade instance containing the MoniGoMani Framework & Strategy"""
+
 import glob
 import json
 import os
-import subprocess
 import sys
-import tempfile
+import logging
+
 from datetime import datetime
 from string import Template
 
 import fire
-import yaml
+
 from InquirerPy import prompt
 from InquirerPy.validator import NumberValidator
 from art import tprint
 
 from user_data.mgm_tools.mgm_hurry.FreqtradeCli import FreqtradeCli
-from user_data.mgm_tools.mgm_hurry.LeetLogger import get_logger
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
+from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
+from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
-logger = get_logger()
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
-
 
 class MGMHurry:
     """
     💨 Your command is my objective 💨
 
     CLI Tool for setting up and managing a Freqtrade instance containing the MoniGoMani Framework & Strategy
-    """
 
-    config = []
-    freqtrade_cli = None
+    Attributes:
+        monigomani_config   The monigomani_config object
+        freqtrade_cli       The FreqtradeCli object
+        _logger             The logging function out of MoniGoManiLogger
+    """
+    monigomani_config: MoniGoManiConfig
+    freqtrade_cli: FreqtradeCli
+    _logger: logging
 
     def __init__(self):
         tprint('mgm-hurry')
 
         self._basedir = os.getcwd()
+        self._logger = MoniGoManiLogger(self._basedir).get_logger()
+        self.monigomani_config = MoniGoManiConfig(self._basedir)
 
-        if self.__reload_config() is False:
-            logger.error('⚠️ Failed to load or create ".hurry" config file.')
+        if self.monigomani_config.reload() is False:
+            self._logger.error('⚠️ Failed to load or create ".hurry" config file.')
 
-        self.freqtrade_cli = FreqtradeCli(self._basedir, logger)
-        self.monigomani_cli = MoniGoManiCli(self._basedir, logger)
-
-    def __reload_config(self) -> bool:
-        """
-        Reads configuration from ".hurry" file and stores in self.config attribute.
-        Creates new ".hurry" config file with default values if no ".hurry" config file could be found.
-
-        :return bool: True if ".hurry" config already exists
-        """
-
-        self.config = None
-
-        if os.path.exists('.hurry') is False:
-            # Create bare ".hurry" config file
-            self.__write_config()
-
-        if os.path.exists('.hurry') is True:
-            self.config = self.__read_config()
-
-        return True
+        self.freqtrade_cli = FreqtradeCli(self._basedir)
+        self.monigomani_cli = MoniGoManiCli(self._basedir)
 
     def up(self):  # pylint: disable=invalid-name
         """
@@ -110,7 +111,7 @@ class MGMHurry:
                 'type': 'list',
                 'name': 'start_trading',
                 'message': '💨 Do you want to start trading?',
-                "choices": [
+                'choices': [
                     {
                         'name': 'No',
                         'value': 0
@@ -177,7 +178,7 @@ class MGMHurry:
             else:
                 self.start_trader(True)
         else:
-            logger.info('💨 Executing mgm-hurry up finished.')
+            self._logger.info('💨 Executing mgm-hurry up finished.')
 
     def install_freqtrade(self, branch: str = 'develop', target_dir: str = None):
         """
@@ -186,9 +187,9 @@ class MGMHurry:
         :param branch: (string, optional) Checkout a specific branch. Defaults to 'develop'.
         :param target_dir: (string, optional) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         """
-        logger.info('💨 💨 💨')
-        logger.info('👉 Install Freqtrade')
-        logger.info('💨 💨 💨')
+        self._logger.info('💨 💨 💨')
+        self._logger.info('👉 Install Freqtrade')
+        self._logger.info('💨 💨 💨')
 
         # Checking Freqtrade installation to confirm for overwrite
         if self.freqtrade_cli.installation_exists() is True:
@@ -204,20 +205,18 @@ class MGMHurry:
             result = prompt(questions)
 
             if result.get('proceed') is False:
-                sys.exit(1)
+                self._logger.info('Skipping overwriting Freqtrade installation.')
+                return False
 
         if target_dir is None:
             target_dir = self._basedir
 
-        with tempfile.TemporaryDirectory() as temp_dirname:
-            self.__exec_cmd(f'git clone -b {branch} https://github.com/freqtrade/freqtrade.git {temp_dirname}')
+        self.freqtrade_cli.download_setup_freqtrade(branch, target_dir)
 
-            self.__exec_cmd(f'cp -rf {temp_dirname}/* {target_dir}')
+        self._logger.info('🍺 Freqtrade has been installed. '
+                          'You can now proceed to install MoniGoMani. (Hint: mgm-hurry install_mgm)')
 
-            self.__exec_cmd(f'deactivate; bash {target_dir}/setup.sh --install')
-
-            logger.info('🍺 Freqtrade has been installed. '
-                        'You can now proceed to install MoniGoMani. (Hint: mgm-hurry install_mgm)')
+        return True
 
     def install_mgm(self, branch: str = 'development', target_dir: str = None):
         """
@@ -226,9 +225,9 @@ class MGMHurry:
         :param branch: (string, optional) Checkout a specific branch. Defaults to 'development'.
         :param target_dir: (string, optional) Specify a target_dir to install MoniGoMani. Defaults to os.getcwd().
         """
-        logger.info('💨 💨 💨')
-        logger.info('👉 Install MoniGoMani')
-        logger.info('💨 💨 💨')
+        self._logger.info('💨 💨 💨')
+        self._logger.info('👉 Install MoniGoMani')
+        self._logger.info('💨 💨 💨')
 
         # Checking MoniGoMani installation to confirm for overwrite
         if self.monigomani_cli.installation_exists() is True:
@@ -244,7 +243,11 @@ class MGMHurry:
             result = prompt(questions)
 
             if result.get('proceed') is False:
-                sys.exit(1)
+                self._logger.info('Skipping overwriting MoniGoMani installation.')
+                return False
+
+            # Check if the private config file already exists.
+            cfg_filename = self.monigomani_config.get_config_filename('mgm-config-private')
 
             questions = [
                 {
@@ -252,7 +255,8 @@ class MGMHurry:
                     'message': 'Should I print your "mgm-config-private.json" contents '
                                'so you can copy it over to new installation?',
                     'name': 'print',
-                    'default': False
+                    'default': False,
+                    'when': lambda result: os.path.isfile(cfg_filename)
                 },
                 {
                     'type': 'confirm',
@@ -274,26 +278,19 @@ class MGMHurry:
         if target_dir is None:
             target_dir = self._basedir
 
-        with tempfile.TemporaryDirectory() as temp_dirname:
-            self.__exec_cmd(f'git clone -b {branch} https://github.com/Rikj000/MoniGoMani.git {temp_dirname}')
-
-            self.__exec_cmd(f'cp -rf {temp_dirname}/user_data/* {target_dir}/user_data/')
-
-            self.monigomani_cli.create_config_files(target_dir)
-
-            logger.info(
-                '🍺 MoniGoMani has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)'
-            )
+        self.monigomani_cli.download_setup_mgm(branch, target_dir)
+        self.monigomani_config.create_config_files(self._basedir)
+        self._logger.info('🍺 MoniGoMani has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)')
 
     def setup(self):
         """
         Saves setup data based on your answers
         """
-        logger.info('💨 💨 💨')
-        logger.info('👉 Setup')
-        logger.info('💨 💨 💨')
+        self._logger.info('💨 💨 💨')
+        self._logger.info('👉 Setup')
+        self._logger.info('💨 💨 💨')
 
-        logger.info('🤓 Let\'s answer some questions to make your life easier.')
+        self._logger.info('🤓 Let\'s answer some questions to make your life easier.')
 
         strategies = map(lambda f: os.path.basename(f).replace('.py', ''),
                          glob.glob(f'{self._basedir}/user_data/strategies/*.py'))
@@ -305,10 +302,10 @@ class MGMHurry:
 
         if len(strategies_choices) == 0:
             strat_dir = f'{self._basedir}/user_data/strategies/'
-            logger.error(f'🤷 I could not find any strategy in {strat_dir}. Did you install Freqtrade & MoniGoMani?')
+            self._logger.error(f'🤷 I could not find any strategy in {strat_dir}. Did you install Freqtrade & MoniGoMani?')
             sys.exit(1)
 
-        self.monigomani_cli.create_config_files(self._basedir)
+        self.monigomani_config.create_config_files(self._basedir)
 
         hyperopts = map(lambda f: os.path.basename(f).replace('.py', ''),
                         glob.glob(f'{self._basedir}/user_data/hyperopts/*.py'))
@@ -319,41 +316,41 @@ class MGMHurry:
 
         if len(hyperopts_choices) == 0:
             ho_dir = f'{self._basedir}/user_data/hyperopts/'
-            logger.error(f'🤷 I could not find any hyperopts in {ho_dir}. Did you install Freqtrade & MoniGoMani?')
+            self._logger.error(f'🤷 I could not find any hyperopts in {ho_dir}. Did you install Freqtrade & MoniGoMani?')
             sys.exit(1)
 
-        existing_config = self.__read_config()
+        self.monigomani_config.reload()
 
         questions = [{
             'type': 'list',
             'name': 'install_type',
             'message': 'Which way you want to use Freqtrade?',
             'choices': ['docker', 'source'],
-            'default': existing_config['install_type'] or 'source'
+            'default': self.monigomani_config.get('install_type') or 'source'
         }, {
             'type': 'input',
             'name': 'timerange',
-            'message': 'Please enter the default timerange you want to use',
-            'default': existing_config['timerange'] or '20210501-20210616'
+            'message': 'Please enter the default timerange you want to use:',
+            'default': self.monigomani_config.get('timerange') or '20210501-20210616'
         }, {
             'type': 'list',
             'name': 'ho_strategy',
             'message': 'Which HyperOpt Strategy do you want to use?',
             'choices': strategies_choices,
-            'default': existing_config['hyperopt']['strategy'] or 'MoniGoManiHyperStrategy'
+            'default': self.monigomani_config.get('hyperopt')['strategy'] or 'MoniGoManiHyperStrategy'
         }, {
             'type': 'list',
             'name': 'ho_loss',
             'message': 'Which HyperOpt Loss do you want to use?',
             'choices': hyperopts_choices,
-            'default': existing_config['hyperopt']['loss'] or 'WinRatioAndProfitRatioLoss'
+            'default': self.monigomani_config.get('hyperopt')['loss'] or 'WinRatioAndProfitRatioLoss'
         }, {
             'type': 'checkbox',
             'name': 'ho_spaces',
             'message': 'Which spaces do you want to HyperOpt?',
             'choices': map(
                 lambda x: {'enabled': True, 'name': x['name'], 'value': x['value']}
-                if x['value'] in existing_config["hyperopt"]["spaces"].split(' ')
+                if x['value'] in self.monigomani_config.get('hyperopt')['spaces'].split(' ')
                 else {'enabled': False, 'name': x['name'], 'value': x['value']},
                 [
                     {'enabled': False, 'name': 'default', 'value': 'default'},
@@ -369,13 +366,13 @@ class MGMHurry:
         }, {
             'type': 'input',
             'name': 'ho_quotation',
-            'message': 'Please enter the default quotation you want to use',
-            'default': existing_config['hyperopt']['quote'] or 'USDT'
+            'message': 'Please enter the default quotation you want to use:',
+            'default': self.monigomani_config.get('hyperopt')['quote'] or 'USDT'
         }, {
             'type': 'input',
             'name': 'ho_epochs',
-            'message': 'Please enter the amount of epochs you want to HyperOpt',
-            'default': str(existing_config['hyperopt']['epochs']) or '1000',
+            'message': 'Please enter the amount of epochs you want to HyperOpt:',
+            'default': str(self.monigomani_config.get('hyperopt')['epochs']) or '1000',
             'filter': lambda val: int(val)
         }, {
             'type': 'confirm',
@@ -387,11 +384,11 @@ class MGMHurry:
             'name': 'exchange',
             'message': 'Which exchange do you want to use?',
             'choices': ['binance', 'ftx', 'bittrex'],
-            'when': lambda result: result["proceed_exchange"]
+            'when': lambda result: result['proceed_exchange']
         }, {
             'type': 'password',
             'name': 'api_key',
-            'message': 'Please enter the exchange API key',
+            'message': 'Please enter the exchange API key: ',
             'when': lambda result: result['proceed_exchange']
         }, {
             'type': 'password',
@@ -403,7 +400,7 @@ class MGMHurry:
         answers = prompt(questions=questions)
 
         if answers == {}:
-            sys.exit(0)
+            sys.exit(1)
 
         if answers.get('install_type') == 'source':
             ft_binary = f'source {self._basedir}/.env/bin/activate; freqtrade'
@@ -422,12 +419,16 @@ class MGMHurry:
                     'spaces': answers.get('ho_spaces') or 'default',
                     'quote': answers.get('ho_quotation'),
                     'epochs': answers.get('ho_epochs')
+                },
+                'mgm_config_names': {
+                    'mgm-config': 'mgm-config.json',
+                    'mgm-config-private': 'mgm-config-private.json',
+                    'mgm-config-hyperopt': 'mgm-config-hyperopt.json'
                 }
             }
         }
 
-        self.__write_config(new_config)
-        self.__reload_config()
+        self.monigomani_config.write_hurry_dotfile(new_config)
 
         if answers.get('proceed_exchange') is True:
             cred = {
@@ -436,7 +437,7 @@ class MGMHurry:
                 'api_secret': answers.get('api_secret'),
             }
 
-            self._save_exchange_credentials(cred)
+            self.monigomani_config._save_exchange_credentials(cred)
 
         self.__setup_telegram()
 
@@ -446,27 +447,15 @@ class MGMHurry:
 
         :param strategy: (Optional, string) Name of the Strategy to cleanup, defaults to 'MoniGoManiHyperStrategy'
         """
-        cleaned_up = False
-        logger.info('💨 💨 💨')
-        logger.info('👉 Cleanup')
-        logger.info('💨 💨 💨')
+        self._logger.info('💨 💨 💨')
+        self._logger.info('👉 Cleanup')
+        self._logger.info('💨 💨 💨')
 
-        if strategy == 'MoniGoManiHyperStrategy':
-            mgm_config_hyperopt_path = \
-                f'{self._basedir}/user_data/{self.config["mgm_config_names"]["mgm-config-hyperopt"]}'
-            if os.path.exists(mgm_config_hyperopt_path):
-                logger.info(f'👉 Removing "{self.config["mgm_config_names"]["mgm-config-hyperopt"]}"')
-                os.remove(mgm_config_hyperopt_path)
-                cleaned_up = True
+        # Remove hyperopt files to cleanup
+        cleaned_up = self.monigomani_config.cleanup_hyperopt_files(strategy)
 
-        strategy_config_hyperopt_path = f'{self._basedir}/user_data/strategies/{strategy}.json'
-        if os.path.exists(strategy_config_hyperopt_path):
-            logger.info(f'👉 Removing "{strategy}.json"')
-            os.remove(strategy_config_hyperopt_path)
-            cleaned_up = True
-
-        logger.info(f'🍺 Cleanup successful, {strategy} ready for a fresh HyperOpt Run...') if cleaned_up is True \
-            else logger.info(f'🍺 No Cleanup was needed, {strategy} ready for a fresh HyperOpt Run...')
+        self._logger.info(f'🍺 Cleanup successful, {strategy} ready for a fresh HyperOpt Run...') if cleaned_up is True \
+            else self._logger.info(f'🍺 No Cleanup was needed, {strategy} ready for a fresh HyperOpt Run...')
 
     def download_candle_data(self, timerange: str = None):
         """
@@ -475,18 +464,18 @@ class MGMHurry:
         :param timerange: (string, optional) Timerange from/to in string format (start-end): yyyymmdd-yyyymmdd.
             Defaults to timerange out of ".hurry" config file. -or- for preset timerange: down, side, up
         """
-        logger.info('💨 💨 💨')
-        logger.info('👉 Download candle data')
-        logger.info('💨 💨 💨')
+        self._logger.info('💨 💨 💨')
+        self._logger.info('👉 Download candle data')
+        self._logger.info('💨 💨 💨')
 
-        if self.__reload_config() is False:
-            logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
-            sys.exit(0)
+        if self.monigomani_config.reload() is False:
+            self._logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
+            sys.exit(1)
 
-        timerange = self.__get_preset_timerange(timerange)
+        timerange = self.monigomani_config._get_preset_timerange(timerange)
 
         if self.freqtrade_cli.installation_exists() is False:
-            logger.error('🤷 No Freqtrade installation found. I crash.')
+            self._logger.error('🤷 No Freqtrade installation found. I crash.')
 
         questions = [{
             'type': 'input',
@@ -502,8 +491,8 @@ class MGMHurry:
                 {'name': '3m', 'value': '3m', 'enabled': False},
                 {'name': '5m', 'value': '5m', 'enabled': True},
                 {'name': '15m', 'value': '15m', 'enabled': False},
-                {'name': '30m', 'value': '30m', 'enabled': False},
-                {'name': '1h', 'value': '1h', 'enabled': True},
+                {'name': '30m', 'value': '30m', 'enabled': True},
+                {'name': '1h', 'value': '1h', 'enabled': False},
                 {'name': '2h', 'value': '2h', 'enabled': False},
                 {'name': '4h', 'value': '4h', 'enabled': False},
                 {'name': '6h', 'value': '6h', 'enabled': False},
@@ -530,73 +519,62 @@ class MGMHurry:
         timerange = answers.get('timerange')
         tickers = answers.get('tickers')
 
-        logger.info(
+        self._logger.info(
             f'👉 Downloading candle data ({tickers}) for timerange {timerange}')
 
-        dcd = f'{self.config["ft_binary"]} download-data --timerange {timerange} \
+        dcd = f'{self.monigomani_config.config["ft_binary"]} download-data --timerange {timerange} \
               -t {tickers} -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json'
 
-        self.__exec_cmd(dcd)
+        self._logger.debug(dcd)
 
-        logger.info('🍺 Downloading candle data finished.')
+        self.monigomani_cli.run_command(dcd)
+
+        self._logger.info('🍺 Downloading candle data finished.')
 
     def download_static_pairlist(self):
         """
         Downloads StaticPairList and saves into mgm_pair_lists folder.
 
-        Fixme:
-            * Temporary disabled due to nasty bug
-            && jq 'del(.exchange.pair_whitelist )' ./user_data/mgm-config.json > ./tmp.json && jq -s '.[0] * .[1]'
-                ./tmp.json ./user_data/mgm_pair_lists/$exchange-$hyperopt_quote-Top-Volume-StaticPairList.json >
-                ./user_data/mgm-config.json && rm ./tmp.json && jq '.' ./user_data/mgm-config.json"
-            * Catch errors
+        :return None
         """
-        logger.info('💨 💨 💨')
-        logger.info('👉 Computing Top Volume Static Pairlist')
-        logger.info('💨 💨 💨')
+        self._logger.info('💨 💨 💨')
+        self._logger.info('👉 Download Top Volume Static Pairlist')
+        self._logger.info('💨 💨 💨')
 
-        if self.__reload_config() is False:
-            logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
-            sys.exit(0)
+        if self.monigomani_config.reload() is False:
+            self._logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
+            sys.exit(1)
 
         if self.freqtrade_cli.installation_exists() is False:
-            logger.error('🤷 Whaaaa.. No Freqtrade installation found. Beats me...')
-            sys.exit(0)
+            self._logger.error('🤷 Whaaaa.. No Freqtrade installation found. Beats me...')
+            sys.exit(1)
 
-        target_file = '$basedir/user_data/mgm_pair_lists/$exchange-$hyperopt_quote-Top-Volume-StaticPairList.json'
-        target_file = Template(target_file).substitute(
-            basedir=self._basedir,
-            exchange=self.config['exchange'].title(),
-            hyperopt_quote=self.config['hyperopt']['quote'])
+        # Download and generate a static pairlist
+        self._logger.info('🤖 Generating new static pairlist...')
+        quote = self.monigomani_config.config['hyperopt']['quote']
+        exchange = self.monigomani_config.config['exchange'].title()
+        static_pairlist = self.freqtrade_cli.download_static_pairlist(quote, exchange)
 
-        cmd_str = '$ft_binary test-pairlist -c ./user_data/mgm_tools/$exchange-Retrieve-Top-Volume-StaticPairList.json \
-            --quote $hyperopt_quote --print-json | tail -n 1 | jq ".| $exchange_placeholder" > $target_file'
+        # Save new static pairlist to his own pairlist json file
+        self._logger.info('🤖 Saving fresh static pairlist into mgm_pair_lists/...')
+        with open('{0}/user_data/mgm_pair_lists/{1}-{2}-Top-Volume-StaticPairList.json'.format(self._basedir, exchange, quote), 'w+') as pairlist_file:
+            data_format = {'exchange': {'pair_whitelist': static_pairlist}}
+            json.dump(data_format, pairlist_file, indent=4)
 
-        cmd_str = Template(cmd_str).substitute(
-            ft_binary=self.config['ft_binary'],
-            exchange=self.config['exchange'].title(),
-            hyperopt_quote=self.config['hyperopt']['quote'],
-            exchange_placeholder='{exchange: {pair_whitelist: .}}',
-            target_file=target_file)
+        self._logger.info('🍺 Saving pairlist as whitelist to "mgm-config.json"...')
+        # Overwrite the new static pairlist to the exchange config in mgm-config[exchange][pair_whitelist]
+        mgm_config_file = self.monigomani_config.get_config_filename('mgm-config')
+        with open(mgm_config_file, ) as mgm_config:
+            try:
+                mgm_config_object = json.load(mgm_config)
+            except Exception:
+                mgm_config_object = {'exchange': {'pair_whitelist': []}}
+            mgm_config.close()
 
-        self.__exec_cmd(cmd_str)
-
-        logger.info('🍺 Writing pairlist to "mgm-config.json"...')
-
-        # Copy static pairlist to mgm-config.json as pair whitelist
-        with open(f'{self._basedir}/user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json', ) \
-                as static_pairlist:
-            mgm_config_json = json.load(static_pairlist)
-
-        with open(f'{self._basedir}/user_data/mgm-config.json', ) as mgm_config:
-            mgm_config_data = json.load(mgm_config)
-
-        mgm_config_data['exchange']['pair_whitelist'] = mgm_config_json['exchange']['pair_whitelist']
-
-        with open(f'{self._basedir}/user_data/mgm-config.json', 'w') as target_f:
-            json.dump(mgm_config_data, target_f, indent=4)
-
-        # logger.error('🤷 Something happened on the way to heaven 🌟🤦')
+        with open(mgm_config_file, 'w') as mgm_config:
+            mgm_config_object['exchange']['pair_whitelist'] = static_pairlist
+            json.dump(mgm_config_object, mgm_config, indent=4)
+            mgm_config.close()
 
     def hyperopt(self, timerange: str = None, strategy: str = None, loss: str = None, spaces: str = None,
                  enable_protections: bool = True, random_state: int = None, apply_best_results: bool = True,
@@ -623,18 +601,23 @@ class MGMHurry:
         :param jobs: Amount of parallel workers (CPU cores) to use, gets set automatically by default
         """
 
-        strategy = self.config['hyperopt']['strategy'] if strategy is None else strategy
-        spaces = self.config['hyperopt']['spaces'] if spaces is None else spaces
-        loss = self.config['hyperopt']['loss'] if loss is None else loss
-
         if clean_start is True:
             self.cleanup(strategy)
 
-        logger.info('💨 💨 💨')
-        logger.info('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
-        logger.info('💨 💨 💨')
+        self._logger.info('💨 💨 💨')
+        self._logger.info('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
+        self._logger.info('💨 💨 💨')
 
-        timerange = self.__get_preset_timerange(timerange)
+        timerange = self.monigomani_config._get_preset_timerange(timerange)
+
+        if strategy is None:
+            strategy = self.monigomani_config.config['hyperopt']['strategy']
+
+        if loss is None:
+            loss = self.monigomani_config.config['hyperopt']['loss']
+
+        if spaces is None:
+            spaces = self.monigomani_config.config['hyperopt']['spaces']
 
         cmd = '$ft_binary hyperopt -s $ho_strategy \
               -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json \
@@ -650,26 +633,27 @@ class MGMHurry:
             cmd = f'{cmd.strip()} -j $jobs'
 
         cmd = Template(cmd).substitute(
-            ft_binary=self.config['ft_binary'],
+            ft_binary=self.monigomani_config.config['ft_binary'],
             ho_strategy=strategy,
             ho_loss=loss,
             ho_spaces=spaces,
-            ho_epochs=self.config['hyperopt']['epochs'],
+            ho_epochs=self.monigomani_config.config['hyperopt']['epochs'],
             timerange=timerange,
             random_state=random_state,
             jobs=jobs)
 
+        self._logger.debug(cmd)
+
         if output_file_name is None:
-            output_file_name = f'HyperOptResults-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.log'
-        self.__exec_cmd(cmd, save_output, output_path, output_file_name)
+            # TODO would be responsibility for logger object to determine output filename.
+            output_file_name = '{0}/user_data/hyperopt_results/HyperOptResults-{1}.log'.format(self._basedir, datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
 
-        if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
-            self.__exec_cmd('mv ./user_data/strategies/MoniGoManiHyperStrategy.json '
-                            './user_data/mgm-config-hyperopt.json')
-        else:
-            self.__exec_cmd(f'rm ./user_data/strategies/{strategy}.json')
+        self.monigomani_cli.run_command(cmd, output_file_name)
 
-        logger.info('🍺 HyperOpt run ready... 🥵')
+        if apply_best_results is True:
+            self.monigomani_cli.apply_best_results(strategy)
+
+        self._logger.info('🍺 HyperOpt run ready... 🥵')
 
     def hyperopt_show_results(self, only_best: bool = True, only_profitable: bool = False):
         """
@@ -679,13 +663,15 @@ class MGMHurry:
         :param only_profitable: (bool, Optional); Show only profitable epochs. Defaults to False.
         """
 
-        fthypts = map(os.path.basename, sorted(glob.glob(f'{self._basedir}/user_data/hyperopt_results/*.fthypt'),
-                                               key=os.path.getmtime, reverse=True))
+        fthypts = map(os.path.basename,
+                      sorted(
+                          glob.glob(f'{self._basedir}/user_data/hyperopt_results/*.fthypt'),
+                          key=os.path.getmtime, reverse=True))
 
         dat = list(fthypts)
 
         if len(dat) == 0:
-            logger.warning('Whoops, no hyperopt results could be found.')
+            self._logger.warning('Whoops, no hyperopt results could be found.')
             sys.exit(1)
 
         questions = [
@@ -701,15 +687,15 @@ class MGMHurry:
 
         choice = answers.get('fthypt_file')
 
-        logger.info(f'👉 Showing hyperopt results for: {choice}')
+        self._logger.info(f'👉 Showing hyperopt results for: {choice}')
 
         best = '--best' if only_best is True else ''
         profit = '--profitable' if only_profitable is True else ''
 
-        dcd = f'{self.config["ft_binary"]} hyperopt-list --hyperopt-filename "{choice}" {best} {profit}'
-        logger.debug(dcd)
+        dcd = f'{self.monigomani_config.config["ft_binary"]} hyperopt-list --hyperopt-filename "{choice}" {best} {profit}'
+        self._logger.debug(dcd)
 
-        self.__exec_cmd(dcd)
+        self.monigomani_cli.run_command(dcd)
 
     def hyperopt_show_epoch(self, epoch: int = 0):
         """
@@ -722,17 +708,17 @@ class MGMHurry:
             - Scrap `hyperopt_apply_epoch`
             - Add `--fthypt` (defaults to last known)
         """
-        logger.info('💨 💨 💨')
-        logger.info('👉 Hyperopt show results')
-        logger.info('💨 💨 💨')
+        self._logger.info('💨 💨 💨')
+        self._logger.info('👉 Hyperopt show results')
+        self._logger.info('💨 💨 💨')
 
         if epoch == 0:
-            logger.error('🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_show_epoch --epoch=837')
+            self._logger.error('🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_show_epoch --epoch=837')
             sys.exit(1)
 
-        logger.info('👉 Showing HyperOpt results for epoch # {epoch}')
+        self._logger.info('👉 Showing HyperOpt results for epoch # {epoch}')
 
-        self.__exec_cmd(f'{self.config["ft_binary"]} hyperopt-show -n {epoch}')
+        self.monigomani_cli.run_command(f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch}')
 
     def hyperopt_apply_epoch(self, epoch: int = 0, run: int = 1):
         """
@@ -741,24 +727,24 @@ class MGMHurry:
         :param epoch: (int): The epoch number to apply the results from.
         :param run: (int, Optional): Defaults to 1. Run number of hyperopt. First run has different command than second.
         """
-        logger.info('💨 💨 💨')
-        logger.info('👉 Hyperopt apply epoch')
-        logger.info('💨 💨 💨')
+        self._logger.info('💨 💨 💨')
+        self._logger.info('👉 Hyperopt apply epoch')
+        self._logger.info('💨 💨 💨')
 
         if epoch == 0:
-            logger.error('🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_apply_epoch --epoch=1337')
+            self._logger.error('🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_apply_epoch --epoch=837')
             sys.exit(1)
 
-        logger.info(f'👉 Applying HyperOpt results of epoch # {epoch}')
+        self._logger.info(f'👉 Applying HyperOpt results of epoch # {epoch}')
 
         # View & Apply HyperOpt Results from a trusted <epoch of choice>:
-        self.__exec_cmd(
-            (f'{self.config["ft_binary"]} hyperopt-show -n {epoch} -c ./user_data/mgm-config.json \
-             -c ./user_data/mgm-config-private.json  && \
-             mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json')
+        self.monigomani_cli.run_command(
+            (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} -c ./user_data/mgm-config.json '
+             '-c ./user_data/mgm-config-private.json  && '
+             'mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json')
         )
 
-        logger.info(f'🍺 Hyperopt results of epoch # {epoch} are applied.')
+        self._logger.info(f'🍺 Hyperopt results of epoch # {epoch} are applied.')
 
     def backtest(self, timerange: str = None, enable_protections: bool = True):
         """
@@ -767,26 +753,26 @@ class MGMHurry:
         :param timerange: (string, Optional): The target timerange for backtesting. Defaults to None.
         :param enable_protections: (bool, Optional): Whether or not to enable protections. Defaults to True.
         """
-        logger.info('💨 💨 💨')
-        logger.info('👉 Start backtesting. Lets see how it all turns out!')
-        logger.info('💨 💨 💨')
+        self._logger.info('💨 💨 💨')
+        self._logger.info('👉 Start backtesting. Lets see how it all turns out!')
+        self._logger.info('💨 💨 💨')
 
-        timerange = self.__get_preset_timerange(timerange)
+        timerange = self.monigomani_config._get_preset_timerange(timerange)
 
-        cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json \
-               -c ./user_data/mgm-config-private.json --timerange $timerange')
+        cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json '
+               '-c ./user_data/mgm-config-private.json --timerange $timerange')
 
         if enable_protections is True:
             cmd = f'{cmd} --enable-protections'
 
         cmd = Template(cmd).substitute(
-            ft_binary=self.config['ft_binary'],
-            ho_strategy=self.config['hyperopt']['strategy'],
+            ft_binary=self.monigomani_config.config['ft_binary'],
+            ho_strategy=self.monigomani_config.config['hyperopt']['strategy'],
             timerange=timerange)
 
-        self.__exec_cmd(cmd)
+        self.monigomani_cli.run_command(cmd)
 
-        logger.info('🍺 Backtesting ready... 🤑')
+        self._logger.info('🍺 Backtesting ready... 🤑')
 
     def start_trader(self, dry_run: bool = True):
         """
@@ -794,19 +780,19 @@ class MGMHurry:
 
         :param dry_run: (bool, Optional): Use dry_run mode. Defaults to True
         """
-        logger.info('💨 💨 💨')
-        logger.info('👉 Start trader')
-        logger.info('💨 💨 💨')
+        self._logger.info('💨 💨 💨')
+        self._logger.info('👉 Start trader')
+        self._logger.info('💨 💨 💨')
 
         cmd = (
-            f'{self.config["ft_binary"]} trade -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json \
-            -c ./user_data/mgm-config-hyperopt.json --strategy {self.config["hyperopt"]["strategy"]}'
+            f'{self.monigomani_config.config["ft_binary"]} trade -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json \
+            -c ./user_data/mgm-config-hyperopt.json --strategy {self.monigomani_config.config["hyperopt"]["strategy"]}'
         )
 
         if dry_run is True:
             cmd = f'{cmd} --dry-run'
 
-        self.__exec_cmd(cmd)
+        self.monigomani_cli.run_command(cmd)
 
     def __setup_telegram(self) -> bool:
         """
@@ -823,7 +809,7 @@ class MGMHurry:
             },
             {
                 'type': 'confirm',
-                "message": 'Do you want to enable the Telegram Bot?',
+                'message': 'Do you want to enable the Telegram Bot?',
                 'name': 'enable_telegram',
                 'default': True,
                 'when': lambda result: result['proceed_telegram']
@@ -856,329 +842,9 @@ class MGMHurry:
                 'telegram_chat_id': answers.get('telegram_chat_id')
             }
 
-            self._save_telegram_credentials(opt)
+            self.monigomani_config._save_telegram_credentials(opt)
 
         return True
-
-    def _save_exchange_credentials(self, cred: dict):
-        """
-        Save exchange credentials to "mgm-config-private.json"
-
-        :param cred: (dict) - List containing values for [exchange,api_key,api_secret]
-        """
-        if len(cred) == 0:
-            logger.warning(
-                'Did not write exchange credentials to "mgm-config-private.json" because no data was passed.')
-            return False
-
-        with open(self._basedir + '/user_data/mgm-config-private.json', ) as file:
-            data = json.load(file)
-
-        data['exchange'] = {
-            'name': cred['exchange'],
-            'key': cred['api_key'],
-            'secret': cred['api_secret']
-        }
-
-        with open(f'{self._basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
-            json.dump(data, outfile, indent=4)
-
-        logger.info('🍺 Exchange settings written to "mgm-config-private.json"')
-
-    def _save_telegram_credentials(self, opt: dict):
-        """
-        Save Telegram bot settings
-
-        :param opt: (dict): list containing values for [enable_telegram,telegram_token,telegram_chat_id]
-        """
-        if len(opt) == 0:
-            logger.warning(
-                'Did not write telegram credentials to "mgm-config-private.json" because no data was passed.')
-            return False
-
-        with open(f'{self._basedir}/user_data/mgm-config-private.json', ) as file:
-            data = json.load(file)
-
-        data['telegram'] = {
-            'enabled': opt['enable_telegram'],
-            'token': opt['telegram_token'],
-            'chat_id': opt['telegram_chat_id']
-        }
-
-        with open(f'{self._basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
-            json.dump(data, outfile, indent=4)
-
-        logger.info('🍺 Telegram bot settings written to "mgm-config-private.json"')
-
-    def __get_preset_timerange(self, timerange: str) -> str:
-        """
-        Parses given timerange-string into according timerange dates
-
-        :param timerange: (str) The timerange-string to parse [up, down, side]
-        :return str: The parsed timerange string in yyyymmdd-yyyymmdd format
-        """
-
-        tr_input = timerange
-
-        if timerange is None:
-            timerange = self.config['timerange']
-        if timerange == 'down':
-            timerange = '20210509-20210524'
-        if timerange == 'side':
-            timerange = '20210518-20210610'
-        if timerange == 'up':
-            timerange = '20210127-20210221'
-
-        tr_output = timerange
-
-        logger.info(f'☀️ Timerange string parsed from "{tr_input}" to "{tr_output}"')
-
-        return timerange
-
-    @staticmethod
-    def filter_line(line: str) -> bool:
-        """
-        Checks if line needs to be filtered out.
-
-        :param line: Line to check if it needs to be filtered out
-        :return bool: True if line needs to be filtered out. False if it's allowed to be printed out
-        """
-
-        ignored_lines = {
-            'INFO - Verbosity set to',
-            'INFO - Using user-data directory:',
-            'INFO - Using data directory:',
-            'INFO - Parameter -j/--job-workers detected:',
-            'INFO - Parameter --random-state detected:',
-            'INFO - Checking exchange...',
-            'INFO - Exchange "',
-            'INFO - Using pairlist from configuration.',
-            'INFO - Validating configuration ...',
-            'INFO - Starting freqtrade in',
-            'INFO - Lock',
-            'INFO - Instance is running with',
-            'INFO - Using CCXT',
-            'INFO - Applying additional ccxt config:',
-            'INFO - Using Exchange',
-            'INFO - Using resolved exchange',
-            'INFO - Found no parameter file.',
-            'INFO - Strategy using order_types:',
-            'INFO - Strategy using order_time_in_force:',
-            'INFO - Strategy using stake_currency:',
-            'INFO - Strategy using stake_amount:',
-            'INFO - Strategy using protections:',
-            'INFO - Strategy using unfilledtimeout:',
-            'INFO - Strategy using use_sell_signal:',
-            'INFO - Strategy using sell_profit_only:',
-            'INFO - Strategy using ignore_roi_if_buy_signal:',
-            'INFO - Strategy using sell_profit_offset:',
-            'INFO - Strategy using disable_dataframe_checks:',
-            'INFO - Using resolved pairlist StaticPairList from',
-            'INFO - Using resolved hyperoptloss',
-            'INFO - Removing `',
-            'INFO - Using indicator startup period:',
-            'INFO - Note: NumExpr detected',
-            'INFO - NumExpr defaulting to',
-            'INFO - Dataload complete. Calculating indicators',
-            'INFO - Found',
-            'INFO - Number of parallel jobs set as:',
-            'INFO - Effective number of parallel workers used:',
-            'user_data.mgm_tools.mgm_hurry.LeetLogger['
-        }
-
-        matches = '\n'.join(ignored_line for ignored_line in ignored_lines if ignored_line.lower() in line.lower())
-        if len(matches) > 0:
-            return True
-
-        return False
-
-    @staticmethod
-    def modify_line(line: str) -> str:
-        """
-        Modifies passed line if needed
-
-        :param line: Line to check if it needs to be modified
-        :return str: Returns modified string
-        """
-
-        # Remove weird unicode characters
-        remove_substrings = {'[32m', '[39m'}
-
-        for remove_substring in remove_substrings:
-            if remove_substring in line:
-                line = line.replace(remove_substring, '')
-
-        # Add in newline pre/suf-fixes where needed
-        prefix_newlines = {'Avg profit', 'Median profit', 'Total profit', 'Avg duration', 'Objective'}
-        if 'Wins/Draws/Losses. Avg profit' in line:
-            line = line.replace(':', ':\n', 1)
-
-            for prefix_newline in prefix_newlines:
-                if prefix_newline in line:
-                    line = line.replace(prefix_newline, f'\n     {prefix_newline}')
-
-            if 'trades. ' in line:
-                line = line.replace('trades. ', f'trades. \n     ')
-
-        prefix_other_newlines = {'Elapsed Time:', 'Best result:', '# Buy hyperspace params:',
-                                 '# Sell hyperspace params:', '# ROI table:', '# Stoploss:', '# Trailing stop:'}
-
-        for prefix_other_newline in prefix_other_newlines:
-            if prefix_other_newline in line:
-                line = line.replace(line, f'\n{line}')
-                line = line[1: len(line)]
-
-        if ' (100%)] ||       | [Time:  ' in line:
-            line = line[line.index(', ') + 2: len(line)].replace(']', '')
-            line = line.replace(line, f'\n{line}')
-
-        return line
-
-    @staticmethod
-    def store_hyperopt_results(hyperopt_results: list, line: str) -> dict:
-        """
-        Filters out and stores HyperOpt Results line
-
-        :param hyperopt_results: List to which the HyperOpt Result will be appended
-        :param line: String to check if it needs to be appended to the hyperopt_results
-        :return dict: Response dictionary containing:
-            - 'hyperopt_results': The updated hyperopt_results list
-            - 'results_updated': Boolean stating if the results got updated or not
-        """
-
-        response = {
-            'hyperopt_results': hyperopt_results,
-            'results_updated': False
-        }
-
-        for hyperopt_results_detector in {'+-----------+', '|   Best |'}:
-            if hyperopt_results_detector in line:
-                response['hyperopt_results'].append(line)
-                response['results_updated'] = True
-
-        return response
-
-    def __exec_cmd(self, cmd: str, save_output: bool = False,
-                   output_path: str = None, output_file_name: str = None) -> int:
-        """
-        Executes shell command and logs output as debug output.
-
-        :param cmd: (str) The command, sir
-        :param save_output: (bool) Save the output to a '.log' file. Defaults to False
-        :param output_path: (str) Path to the output of the '.log' file.
-            Defaults to 'Some Test Results/MoniGoMani_version_number/'
-        :param output_file_name: (str) Name of the '.log' file. Defaults to 'Results-<Current-DateTime>.log'
-        :return returncode: (int) The returncode of the subprocess
-        """
-
-        if cmd is None or cmd == '':
-            logger.error('🤷 Please pass a command through. Without command no objective, sir!')
-            sys.exit(1)
-
-        return_code = 1
-
-        if save_output is True:
-            if output_path is None:
-                output_path = f'{self._basedir}/Some Test Results/'
-                if not os.path.isdir(output_path):
-                    os.mkdir(output_path)
-
-                mgm_config_files = self.monigomani_cli.load_config_files()
-                output_path = f'{output_path}{mgm_config_files["mgm-config-private"]["bot_name"]}/'
-
-            if output_file_name is None:
-                output_file_name = f'MGM-Hurry-Command-Results-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.log'
-
-            if not os.path.isdir(output_path):
-                os.mkdir(output_path)
-
-            output_file = open(output_path + output_file_name, 'w')
-
-        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT, encoding='utf-8')
-
-        hyperopt_results = []
-
-        for line in process.stdout:
-            # Split off the Datetime + Code Sections if needed to keep things clean
-            if line.count(' - ') >= 3:
-                second_splitter = line.find(' - ', line.find(' - ') + 1) + 3
-                final_line = line[second_splitter:len(line)]
-            else:
-                final_line = line
-
-            # Filter out unwanted - unneeded - double lines
-            if self.filter_line(final_line) is False:
-                # Modify line output to MoniGoMani's preferred format
-                final_line = self.modify_line(final_line)
-
-                # Save the output to a '.log' file if enabled
-                if (save_output is True) and ('| [ETA:' not in final_line):
-                    output_file.write(final_line)
-
-            # Check if a new HyperOpt Results line is found, store it in RAM and re-print the whole HyperOpt Table if so
-            response = self.store_hyperopt_results(hyperopt_results, final_line)
-            if (response['results_updated'] is True) or \
-                    ('| [ETA:' not in final_line) and ('Elapsed Time:' in final_line):
-                hyperopt_results = response['hyperopt_results']
-                # Skip the initial header
-                if len(hyperopt_results) > 3:
-                    for hyperopt_results_line in hyperopt_results:
-                        sys.stdout.write(hyperopt_results_line)
-                if ('| [ETA:' not in final_line) and ('Elapsed Time:' in final_line):
-                    sys.stdout.write(final_line)
-            else:
-                sys.stdout.write(final_line)
-
-        process.wait()
-
-        return return_code
-
-    def __read_config(self):
-        """
-        Reads config values out of ".hurry" config file.
-
-        :return config (dict) Dictionary containing all config key/value pairs. Or returns None.
-        """
-        with open('.hurry', 'r') as yml_file:
-            config = yaml.full_load(yml_file) or {}
-
-        if 'config' in config:
-            return config['config']
-
-        # Something happened on the way to heaven. Let's fix it to create a default ".hurry" config file
-        self.__write_config()
-        return None
-
-    def __write_config(self, config: dict = None):
-        """
-        Write config-array to ".hurry" config file.
-        Writes the passed config dictionary or if nothing passed, it will write default values.
-
-        :param config: (dict, Optional) The config values to store. Defaults to None.
-        """
-        if config is None:
-            config = {
-                'config': {
-                    'install_type': 'docker',
-                    'timerange': '20210501-20210616',
-                    'exchange': 'binance',
-                    'hyperopt': {
-                        'strategy': 'MoniGoManiHyperStrategy',
-                        'loss': 'WinRatioAndProfitRatioLoss',
-                        'spaces': 'buy sell',
-                        'quote': 'USDT',
-                        'epochs': 1000
-                    }
-                }
-            }
-
-        with open('.hurry', 'w+') as file:
-            yaml.dump(config, file)
-
-        self.__reload_config()
-
-        logger.info('🍺 Configuration data written to ".hurry" file')
 
 
 if __name__ == '__main__':

@@ -20,7 +20,10 @@
     </a>
 </p>
 
+
 ## ⚠️ Disclaimer
+---
+
  - This Framework & Strategy are still experimental and under heavy development. It is not recommended running it live at this moment.
  - Always make sure to understand & test your MoniGoMani configuration until you trust it, before even thinking about going live!
  - I am in no way responsible for your live results! You are always responsible for your own MoniGoMani configuration!
@@ -34,13 +37,13 @@
 </p>
 
 MGM-Hurry is a command line tool to speedup & simplify the setup & usage of [Freqtrade](https://www.freqtrade.io/en/stable/) in combination with the [MoniGoMani](https://github.com/Rikj000/MoniGoMani) FrameWork & Strategy.
-Setting it all up requires some knowledge of the entire process, until you found MGM-Hurry 💨.
-You will get up and HyperOpting (or Dry/Live Running) in no time!
+Setting it all up requires some knowledge of the entire process, until you found MGM-Hurry! 💨
 
 
 ## Table of Contents
-- [⚠️ Disclaimer](#️-disclaimer)
-- [Table of Contents](#table-of-contents)
+---
+
+- [Installation instructions](#installation-instructions)
 - [`mgm-hurry` Command Usage](#mgm-hurry-command-usage)
   - [`mgm-hurry --help`](#mgm-hurry---help)
   - [`mgm-hurry up`](#mgm-hurry-up)
@@ -61,14 +64,34 @@ You will get up and HyperOpting (or Dry/Live Running) in no time!
     - [Options](#options-5)
   - [`mgm-hurry start_trader`](#mgm-hurry-start_trader)
     - [Option](#option)
-- [Examples](#examples)
-  - [Timerange examples](#timerange-examples)
+- [Example timeranges](#example-timeranges)
 - [Developer Notes](#developer-notes)
-    - [`pydoc` generation](#pydoc-generation)
-    - [`yapf` formatting](#yapf-formatting)
+    - [Virtual Environment](#Virtual-Environment)
+    - [Continuous Integration](#Continuous-Integration)
+    - [Module headers](#Module-headers)
 
+## Installation instructions
+---
+- **ToDo:** *Move Installation instructions to `Docs-VeryQuickStart.md`*
+- **Note:** *Assumes Python 3.8+, Pip & Git are already installed on your system!*
+
+MoniGoMani provides an all-in-one setup tool. It will guide you through the entire installation procedure. Not only for MoniGoMani, but Freqtrade also. You want the entire package, right? You will be up & HyperOpting (or Dry/Live Running) in no time! 🤙
+
+To run the `installer.sh`, just run the following command:
+```powershell
+sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
+```
+
+After installation all you need to do to get started is run:
+
+```powershell
+cd ./freqtrade-mgm
+python3 mgm-hurry up
+```
 
 ## `mgm-hurry` Command Usage
+---
+
 ⚠️ A [shell alias](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-VeryQuickStart.md#pro-tip) has been configured for these shorter example commands.
 If you haven't done that optional step then you will need to prefix all your commands with `python3`!
 
@@ -169,6 +192,7 @@ Runs HyperOpt process to find out the most positive settings.
 
 
 ### `mgm-hurry hyperopt_show_results`
+- **ToDo:** *Scrap with [issue 105](https://github.com/Rikj000/MoniGoMani/issues/105)*
 Launches a prompt to easily choose a certain `.fthypt` file to print epochs from.
 #### Options
 - **`--only_best`:** *(Optional)* Show only best epochs.
@@ -178,6 +202,7 @@ Launches a prompt to easily choose a certain `.fthypt` file to print epochs from
 
 
 ### `mgm-hurry hyperopt_show_epoch`
+- **ToDo:** *Re-write with [issue 105](https://github.com/Rikj000/MoniGoMani/issues/105)*
 Prints & applies the HyperOpt Results for an epoch of choice.
 
 #### Options
@@ -196,74 +221,76 @@ Start the trader. Your ultimate goal!
   - **Defaults to:** `True`. Provide `False` to run in Live-Run mode.
 
 
-## Examples
-```powershell
-$ mgm-hurry up
-                                     _                               
- _ __ ___    __ _  _ __ ___         | |__   _   _  _ __  _ __  _   _ 
-| '_ ` _ \  / _` || '_ ` _ \  _____ | '_ \ | | | || '__|| '__|| | | |
-| | | | | || (_| || | | | | ||_____|| | | || |_| || |   | |   | |_| |
-|_| |_| |_| \__, ||_| |_| |_|       |_| |_| \__,_||_|   |_|    \__, |
-            |___/                                              |___/ 
+## Example timeranges
+---
+Here are some examples of timeranges for each different market type (bearish, bullish etc).
 
-1970-01-01 13:37:00 __main__[7594] DEBUG 👉 Freqtrade binary: `source ./.env/bin/activate; freqtrade`
-1970-01-01 13:37:00 __main__[7594] WARNING 🤷‍♂️ No MoniGoMani installation found.
-? 💨 Do you want to install Freqtrade? Yes
-? 💨 Do you want to install MoniGoMani? Yes
-? 💨 Do you want to configure it now? Yes
-? 💨 Do you want to download candle data now? Yes
-? 💨 Do you want to generate a static pairlist now? Yes
-? 💨 Do you want to hyperopt now? Yes
-? 💨 Do you want to backtest now? Yes
-? 💨 Do you want to start trading? No
-...
-```
-
-```powershell
-$ mgm-hurry setup
-                                     _                               
- _ __ ___    __ _  _ __ ___         | |__   _   _  _ __  _ __  _   _ 
-| '_ ` _ \  / _` || '_ ` _ \  _____ | '_ \ | | | || '__|| '__|| | | |
-| | | | | || (_| || | | | | ||_____|| | | || |_| || |   | |   | |_| |
-|_| |_| |_| \__, ||_| |_| |_|       |_| |_| \__,_||_|   |_|    \__, |
-            |___/                                              |___/ 
-
-1970-01-01 13:37:00 __main__[6466] DEBUG 👉 Freqtrade binary: `source ./.env/bin/activate; freqtrade`
-1970-01-01 13:37:00 __main__[6466] DEBUG 👉 MoniGoMani strategy and config found √
-1970-01-01 13:37:00 __main__[6466] INFO 💨 💨 💨
-1970-01-01 13:37:00 __main__[6466] INFO 👉 Setup
-1970-01-01 13:37:00 __main__[6466] INFO 💨 💨 💨
-1970-01-01 13:37:00 __main__[6466] INFO 🤓 Let's answer some questions to make your life easier.
-? Which way you want to use Freqtrade? source
-? Please enter the default timerange you want to use 20210127-20210221
-? Which HyperOpt Strategy do you want to use? MoniGoManiHyperStrategy
-? Which HyperOpt Loss do you want to use? WinRatioAndProfitRatioLoss
-? Which spaces do you want to HyperOpt? ['buy', 'sell']
-? Please enter the default quotation you want to use USDT
-? Please enter the amount of epochs you want to HyperOpt 75
-? Do you want to also setup your exchange? No
-1970-01-01 13:37:00 __main__[6466] INFO 🍺 Configuration data written to .hurry file
-? Do you want to also setup your Telegram bot?  No
-...
-```
-
-### Timerange examples
-| Trend      | Timerange           |
-| ---------- | ------------------- |
-| Down-trend | `20210509-20210524` |
-| Up-trend   | `20210127-20210221` |
-| Side-trend | `20210518-20210610` |
-| Final      | `20210425-20210610` |
+|Trend    |Timerange            |
+|-------- |-------------------- |
+|Downtrend| `20210509-20210524` |
+|Uptrend  | `20210127-20210221` |
+|Sidetrend| `20210518-20210610` |
+|Final    | `20210425-20210610` |
 
 ## Developer Notes
-#### `pydoc` generation
+
+
+### Virtual Environment
+---
+
+It's adviced to use an isolated environment for this project. (Probably each project)
+Using `pipenv` makes this super easy.
+
 ```powershell
-python3 -m pydoc -w ./mgm-hurry
+brew install pipenv
 ```
 
-#### `yapf` formatting
+>Install pip packages from Pipfile in isolated environment
+
 ```powershell
-yapf mgm-hurry --diff
-yapf mgm-hurry > mgm-hurry.diff
-yapf -i mgm-hurry
+pipenv install -d  # -d to install dev dependencies also
 ```
+
+>Execute commands in the environment is as easy as `pipenv run <your command>`
+
+### Continuous Integration
+---
+
+We use GitHub Actions online (and `pre-commit` local) to run CI procedures after each push and PR. It runs code styling checks and unit tests. To run these checks on your machine it is adviced to use `pre-commit`.
+
+
+> Install `pre-commit` tool
+Installing a git pre-commit hook as configured in `.pre-commit-config.yaml`
+
+```powershell
+brew install pre-commit
+```
+*Note; this example uses [Homebrew](https://brew.sh/) to install `pre-commit` but you are free to use your preferred package manager.*
+
+> Install the pre-commit script.
+```powershell
+pipenv run pre-commit install
+```
+
+> Run pre-commit only on files in current changeset.
+```powershell
+pipenv run pre-commit run
+```
+
+> Run pre-commit on all files in the repo.
+```powershell
+pipenv run pre-commit run -a
+```
+
+### Module headers
+---
+
+To generate a module header (ascii art), you need to run the following command:
+
+```powershell
+$ python3
+$ from art import tprint
+$ tprint("Whatever you want")
+```
+
+Copy and paste the ASCII art output 🍻
