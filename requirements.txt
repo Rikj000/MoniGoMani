@@ -23,4 +23,5 @@ smmap==4.0.0
 tenacity==8.0.1
 termcolor==1.1.0
 wcwidth==0.2.5
+wheel==0.37.0
 yaspin==2.0.0
