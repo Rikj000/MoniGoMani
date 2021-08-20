@@ -79,7 +79,7 @@ MoniGoMani provides an all-in-one setup tool. It will guide you through the enti
 
 To run the `installer.sh`, just run the following command:
 ```powershell
-sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/feature/optimizations/installer.sh")
+sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
 ```
 
 After installation all you need to do to get started is run:
