@@ -60,11 +60,11 @@ INSTALL_DIR="./freqtrade-mgm"
 
 FREQTRADE_REPO_URL="https://github.com/freqtrade/freqtrade.git"
 FREQTRADE_BRANCH="develop"
-FREQTRADE_COMMIT=""
+FREQTRADE_COMMIT="3503fdb4"
 
 MGM_REPO_URL="https://github.com/Rikj000/MoniGoMani.git"
 MGM_BRANCH="development"
-MGM_COMMIT="3503fdb4"
+MGM_COMMIT=""
 
 CWD=`pwd`
 
