@@ -601,6 +601,9 @@ class MGMHurry:
         :param jobs: Amount of parallel workers (CPU cores) to use, gets set automatically by default
         """
 
+        if strategy is None:
+            strategy = self.monigomani_config.config['hyperopt']['strategy']
+
         if clean_start is True:
             self.cleanup(strategy)
 
@@ -609,9 +612,6 @@ class MGMHurry:
         self._logger.info('💨 💨 💨')
 
         timerange = self.monigomani_config._get_preset_timerange(timerange)
-
-        if strategy is None:
-            strategy = self.monigomani_config.config['hyperopt']['strategy']
 
         if loss is None:
             loss = self.monigomani_config.config['hyperopt']['loss']
