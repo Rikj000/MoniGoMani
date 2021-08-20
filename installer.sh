@@ -22,7 +22,7 @@
 #######################################################
 #
 # Usage
-#   sh <(curl -s "https://raw.githubusercontent.com/topscoder/MoniGoMani/feature/optimizations/installer.sh")
+#   sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
 #
 ######################################################
 
@@ -62,9 +62,9 @@ FREQTRADE_REPO_URL="https://github.com/freqtrade/freqtrade.git"
 FREQTRADE_BRANCH="develop"
 FREQTRADE_COMMIT=""
 
-MGM_REPO_URL="https://github.com/topscoder/MoniGoMani.git"
-MGM_BRANCH="feature/optimizations"
-MGM_COMMIT=""
+MGM_REPO_URL="https://github.com/Rikj000/MoniGoMani.git"
+MGM_BRANCH="development"
+MGM_COMMIT="3503fdb4"
 
 CWD=`pwd`
 
