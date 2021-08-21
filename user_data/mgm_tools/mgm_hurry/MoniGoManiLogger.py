@@ -210,7 +210,8 @@ class MoniGoManiLogger:
         """
         self.basedir = basedir
         self.output_path = '{0}/user_data/logs/'.format(self.basedir)
-        self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
+        self.date_format = '%d-%m-%Y-%H-%M-%S'
+        self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime(self.date_format))
 
         self._setup_logging()
 
@@ -220,9 +221,9 @@ class MoniGoManiLogger:
         """
 
         logging_file_debug = os.path.join(self.output_path, 'MGM-Hurry-Command-Debug-{0}.log'
-                                          .format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S')))
+                                          .format(datetime.now().strftime(self.date_format)))
         logging_file_error = os.path.join(self.output_path, 'MGM-Hurry-Command-Error-{0}.log'
-                                          .format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S')))
+                                          .format(datetime.now().strftime(self.date_format)))
 
         # Here is configured how log lines are formatted for each Handler.
         logging.setLoggerClass(MGMLogger)
@@ -252,7 +253,11 @@ class MoniGoManiLogger:
         self.logger = mgm_logger
 
     def get_logger(self) -> logging:
-        """Return the logging object."""
+        """
+        Return the logging object.
+
+        :return logging: Logging object
+        """
         return self.logger
 
     @staticmethod
