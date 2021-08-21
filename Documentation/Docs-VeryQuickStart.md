@@ -47,7 +47,7 @@ Make sure that you have all of the following available on your system before pro
 1) Install the required Python packages
     *(Command may vary a bit depending on your systems version of `python` & `pip`)*
     ```powershell
-    pip3 install -r https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/requirements.txt
+    pip3 install -r https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/requirements-mgm.txt
     ```
 2) Download `mgm-hurry` in the folder where you want to install `MoniGoMani` and/or `Freqtrade`
     ```powershell

@@ -10,9 +10,10 @@ The following is a set of guidelines for contributing to the MoniGoMani Hyper St
 Table of Contents
 -
 
-* [Installation instructions](#installation-instructions)
-* [Using pre-commit hooks](#using-pre-commit-hooks)
-* [GitHub Action Workflows](#github-action-workflows)
+- [Contributing to MoniGoMani Hyper Strategy](#contributing-to-monigomani-hyper-strategy)
+  - [Installation instructions](#installation-instructions)
+  - [Using pre-commit hooks](#using-pre-commit-hooks)
+  - [GitHub Action Workflows](#github-action-workflows)
 
 ---
 
@@ -68,7 +69,7 @@ Fix double quoted strings................................................Failed
 
 Fixing strings in mgm-hurry
 
-Fix requirements.txt.....................................................Passed
+Fix requirements-mgm.txt.................................................Passed
 Check for case conflicts.................................................Passed
 ```
 

@@ -91,7 +91,7 @@ class MoniGoManiCli(object):
 
     def download_setup_mgm(self, branch: str = 'develop', target_dir: str = None):
         """
-        Install Freqtrade using a git clone to target_dir.
+        Install MoniGoMani using a git clone to target_dir.
 
         :param branch: (str) Checkout a specific branch. Defaults to 'develop'.
         :param target_dir: (str) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().

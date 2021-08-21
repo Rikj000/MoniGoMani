@@ -239,13 +239,13 @@ echo -e "${WHITE}  ⚙️  Installing MGM-Hurry...${CLOSE}"
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
 echo ""
 
-cd "$INSTALL_DIR" && pip install -r requirements.txt && python3 ./mgm-hurry up
+cd "$INSTALL_DIR" && pip install -r requirements-mgm.txt && python3 ./mgm-hurry up
 
 echo ""
 echo ""
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
 echo ""
-echo "  🎉  ${CYAN}You are all set! We hope you enjoy your ride.${CLOSE}"
+echo -e "${CYAN}  🎉  You are all set! We hope you enjoy your ride.${CLOSE}"
 echo ""
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
 echo ""
