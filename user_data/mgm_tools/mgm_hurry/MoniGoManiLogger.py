@@ -15,45 +15,50 @@
 #                                                                                |___/  |___/
 #
 
-import os
 import logging
-
-from logging import Formatter, FileHandler
+import os
 from datetime import datetime
+from logging import FileHandler, Formatter
+
 
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
-class mgmConsoleFormatter(Formatter):
+
+class MgmConsoleFormatter(Formatter):
     def __init__(self):
         log_file_format = '[%(levelname)s] - : %(message)s'
-        datefmt = '%F %A %T' # in fact this is not used if no %(asctime)s exists in log_file_format
-        super(mgmConsoleFormatter, self).__init__(log_file_format, datefmt)
+        date_format = '%F %A %T'  # in fact this is not used if no %(asctime)s exists in log_file_format
+        super(MgmConsoleFormatter, self).__init__(log_file_format, date_format)
 
 
-class mgmFileFormatter(Formatter):
+class MgmFileFormatter(Formatter):
     def __init__(self):
         log_file_format = '[%(levelname)s] - %(asctime)s - %(name)s - : %(message)s in %(pathname)s:%(lineno)d'
-        datefmt = '%F %A %T'
-        super(mgmFileFormatter, self).__init__(log_file_format, datefmt)
+        date_format = '%F %A %T'
+        super(MgmFileFormatter, self).__init__(log_file_format, date_format)
 
 
 class MGMLogger(logging.Logger):
 
-    def makeRecord(self, name, level, fn, lno, msg, args, exc_info,
-                   func=None, extra=None, sinfo=None):
+    def makeRecord(self, name, level, fn, lno, msg, args, exc_info, func=None, extra=None, sinfo=None):
         """
-        A factory method which can be overridden in subclasses to create
-        specialized LogRecords.
+        A factory method which can be overridden in SubClasses to create specialized LogRecords.
         """
-        rv = super(MGMLogger, self).makeRecord(name, level, fn, lno, msg, args, exc_info,
-                                                func=None, extra=None, sinfo=None)
+        log_record = super(MGMLogger, self).makeRecord(name, level, fn, lno, msg, args, exc_info,
+                                                       func=None, extra=None, sinfo=None)
 
         # The magic filtering happens right here!
-        rv.__dict__['message'] = self.clean_line(rv.__dict__['message'])
+        log_record.__dict__['message'] = self.clean_line(log_record.__dict__['message'])
 
-        return rv
+        return log_record
 
     def clean_line(self, line: str) -> str:
+        """
+        Scrubs unwanted information out of a given line to match the preferred MoniGoMani format
+
+        :param line: (str) Line to clean up
+        :return str: Cleaned up line
+        """
         # Split off the Datetime + Code Sections if needed to keep things clean
         if line.count(' - ') >= 3:
             second_splitter = line.find(' - ', line.find(' - ') + 1) + 3
@@ -73,7 +78,7 @@ class MGMLogger(logging.Logger):
         """
         Checks if line needs to be filtered out.
 
-        :param line: Line to check if it needs to be filtered out
+        :param line: (str) Line to check if it needs to be filtered out
         :return bool: True if line needs to be filtered out. False if it's allowed to be printed out
         """
 
@@ -130,7 +135,7 @@ class MGMLogger(logging.Logger):
         """
         Modifies passed line if needed
 
-        :param line: Line to check if it needs to be modified
+        :param line: (str) Line to check if it needs to be modified
         :return str: Returns modified string
         """
 
@@ -167,16 +172,19 @@ class MGMLogger(logging.Logger):
 
         return line
 
+
 def singleton(class_):
     instances = {}
-    def getinstance(*args, **kwargs):
+
+    def get_instance(*args, **kwargs):
         if class_ not in instances:
             instances[class_] = class_(*args, **kwargs)
         return instances[class_]
-    return getinstance
+    return get_instance
+
 
 @singleton
-class MoniGoManiLogger():
+class MoniGoManiLogger:
     """
     Let's Log and Roll.
 
@@ -207,11 +215,14 @@ class MoniGoManiLogger():
         self._setup_logging()
 
     def _setup_logging(self):
-        # Use our own Logging setup to log what we want.
-        # And probably more important: how we want it!
+        """
+        Use our own Logging setup to log what we want, and more importantly, how we want it!
+        """
 
-        logging_file_debug = os.path.join(self.output_path, 'MGM-Hurry-Command-Debug-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S')))
-        logging_file_error = os.path.join(self.output_path, 'MGM-Hurry-Command-Error-{0}.log'.format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S')))
+        logging_file_debug = os.path.join(self.output_path, 'MGM-Hurry-Command-Debug-{0}.log'
+                                          .format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S')))
+        logging_file_error = os.path.join(self.output_path, 'MGM-Hurry-Command-Error-{0}.log'
+                                          .format(datetime.now().strftime('%d-%m-%Y-%H-%M-%S')))
 
         # Here is configured how log lines are formatted for each Handler.
         logging.setLoggerClass(MGMLogger)
@@ -222,17 +233,17 @@ class MoniGoManiLogger():
         # How to log to console
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.INFO)
-        console_handler.setFormatter(mgmConsoleFormatter())
+        console_handler.setFormatter(MgmConsoleFormatter())
 
         # How to log to log file (debug)
         exp_file_handler = FileHandler(logging_file_debug, mode='a')
         exp_file_handler.setLevel(logging.DEBUG)
-        exp_file_handler.setFormatter(mgmFileFormatter())
+        exp_file_handler.setFormatter(MgmFileFormatter())
 
         # How to log to log file (error)
         exp_errors_file_handler = FileHandler(logging_file_error, mode='a')
         exp_errors_file_handler.setLevel(logging.WARNING)
-        exp_errors_file_handler.setFormatter(mgmFileFormatter())
+        exp_errors_file_handler.setFormatter(MgmFileFormatter())
 
         mgm_logger.addHandler(console_handler)
         mgm_logger.addHandler(exp_file_handler)
@@ -256,10 +267,7 @@ class MoniGoManiLogger():
             - 'results_updated': Boolean stating if the results got updated or not
         """
 
-        response = {
-            'hyperopt_results': hyperopt_results,
-            'results_updated': False
-        }
+        response = {'hyperopt_results': hyperopt_results, 'results_updated': False}
 
         for hyperopt_results_detector in {'+-----------+', '|   Best |'}:
             if hyperopt_results_detector in line:

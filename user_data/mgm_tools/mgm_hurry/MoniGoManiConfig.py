@@ -14,12 +14,13 @@
 #                                                                                                __/ |
 #                                                                                               |___/
 
-import os
 import json
-import sys
+import os
 import shutil
-import yaml
+import sys
 from operator import xor
+
+import yaml
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
@@ -161,11 +162,7 @@ class MoniGoManiConfig(object):
             - mgm-config-hyperopt
 
         :return dict: Dictionary containing all the MoniGoMani Configuration files in format
-                        {
-                            mgm-config: dict,
-                            mgm-config-private: dict,
-                            mgm-config-hyperopt: dict
-                        }
+            {mgm-config: dict, mgm-config-private: dict, mgm-config-hyperopt: dict}
         """
 
         hurry_config = self.read_hurry_config()
@@ -200,7 +197,7 @@ class MoniGoManiConfig(object):
         """
         Read .hurry configuration dotfile and return its yaml contents as dict.
 
-        :return dict: dictionary containing the config section of .hurry file. None if failed.
+        :return dict: Dictionary containing the config section of .hurry file. None if failed.
         """
         with open('{0}/.hurry'.format(self.basedir), 'r') as yml_file:
             config = yaml.full_load(yml_file) or {}
@@ -213,8 +210,8 @@ class MoniGoManiConfig(object):
         """
         Transforms given cfg_key into the corresponding config filename.
 
-        :param cfg_key: (str) the config name (key) to parse.
-        :return str: the absolute path to the asked config file.
+        :param cfg_key: (str) The config name (key) to parse.
+        :return str: The absolute path to the asked config file.
         """
         hurry_config = self.read_hurry_config()
         return self._get_full_path_for_config_name(hurry_config, cfg_key)
@@ -286,8 +283,7 @@ class MoniGoManiConfig(object):
         - {strategy}.json (intermediate results file)
 
         :param strategy: (str) The strategy used to find the corresponding files. Defaults to 'MoniGoManiHyperStrategy'.
-        :return bool: True if one of these files is cleaned up with success.
-                      False if no file was cleaned up.
+        :return bool: True if one of these files is cleaned up with success. False if no file was cleaned up.
         """
         cleaned_up_cfg = False
         if strategy == 'MoniGoManiHyperStrategy':
@@ -332,7 +328,7 @@ class MoniGoManiConfig(object):
         """
         Save exchange credentials to "mgm-config-private.json"
 
-        :param cred: (dict) - List containing values for [exchange,api_key,api_secret]
+        :param cred: (dict) List containing values for [exchange,api_key,api_secret]
         """
         if len(cred) == 0:
             self.logger.warning('Did not write exchange credentials to "mgm-config-private.json" '
@@ -356,7 +352,7 @@ class MoniGoManiConfig(object):
         """
         Save Telegram bot settings
 
-        :param opt: (dict): list containing values for [enable_telegram,telegram_token,telegram_chat_id]
+        :param opt: (dict) Dictionary containing values for [enable_telegram,telegram_token,telegram_chat_id]
         :return bool: True if json data is written. False otherwise.
         """
         if len(opt) == 0:
