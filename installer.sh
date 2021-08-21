@@ -8,7 +8,7 @@
 #######################################################
 #
 # Requirements
-#  - macOS, Unix distro or a POSIX compliant Windows WSL distro
+#  - Unix distro, macOS, or a POSIX compliant Windows WSL distro
 #    (bash, command, mktemp, pwd, rm, sh, /dev/null)
 #  - Python 3.8+
 #  - Git
@@ -16,13 +16,13 @@
 #
 # Windows Specific Notes
 #   This script uses UNIX command line tools to run.
-#   Please ensure you installed Windows Subsystem for Linux. 
+#   Please ensure you installed Windows Subsystem for Linux.
 #   See: https://aka.ms/wslstore
-# 
+#
 #######################################################
 #
 # Usage
-#   sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
+#   bash <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
 #
 ######################################################
 
@@ -31,11 +31,11 @@ usage() {
 
     cat << EOF
 
-  Usage: 
-    sh installer.sh [options]
+  Usage:
+    bash installer.sh [options]
 
   Example:
-    sh installer.sh --dir="./targetdir" --ft_branch="feature/xyz" --mgm_commit="abcd1337"
+    bash installer.sh --dir="./targetdir" --ft_branch="feature/xyz" --mgm_commit="abcd1337"
 
   Optional options:
     -h, --help                    Show this help.
@@ -51,7 +51,7 @@ usage() {
     --mgm_commit=<commit hash>    Specific commit hash to checkout from Git repository. (note: will skip --mgm_branch if set)
 
 EOF
-    
+
     exit 0
 }
 
@@ -136,9 +136,9 @@ confirm() {
 
     # Loop forever until the user enters a valid response (Y/N or Yes/No).
     while true; do
-        read -r -p "  $_prompt2 
-        
-  " _response        
+        read -r -p "  $_prompt2
+
+  " _response
         case "$_response" in
         [Yy][Ee][Ss]|[Yy]) # Yes or Y (case-insensitive).
             REPLY="0"

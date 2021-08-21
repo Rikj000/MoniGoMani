@@ -77,12 +77,9 @@ Setting it all up requires some knowledge of the entire process, until you found
 
 MoniGoMani provides an all-in-one setup tool. It will guide you through the entire installation procedure. Not only for MoniGoMani, but Freqtrade also. You want the entire package, right? You will be up & HyperOpting (or Dry/Live Running) in no time! 🤙
 
-To run the `installer.sh`, just run the following 2 commands:
+To run the `installer.sh`, just run the following command:
 ```powershell
-# 1) Switch to `bash`
-bash
-# 2) Run the installer
-sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
+bash <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
 ```
 
 After installation all you need to do to get started is run:
