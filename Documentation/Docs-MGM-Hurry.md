@@ -43,8 +43,10 @@ Setting it all up requires some knowledge of the entire process, until you found
 ## Table of Contents
 ---
 
-- [Installation instructions](#installation-instructions)
-- [`mgm-hurry` Command Usage](#mgm-hurry-command-usage)
+- [## ⚠️ Disclaimer](#-️-disclaimer)
+- [## Table of Contents](#-table-of-contents)
+- [## Installation instructions](#-installation-instructions)
+- [## `mgm-hurry` Command Usage](#-mgm-hurry-command-usage)
   - [`mgm-hurry --help`](#mgm-hurry---help)
   - [`mgm-hurry up`](#mgm-hurry-up)
   - [`mgm-hurry install_freqtrade`](#mgm-hurry-install_freqtrade)
@@ -64,11 +66,11 @@ Setting it all up requires some knowledge of the entire process, until you found
     - [Options](#options-5)
   - [`mgm-hurry start_trader`](#mgm-hurry-start_trader)
     - [Option](#option)
-- [Example timeranges](#example-timeranges)
+- [## Example timeranges](#-example-timeranges)
 - [Developer Notes](#developer-notes)
-    - [Virtual Environment](#Virtual-Environment)
-    - [Continuous Integration](#Continuous-Integration)
-    - [Module headers](#Module-headers)
+- [### Virtual Environment](#-virtual-environment)
+- [### Continuous Integration](#-continuous-integration)
+- [### Module headers](#-module-headers)
 
 ## Installation instructions
 ---
@@ -79,7 +81,7 @@ MoniGoMani provides an all-in-one setup tool. It will guide you through the enti
 
 To run the `installer.sh`, just run the following command:
 ```powershell
-bash <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
+/usr/bin/env sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
 ```
 
 After installation all you need to do to get started is run:
