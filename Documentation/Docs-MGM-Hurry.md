@@ -77,8 +77,11 @@ Setting it all up requires some knowledge of the entire process, until you found
 
 MoniGoMani provides an all-in-one setup tool. It will guide you through the entire installation procedure. Not only for MoniGoMani, but Freqtrade also. You want the entire package, right? You will be up & HyperOpting (or Dry/Live Running) in no time! 🤙
 
-To run the `installer.sh`, just run the following command:
+To run the `installer.sh`, just run the following 2 commands:
 ```powershell
+# 1) Switch to `bash`
+bash
+# 2) Run the installer
 sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
 ```
 
@@ -117,18 +120,18 @@ Quick start command, launches an interactive wizard which guides you through the
 ### `mgm-hurry install_freqtrade`
 Individual command to install Freqtrade.
 #### Options
-- **`--branch`:** *(Optional)* Specify the MoniGoMani branch you wish to install 
+- **`--branch`:** *(Optional)* Specify the MoniGoMani branch you wish to install
   - ***Defaults to:** The `develop` branch, can also be `stable` branch for less bleeding edge but generally more stable version*
-- **`--target_dir`:** *(Optional)* Specify where you wish to install Freqtrade 
+- **`--target_dir`:** *(Optional)* Specify where you wish to install Freqtrade
   - ***Defaults to:** The current directory*
 
 
 ### `mgm-hurry install_mgm`
 Individual command to install MoniGoMani.
 #### Options
-- **`--branch`:** *(Optional)* Specify the MoniGoMani branch you wish to install 
+- **`--branch`:** *(Optional)* Specify the MoniGoMani branch you wish to install
   - ***Defaults to:** The `development` branch, can also be `main` branch for less bleeding edge but generally more stable version*
-- **`--target_dir`:** *(Optional)* Specify where you wish to install MoniGoMani 
+- **`--target_dir`:** *(Optional)* Specify where you wish to install MoniGoMani
   - ***Defaults to:** The current directory*
 
 
@@ -153,7 +156,7 @@ Downloads candle data for a given timerange.
 - **`--timerange`:** *(Optional)* Specify the timerange for which you want to download candle data
   - Needs to be of the format `--timerange=yyyymmdd-yyyymmdd` or `--timerange=down/side/up`
   - ***Defaults to:** The `timerange` defined in your `.hurry` file.*
-- **`--timerange`:** *(Optional)* Specify the timerange for which you want to download candle data 
+- **`--timerange`:** *(Optional)* Specify the timerange for which you want to download candle data
   - ***Defaults to:** The `timerange` defined in your `.hurry` file*
 
 
@@ -162,7 +165,7 @@ Downloads candle data for a given timerange.
 Runs HyperOpt process to find out the most positive settings.
 
 #### Options
-- **`--timerange`:** *(Optional)* Specify the timerange upon which you want to HyperOpt 
+- **`--timerange`:** *(Optional)* Specify the timerange upon which you want to HyperOpt
   - Needs to be of the format `--timerange=yyyymmdd-yyyymmdd` or `--timerange=down/side/up`
   - ***Defaults to:** The `timerange` defined in your `.hurry` file.*
 - **`--strategy`:** *(Optional)* Specify the Strategy which you want to HyperOpt
