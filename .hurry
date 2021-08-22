@@ -2,7 +2,7 @@ config:
   exchange: binance
   ft_binary: source ./.env/bin/activate; freqtrade
   hyperopt:
-    epochs: 800
+    epochs: 1000
     loss: WinRatioAndProfitRatioLoss
     quote: USDT
     spaces: buy sell
