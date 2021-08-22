@@ -11,12 +11,12 @@
 # | |\/| | / _ \ | '_ \ | || | __  / _ \ | |\/| | / _` || '_ \ | || |    | || |
 # | |  | || (_) || | | || || |_\ \| (_) || |  | || (_| || | | || || \__/\| || |
 # \_|  |_/ \___/ |_| |_||_| \____/ \___/ \_|  |_/ \__,_||_| |_||_| \____/|_||_|
-
+import glob
 import os
 import shlex
 import sys
 import tempfile
-from shutil import copy2, copytree
+from shutil import copy2
 
 import pygit2
 from pygit2 import Repository, clone_repository
@@ -114,13 +114,70 @@ class MoniGoManiCli(object):
                     self.logger.critical('Failed to clone MoniGoMani repo. I quit!')
                     sys.exit(1)
 
-            try:
-                sp.write('Copy MoniGoMani to target directory')
-                copytree(f'cp -rf {temp_dirname}/user_data/', f'{target_dir}/user_data/')
-            except Exception:
-                pass
+                sp.green.ok('✔')
 
-            sp.green.ok('✔ Downloading MoniGoMani completed')
+            with yaspin(text='👉  Copy MoniGoMani to the monigomani folder in the target directory and '
+                             'symbolic linking files', color='cyan') as sp:
+                try:
+                    if self.copy_and_link_installation_files(temp_dirname, target_dir):
+                        sp.green.ok('✔ Downloading & Installing MoniGoMani completed!')
+                    else:
+                        sp.red.write('😕 MoniGoMani installation failed')
+                        sys.exit(1)
+                except Exception:
+                    sp.red.write('😕 MoniGoMani installation failed')
+                    sys.exit(1)
+
+    def copy_and_link_installation_files(self, temp_dirname: str, target_dir: str) -> bool:
+        """
+        Copy the installation files to the target directory and symbolic link them.
+
+        :param temp_dirname: (str) The source directory where installation files exist.
+        :param target_dir: (str) The target directory where the installation files should be copied to.
+        :return bool: True if copying and symbolic linking was executed successfully, False if failed.
+        """
+        try:
+            mgm_folder = '/monigomani'
+            if not os.path.exists(target_dir + mgm_folder):
+                os.makedirs(target_dir + mgm_folder, exist_ok=True)
+
+            self.run_command('cp -rT {0} {1}'.format(temp_dirname, target_dir + mgm_folder))
+
+            os.remove(f'{target_dir}/docker-compose.yml')
+
+            # Symlink separate files and whole directories
+            symlink_objects = {
+                'Documentation',
+                'Some Test Results',
+                'docker/Dockerfile.MoniGoMani',
+                'user_data/logs/freqtrade.log',
+                'user_data/mgm_pair_lists',
+                'user_data/mgm_tools',
+                'user_data/__init__.py',
+                'docker-compose.yml',
+                'mgm-hurry',
+                'requirements-mgm.txt'
+            }
+
+            for symlink_object in symlink_objects:
+                os.symlink(f'{target_dir + mgm_folder}/{symlink_object}', f'{target_dir}/{symlink_object}')
+            os.symlink(f'{target_dir + mgm_folder}/README.md', f'{target_dir}/README-MGM.md')
+
+            # Symlink all files inside the given directories separately
+            symlink_directory_contents = {
+                'tests',
+                'user_data/hyperopts',
+                'user_data/strategies'
+            }
+
+            for directory in symlink_directory_contents:
+                for symlink_object in glob.glob(f'{target_dir + mgm_folder}/{directory}/*'):
+                    if os.path.isfile(symlink_object):
+                        os.symlink(symlink_object, symlink_object.replace(mgm_folder, ''))
+
+            return True
+        except Exception:
+            return False
 
     def apply_best_results(self, strategy: str, config: MoniGoManiConfig = None) -> bool:
         """
