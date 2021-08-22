@@ -21,8 +21,12 @@
 #
 #   /usr/bin/env sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
 #
-######################################################
-
+# === Settings =========================================================================================================
+INSTALL_FOLDER_NAME="freqtrade-mgm" # By default the folder will be created under the current working directory
+MGM_REPO_URL="https://github.com/Rikj000/MoniGoMani.git"
+MGM_BRANCH="development"
+MGM_COMMIT=""
+# ======================================================================================================================
 
 usage() {
 
@@ -50,18 +54,8 @@ EOF
     exit 0
 }
 
-# Default values
-INSTALL_DIR="./freqtrade-mgm"
-
-FREQTRADE_REPO_URL="https://github.com/freqtrade/freqtrade.git"
-FREQTRADE_BRANCH="develop"
-FREQTRADE_COMMIT="3503fdb4"
-
-MGM_REPO_URL="https://github.com/Rikj000/MoniGoMani.git"
-MGM_BRANCH="development"
-MGM_COMMIT=""
-
-CWD=`pwd`
+CURRENT_DIR=$(pwd)
+INSTALL_DIR="$CURRENT_DIR/$INSTALL_FOLDER_NAME"
 
 # ANSI text coloring
 CYAN='\033[0;36m'
@@ -80,19 +74,6 @@ do
         INSTALL_DIR="${arg#*=}"
         shift
         ;;
-        --ft_url=*)
-        FREQTRADE_REPO_URL="${arg#*=}"
-        shift
-        ;;
-        --ft_branch=*)
-        FREQTRADE_BRANCH="${arg#*=}"
-        shift
-        ;;
-        --ft_commit=*)
-        FREQTRADE_COMMIT="${arg#*=}"
-        shift
-        ;;
-
         --mgm_url=*)
         MGM_REPO_URL="${arg#*=}"
         shift
@@ -244,12 +225,12 @@ echo -e "${WHITE}  ⚙️  Downloading required files...${CLOSE}"
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
 echo ""
 
-git clone -n "$MGM_REPO_URL" "$INSTALL_DIR"
+git clone -n "$MGM_REPO_URL" "$INSTALL_DIR/monigomani"
 
 if [ "$MGM_COMMIT" != "" ]; then
-    cd "$INSTALL_DIR" && git checkout -b "detached_by_installer" "$MGM_COMMIT" && cd "$CWD"
+    cd "$INSTALL_DIR/monigomani" && git checkout -b "detached_by_installer" "$MGM_COMMIT"
 else
-    cd "$INSTALL_DIR" && git checkout "$MGM_BRANCH" && cd "$CWD"
+    cd "$INSTALL_DIR/monigomani" && git checkout "$MGM_BRANCH"
 fi
 
 
@@ -259,7 +240,7 @@ echo -e "${WHITE}  ⚙️  Installing dependency packages...${CLOSE}"
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
 echo ""
 
-cd "$INSTALL_DIR" && pip install -r requirements-mgm.txt && python3 ./mgm-hurry up
+cd "$INSTALL_DIR" && pip3 install -r ./monigomani/requirements-mgm.txt && python3 ./monigomani/mgm-hurry up
 
 echo ""
 echo ""
