@@ -134,7 +134,7 @@ class MoniGoManiConfig(object):
         ]
 
         for example_file in example_files:
-            src_file = target_dir + '/user_data/' + example_file['src']
+            src_file = target_dir + '/monigomani/user_data/' + example_file['src']
 
             if not os.path.isfile(src_file):
                 self.logger.error('❌ Bummer. Cannot find the example file "{0}" '
@@ -243,7 +243,7 @@ class MoniGoManiConfig(object):
         if config is None:
             config = {
                 'config': {
-                    'install_type': 'docker',
+                    'install_type': 'source',
                     'ft_binary': 'freqtrade',
                     'timerange': '20210501-20210616',
                     'exchange': 'binance',
