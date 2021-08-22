@@ -20,6 +20,7 @@ import subprocess
 import sys
 import tempfile
 
+import pygit2
 from pygit2 import Repository, clone_repository
 from yaspin import yaspin
 
@@ -54,7 +55,8 @@ class FreqtradeCli:
     _install_type: str
 
     def __init__(self, basedir: str):
-        """Initialize the Freqtrade binary.
+        """
+        Initialize the Freqtrade binary.
 
         :param basedir: (str) The basedir to be used as our root directory.
         """
@@ -110,7 +112,8 @@ class FreqtradeCli:
         return self.cli_logger
 
     def installation_exists(self) -> bool:
-        """Return true if all is setup correctly.
+        """
+        Return true if all is setup correctly.
 
         :return bool: True if install_type is docker or Freqtrade is found. False otherwise.
         """
@@ -138,17 +141,25 @@ class FreqtradeCli:
 
         return False
 
-    def download_setup_freqtrade(self, branch: str = 'develop', target_dir: str = None) -> bool:
+    def download_setup_freqtrade(self, target_dir: str = None, branch: str = 'develop', commit: str = None) -> bool:
         """
         Install Freqtrade using a git clone to target_dir.
 
-        :param branch: (str) Checkout a specific branch. Defaults to 'develop'.
         :param target_dir: (str) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
+        :param branch: (str) Checkout a specific branch. Defaults to 'develop'.
+        :param commit: (str) Checkout a specific commit. Defaults to None aka latest.
         :return bool: True if setup completed without errors, else False.
         """
+        if target_dir is None:
+            target_dir = os.getcwd()
+
         with tempfile.TemporaryDirectory() as temp_dirname:
-            with yaspin(text='👉  Clone Freqtrade repository', color='cyan') as sp:
+            text = '👉  Clone Freqtrade repository'
+            text = text if commit is None else f'{text} and resetting to commit {commit}'
+            with yaspin(text=text, color='cyan') as sp:
                 repo = clone_repository(GIT_URL_FREQTRADE, temp_dirname, checkout_branch=branch)
+                if commit is not None:
+                    repo.reset(commit, pygit2.GIT_RESET_HARD)
 
                 if not isinstance(repo, Repository):
                     sp.red.write('😕  Failed to clone Freqtrade repo. I quit!')

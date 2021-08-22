@@ -119,10 +119,12 @@ Quick start command, launches an interactive wizard which guides you through the
 ### `mgm-hurry install_freqtrade`
 Individual command to install Freqtrade.
 #### Options
-- **`--branch`:** *(Optional)* Specify the MoniGoMani branch you wish to install
-  - ***Defaults to:** The `develop` branch, can also be `stable` branch for less bleeding edge but generally more stable version*
 - **`--target_dir`:** *(Optional)* Specify where you wish to install Freqtrade
   - ***Defaults to:** The current directory*
+- **`--branch`:** *(Optional)* Specify the Freqtrade branch you wish to install
+  - ***Defaults to:** The `develop` branch, can also be `stable` branch for less bleeding edge but generally more stable version*
+- **`--commit`:** *(Optional)* Specify a specific Freqtrade commit you wish to utilize
+  - ***Defaults to:** The recommended commit for MoniGoMani*
 
 
 ### `mgm-hurry install_mgm`

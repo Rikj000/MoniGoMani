@@ -38,6 +38,7 @@ from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
+
 class MGMHurry:
     """
     💨 Your command is my objective 💨
@@ -180,12 +181,14 @@ class MGMHurry:
         else:
             self._logger.info('💨 Executing mgm-hurry up finished.')
 
-    def install_freqtrade(self, branch: str = 'develop', target_dir: str = None):
+    def install_freqtrade(self, target_dir: str = None, branch: str = 'develop',
+                          commit: str = '3503fdb4ec31be99f433fdce039543e0911964d6'):
         """
         Install Freqtrade the easy way.
 
-        :param branch: (string, optional) Checkout a specific branch. Defaults to 'develop'.
         :param target_dir: (string, optional) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
+        :param branch: (string, optional) Checkout a specific branch. Defaults to 'develop'.
+        :param commit: (str) Checkout a specific commit. Defaults to None aka latest.
         """
         self._logger.info('💨 💨 💨')
         self._logger.info('👉 Install Freqtrade')
@@ -211,7 +214,7 @@ class MGMHurry:
         if target_dir is None:
             target_dir = self._basedir
 
-        self.freqtrade_cli.download_setup_freqtrade(branch, target_dir)
+        self.freqtrade_cli.download_setup_freqtrade(target_dir, branch, commit)
 
         self._logger.info('🍺 Freqtrade has been installed. '
                           'You can now proceed to install MoniGoMani. (Hint: mgm-hurry install_mgm)')
