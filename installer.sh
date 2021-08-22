@@ -209,6 +209,15 @@ fi
 
 echo -e "${GREEN}  ✅  cURL is installed.${CLOSE}"
 
+# Ensure that expect is installed
+command -v expect >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo -e "${RED}  🙉  Expect is not installed. Can't proceed. See: https://core.tcl-lang.org/expect/index${CLOSE}"
+    exit 1
+fi
+
+echo -e "${GREEN}  ✅  Expect is installed.${CLOSE}"
+
 # Ensure that TA-Lib (C dependency package) is installed
 command -v ta-lib-config >/dev/null 2>&1
 if [ $? -ne 0 ]; then
