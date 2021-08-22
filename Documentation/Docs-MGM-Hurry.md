@@ -76,6 +76,7 @@ Setting it all up requires some knowledge of the entire process, until you found
 ---
 - **ToDo:** *Move Installation instructions to `Docs-VeryQuickStart.md`*
 - **Note:** *Assumes Python 3.8+, Pip & Git are already installed on your system!*
+- **Note:** *WSL users first will need to [switch their `sh` to `bash`](https://unix.stackexchange.com/a/442517)*
 
 MoniGoMani provides an all-in-one setup tool. It will guide you through the entire installation procedure. Not only for MoniGoMani, but Freqtrade also. You want the entire package, right? You will be up & HyperOpting (or Dry/Live Running) in no time! 🤙
 

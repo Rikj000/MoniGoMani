@@ -369,7 +369,7 @@ class MGMHurry:
         }, {
             'type': 'input',
             'name': 'ho_quotation',
-            'message': 'Please enter the default quotation you want to use:',
+            'message': 'Please enter the default stake currency (aka quote) you want to use:',
             'default': self.monigomani_config.get('hyperopt')['quote'] or 'USDT'
         }, {
             'type': 'input',
