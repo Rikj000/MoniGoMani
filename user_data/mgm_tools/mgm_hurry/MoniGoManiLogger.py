@@ -210,6 +210,10 @@ class MoniGoManiLogger:
         """
         self.basedir = basedir
         self.output_path = '{0}/user_data/logs/'.format(self.basedir)
+
+        if not os.path.exists(self.output_path):
+            os.makedirs(self.output_path, exist_ok=True)
+
         self.date_format = '%d-%m-%Y-%H-%M-%S'
         self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime(self.date_format))
 
