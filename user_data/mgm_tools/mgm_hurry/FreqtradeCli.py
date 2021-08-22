@@ -201,6 +201,8 @@ class FreqtradeCli:
         if not os.path.isfile(f'{target_dir}/monigomani/setup.exp'):
             self.cli_logger.error('🤷 No "setup.exp" found, back to the MoniGoMani installation docs it is!')
             sys.exit(1)
+
+        os.chmod(f'{target_dir}/monigomani/setup.exp', 0o444)
         os.symlink(f'{target_dir}/monigomani/setup.exp', f'{target_dir}/setup.exp')
 
     def run_setup_installer(self, target_dir: str) -> bool:
@@ -213,7 +215,7 @@ class FreqtradeCli:
 
         if os.path.isfile('{0}/setup.exp'.format(target_dir)):
             # Using 'except' to automatically skip resetting the git repo, but do install all dependencies
-            self.monigomani_cli.run_command('{0}/setup.exp'.format(target_dir))
+            self.monigomani_cli.run_command('expect {0}/setup.exp'.format(target_dir))
             return True
 
         self.cli_logger.error('Could not run {0}/setup.exp for Freqtrade because the file does not exist.'
