@@ -176,26 +176,36 @@ class FreqtradeCli:
             return False
 
     def copy_installation_files(self, temp_dirname: str, target_dir: str):
-        """Copy the installation files to the target directory.
+        """
+        Copy the installation files to the target directory. Also symlink the 'setup.exp' file.
 
         :param temp_dirname: (str) The source directory where installation files exist.
         :param target_dir: (str) The target directory where the installation files should be copied to.
         """
-        self.monigomani_cli.run_command('cp -R {0}/* {1}'.format(temp_dirname, target_dir))
+        if not os.path.exists(target_dir):
+            os.makedirs(target_dir, exist_ok=True)
+
+        self.monigomani_cli.run_command('cp -rT {0} {1}'.format(temp_dirname, target_dir))
+
+        if not os.path.isfile(f'{target_dir}/monigomani/setup.exp'):
+            self.cli_logger.error('🤷 No "setup.exp" found, back to the MoniGoMani installation docs it is!')
+            sys.exit(1)
+        os.symlink(f'{target_dir}/monigomani/setup.exp', f'{target_dir}/setup.exp')
 
     def run_setup_installer(self, target_dir: str) -> bool:
         """
-        Run Freqtrade setup.sh --install.
+        Run Freqtrade setup.sh --install through setup.exp
 
         :param target_dir: (str) The target directory where Freqtrade is installed.
         :return bool: True if setup ran successfully. False otherwise.
         """
 
-        if os.path.isfile('{0}/setup.sh'.format(target_dir)):
-            self.monigomani_cli.run_command('bash {0}/setup.sh --install'.format(target_dir))
+        if os.path.isfile('{0}/setup.exp'.format(target_dir)):
+            # Using 'except' to automatically skip resetting the git repo, but do install all dependencies
+            self.monigomani_cli.run_command('{0}/setup.exp'.format(target_dir))
             return True
 
-        self.cli_logger.error('Could not run {0}/setup.sh for Freqtrade because the file does not exist.'
+        self.cli_logger.error('Could not run {0}/setup.exp for Freqtrade because the file does not exist.'
                               .format(target_dir))
 
         return False
