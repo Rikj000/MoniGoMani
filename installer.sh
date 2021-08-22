@@ -1,26 +1,24 @@
 #!/bin/bash
-#
-######################################################
+
+# === Description ======================================================================================================
 #
 # This file contains the installation procedure to get up and running with Freqtrade and the MoniGoMani HyperStrategy.
 #
-#######################################################
+# === Requirements =====================================================================================================
 #
-# Requirements
-#  - Unix distro, macOS, or a POSIX compliant Windows WSL distro
-#    (sh, bash, command, mktemp, pwd, rm, /dev/null)
+#  - UNIX Distro, macOS, or a POSIX compliant WSL Distro (sh, bash, command, mktemp, pwd, rm, /dev/null)
 #  - Python 3.8+
 #  - Git
 #  - Pip3 python package manager
 #
-# Windows Specific Notes
-#   This script uses UNIX command line tools to run.
-#   Please ensure you installed Windows Subsystem for Linux.
-#   See: https://aka.ms/wslstore
+# Windows Specific Notes:
+#   This script has been made with the intention to run on UNIX systems and it makes use of UNIX command line tools..
+#   However if you really have no other option, it should also be able to run under WSL (Windows Subsystem for Linux)!
+#   - See for installation:       https://docs.microsoft.com/en-us/windows/wsl/install-win10
+#   - Then change 'sh' to 'bash': https://unix.stackexchange.com/a/442517
 #
-#######################################################
+# === Usage ============================================================================================================
 #
-# Usage:
 #   /usr/bin/env sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
 #
 ######################################################
@@ -34,20 +32,18 @@ usage() {
     /usr/bin/env sh installer.sh [options]
 
   Example:
-    /usr/bin/env sh installer.sh --dir="./targetdir" --ft_branch="feature/xyz" --mgm_commit="abcd1337"
+    /usr/bin/env sh installer.sh --dir="./targetdir" --mgm_branch="feature/xyz" --mgm_commit="abcd1337"
 
   Optional options:
     -h, --help                    Show this help.
 
-    --dir=<path>                  Path to directory to install Freqtrade with MGM. Will be created or overwritten when it's existing.
-
-    --ft_url=<url>                URL to Git repository. (eg. https://github.com/freqtrade/freqtrade.git)
-    --ft_branch=<branch>          Specific branch to checkout from Git repository. (eg. develop)
-    --ft_commit=<commit hash>     Specific commit hash to checkout from Git repository. (note: will skip --ft_branch if set)
+    --dir=<path>                  Path to directory to install Freqtrade with MoniGoMani.
+                                  Will be created or overwritten when it's existing.
 
     --mgm_url=<url>               URL to Git repository. (eg. https://github.com/Rikj000/MoniGoMani.git)
     --mgm_branch=<branch>         Specific branch to checkout from Git repository. (eg. development)
-    --mgm_commit=<commit hash>    Specific commit hash to checkout from Git repository. (note: will skip --mgm_branch if set)
+    --mgm_commit=<commit hash>    Specific commit hash to checkout from Git repository.
+                                  (Note: will skip --mgm_branch if set)
 
 EOF
 
@@ -220,7 +216,7 @@ fi
 echo ""
 echo ""
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
-echo -e "${WHITE}  ⚙️  Downloading MGM-Hurry...${CLOSE}"
+echo -e "${WHITE}  ⚙️  Downloading required files...${CLOSE}"
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
 echo ""
 
@@ -235,7 +231,7 @@ fi
 
 echo ""
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
-echo -e "${WHITE}  ⚙️  Installing MGM-Hurry...${CLOSE}"
+echo -e "${WHITE}  ⚙️  Installing dependency packages...${CLOSE}"
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
 echo ""
 
