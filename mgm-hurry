@@ -221,7 +221,7 @@ class MGMHurry:
 
         return True
 
-    def install_mgm(self, branch: str = 'development', target_dir: str = None):
+    def install_mgm(self, target_dir: str = None, branch: str = 'development', commit: str = None):
         """
         Install the MoniGoMani Framework & Strategy.
 
@@ -281,7 +281,7 @@ class MGMHurry:
         if target_dir is None:
             target_dir = self._basedir
 
-        self.monigomani_cli.download_setup_mgm(branch, target_dir)
+        self.monigomani_cli.download_setup_mgm(target_dir, branch, commit)
         self.monigomani_config.create_config_files(self._basedir)
         self._logger.info('🍺 MoniGoMani has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)')
 

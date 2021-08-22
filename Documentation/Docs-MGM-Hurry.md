@@ -130,10 +130,12 @@ Individual command to install Freqtrade.
 ### `mgm-hurry install_mgm`
 Individual command to install MoniGoMani.
 #### Options
-- **`--branch`:** *(Optional)* Specify the MoniGoMani branch you wish to install
-  - ***Defaults to:** The `development` branch, can also be `main` branch for less bleeding edge but generally more stable version*
 - **`--target_dir`:** *(Optional)* Specify where you wish to install MoniGoMani
   - ***Defaults to:** The current directory*
+- **`--branch`:** *(Optional)* Specify the MoniGoMani branch you wish to install
+  - ***Defaults to:** The `development` branch, can also be `main` branch for less bleeding edge but generally more stable version*
+- **`--commit`:** *(Optional)* Specify a specific MoniGoMani commit you wish to utilize
+  - ***Defaults to:** The latest MoniGoMani commit*
 
 
 ### `mgm-hurry setup`

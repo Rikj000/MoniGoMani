@@ -18,6 +18,7 @@ import sys
 import tempfile
 from shutil import copy2, copytree
 
+import pygit2
 from pygit2 import Repository, clone_repository
 from shell_command import shell_call, shell_output
 from yaspin import yaspin
@@ -89,20 +90,29 @@ class MoniGoManiCli(object):
         """
         return os.path.exists('{0}/user_data/strategies/MoniGoManiHyperStrategy.py'.format(self.basedir))
 
-    def download_setup_mgm(self, branch: str = 'develop', target_dir: str = None):
+    def download_setup_mgm(self, target_dir: str = None, branch: str = 'develop', commit: str = None):
         """
         Install MoniGoMani using a git clone to target_dir.
 
+        :param target_dir: (str) Specify a target_dir to install MoniGoMani. Defaults to 'os.getcwd()'.
         :param branch: (str) Checkout a specific branch. Defaults to 'develop'.
-        :param target_dir: (str) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
+        :param commit: (str) Checkout a specific commit. Defaults to None aka latest.
         """
         with tempfile.TemporaryDirectory() as temp_dirname:
-            with yaspin(text='👉  Downloading MoniGoMani repository', color='cyan') as sp:
+            if target_dir is None:
+                target_dir = os.getcwd()
+
+            text = '👉  Clone MoniGoMani repository'
+            text = text if commit is None else f'{text} and resetting to commit {commit}'
+            with yaspin(text=text, color='cyan') as sp:
                 repo = clone_repository(GIT_URL_MONIGOMANI, temp_dirname, checkout_branch=branch)
-            if not isinstance(repo, Repository):
-                sp.red.write('Failed to download MoniGoMani repo. I quit!')
-                self.logger.critical('Failed to clone MoniGoMani repo. I quit!')
-                sys.exit(1)
+                if commit is not None:
+                    repo.reset(commit, pygit2.GIT_RESET_HARD)
+
+                if not isinstance(repo, Repository):
+                    sp.red.write('Failed to download MoniGoMani repo. I quit!')
+                    self.logger.critical('Failed to clone MoniGoMani repo. I quit!')
+                    sys.exit(1)
 
             try:
                 sp.write('Copy MoniGoMani to target directory')
