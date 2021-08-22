@@ -1,25 +1,13 @@
 # -*- coding: utf-8 -*-
 # -* vim: syntax=python -*-
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
-import os
 from datetime import datetime
 from typing import Dict
 
 from pandas import DataFrame
 
 from freqtrade.optimize.hyperopt import IHyperOptLoss
-
-from user_data.mgm_tools.mgm_hurry.LeetLogger import get_logger
-from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
-
-logger = get_logger()
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
-
-# Load the MoniGoMani config files and MGM_UncloggedWinRatioAndProfitRatioLoss Setting
-mgm_config_files = MoniGoManiCli(os.getcwd(), logger).load_config_files()
-# Percentage of loss to ignore while HyperOpting: -0.01 = Ignore trades with less then -1% loss
-unclogger_profit_ratio_loss_tolerance = mgm_config_files['mgm-config']['monigomani_hyperoptloss_settings'][
-    'MGM_UncloggedWinRatioAndProfitRatioHyperOptLoss']['unclogger_profit_ratio_loss_tolerance']
 
 
 class MGM_UncloggedWinRatioAndProfitRatioHyperOptLoss(IHyperOptLoss):
@@ -58,6 +46,11 @@ class MGM_UncloggedWinRatioAndProfitRatioHyperOptLoss(IHyperOptLoss):
             :param backtest_stats: Backtesting statistics using the same format as the backtesting file 'strategy'
                 substructure. Available fields can be seen in generate_strategy_stats() in optimize_reports.py
         """
+        # Load the MoniGoMani config files and MGM_UncloggedWinRatioAndProfitRatioHyperOptLoss setting.
+        # Stands for percentage of loss to ignore while HyperOpting: -0.01 = Ignore trades with less then -1% loss
+        unclogger_profit_ratio_loss_tolerance = config['monigomani_hyperoptloss_settings'][
+            'MGM_UncloggedWinRatioAndProfitRatioHyperOptLoss']['unclogger_profit_ratio_loss_tolerance']
+
 
         wins = len(results[results['profit_ratio'] > 0])
         draws = len(results[results['profit_ratio'] == 0])
