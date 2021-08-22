@@ -170,11 +170,11 @@ echo -e "${WHITE}  ⛱️  Welcome aboard! Let's get started ...${CLOSE}"
 echo ""
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
 echo ""
+
 echo ""
 echo -e "${WHITE}  🚦  Requirements check${CLOSE}"
 echo -e "${WHITE}  ======================${CLOSE}"
 echo ""
-
 
 # Ensure that python3 is installed
 command -v python3 >/dev/null 2>&1
@@ -182,7 +182,6 @@ if [ $? -ne 0 ]; then
     echo -e "${RED}  🙉  Python3 is not installed. Can't proceed. See: https://realpython.com/installing-python/${CLOSE}"
     exit 1
 fi
-
 echo -e "${GREEN}  ✅  Python3 is installed.${CLOSE}"
 
 # Ensure that pip3 is installed
@@ -191,7 +190,6 @@ if [ $? -ne 0 ]; then
     echo -e "${RED}  🙉  Pip3 is not installed. Can't proceed. See: https://pypi.org/project/pip/${CLOSE}"
     exit 1
 fi
-
 echo -e "${GREEN}  ✅  Pip3 is installed.${CLOSE}"
 
 # Ensure that git is installed
@@ -200,13 +198,30 @@ if [ $? -ne 0 ]; then
     echo -e "${RED}  🙉  Git is not installed. Can't proceed. See: https://gist.github.com/derhuerst/1b15ff4652a867391f03${CLOSE}"
     exit 1
 fi
-
 echo -e "${GREEN}  ✅  Git is installed.${CLOSE}"
-echo ""
 
+# Ensure that cURL is installed
+command -v curl >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo -e "${RED}  🙉  cURL is not installed. Can't proceed. See: https://www.tecmint.com/install-curl-in-linux/${CLOSE}"
+    exit 1
+fi
+
+echo -e "${GREEN}  ✅  cURL is installed.${CLOSE}"
+
+# Ensure that TA-Lib (C dependency package) is installed
+command -v ta-lib-config >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo -e "${RED}  🙉  TA-Lib (C dependency package) is not installed. Can't proceed. See: https://github.com/mrjbq7/ta-lib#dependencies${CLOSE}"
+    exit 1
+fi
+echo -e "${GREEN}  ✅  TA-Lib (C dependency package) is installed.${CLOSE}"
+
+
+echo ""
 confirm "👉  Are you ready to proceed?" "(y/n)"
 
-if [ "$REPLY" == "1" ] # 1 = No
+if [ "$REPLY" == "1" ] # 1 = False, why shell why..
 then
     do_exit
     exit 1
