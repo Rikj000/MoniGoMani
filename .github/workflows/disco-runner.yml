@@ -1,0 +1,24 @@
+name: 'Disco Runner 👯'
+description: 'Party like we have never done before'
+author: 'github.com/topscoder'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DISCORD_MESSAGE: ${{ secrets.DISCORD_MESSAGE }}
+      DISCORD_CHANNEL_URL: ${{ secrets.DISCORD_CHANNEL_URL }}
+      DISCORD_USERNAME: ${{ secrets.DISCORD_USERNAME }}
+      DISCORD_PASSWORD: ${{ secrets.DISCORD_PASSWORD }}
+      DISCORD_TEXTBOX_SELECTOR: ${{ secrets.DISCORD_TEXTBOX_SELECTOR }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+      - uses: ./
+      - run: node .github/scripts/disco.js
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
