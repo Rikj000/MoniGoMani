@@ -25,7 +25,7 @@ pygit2 = "*"
 [dev-packages]
 flake8 = "==3.9.2"
 isort = "*"
-pre-commit = "==2.10.0"
+pre-commit = "==2.14.0"
 pylint = "==2.10.2"
 pytest = "==6.2.4"
 pytest-cov = "==2.12.1"
