@@ -1,6 +1,10 @@
 name: 'Disco Runner 👯'
-description: 'Party like we have never done before'
-author: 'github.com/topscoder'
+# description: 'Party like we have never done before'
+# author: 'github.com/topscoder'
+
+on:
+  schedule:
+    - cron: '37 16,22,4,10 * * *'
 
 jobs:
   test:
@@ -18,7 +22,3 @@ jobs:
           node-version: '12'
       - uses: ./
       - run: node .github/scripts/disco.js
-
-runs:
-  using: 'node12'
-  main: 'dist/index.js'
