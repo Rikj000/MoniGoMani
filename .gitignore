@@ -29,6 +29,9 @@ user_data/plot/
 # Ignore Logo Folder
 Logo/
 
+# Ignore GitHub Secrets
+GitHub-Secrets.txt
+
 # Ignore fthypt and legacy pickle Files
 *.fthypt
 *.pickle
