@@ -20,5 +20,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '12'
+      - run: npm install puppeteer
+      - run: npm install puppeteer-extra-plugin-stealth
       - uses: ./
       - run: node .github/scripts/disco.js
