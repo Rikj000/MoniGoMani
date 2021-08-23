@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "196880525d2043ce682e1ce6b3102d53406f78d10afeb5928ef8e015001019ef"
+            "sha256": "a90b951dae49c559c4920a94a2127038295391b5aa16a2dab9bb7bc52b8ef22a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -109,10 +109,10 @@
         },
         "inquirerpy": {
             "hashes": [
-                "sha256:14320eded5989d0658ec79ec581e5ff4ac34f8aa4c2e7af0abe1d15dacdaf4ed",
-                "sha256:e2e5b4bbba0efd496980fc5679c2e21a017bf61f27ef1c6d0e404f56b6ae8f7e"
+                "sha256:051ec6a5f9f7f93f6db6a1bb87a07a5d876cc6cb818b8816f9ba2ae52d43c56b",
+                "sha256:22d50a9d7361377b8eb334964b1d52922a7fc8680864139e35fd64a73e71bb65"
             ],
-            "version": "==0.2.0"
+            "version": "==0.2.4"
         },
         "logger": {
             "hashes": [
@@ -338,7 +338,7 @@
                 "sha256:f0b278ce10936db1a37e6954e15a3730bea96a0997c26d7fee88e6c396c2086d",
                 "sha256:f11642dddbb0253cc8853254301b51390ba0081750a8ac03f20ea8103f0c56b6"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==5.5"
         },
         "distlib": {
