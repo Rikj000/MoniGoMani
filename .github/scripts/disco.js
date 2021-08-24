@@ -52,10 +52,11 @@ async function run() {
         const page = await browser.newPage();
         await page.goto('https://discord.com/login', {
             waitUntil: 'networkidle2',
-            timeout: 60
+            timeout: 5000
         })
     } catch (error) {
         core.setFailed(`[DISCO] Failed to start browser. ${error.message}`)
+        process.exit(1)
     }
 
     // login
@@ -73,6 +74,7 @@ async function run() {
         await page.screenshot({ path: "screenshots/1-click-submit.png" })
     } catch (error) {
         core.setFailed(`[DISCO] Failed to enter login credentials. ${error.message}`)
+        process.exit(1)
     }
 
     console.log("[DISCO] Checking if we are logged in")
@@ -85,6 +87,7 @@ async function run() {
         }
     } catch (error) {
         core.setFailed(`[DISCO] Failed to login to Discord. ${error.message}`)
+        process.exit(1)
     }
 
     await page.screenshot({ path: "screenshots/2-login-success.png" })
@@ -94,10 +97,11 @@ async function run() {
         // enter target discord server/channel
         await page.goto(discord_channel_url, {
             waitUntil: 'networkidle2',
-            timeout: 60
+            timeout: 5000
         })
     } catch (error) {
         core.setFailed(`[DISCO] Failed to enter Discord channel. ${error.message}`)
+        process.exit(1)
     }
 
     // DO NOT CREATE ANY SCREENSHOTS FROM HERE TO
@@ -114,6 +118,7 @@ async function run() {
         await page.waitForNavigation()
     } catch (error) {
         core.setFailed(`[DISCO] Failed to enter message in Discord channel. ${error.message}`)
+        process.exit(1)
     }
 
     console.log("[DISCO] And we are done. Let's go to the disco! 👯 ")
