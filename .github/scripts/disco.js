@@ -79,9 +79,11 @@ const headless = true;
 
     await page.waitForNavigation()
 
-    console.log("[DISCO] And we are done. Let's go to the disco!")
+    console.log("[DISCO] And we are done. Let's go to the disco! 👯 ")
 
-    // and let's dance! 👯‍♀️
+    // and let's dance! 👯‍
     await page.waitForTimeout(3000); // wait for 3 seconds
     await browser.close();
+
+    process.exit(0)
   })();
