@@ -30,6 +30,7 @@ jobs:
           npm install puppeteer
           npm install puppeteer-extra
           npm install puppeteer-extra-plugin-stealth
+          npm install random-useragent
       - run: node ./.github/scripts/disco.js
       - uses: actions/upload-artifact@v2
         if: failure()
