@@ -43,8 +43,8 @@ const headless = true;
         document.querySelector('button[type=submit]').click();
     });
 
-    // Wait for navigation. We are not in a hurry
-    await page.waitForNavigation()
+    // wait for 3 seconds. We are not in a hurry
+    await page.waitForTimeout(3000);
     await page.screenshot({ path: "1-click-submit.png" })
 
     // check if login is successful
@@ -62,7 +62,7 @@ const headless = true;
         waitUntil: 'networkidle2',
     })
 
-    await page.waitForNavigation()
+    await page.waitForTimeout(5000); // wait for 5 seconds
 
     await page.type(discord_textbox_selector, the_message)
     await page.waitForTimeout(2000); // wait for 2 seconds
