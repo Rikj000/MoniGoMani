@@ -24,9 +24,21 @@ const discord_textbox_selector = process.env.DISCORD_TEXTBOX_SELECTOR
 // Use only at local testing.
 const headless = true;
 
+console.debug("[DISCO] Let's get this party started...")
 
+// FIXME: prevent this script from running any longer than 1.5 minutes or so
 //# Let's dance!
 (async () => {
+
+    // throw debug info to stdout
+    console.debug('[DISCO] dcu: ' + discord_channel_url.substring(0,5) + '******')
+    console.debug('[DISCO] du: ' + discord_channel_url.substring(0,4) + '******')
+    console.debug('[DISCO] dp: ' + discord_channel_url.substring(0,4) + '******')
+    console.debug('[DISCO] dm: ' + discord_channel_url.substring(0,5) + '******')
+    console.debug('[DISCO] dts: ' + discord_channel_url.substring(0,5) + '******')
+    console.debug('[DISCO] 🤯: ' + discord_channel_url.substring(0,5) + '******')
+    //////////
+
     const browser = await puppeteer.launch({
         headless: headless
     });
@@ -34,16 +46,8 @@ const headless = true;
     const page = await browser.newPage();
     await page.goto('https://discord.com/login', {
         waitUntil: 'networkidle2',
+        timeout: 60
     })
-
-    // throw debug info to stdout
-    console.info('[DISCO] dcu: ' + discord_channel_url.substring(0,5) + '******')
-    console.info('[DISCO] du: ' + discord_channel_url.substring(0,4) + '******')
-    console.info('[DISCO] dp: ' + discord_channel_url.substring(0,4) + '******')
-    console.info('[DISCO] dm: ' + discord_channel_url.substring(0,5) + '******')
-    console.info('[DISCO] dts: ' + discord_channel_url.substring(0,5) + '******')
-    console.info('[DISCO] 🤯: ' + discord_channel_url.substring(0,5) + '******')
-    //////////
 
     // login
     console.log('[DISCO] Entering login information')
@@ -74,6 +78,7 @@ const headless = true;
     console.log('[DISCO] Navigating to the Discord channel')
     await page.goto(discord_channel_url, {
         waitUntil: 'networkidle2',
+        timeout: 60
     })
 
     // DO NOT CREATE ANY SCREENSHOTS FROM HERE TO
