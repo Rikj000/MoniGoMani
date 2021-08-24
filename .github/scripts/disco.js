@@ -56,7 +56,7 @@ async function run() {
             waitUntil: 'networkidle2',
             timeout: 5000
         })
-        async shot_screen(page, '1-browser-started.png')
+        await shot_screen(page, '1-browser-started.png')
 
         // login
         console.log("[DISCO] Entering login information")
@@ -70,18 +70,18 @@ async function run() {
 
         // wait for 3 seconds. We are not in a hurry
         await page.waitForTimeout(3000);
-        async shot_screen(page, "1-click-submit.png")
+        await shot_screen(page, "1-click-submit.png")
 
         console.log("[DISCO] Checking if we are logged in")
 
         // check if login is successful
         if (page.url().includes('discord.com/login')) {
-            async shot_screen(page, "2-failed-login.png")
+            await shot_screen(page, "2-failed-login.png")
             await browser.close();
             core.setFailed("[DISCO] Sorry, but failed to log in")
         }
 
-        async shot_screen(page, "2-login-success.png")
+        await shot_screen(page, "2-login-success.png")
 
         console.log("[DISCO] Navigating to the Discord channel")
 
