@@ -28,7 +28,7 @@ const headless = true;
 console.log("[DISCO] Let's get this party started...")
 
 //# Let's dance!
-(async () => {
+async function run() => {
 
     // throw debug info to stdout
     dcu = discord_channel_url.substring(0,5)
@@ -123,4 +123,6 @@ console.log("[DISCO] Let's get this party started...")
     // and let's dance! 👯‍
     await page.waitForTimeout(3000); // wait for 3 seconds
     await browser.close();
-  })();
+}
+
+run()
