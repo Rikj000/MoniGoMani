@@ -24,19 +24,18 @@ const discord_textbox_selector = process.env.DISCORD_TEXTBOX_SELECTOR
 // Use only at local testing.
 const headless = true;
 
-console.debug("[DISCO] Let's get this party started...")
+console.info("[DISCO] Let's get this party started...")
 
-// FIXME: prevent this script from running any longer than 1.5 minutes or so
 //# Let's dance!
 (async () => {
 
     // throw debug info to stdout
-    console.debug('[DISCO] dcu: ' + discord_channel_url.substring(0,5) + '******')
-    console.debug('[DISCO] du: ' + discord_channel_url.substring(0,4) + '******')
-    console.debug('[DISCO] dp: ' + discord_channel_url.substring(0,4) + '******')
-    console.debug('[DISCO] dm: ' + discord_channel_url.substring(0,5) + '******')
-    console.debug('[DISCO] dts: ' + discord_channel_url.substring(0,5) + '******')
-    console.debug('[DISCO] 🤯: ' + discord_channel_url.substring(0,5) + '******')
+    console.info('[DISCO] dcu: ' + discord_channel_url.substring(0,5) + '******')
+    console.info('[DISCO] du: ' + discord_channel_url.substring(0,4) + '******')
+    console.info('[DISCO] dp: ' + discord_channel_url.substring(0,4) + '******')
+    console.info('[DISCO] dm: ' + discord_channel_url.substring(0,5) + '******')
+    console.info('[DISCO] dts: ' + discord_channel_url.substring(0,5) + '******')
+    console.info('[DISCO] 🤯: ' + discord_channel_url.substring(0,5) + '******')
     //////////
 
     const browser = await puppeteer.launch({
