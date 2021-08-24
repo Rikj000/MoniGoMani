@@ -23,8 +23,15 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '12'
+      - run: mkdir -p disco-runner/screenshots/
       - run: |
           npm install puppeteer
           npm install puppeteer-extra
           npm install puppeteer-extra-plugin-stealth
       - run: node ./.github/scripts/disco.js
+      - uses: actions/checkout@v2
+      - uses: actions/upload-artifact@v2
+        with:
+          name: screenshots
+          path: disco-runner/screenshots/*
+#          if-no-files-found: error #
