@@ -75,18 +75,6 @@ async function run() {
 
         // check if login is successful
         if (page.url().includes('discord.com/login')) {
-            console.log('[DISCO] Trying to get out of the captcha trap')
-            await page.solveRecaptchas()
-            await Promise.all([
-                page.waitForNavigation(),
-                page.click(`#recaptcha-demo-submit`)
-            ])
-            await page.screenshot({ path: 'screenshots/recaptcha-solver.png', fullPage: true })
-        }
-
-        await page.waitForNavigation()
-
-        if (page.url().includes('discord.com/login')) {
             await shot_screen(page, "2-failed-login.png")
             await browser.close();
             core.setFailed("[DISCO] Sorry, but failed to log in")
