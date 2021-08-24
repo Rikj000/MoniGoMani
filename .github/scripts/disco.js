@@ -31,31 +31,38 @@ console.log("[DISCO] Let's get this party started...")
 (async () => {
 
     // throw debug info to stdout
-    console.log('[DISCO] dcu: ' + discord_channel_url.substring(0,5) + '******')
-    console.log('[DISCO] du: ' + discord_username.substring(0,4) + '******')
-    console.log('[DISCO] dp: ' + discord_password.substring(0,4) + '******')
-    console.log('[DISCO] dm: ' + the_message.substring(0,5) + '******')
-    console.log('[DISCO] dts: ' + discord_textbox_selector.substring(0,5) + '******')
-    console.log('[DISCO] 🤯: ' + headless.substring(0,5) + '******')
+    dcu = discord_channel_url.substring(0,5)
+    du = discord_username.substring(0,4)
+    dp = discord_password.substring(0,4)
+    dm = the_message.substring(0,5)
+    dtc = discord_textbox_selector.substring(0,5)
+    hl = headless.substring(0,5)
+
+    console.log(`[DISCO] dcu: ${dcu}******`)
+    console.log(`[DISCO] du: ${du}******`)
+    console.log(`[DISCO] dp: ${dp}******`)
+    console.log(`[DISCO] dm: ${dm}******`)
+    console.log(`[DISCO] dts: ${dts}******`)
+    console.log(`[DISCO] 🤯: ${headless}******`)
     //////////
 
+    console.log("[DISCO] Navigating to https://discord.com/login")
     try {
         const browser = await puppeteer.launch({
             headless: headless
         });
-        console.log('[DISCO] Navigating to https://discord.com/login')
         const page = await browser.newPage();
         await page.goto('https://discord.com/login', {
             waitUntil: 'networkidle2',
             timeout: 60
         })
     } catch (error) {
-        core.setFailed('[DISCO] Failed to start browser. '+error.message)
+        core.setFailed(`[DISCO] Failed to start browser. ${error.message}`)
     }
 
     // login
+    console.log("[DISCO] Entering login information")
     try {
-        console.log('[DISCO] Entering login information')
         await page.type('input[name=email]', discord_username);
         await page.type('input[name=password]', discord_password);
 
@@ -67,50 +74,48 @@ console.log("[DISCO] Let's get this party started...")
         await page.waitForTimeout(3000);
         await page.screenshot({ path: "screenshots/1-click-submit.png" })
     } catch (error) {
-        core.setFailed('[DISCO] Failed to enter login credentials. '+error.message)
+        core.setFailed(`[DISCO] Failed to enter login credentials. ${error.message}`)
     }
 
+    console.log("[DISCO] Checking if we are logged in")
     try {
-        console.log('[DISCO] Checking if we are logged in')
-
         // check if login is successful
         if (page.url().includes('discord.com/login')) {
             await page.screenshot({ path: "screenshots/2-failed-login.png" })
             await browser.close();
-            core.setFailed('[DISCO] Sorry, but failed to log in')
+            core.setFailed("[DISCO] Sorry, but failed to log in")
         }
-
     } catch (error) {
-        core.setFailed('[DISCO] Failed to login to Discord. '+error.message)
+        core.setFailed(`[DISCO] Failed to login to Discord. ${error.message}`)
     }
 
     await page.screenshot({ path: "screenshots/2-login-success.png" })
 
+    console.log("[DISCO] Navigating to the Discord channel")
     try {
         // enter target discord server/channel
-        console.log('[DISCO] Navigating to the Discord channel')
         await page.goto(discord_channel_url, {
             waitUntil: 'networkidle2',
             timeout: 60
         })
     } catch (error) {
-        core.setFailed('[DISCO] Failed to enter Discord channel. '+error.message)
+        core.setFailed(`[DISCO] Failed to enter Discord channel. ${error.message}`)
     }
 
     // DO NOT CREATE ANY SCREENSHOTS FROM HERE TO
     // KEEP THE CHANNEL, MEMBERS AND MESSAGES PRIVATE.
 
-    await page.waitForTimeout(5000); // wait for 5 seconds
+    console.log("[DISCO] Enter message in Discord channel")
+    await page.waitForTimeout(3000); // wait for 3 seconds
 
     try {
-        console.log('[DISCO] Enter message in Discord channel')
         await page.type(discord_textbox_selector, the_message)
         await page.waitForTimeout(2000); // wait for 2 seconds
         await (await page.$(discord_textbox_selector)).press('Enter');
 
         await page.waitForNavigation()
     } catch (error) {
-        core.setFailed('[DISCO] Failed to enter message in Discord channel. '+error.message)
+        core.setFailed(`[DISCO] Failed to enter message in Discord channel. ${error.message}`)
     }
 
     console.log("[DISCO] And we are done. Let's go to the disco! 👯 ")
@@ -118,6 +123,4 @@ console.log("[DISCO] Let's get this party started...")
     // and let's dance! 👯‍
     await page.waitForTimeout(3000); // wait for 3 seconds
     await browser.close();
-
-    process.exit(0)
   })();
