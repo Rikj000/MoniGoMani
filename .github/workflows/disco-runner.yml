@@ -3,6 +3,7 @@ name: 'Disco Runner 👯'
 # author: 'github.com/topscoder'
 
 on:
+  push:
   schedule:
     - cron: '37 16,22,4,10 * * *'
 
@@ -21,6 +22,6 @@ jobs:
         with:
           node-version: '12'
       - run: npm install puppeteer
+      - run: npm install puppeteer-extra
       - run: npm install puppeteer-extra-plugin-stealth
-      - uses: ./
-      - run: node .github/scripts/disco.js
+      - run: node ./.github/scripts/disco.js
