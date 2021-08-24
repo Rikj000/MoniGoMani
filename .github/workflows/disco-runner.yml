@@ -24,8 +24,8 @@ jobs:
         with:
           node-version: '12'
           cache: 'npm'
-          cache-dependency-path: .github/scripts/package-lock.json
+          cache-dependency-path: ./.github/scripts/package-lock.json
       - run: npm install puppeteer
       - run: npm install puppeteer-extra
       - run: npm install puppeteer-extra-plugin-stealth
-      - run: node .github/scripts/disco.js
+      - run: node ./.github/scripts/disco.js
