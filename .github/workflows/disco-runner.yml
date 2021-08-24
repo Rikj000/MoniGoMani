@@ -23,15 +23,20 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '12'
-      - run: mkdir -p disco-runner/screenshots/
+      - run: mkdir -p screenshots
       - run: |
           npm install puppeteer
           npm install puppeteer-extra
           npm install puppeteer-extra-plugin-stealth
       - run: node ./.github/scripts/disco.js
-      - uses: actions/checkout@v2
+#        env:
+#          DISCORD_MESSAGE: ${{ secrets.DISCORD_MESSAGE }}
+#          DISCORD_CHANNEL_URL: ${{ secrets.DISCORD_CHANNEL_URL }}
+#          DISCORD_USERNAME: ${{ secrets.DISCORD_USERNAME }}
+#          DISCORD_PASSWORD: ${{ secrets.DISCORD_PASSWORD }}
+#          DISCORD_TEXTBOX_SELECTOR: ${{ secrets.DISCORD_TEXTBOX_SELECTOR }}
       - uses: actions/upload-artifact@v2
         with:
-          name: screenshots
-          path: disco-runner/screenshots/*
+          path: screenshots/*
+          name: Download-screenshots
 #          if-no-files-found: error #
