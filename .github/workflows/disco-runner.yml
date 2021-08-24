@@ -27,9 +27,4 @@ jobs:
           npm install puppeteer
           npm install puppeteer-extra
           npm install puppeteer-extra-plugin-stealth
-          DISCORD_MESSAGE="${{ secrets.DISCORD_MESSAGE }}" \
-          DISCORD_USERNAME="${{ secrets.DISCORD_USERNAME }}" \
-          DISCORD_PASSWORD="peekaboo!"
-          DISCORD_CHANNEL_URL="${{ secrets.DISCORD_CHANNEL_URL }}" \
-          DISCORD_TEXTBOX_SELECTOR="${{ secrets.DISCORD_TEXTBOX_SELECTOR }}"
-          node ./.github/scripts/disco.js
+      - run: node ./.github/scripts/disco.js
