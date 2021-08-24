@@ -35,7 +35,7 @@ async function run() {
     du = discord_username.substring(0,4)
     dp = discord_password.substring(0,4)
     dm = the_message.substring(0,5)
-    dtc = discord_textbox_selector.substring(0,5)
+    dts = discord_textbox_selector.substring(0,5)
 
     console.log(`[DISCO] dcu: ${dcu}******`)
     console.log(`[DISCO] du: ${du}******`)
