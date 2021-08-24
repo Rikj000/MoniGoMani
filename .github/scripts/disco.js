@@ -47,25 +47,28 @@ const headless = true;
 
     // wait for 3 seconds. We are not in a hurry
     await page.waitForTimeout(3000);
-    await page.screenshot({ path: "1-click-submit.png" })
+    await page.screenshot({ path: "disco-runner/screenshots/1-click-submit.png" })
 
     console.log('[DISCO] Check if we are logged in')
 
     // check if login is successful
     if (page.url().includes('discord.com/login')) {
-        await page.screenshot({ path: "2-failed-login.png" })
+        await page.screenshot({ path: "disco-runner/screenshots/2-failed-login.png" })
         await browser.close();
         console.error('[DISCO] Sorry, but failed to log in')
         exit()
     }
 
-    await page.screenshot({ path: "2-login-success.png" })
+    await page.screenshot({ path: "disco-runner/screenshots/2-login-success.png" })
 
     // enter target discord server/channel
     console.log('[DISCO] Navigating to the Discord channel')
     await page.goto(discord_channel_url, {
         waitUntil: 'networkidle2',
     })
+
+    // DO NOT CREATE ANY SCREENSHOTS FROM HERE TO
+    // KEEP THE CHANNEL, MEMBERS AND MESSAGES PRIVATE.
 
     await page.waitForTimeout(5000); // wait for 5 seconds
 
