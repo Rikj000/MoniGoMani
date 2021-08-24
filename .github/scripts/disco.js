@@ -10,8 +10,6 @@
 
 //# Required libs
 const core = require('@actions/core');
-const artifact = require('@actions/artifact');
-const artifactClient = artifact.create()
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
