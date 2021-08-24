@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ACTIONS_RUNTIME_URL:
+      ACTIONS_CACHE_URL:
       DISCORD_MESSAGE: ${{ secrets.DISCORD_MESSAGE }}
       DISCORD_CHANNEL_URL: ${{ secrets.DISCORD_CHANNEL_URL }}
       DISCORD_USERNAME: ${{ secrets.DISCORD_USERNAME }}
@@ -32,8 +34,8 @@ jobs:
           npm install puppeteer-extra
           npm install puppeteer-extra-plugin-stealth
       - run: node ./.github/scripts/disco.js
-      - uses: actions/upload-artifact@v2
-        with:
-          path: screenshots/*
-          name: Download-screenshots
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          path: screenshots/*
+#          name: Download-screenshots
 #          if-no-files-found: error #

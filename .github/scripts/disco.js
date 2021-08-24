@@ -111,10 +111,10 @@ async function run() {
 
     if (! failure )
         console.log("[DISCO] And we are done. Let's go to the disco! 👯 ")
+        await page.waitForTimeout(3000); // wait for 3 seconds
 
-    // and let's dance! 👯‍
-    await page.waitForTimeout(3000); // wait for 3 seconds
-    await browser.close();
+    if (browser)
+        await browser.close();
 }
 
 async function shot_screen(page, filename) {
