@@ -43,24 +43,32 @@ const headless = true;
         document.querySelector('button[type=submit]').click();
     });
 
-    // wait for 3 seconds. We are not in a hurry
-    await page.waitForTimeout(3000);
+    // Wait for navigation. We are not in a hurry
+    await page.waitForNavigation()
+    await page.screenshot({ path: "1-click-submit.png" })
 
     // check if login is successful
     if (page.url().includes('discord.com/login')) {
         console.log('Sorry, but failed to log in.')
+        await page.screenshot({ path: "2-failed-login.png" })
         await browser.close();
         exit()
     }
+
+    await page.screenshot({ path: "2-login-success.png" })
 
     // enter target discord server/channel
     await page.goto(discord_channel_url, {
         waitUntil: 'networkidle2',
     })
 
+    await page.waitForNavigation()
+
     await page.type(discord_textbox_selector, the_message)
     await page.waitForTimeout(2000); // wait for 2 seconds
     await (await page.$(discord_textbox_selector)).press('Enter');
+
+    await page.waitForNavigation()
 
     // and let's dance! 👯‍♀️
     await page.waitForTimeout(3000); // wait for 3 seconds
