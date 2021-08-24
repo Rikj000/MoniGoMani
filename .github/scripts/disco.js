@@ -36,6 +36,15 @@ const headless = true;
         waitUntil: 'networkidle2',
     })
 
+    // throw debug info to stdout
+    console.info('[DISCO] dcu: ' + discord_channel_url.substring(0,5) + '******')
+    console.info('[DISCO] du: ' + discord_channel_url.substring(0,4) + '******')
+    console.info('[DISCO] dp: ' + discord_channel_url.substring(0,4) + '******')
+    console.info('[DISCO] dm: ' + discord_channel_url.substring(0,5) + '******')
+    console.info('[DISCO] dts: ' + discord_channel_url.substring(0,5) + '******')
+    console.info('[DISCO] 🤯: ' + discord_channel_url.substring(0,5) + '******')
+    //////////
+
     // login
     console.log('[DISCO] Entering login information')
     await page.type('input[name=email]', discord_username);
