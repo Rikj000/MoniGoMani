@@ -118,17 +118,7 @@ async function run() {
 }
 
 async function shot_screen(page, filename) {
-    await page.screenshot({ path: `screenshots/${filename}` })
-
-    const artifactClient = artifact.create()
-    const uploadResponse = await artifactClient.uploadArtifact(
-        filename,
-        [`screenshots/${filename}`],
-        '.',
-        { continueOnError: true }
-    )
-
-    return uploadResponse
+    return await page.screenshot({ path: `screenshots/${filename}` })
 }
 
 dumpStack = function(err) {
