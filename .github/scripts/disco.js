@@ -36,14 +36,12 @@ async function run() {
     dp = discord_password.substring(0,4)
     dm = the_message.substring(0,5)
     dtc = discord_textbox_selector.substring(0,5)
-    hl = headless.substring(0,5)
 
     console.log(`[DISCO] dcu: ${dcu}******`)
     console.log(`[DISCO] du: ${du}******`)
     console.log(`[DISCO] dp: ${dp}******`)
     console.log(`[DISCO] dm: ${dm}******`)
     console.log(`[DISCO] dts: ${dts}******`)
-    console.log(`[DISCO] 🤯: ${headless}******`)
     //////////
 
     console.log("[DISCO] Navigating to https://discord.com/login")
