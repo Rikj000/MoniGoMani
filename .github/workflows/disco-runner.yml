@@ -26,6 +26,7 @@ jobs:
       - run: mkdir -p screenshots
       - run: |
           npm install @actions/core
+          npm install @actions/artifact
           npm install puppeteer
           npm install puppeteer-extra
           npm install puppeteer-extra-plugin-stealth
