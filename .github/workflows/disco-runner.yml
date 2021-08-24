@@ -25,6 +25,7 @@ jobs:
           node-version: '12'
       - run: mkdir -p screenshots
       - run: |
+          npm install @actions/core
           npm install puppeteer
           npm install puppeteer-extra
           npm install puppeteer-extra-plugin-stealth

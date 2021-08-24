@@ -9,6 +9,7 @@
 // :: github.com/topscoder
 
 //# Required libs
+const core = require('@actions/core');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
@@ -24,73 +25,93 @@ const discord_textbox_selector = process.env.DISCORD_TEXTBOX_SELECTOR
 // Use only at local testing.
 const headless = true;
 
-console.info("[DISCO] Let's get this party started...")
+console.log("[DISCO] Let's get this party started...")
 
 //# Let's dance!
 (async () => {
 
     // throw debug info to stdout
-    console.info('[DISCO] dcu: ' + discord_channel_url.substring(0,5) + '******')
-    console.info('[DISCO] du: ' + discord_channel_url.substring(0,4) + '******')
-    console.info('[DISCO] dp: ' + discord_channel_url.substring(0,4) + '******')
-    console.info('[DISCO] dm: ' + discord_channel_url.substring(0,5) + '******')
-    console.info('[DISCO] dts: ' + discord_channel_url.substring(0,5) + '******')
-    console.info('[DISCO] 🤯: ' + discord_channel_url.substring(0,5) + '******')
+    console.log('[DISCO] dcu: ' + discord_channel_url.substring(0,5) + '******')
+    console.log('[DISCO] du: ' + discord_username.substring(0,4) + '******')
+    console.log('[DISCO] dp: ' + discord_password.substring(0,4) + '******')
+    console.log('[DISCO] dm: ' + the_message.substring(0,5) + '******')
+    console.log('[DISCO] dts: ' + discord_textbox_selector.substring(0,5) + '******')
+    console.log('[DISCO] 🤯: ' + headless.substring(0,5) + '******')
     //////////
 
-    const browser = await puppeteer.launch({
-        headless: headless
-    });
-    console.log('[DISCO] Navigating to https://discord.com/login')
-    const page = await browser.newPage();
-    await page.goto('https://discord.com/login', {
-        waitUntil: 'networkidle2',
-        timeout: 60
-    })
-
-    // login
-    console.log('[DISCO] Entering login information')
-    await page.type('input[name=email]', discord_username);
-    await page.type('input[name=password]', discord_password);
-
-    await page.evaluate(() => {
-        document.querySelector('button[type=submit]').click();
-    });
-
-    // wait for 3 seconds. We are not in a hurry
-    await page.waitForTimeout(3000);
-    await page.screenshot({ path: "disco-runner/screenshots/1-click-submit.png" })
-
-    console.log('[DISCO] Checking if we are logged in')
-
-    // check if login is successful
-    if (page.url().includes('discord.com/login')) {
-        await page.screenshot({ path: "disco-runner/screenshots/2-failed-login.png" })
-        await browser.close();
-        console.error('[DISCO] Sorry, but failed to log in')
-        process.exit(1)
+    try {
+        const browser = await puppeteer.launch({
+            headless: headless
+        });
+        console.log('[DISCO] Navigating to https://discord.com/login')
+        const page = await browser.newPage();
+        await page.goto('https://discord.com/login', {
+            waitUntil: 'networkidle2',
+            timeout: 60
+        })
+    } catch (error) {
+        core.setFailed('[DISCO] Failed to start browser. '+error.message)
     }
 
-    await page.screenshot({ path: "disco-runner/screenshots/2-login-success.png" })
+    // login
+    try {
+        console.log('[DISCO] Entering login information')
+        await page.type('input[name=email]', discord_username);
+        await page.type('input[name=password]', discord_password);
 
-    // enter target discord server/channel
-    console.log('[DISCO] Navigating to the Discord channel')
-    await page.goto(discord_channel_url, {
-        waitUntil: 'networkidle2',
-        timeout: 60
-    })
+        await page.evaluate(() => {
+            document.querySelector('button[type=submit]').click();
+        });
+
+        // wait for 3 seconds. We are not in a hurry
+        await page.waitForTimeout(3000);
+        await page.screenshot({ path: "screenshots/1-click-submit.png" })
+    } catch (error) {
+        core.setFailed('[DISCO] Failed to enter login credentials. '+error.message)
+    }
+
+    try {
+        console.log('[DISCO] Checking if we are logged in')
+
+        // check if login is successful
+        if (page.url().includes('discord.com/login')) {
+            await page.screenshot({ path: "screenshots/2-failed-login.png" })
+            await browser.close();
+            core.setFailed('[DISCO] Sorry, but failed to log in')
+        }
+
+    } catch (error) {
+        core.setFailed('[DISCO] Failed to login to Discord. '+error.message)
+    }
+
+    await page.screenshot({ path: "screenshots/2-login-success.png" })
+
+    try {
+        // enter target discord server/channel
+        console.log('[DISCO] Navigating to the Discord channel')
+        await page.goto(discord_channel_url, {
+            waitUntil: 'networkidle2',
+            timeout: 60
+        })
+    } catch (error) {
+        core.setFailed('[DISCO] Failed to enter Discord channel. '+error.message)
+    }
 
     // DO NOT CREATE ANY SCREENSHOTS FROM HERE TO
     // KEEP THE CHANNEL, MEMBERS AND MESSAGES PRIVATE.
 
     await page.waitForTimeout(5000); // wait for 5 seconds
 
-    console.log('[DISCO] Enter message in Discord channel')
-    await page.type(discord_textbox_selector, the_message)
-    await page.waitForTimeout(2000); // wait for 2 seconds
-    await (await page.$(discord_textbox_selector)).press('Enter');
+    try {
+        console.log('[DISCO] Enter message in Discord channel')
+        await page.type(discord_textbox_selector, the_message)
+        await page.waitForTimeout(2000); // wait for 2 seconds
+        await (await page.$(discord_textbox_selector)).press('Enter');
 
-    await page.waitForNavigation()
+        await page.waitForNavigation()
+    } catch (error) {
+        core.setFailed('[DISCO] Failed to enter message in Discord channel. '+error.message)
+    }
 
     console.log("[DISCO] And we are done. Let's go to the disco! 👯 ")
 
