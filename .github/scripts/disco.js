@@ -114,7 +114,7 @@ async function run() {
     await browser.close();
 }
 
-async shot_screen = function(page, filename) {
+async function shot_screen(page, filename) {
     await page.screenshot({ path: `screenshots/${filename}` })
 
     const artifactClient = artifact.create()
