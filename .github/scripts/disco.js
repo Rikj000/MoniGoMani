@@ -49,14 +49,14 @@ const headless = true;
     await page.waitForTimeout(3000);
     await page.screenshot({ path: "disco-runner/screenshots/1-click-submit.png" })
 
-    console.log('[DISCO] Check if we are logged in')
+    console.log('[DISCO] Checking if we are logged in')
 
     // check if login is successful
     if (page.url().includes('discord.com/login')) {
         await page.screenshot({ path: "disco-runner/screenshots/2-failed-login.png" })
         await browser.close();
         console.error('[DISCO] Sorry, but failed to log in')
-        exit()
+        process.exit(1)
     }
 
     await page.screenshot({ path: "disco-runner/screenshots/2-login-success.png" })
