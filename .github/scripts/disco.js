@@ -30,12 +30,14 @@ const headless = true;
     const browser = await puppeteer.launch({
         headless: headless
     });
+    console.log('[DISCO] Navigating to https://discord.com/login')
     const page = await browser.newPage();
     await page.goto('https://discord.com/login', {
         waitUntil: 'networkidle2',
     })
 
     // login
+    console.log('[DISCO] Entering login information')
     await page.type('input[name=email]', discord_username);
     await page.type('input[name=password]', discord_password);
 
@@ -47,28 +49,34 @@ const headless = true;
     await page.waitForTimeout(3000);
     await page.screenshot({ path: "1-click-submit.png" })
 
+    console.log('[DISCO] Check if we are logged in')
+
     // check if login is successful
     if (page.url().includes('discord.com/login')) {
-        console.log('Sorry, but failed to log in.')
         await page.screenshot({ path: "2-failed-login.png" })
         await browser.close();
+        console.error('[DISCO] Sorry, but failed to log in')
         exit()
     }
 
     await page.screenshot({ path: "2-login-success.png" })
 
     // enter target discord server/channel
+    console.log('[DISCO] Navigating to the Discord channel')
     await page.goto(discord_channel_url, {
         waitUntil: 'networkidle2',
     })
 
     await page.waitForTimeout(5000); // wait for 5 seconds
 
+    console.log('[DISCO] Enter message in Discord channel')
     await page.type(discord_textbox_selector, the_message)
     await page.waitForTimeout(2000); // wait for 2 seconds
     await (await page.$(discord_textbox_selector)).press('Enter');
 
     await page.waitForNavigation()
+
+    console.log("[DISCO] And we are done. Let's go to the disco!")
 
     // and let's dance! 👯‍♀️
     await page.waitForTimeout(3000); // wait for 3 seconds
