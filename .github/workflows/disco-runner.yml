@@ -30,12 +30,6 @@ jobs:
           npm install puppeteer-extra
           npm install puppeteer-extra-plugin-stealth
       - run: node ./.github/scripts/disco.js
-#        env:
-#          DISCORD_MESSAGE: ${{ secrets.DISCORD_MESSAGE }}
-#          DISCORD_CHANNEL_URL: ${{ secrets.DISCORD_CHANNEL_URL }}
-#          DISCORD_USERNAME: ${{ secrets.DISCORD_USERNAME }}
-#          DISCORD_PASSWORD: ${{ secrets.DISCORD_PASSWORD }}
-#          DISCORD_TEXTBOX_SELECTOR: ${{ secrets.DISCORD_TEXTBOX_SELECTOR }}
       - uses: actions/upload-artifact@v2
         with:
           path: screenshots/*

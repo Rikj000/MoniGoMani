@@ -54,7 +54,9 @@ async function run() {
             waitUntil: 'networkidle2',
             timeout: 5000
         })
+        await page.screenshot({ path: "screenshots/1-browser-started.png" })
     } catch (error) {
+        dumpStack(error)
         core.setFailed(`[DISCO] Failed to start browser. ${error.message}`)
         process.exit(1)
     }
@@ -73,6 +75,7 @@ async function run() {
         await page.waitForTimeout(3000);
         await page.screenshot({ path: "screenshots/1-click-submit.png" })
     } catch (error) {
+        dumpStack(error)
         core.setFailed(`[DISCO] Failed to enter login credentials. ${error.message}`)
         process.exit(1)
     }
@@ -86,6 +89,7 @@ async function run() {
             core.setFailed("[DISCO] Sorry, but failed to log in")
         }
     } catch (error) {
+        dumpStack(error)
         core.setFailed(`[DISCO] Failed to login to Discord. ${error.message}`)
         process.exit(1)
     }
@@ -100,6 +104,7 @@ async function run() {
             timeout: 5000
         })
     } catch (error) {
+        dumpStack(error)
         core.setFailed(`[DISCO] Failed to enter Discord channel. ${error.message}`)
         process.exit(1)
     }
@@ -117,6 +122,7 @@ async function run() {
 
         await page.waitForNavigation()
     } catch (error) {
+        dumpStack(error)
         core.setFailed(`[DISCO] Failed to enter message in Discord channel. ${error.message}`)
         process.exit(1)
     }
@@ -126,6 +132,14 @@ async function run() {
     // and let's dance! 👯‍
     await page.waitForTimeout(3000); // wait for 3 seconds
     await browser.close();
+}
+
+dumpStack = function(err) {
+    if (err.stack) {
+      console.log('\nStacktrace:')
+      console.log('====================')
+      console.log(err.stack);
+    }
 }
 
 run()
