@@ -26,6 +26,7 @@ const discord_textbox_selector = process.env.DISCORD_TEXTBOX_SELECTOR
 // True if it should run in an invisible browser window. False to see all magic happen.
 // Use only at local testing.
 const headless = true;
+let failure = false;
 
 console.log("[DISCO] Let's get this party started...")
 
@@ -105,9 +106,11 @@ async function run() {
     } catch (error) {
         dumpStack(error)
         core.setFailed(`[DISCO] Failed to send message in Discord channel. ${error.message}`)
+        failure = true
     }
 
-    console.log("[DISCO] And we are done. Let's go to the disco! 👯 ")
+    if (! failure )
+        console.log("[DISCO] And we are done. Let's go to the disco! 👯 ")
 
     // and let's dance! 👯‍
     await page.waitForTimeout(3000); // wait for 3 seconds

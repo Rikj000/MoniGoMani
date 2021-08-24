@@ -13,6 +13,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
+      ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       DISCORD_MESSAGE: ${{ secrets.DISCORD_MESSAGE }}
       DISCORD_CHANNEL_URL: ${{ secrets.DISCORD_CHANNEL_URL }}
       DISCORD_USERNAME: ${{ secrets.DISCORD_USERNAME }}
