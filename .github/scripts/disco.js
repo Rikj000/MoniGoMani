@@ -24,6 +24,7 @@ const discord_textbox_selector = process.env.DISCORD_TEXTBOX_SELECTOR
 // True if it should run in an invisible browser window. False to see all magic happen.
 // Use only at local testing.
 const headless = true;
+page = null;
 
 console.log("[DISCO] Let's get this party started...")
 
@@ -49,7 +50,7 @@ async function run() {
         const browser = await puppeteer.launch({
             headless: headless
         });
-        const page = await browser.newPage();
+        page = await browser.newPage();
         await page.goto('https://discord.com/login', {
             waitUntil: 'networkidle2',
             timeout: 5000
@@ -139,6 +140,7 @@ dumpStack = function(err) {
       console.log('\nStacktrace:')
       console.log('====================')
       console.log(err.stack);
+      console.log('====================\n')
     }
 }
 
