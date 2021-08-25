@@ -11,12 +11,13 @@
 # | |\/| | / _ \ | '_ \ | || | __  / _ \ | |\/| | / _` || '_ \ | || |    | || |
 # | |  | || (_) || | | || || |_\ \| (_) || |  | || (_| || | | || || \__/\| || |
 # \_|  |_/ \___/ |_| |_||_| \____/ \___/ \_|  |_/ \__,_||_| |_||_| \____/|_||_|
+
 import glob
 import os
 import shlex
 import sys
 import tempfile
-from shutil import copy2
+from shutil import copy2, copytree
 
 import pygit2
 from pygit2 import Repository, clone_repository
@@ -25,7 +26,6 @@ from yaspin import yaspin
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
-
 
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
@@ -141,9 +141,14 @@ class MoniGoManiCli(object):
             if not os.path.exists(target_dir + mgm_folder):
                 os.makedirs(target_dir + mgm_folder, exist_ok=True)
 
-            self.run_command('cp -rT {0} {1}'.format(temp_dirname, target_dir + mgm_folder))
+            if os.path.isfile(f'{target_dir + mgm_folder}/setup.exp'):
+                os.remove(f'{target_dir + mgm_folder}/setup.exp')
 
-            os.remove(f'{target_dir}/docker-compose.yml')
+            os.chmod(f'{temp_dirname}/setup.exp', 0o444)
+            copytree(temp_dirname, target_dir + mgm_folder, dirs_exist_ok=True)
+
+            if os.path.isfile(f'{target_dir}/docker-compose.yml'):
+                os.remove(f'{target_dir}/docker-compose.yml')
 
             # Symlink separate files and whole directories
             symlink_objects = {

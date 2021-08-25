@@ -19,6 +19,7 @@ import os
 import subprocess
 import sys
 import tempfile
+from shutil import copytree
 
 import pygit2
 from pygit2 import Repository, clone_repository
@@ -27,7 +28,6 @@ from yaspin import yaspin
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
-
 
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
@@ -196,7 +196,7 @@ class FreqtradeCli:
         if not os.path.exists(target_dir):
             os.makedirs(target_dir, exist_ok=True)
 
-        self.monigomani_cli.run_command('cp -rT {0} {1}'.format(temp_dirname, target_dir))
+        copytree(temp_dirname, target_dir, dirs_exist_ok=True)
 
         if not os.path.isfile(f'{target_dir}/monigomani/setup.exp'):
             self.cli_logger.error('🤷 No "setup.exp" found, back to the MoniGoMani installation docs it is!')
