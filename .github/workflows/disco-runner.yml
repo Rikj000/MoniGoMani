@@ -1,6 +1,5 @@
 name: 'Disco Runner 👯'
-# description: 'Party like we have never done before'
-# author: 'github.com/topscoder'
+# description: 'Party like we have never done before!'
 
 on:
   schedule:
@@ -10,17 +9,19 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      DISCORD_MESSAGE: ${{ secrets.DISCORD_MESSAGE }}
-      DISCORD_CHANNEL_URL: ${{ secrets.DISCORD_CHANNEL_URL }}
-      DISCORD_USERNAME: ${{ secrets.DISCORD_USERNAME }}
-      DISCORD_PASSWORD: ${{ secrets.DISCORD_PASSWORD }}
-      DISCORD_TEXTBOX_SELECTOR: ${{ secrets.DISCORD_TEXTBOX_SELECTOR }}
+      DISCO_BOT: ${{ secrets.DISCO_BOT }}
+      DISCO_TOKEN: ${{ secrets.DISCO_TOKEN }}
+      DISCO_CHANNEL: ${{ secrets.DISCO_CHANNEL }}
+      DISCO_MESSAGE: ${{ secrets.DISCO_MESSAGE }}
+
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          node-version: '12'
-      - run: npm install puppeteer
-      - run: npm install puppeteer-extra-plugin-stealth
-      - uses: ./
-      - run: node .github/scripts/disco.js
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependency
+        run: |
+          python3 -m pip install discord.py
+      - name: Let's go to the disco!
+        run: python .github/scripts/disco.py
