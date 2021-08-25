@@ -124,7 +124,8 @@ class MoniGoManiCli(object):
                     else:
                         sp.red.write('😕 MoniGoMani installation failed')
                         sys.exit(1)
-                except Exception:
+                except Exception as e:
+                    sp.red.write(str(e))
                     sp.red.write('😕 MoniGoMani installation failed')
                     sys.exit(1)
 
@@ -181,7 +182,8 @@ class MoniGoManiCli(object):
                         os.symlink(symlink_object, symlink_object.replace(mgm_folder, ''))
 
             return True
-        except Exception:
+        except Exception as e:
+            self.logger.critical(str(e))
             return False
 
     def apply_best_results(self, strategy: str, config: MoniGoManiConfig = None) -> bool:
