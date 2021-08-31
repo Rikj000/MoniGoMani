@@ -167,16 +167,6 @@ if [ $? -ne 0 ]; then
 fi
 echo -e "${GREEN}  ✅  Python3 is installed.${CLOSE}"
 
-# Ensure that python3-venv is installed
-VENV_PACKAGE_NAME="`readlink -f $(which python3)  | awk -F'/' '{print $NF}'`-venv"
-dpkg -s  $VENV_PACKAGE_NAME | grep "ok installed" >/dev/null 2>&1
-if [ $? -ne 0 ]; then
-    echo -e "${RED}  🙉  Python3-venv is not installed. Can't proceed. install it with: apt-get install ${VENV_PACKAGE_NAME}${CLOSE}"
-    exit 1
-fi
-echo -e "${GREEN}  ✅  Python3-venv is installed.${CLOSE}"
-
-
 # Ensure that pip3 is installed
 command -v pip3 >/dev/null 2>&1
 if [ $? -ne 0 ]; then
@@ -184,6 +174,14 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 echo -e "${GREEN}  ✅  Pip3 is installed.${CLOSE}"
+
+# Ensure that python3-venv is installed
+pip3 list | grep virtualenv >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo -e "${RED}  🙉  Python3-venv is not installed. Can't proceed. install it with: pip install virtualenv${CLOSE}"
+    exit 1
+fi
+echo -e "${GREEN}  ✅  Python3-venv is installed.${CLOSE}"
 
 # Ensure that git is installed
 command -v git >/dev/null 2>&1
