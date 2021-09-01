@@ -14,7 +14,7 @@
 #
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 
-"""mgm-hurry is a CLI Tool for setting up and managing a Freqtrade instance containing the MoniGoMani Framework & Strategy"""
+"""mgm-hurry is a CLI Tool for setting up and managing Freqtrade in combination with MoniGoMani"""
 
 import glob
 import json
@@ -124,7 +124,7 @@ class MGMHurry:
                         'value': 2
                     }
                 ]
-            },
+            }
         ]
 
         answers = prompt(questions=questions)
@@ -188,7 +188,7 @@ class MGMHurry:
 
         :param target_dir: (string, optional) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         :param branch: (string, optional) Checkout a specific branch. Defaults to 'develop'.
-        :param commit: (str) Checkout a specific commit. Defaults to None aka latest.
+        :param commit: (str) Checkout a specific commit. Defaults to latest supported by MoniGoMani.
         """
         self._logger.info('💨 💨 💨')
         self._logger.info('👉 Install Freqtrade')
@@ -227,6 +227,7 @@ class MGMHurry:
 
         :param branch: (string, optional) Checkout a specific branch. Defaults to 'development'.
         :param target_dir: (string, optional) Specify a target_dir to install MoniGoMani. Defaults to os.getcwd().
+        :param commit: (str) Checkout a specific commit. Defaults to None aka latest.
         """
         self._logger.info('💨 💨 💨')
         self._logger.info('👉 Install MoniGoMani')
@@ -283,7 +284,8 @@ class MGMHurry:
 
         self.monigomani_cli.download_setup_mgm(target_dir, branch, commit)
         self.monigomani_config.create_config_files(self._basedir)
-        self._logger.info('🍺 MoniGoMani has been installed. You can now proceed to setup your instance. (Hint: mgm-hurry setup)')
+        self._logger.info('🍺 MoniGoMani has been installed. You can now proceed to setup your instance. '
+                          '(Hint: mgm-hurry setup)')
 
     def setup(self):
         """
@@ -305,7 +307,8 @@ class MGMHurry:
 
         if len(strategies_choices) == 0:
             strat_dir = f'{self._basedir}/user_data/strategies/'
-            self._logger.error(f'🤷 I could not find any strategy in {strat_dir}. Did you install Freqtrade & MoniGoMani?')
+            self._logger.error(f'🤷 I could not find any strategy in {strat_dir}. '
+                               f'Did you install Freqtrade & MoniGoMani?')
             sys.exit(1)
 
         self.monigomani_config.create_config_files(self._basedir)
@@ -319,7 +322,8 @@ class MGMHurry:
 
         if len(hyperopts_choices) == 0:
             ho_dir = f'{self._basedir}/user_data/hyperopts/'
-            self._logger.error(f'🤷 I could not find any hyperopts in {ho_dir}. Did you install Freqtrade & MoniGoMani?')
+            self._logger.error(f'🤷 I could not find any hyperopts in {ho_dir}. '
+                               f'Did you install Freqtrade & MoniGoMani?')
             sys.exit(1)
 
         self.monigomani_config.reload()
@@ -440,7 +444,7 @@ class MGMHurry:
                 'api_secret': answers.get('api_secret'),
             }
 
-            self.monigomani_config._save_exchange_credentials(cred)
+            self.monigomani_config.save_exchange_credentials(cred)
 
         self.__setup_telegram()
 
@@ -475,7 +479,7 @@ class MGMHurry:
             self._logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
             sys.exit(1)
 
-        timerange = self.monigomani_config._get_preset_timerange(timerange)
+        timerange = self.monigomani_config.get_preset_timerange(timerange)
 
         if self.freqtrade_cli.installation_exists() is False:
             self._logger.error('🤷 No Freqtrade installation found. I crash.')
@@ -560,7 +564,8 @@ class MGMHurry:
 
         # Save new static pairlist to his own pairlist json file
         self._logger.info('🤖 Saving fresh static pairlist into mgm_pair_lists/...')
-        with open('{0}/user_data/mgm_pair_lists/{1}-{2}-Top-Volume-StaticPairList.json'.format(self._basedir, exchange, quote), 'w+') as pairlist_file:
+        with open('{0}/user_data/mgm_pair_lists/{1}-{2}-'
+                  'Top-Volume-StaticPairList.json'.format(self._basedir, exchange, quote), 'w+') as pairlist_file:
             data_format = {'exchange': {'pair_whitelist': static_pairlist}}
             json.dump(data_format, pairlist_file, indent=4)
 
@@ -584,7 +589,7 @@ class MGMHurry:
                  clean_start: bool = False, save_output: bool = True, output_path: str = None,
                  output_file_name: str = None, jobs: int = None):
         """
-        HyperOpt Magic. Runs HyperOpt process to find out the most positive settings.
+        HyperOpt Magic. Runs HyperOpt process to find out the most positive settings, automatically saves results.
 
         :param timerange: (str, Optional): timerange from/to in format (start-end): yyyymmdd-yyyymmdd
             or preset [up, down, side]. Defaults to value in '.hurry'
@@ -614,7 +619,7 @@ class MGMHurry:
         self._logger.info('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
         self._logger.info('💨 💨 💨')
 
-        timerange = self.monigomani_config._get_preset_timerange(timerange)
+        timerange = self.monigomani_config.get_preset_timerange(timerange)
 
         if loss is None:
             loss = self.monigomani_config.config['hyperopt']['loss']
@@ -695,7 +700,8 @@ class MGMHurry:
         best = '--best' if only_best is True else ''
         profit = '--profitable' if only_profitable is True else ''
 
-        dcd = f'{self.monigomani_config.config["ft_binary"]} hyperopt-list --hyperopt-filename "{choice}" {best} {profit}'
+        dcd = f'{self.monigomani_config.config["ft_binary"]} hyperopt-list ' \
+              f'--hyperopt-filename "{choice}" {best} {profit}'
         self._logger.debug(dcd)
 
         self.monigomani_cli.run_command(dcd)
@@ -716,26 +722,27 @@ class MGMHurry:
         self._logger.info('💨 💨 💨')
 
         if epoch == 0:
-            self._logger.error('🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_show_epoch --epoch=837')
+            self._logger.error(
+                '🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_show_epoch --epoch=837')
             sys.exit(1)
 
         self._logger.info('👉 Showing HyperOpt results for epoch # {epoch}')
 
         self.monigomani_cli.run_command(f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch}')
 
-    def hyperopt_apply_epoch(self, epoch: int = 0, run: int = 1):
+    def hyperopt_apply_epoch(self, epoch: int = 0):
         """
         Apply HyperOpt results from given epoch
 
         :param epoch: (int): The epoch number to apply the results from.
-        :param run: (int, Optional): Defaults to 1. Run number of hyperopt. First run has different command than second.
         """
         self._logger.info('💨 💨 💨')
         self._logger.info('👉 Hyperopt apply epoch')
         self._logger.info('💨 💨 💨')
 
         if epoch == 0:
-            self._logger.error('🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_apply_epoch --epoch=837')
+            self._logger.error(
+                '🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_apply_epoch --epoch=837')
             sys.exit(1)
 
         self._logger.info(f'👉 Applying HyperOpt results of epoch # {epoch}')
@@ -757,10 +764,10 @@ class MGMHurry:
         :param enable_protections: (bool, Optional): Whether or not to enable protections. Defaults to True.
         """
         self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Start backtesting. Lets see how it all turns out!')
+        self._logger.info('👉 Start BackTesting. Lets see how it all turns out!')
         self._logger.info('💨 💨 💨')
 
-        timerange = self.monigomani_config._get_preset_timerange(timerange)
+        timerange = self.monigomani_config.get_preset_timerange(timerange)
 
         cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json '
                '-c ./user_data/mgm-config-private.json --timerange $timerange')
@@ -788,8 +795,8 @@ class MGMHurry:
         self._logger.info('💨 💨 💨')
 
         cmd = (
-            f'{self.monigomani_config.config["ft_binary"]} trade -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json \
-            -c ./user_data/mgm-config-hyperopt.json --strategy {self.monigomani_config.config["hyperopt"]["strategy"]}'
+            f'{self.monigomani_config.config["ft_binary"]} trade -c ./user_data/mgm-config.json '
+            f'-c ./user_data/mgm-config-private.json --strategy {self.monigomani_config.config["hyperopt"]["strategy"]}'
         )
 
         if dry_run is True:
@@ -808,7 +815,7 @@ class MGMHurry:
                 'type': 'confirm',
                 'message': 'Do you want to also setup your Telegram bot? ',
                 'name': 'proceed_telegram',
-                'default': True,
+                'default': True
             },
             {
                 'type': 'confirm',
@@ -830,7 +837,7 @@ class MGMHurry:
                 'message': 'Please enter the chat ID: ',
                 'default': '',
                 'when': lambda result: result['proceed_telegram'] and result['enable_telegram']
-            },
+            }
         ]
 
         answers = prompt(questions=questions)
@@ -845,7 +852,7 @@ class MGMHurry:
                 'telegram_chat_id': answers.get('telegram_chat_id')
             }
 
-            self.monigomani_config._save_telegram_credentials(opt)
+            self.monigomani_config.save_telegram_credentials(opt)
 
         return True
 

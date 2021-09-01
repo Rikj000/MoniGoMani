@@ -324,7 +324,7 @@ class MoniGoManiConfig(object):
         """
         self.write_hurry_dotfile()
 
-    def _save_exchange_credentials(self, cred: dict):
+    def save_exchange_credentials(self, cred: dict):
         """
         Save exchange credentials to "mgm-config-private.json"
 
@@ -348,7 +348,7 @@ class MoniGoManiConfig(object):
 
         self.logger.info('🍺 Exchange settings written to "mgm-config-private.json"')
 
-    def _save_telegram_credentials(self, opt: dict) -> bool:
+    def save_telegram_credentials(self, opt: dict) -> bool:
         """
         Save Telegram bot settings
 
@@ -374,7 +374,7 @@ class MoniGoManiConfig(object):
 
         return True
 
-    def _get_preset_timerange(self, timerange: str) -> str:
+    def get_preset_timerange(self, timerange: str) -> str:
         """
         Parses given timerange-string into according timerange dates
 
