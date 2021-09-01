@@ -49,6 +49,8 @@ usage() {
     --mgm_commit=<commit hash>    Specific commit hash to checkout from Git repository.
                                   (Note: will skip --mgm_branch if set)
 
+    --dev-break                   Break before launching MGM-Hurry
+
 EOF
 
     exit 0
@@ -67,6 +69,7 @@ NOCOLOR='\033[0m'
 CLOSE='\033[m'
 
 # Loop through arguments and process them
+DEV_BREAK="false"
 for arg in "$@"
 do
     case $arg in
@@ -84,6 +87,10 @@ do
         ;;
         --mgm_commit=*)
         MGM_COMMIT="${arg#*=}"
+        shift
+        ;;
+        --dev-break)
+        DEV_BREAK="true"
         shift
         ;;
         -h|--help)
@@ -235,6 +242,16 @@ else
     cd "$INSTALL_DIR/monigomani" && git checkout "$MGM_BRANCH"
 fi
 
+if [ "$DEV_BREAK" == "true" ]; then
+  echo ""
+  confirm "👉  Are you ready to proceed?" "(y/n)"
+
+  if [ "$REPLY" == "1" ] # 1 = False, why shell why..
+  then
+      do_exit
+      exit 1
+  fi
+fi
 
 echo ""
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
