@@ -175,6 +175,18 @@ if [ $? -ne 0 ]; then
 fi
 echo -e "${GREEN}  ✅  Pip3 is installed.${CLOSE}"
 
+# Ensure that python3-venv is installed
+OS=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
+if [ "$OS" == "\"Ubuntu\"" -o "$OS" == "\"Debian\"" ]; then
+    VENV_PACKAGE_NAME="`readlink -f $(which python3)  | awk -F'/' '{print $NF}'`-venv"
+    dpkg -s  $VENV_PACKAGE_NAME | grep "ok installed" >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}  🙉  Python3-venv is not installed. Can't proceed. install it with: sudo apt-get install ${VENV_PACKAGE_NAME}${CLOSE}"
+        exit 1
+    fi
+    echo -e "${GREEN}  ✅  Python3-venv is installed.${CLOSE}"
+fi
+
 # Ensure that git is installed
 command -v git >/dev/null 2>&1
 if [ $? -ne 0 ]; then
