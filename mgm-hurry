@@ -402,6 +402,11 @@ class MGMHurry:
             'name': 'api_secret',
             'message': 'Please enter the exchange API secret: ',
             'when': lambda result: result['proceed_exchange']
+        }, {
+            'type': 'input',
+            'name': 'username',
+            'message': 'Please enter the Username you want to use:',
+            'default': self.monigomani_config.get('username') or 'MoniGoMani Community'
         }]
 
         answers = prompt(questions=questions)
@@ -416,6 +421,7 @@ class MGMHurry:
 
         new_config = {
             'config': {
+                'username': answers.get('username'),
                 'install_type': answers.get('install_type'),
                 'ft_binary': ft_binary,
                 'timerange': answers.get('timerange'),

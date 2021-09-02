@@ -1,4 +1,5 @@
 config:
+  username: MoniGoMani Community
   exchange: binance
   ft_binary: source ./.env/bin/activate; freqtrade
   hyperopt:
