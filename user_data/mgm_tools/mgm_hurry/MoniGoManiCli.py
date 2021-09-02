@@ -14,18 +14,18 @@
 
 import glob
 import os
-import shlex
+import subprocess
 import sys
 import tempfile
 from shutil import copy2, copytree
 
+import logger
 import pygit2
 from pygit2 import Repository, clone_repository
-from shell_command import shell_call, shell_output
 from yaspin import yaspin
 
 from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
-from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
+from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger, MGMLogger
 
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
@@ -37,9 +37,11 @@ class MoniGoManiCli(object):
     Use this module to communicate with the MoniGoMani HyperStrategy.
 
     Attributes:
-        logger      The logger function of the MoniGoManiCli module.
+        logger              The logger function of the MoniGoManiCli module.
+        monigomani_config   The MoniGoManiConfig object.
     """
     logger: MoniGoManiLogger
+    monigomani_config: MoniGoManiConfig
 
     def __init__(self, basedir):
         """
@@ -49,6 +51,7 @@ class MoniGoManiCli(object):
         """
         self.basedir = basedir
         self.logger = MoniGoManiLogger(self.basedir).get_logger()
+        self.monigomani_config = MoniGoManiConfig(self.basedir)
 
     def installation_exists(self) -> bool:
         """
@@ -218,23 +221,46 @@ class MoniGoManiCli(object):
         Execute shell command and log output to mgm logfile.
 
         :param command: (str) Shell command to execute, sir!
-        :param output_file_name: (str) Name of the '.log' file. Defaults to 'Results-<Current-DateTime>.log'
+        :param output_file_name: (str) Name of the absolute path to the '.log' file.
         :return returncode: (int) The returncode of the subprocess
         """
+
         if command is None or command == '':
             self.logger.error('🤷 Please pass a command through. Without command no objective, sir!')
             sys.exit(1)
-
-        cmd = shlex.split(command)
-        cmd = ' '.join(cmd)
+        return_code = 1
 
         if output_file_name is not None:
-            output = shell_output(cmd, universal_newlines=True)
-            with open(output_file_name, 'w+') as output_file:
-                output_file.write(output)
-                output_file.close()
+            output_file = open(output_file_name, 'w')
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT, encoding='utf-8')
 
-            self.logger.debug(output)
-            return 0
+        hyperopt_results = []
+        mgm_logger = MGMLogger(logger.logger)
+        monigomani_logger = MoniGoManiLogger(self.basedir)
+        elapsed_time = 'Elapsed Time:'
+        eta = '| [ETA:'
 
-        return shell_call(cmd, shell=True)
+        for line in process.stdout:
+            final_line = mgm_logger.clean_line(line)
+
+            # Save the output to a '.log' file if enabled
+            if (mgm_logger.filter_line(final_line) is False) and \
+                (output_file_name is not None) and (eta not in final_line):
+                output_file.write(final_line)
+
+            # Check if a new HyperOpt Results line is found, store it in RAM and re-print the whole HyperOpt Table if so
+            response = monigomani_logger.store_hyperopt_results(hyperopt_results, final_line)
+            if (response['results_updated'] is True) or (eta not in final_line) and (elapsed_time in final_line):
+                hyperopt_results = response['hyperopt_results']
+                # Skip the initial header
+                if len(hyperopt_results) > 3:
+                    for hyperopt_results_line in hyperopt_results:
+                        sys.stdout.write(hyperopt_results_line)
+                if (eta not in final_line) and (elapsed_time in final_line):
+                    sys.stdout.write(final_line)
+            else:
+                sys.stdout.write(final_line)
+
+        process.wait()
+        return return_code

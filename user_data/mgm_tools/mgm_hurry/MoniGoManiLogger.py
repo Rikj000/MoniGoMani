@@ -121,7 +121,7 @@ class MGMLogger(logging.Logger):
             'INFO - Found',
             'INFO - Number of parallel jobs set as:',
             'INFO - Effective number of parallel workers used:',
-            'user_data.mgm_tools.mgm_hurry.LeetLogger['
+            'user_data.mgm_tools.mgm_hurry.MoniGoManiLogger['
         }
 
         matches = '\n'.join(ignored_line for ignored_line in ignored_lines if ignored_line.lower() in line.lower())
