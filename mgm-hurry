@@ -762,12 +762,16 @@ class MGMHurry:
 
         self._logger.info(f'🍺 Hyperopt results of epoch # {epoch} are applied.')
 
-    def backtest(self, timerange: str = None, enable_protections: bool = True):
+    def backtest(self, timerange: str = None, strategy: str = None,
+                 enable_protections: bool = True, output_file_name: str = None):
         """
-        Run a backtest session.
+        Run a backtest session and automatically save the results.
 
-        :param timerange: (string, Optional): The target timerange for backtesting. Defaults to None.
+        :param timerange: (string, Optional): The target timerange for backtesting. Defaults to timerange in '.hurry'.
+        :param strategy: (str, Optional): Strategy to use during BackTesting. Defaults to value in '.hurry'
         :param enable_protections: (bool, Optional): Whether or not to enable protections. Defaults to True.
+        :param output_file_name: (str, Optional) Name of the '.log' file(s).
+            Defaults to 'BackTestResults-<Current-DateTime>'
         """
         self._logger.info('💨 💨 💨')
         self._logger.info('👉 Start BackTesting. Lets see how it all turns out!')
@@ -778,15 +782,30 @@ class MGMHurry:
         cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json '
                '-c ./user_data/mgm-config-private.json --timerange $timerange')
 
+        if timerange is None:
+            timerange = self.monigomani_config.config['timerange']
+
+        if strategy is None:
+            strategy = self.monigomani_config.config['hyperopt']['strategy']
+
         if enable_protections is True:
             cmd = f'{cmd} --enable-protections'
 
         cmd = Template(cmd).substitute(
             ft_binary=self.monigomani_config.config['ft_binary'],
-            ho_strategy=self.monigomani_config.config['hyperopt']['strategy'],
+            ho_strategy=strategy,
             timerange=timerange)
 
-        self.monigomani_cli.run_command(cmd)
+        if output_file_name is None:
+            output_file_name = f'BackTestResults-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+
+        output_file_path = f'{self._basedir}/user_data/backtest_results/{output_file_name}.log'
+        self.monigomani_cli.run_command(cmd, output_file_path)
+        MoniGoManiLogger(self._basedir).post_message(username=self.monigomani_config.config['username'],
+                                                     message=f'🚀 Fresh **{strategy}** BackTest Results ⬇️',
+                                                     results_path=output_file_path)
+        MoniGoManiLogger(self._basedir).post_setup(config=self.monigomani_config.config, strategy=strategy,
+                                                   basedir=self._basedir)
 
         self._logger.info('🍺 Backtesting ready... 🤑')
 
