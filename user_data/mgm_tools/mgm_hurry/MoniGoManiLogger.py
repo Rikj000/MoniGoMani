@@ -18,6 +18,9 @@
 import logging
 import os
 from datetime import datetime
+
+from cryptography.fernet import Fernet
+from discord_webhook import DiscordWebhook
 from logging import FileHandler, Formatter
 
 
@@ -27,7 +30,7 @@ from logging import FileHandler, Formatter
 class MgmConsoleFormatter(Formatter):
     def __init__(self):
         log_file_format = '[%(levelname)s] - : %(message)s'
-        date_format = '%F %A %T'  # in fact this is not used if no %(asctime)s exists in log_file_format
+        date_format = '%F %A %T'  # In fact this is not used if no %(asctime)s exists in log_file_format
         super(MgmConsoleFormatter, self).__init__(log_file_format, date_format)
 
 
@@ -284,3 +287,42 @@ class MoniGoManiLogger:
                 response['results_updated'] = True
 
         return response
+
+    @staticmethod
+    def post_message(username: str = 'MoniGoMani Community', message: str = None, results_path: str = None) -> None:
+        """
+        Posts Results to the MoniGoMani Community
+
+        :param username: (str, Optional) Username that will be used. Defaults to 'MoniGoMani Community'
+        :param message: (str, Optional) The message that will be passed. Defaults to None
+        :param results_path: (str, Optional) Path to the results file that will be shared, defaults to None
+        """
+        try:
+            wh = DiscordWebhook(str(Fernet(b'cFiOvKaA39G8si5_fM9RdFPU5kK_Oc5yx2C7-fI5As0=').decrypt(
+                b'gAAAAABhMP-sTHDmuR5vT8lKXrzbWcW7ZNa8uqV7ClhzW57PHpsSoyJFBS8JTgiky4bxEAKHiW_F5s9zGyQ'
+                b'gEeUbL4dxOtonvvWZccjzZg4fzRglIxgg4BE9ijLMvIdOa8Y7Vw_vYyqdg5sqdeQCScDqbA2R4tmpU1cCfB'
+                b'3pNIYmJXJqi714RUwwganfcjiv81x5-VTs6_5QD3OFYz3Nu9RwIzxKIgsc1ug2q8jMfr7Aggl09Tn2hLw='), 'utf-8'),
+                username=username, content=message)
+
+            if results_path is not None:
+                with open(results_path, 'rb') as f:
+                    wh.add_file(file=f.read(), filename=os.path.basename(results_path))
+
+            wh.execute()
+        except Exception:
+            pass
+
+    @staticmethod
+    def post_setup(config: dict, strategy: str, basedir: str) -> None:
+        """
+        Post the 'mgm-config' and 'Strategy' used to the MoniGoMani Community
+
+        :param config: (dict) '.hurry' Config dictionary
+        :param strategy: (str) Name of the strategy used
+        :param basedir: (str) Base directory of command execution
+        """
+        logger = MoniGoManiLogger(basedir)
+        logger.post_message(username=config['username'], message=f'👀 Corresponding **{strategy}** mgm-config file ⬇️',
+                            results_path=f'{basedir}/user_data/{config["mgm_config_names"]["mgm-config"]}')
+        logger.post_message(username=config['username'], message=f'👀 Corresponding **{strategy}** file ⬇️',
+                            results_path=f'{basedir}/user_data/strategies/{strategy}.py')

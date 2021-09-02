@@ -4,6 +4,9 @@ python_version = "3.8"
 [packages]
 art = "==5.2"
 coloredlogs = "==15.0.1"
+cryptography = "==3.4.8"
+discord-webhook = "==0.14.0"
+distro = "==1.6.0"
 fire = "==0.4.0"
 inquirerpy = "==0.2.4"
 logger = "==1.4"
@@ -18,7 +21,6 @@ smmap = "==4.0.0"
 tenacity = "==8.0.1"
 termcolor = "==1.1.0"
 wcwidth = "==0.2.5"
-shell_command = "==0.1"
 pygit2 = "*"
 
 [dev-packages]
