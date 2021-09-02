@@ -60,10 +60,12 @@ Setting it all up requires some knowledge of the entire process, until you found
     - [Options](#options-2)
   - [`mgm-hurry hyperopt`](#mgm-hurry-hyperopt)
     - [Options](#options-3)
-  - [`mgm-hurry hyperopt_show_results`](#mgm-hurry-hyperopt_show_results)
+  - [`mgm-hurry backtest`](#mgm-hurry-backtest)
     - [Options](#options-4)
-  - [`mgm-hurry hyperopt_show_epoch`](#mgm-hurry-hyperopt_show_epoch)
+  - [`mgm-hurry hyperopt_show_results`](#mgm-hurry-hyperopt_show_results)
     - [Options](#options-5)
+  - [`mgm-hurry hyperopt_show_epoch`](#mgm-hurry-hyperopt_show_epoch)
+    - [Options](#options-6)
   - [`mgm-hurry start_trader`](#mgm-hurry-start_trader)
     - [Option](#option)
 - [## Example timeranges](#-example-timeranges)
@@ -76,7 +78,7 @@ Setting it all up requires some knowledge of the entire process, until you found
 ---
 - **ToDo:** *Move Installation instructions to `Docs-VeryQuickStart.md`*
 - **Note:** *Assumes Python 3.8+, Pip & Git are already installed on your system!*
-- **Note:** *WSL users first will need to [switch their `sh` to `bash`](https://unix.stackexchange.com/a/442517)*
+- **Note:** *Ubuntu users first will need to [switch their `sh` to `bash`](https://unix.stackexchange.com/a/442517)*
 
 MoniGoMani provides an all-in-one setup tool. It will guide you through the entire installation procedure. Not only for MoniGoMani, but Freqtrade also. You want the entire package, right? You will be up & HyperOpting (or Dry/Live Running) in no time! 🤙
 
@@ -187,16 +189,24 @@ Runs HyperOpt process to find out the most positive settings.
   - For other strategies this will be a `<strategy-name>.json` file found in the `user_data/strategies` folder
   - **Defaults to:** `True`. Provide `False` to disable automatic creation of a HyperOpt Results `.json` file.
 - **`--clean_start`:** *(Optional)* Perform [`mgm-hurry cleanup`](#mgm-hurry-cleanup) before starting HyperOpt.
-  -  **Defaults to:** `False`. Provide `True` to enable cleanup before HyperOpt
-- **`--save_output`:** *(Optional)* Auto-save the HyperOpt output to a nicely formatted `.log` file.
-  -  **Defaults to:** `True`. Provide `False` to disable the creation of HyperOpt Result `.log` files
-- **`--output_path`:** *(Optional)* Path to the output of the `.log` file.
-  - **Defaults to:** `Some Test Results/<mgm-config-private-bot_name>/`
-- **`--output_file_name`:** *(Optional)* Name of the `.log` file.
+- **`--do_backtest`:** *(bool, Optional)* Do a BackTest after the HyperOpt?
+  - **Defaults to:** True.
+- **`--output_file_name`:** *(Optional)* Custom filename for the `.log` file being created.
   - **Defaults to:** `HyperOptResults-<Current-DateTime>.log`
 - **`--jobs`:** *(Optional)* Amount of parallel workers (CPU cores) to use
   - **Defaults to:** Automatic detection *(Amount used will depend on the amount of cores available on your system)*
 
+### `mgm-hurry backtest`
+Runs BackTest process to find out more about the results found by HyperOpt.
+#### Options
+- **`--timerange`:** *(Optional)* The target timerange for backtesting.
+  - **Defaults to:** timerange in `.hurry`.
+- **`--strategy`:** *(Optional)* Specify the Strategy which you want to BackTest
+  - **Defaults to:** The `strategy` defined in the `hyperopt` section of your `.hurry` file.
+- **`--enable_protections`:** *(Optional)* Whether or not to enable protections.
+  - **Defaults to:** True.
+- **`--output_file_name`:** *(Optional)* Custom name for the '.log' file being created.
+  - **Defaults to:** Defaults to 'BackTestResults-<Current-DateTime>'
 
 ### `mgm-hurry hyperopt_show_results`
 - **ToDo:** *Scrap with [issue 105](https://github.com/Rikj000/MoniGoMani/issues/105)*
