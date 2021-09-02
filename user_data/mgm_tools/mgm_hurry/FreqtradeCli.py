@@ -14,6 +14,7 @@
 #                        | |
 #                        |_|
 
+import distro
 import json
 import os
 import subprocess
@@ -214,8 +215,12 @@ class FreqtradeCli:
         """
 
         if os.path.isfile('{0}/setup.exp'.format(target_dir)):
+            command = 'expect {0}/setup.exp'.format(target_dir)
+            if distro.id() in ['ubuntu', 'debian']:
+                command = f'sudo {command}'
+
             # Using 'except' to automatically skip resetting the git repo, but do install all dependencies
-            self.monigomani_cli.run_command('expect {0}/setup.exp'.format(target_dir))
+            self.monigomani_cli.run_command(command)
             return True
 
         self.cli_logger.error('Could not run {0}/setup.exp for Freqtrade because the file does not exist.'
