@@ -419,6 +419,7 @@ class MGMHurry:
         else:
             ft_binary = 'docker-compose run --rm freqtrade'
 
+        # ToDo: Fill in HO quote aka stake_currency in mgm-config
         new_config = {
             'config': {
                 'username': answers.get('username'),
@@ -477,6 +478,7 @@ class MGMHurry:
         :param timerange: (string, optional) Timerange from/to in string format (start-end): yyyymmdd-yyyymmdd.
             Defaults to timerange out of ".hurry" config file. -or- for preset timerange: down, side, up
         """
+        # ToDo: Download more candle data then the length of the timerange used (Concerning startup candle count)
         self._logger.info('💨 💨 💨')
         self._logger.info('👉 Download candle data')
         self._logger.info('💨 💨 💨')
@@ -592,8 +594,7 @@ class MGMHurry:
 
     def hyperopt(self, timerange: str = None, strategy: str = None, loss: str = None, spaces: str = None,
                  enable_protections: bool = True, random_state: int = None, apply_best_results: bool = True,
-                 clean_start: bool = False, save_output: bool = True, output_path: str = None,
-                 output_file_name: str = None, jobs: int = None):
+                 clean_start: bool = False, do_backtest: bool = True, output_file_name: str = None, jobs: int = None):
         """
         HyperOpt Magic. Runs HyperOpt process to find out the most positive settings, automatically saves results.
 
@@ -607,11 +608,9 @@ class MGMHurry:
         :param random_state: (int, Optional): Add '--random-state random_state' flag to HO-command. Defaults to None.
         :param apply_best_results: (bool, Optional): Apply 'best' HO results direct after HO? Defaults to True.
         :param clean_start: (bool, Optional): Cleanup MoniGoMani before starting the HO? Defaults to False.
-        :param save_output: (bool, Optional) Save the output to a '.log' file. Defaults to True
-        :param output_path: (str) Path to the output of the '.log' file.
-            Defaults to 'Some Test Results/<mgm-config-private-bot_name>/'
-        :param output_file_name: (str, Optional) Name of the '.log' file.
-            Defaults to 'HyperOptResults-<Current-DateTime>.log'
+        :param do_backtest: (bool, Optional): Do a BackTest after the HO? Defaults to True.
+        :param output_file_name: (str, Optional) Name of the '.log' file(s).
+            Defaults to 'HyperOpt/BackTestResults-<Current-DateTime>'
         :param jobs: Amount of parallel workers (CPU cores) to use, gets set automatically by default
         """
 
@@ -658,14 +657,31 @@ class MGMHurry:
 
         self._logger.debug(cmd)
 
+        backtest_file_name = output_file_name
+        hyperopt_file_name = output_file_name
         if output_file_name is None:
-            # TODO would be responsibility for logger object to determine output filename.
-            output_file_name = '{0}/user_data/hyperopt_results/HyperOptResults-{1}.log'.format(self._basedir, datetime.now().strftime('%d-%m-%Y-%H-%M-%S'))
+            datetime_now = datetime.now().strftime('%d-%m-%Y-%H-%M-%S')
+            backtest_file_name = f'BackTestResults-{datetime_now}'
+            hyperopt_file_name = f'HyperOptResults-{datetime_now}'
 
-        self.monigomani_cli.run_command(cmd, output_file_name)
+        output_file_path = f'{self._basedir}/user_data/hyperopt_results/{hyperopt_file_name}.log'
+        self.monigomani_cli.run_command(cmd, output_file_path)
+        MoniGoManiLogger(self._basedir).post_message(username=self.monigomani_config.config['username'],
+                                                     message=f'🚀 Fresh **{strategy}** HyperOpt Results ⬇️',
+                                                     results_path=output_file_path)
 
+        # ToDo: Auto Create & Post a TotalOverallSignalImportanceCalculator Report
         if apply_best_results is True:
             self.monigomani_cli.apply_best_results(strategy)
+        elif do_backtest is True:
+            self._logger.warning('🤷 Backtesting without HyperOptResults applied?..')
+
+        if do_backtest is True:
+            self.backtest(timerange=timerange, strategy=strategy,
+                          enable_protections=enable_protections, output_file_name=backtest_file_name)
+        else:
+            MoniGoManiLogger(self._basedir).post_setup(config=self.monigomani_config.config, strategy=strategy,
+                                                       basedir=self._basedir)
 
         self._logger.info('🍺 HyperOpt run ready... 🥵')
 
