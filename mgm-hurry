@@ -574,7 +574,7 @@ class MGMHurry:
         self._logger.info(f'👉 Downloading candle data ({tickers}) for timerange {timerange}')
 
         dcd = f'{self.monigomani_config.config["ft_binary"]} download-data --timerange {timerange} \
-              -t {tickers} -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json'
+              -t {tickers} {self.monigomani_config.command_configs()}'
 
         self._logger.debug(dcd)
         self.monigomani_cli.run_command(dcd)
@@ -667,9 +667,8 @@ class MGMHurry:
         if spaces is None:
             spaces = self.monigomani_config.config['hyperopt']['spaces']
 
-        cmd = '$ft_binary hyperopt -s $ho_strategy \
-              -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json \
-              --hyperopt-loss $ho_loss --spaces $ho_spaces -e $ho_epochs --timerange $timerange '
+        cmd = f'$ft_binary hyperopt -s $ho_strategy {self.monigomani_config.command_configs()}' \
+              f'--hyperopt-loss $ho_loss --spaces $ho_spaces -e $ho_epochs --timerange $timerange '
 
         if enable_protections is True:
             cmd = f'{cmd.strip()} --enable-protections '
@@ -829,9 +828,8 @@ class MGMHurry:
         self._logger.info('💨 💨 💨')
 
         timerange = self.monigomani_config.get_preset_timerange(timerange)
-
-        cmd = ('$ft_binary backtesting -s $ho_strategy -c ./user_data/mgm-config.json '
-               '-c ./user_data/mgm-config-private.json --timerange $timerange')
+        cmd = f'$ft_binary backtesting -s $ho_strategy {self.monigomani_config.command_configs()}' \
+              f'--timerange $timerange'
 
         if timerange is None:
             timerange = self.monigomani_config.config['timerange']
@@ -870,15 +868,13 @@ class MGMHurry:
         self._logger.info('👉 Start trader')
         self._logger.info('💨 💨 💨')
 
-        cmd = (
-            f'{self.monigomani_config.config["ft_binary"]} trade -c ./user_data/mgm-config.json '
-            f'-c ./user_data/mgm-config-private.json --strategy {self.monigomani_config.config["hyperopt"]["strategy"]}'
-        )
+        command = f'{self.monigomani_config.config["ft_binary"]} trade {self.monigomani_config.command_configs()}' \
+                  f'--strategy {self.monigomani_config.config["hyperopt"]["strategy"]}'
 
         if dry_run is True:
-            cmd = f'{cmd} --dry-run'
+            command += ' --dry-run'
 
-        self.monigomani_cli.run_command(cmd)
+        self.monigomani_cli.run_command(command)
 
     def __setup_telegram(self) -> bool:
         """

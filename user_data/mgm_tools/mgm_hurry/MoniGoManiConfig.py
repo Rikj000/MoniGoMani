@@ -387,6 +387,16 @@ class MoniGoManiConfig(object):
 
         return True
 
+    def command_configs(self) -> str:
+        """
+        Returns a string with the 'mgm-config' & 'mgm-config-private' names loaded from '.hurry'
+        ready to implement in a freqtrade command.
+        :return str: String with 'mgm-config' & 'mgm-config-private' for a freqtrade command
+        """
+        mgm_json_name = self.config['mgm_config_names']['mgm-config']
+        mgm_private_json_name = self.config['mgm_config_names']['mgm-config-private']
+        return f'-c ./user_data/{mgm_json_name} -c ./user_data/{mgm_private_json_name} '
+
     def get_preset_timerange(self, timerange: str) -> str:
         """
         Parses given timerange-string into according timerange dates
