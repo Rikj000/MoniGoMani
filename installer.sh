@@ -220,6 +220,7 @@ fi
 
 echo -e "${GREEN}  ✅  Expect is installed.${CLOSE}"
 
+# ToDo: Remove after updating Freqtrade (There TA-Lib installation process is improved)
 # Ensure that TA-Lib (C dependency package) is installed
 command -v ta-lib-config >/dev/null 2>&1
 if [ $? -ne 0 ]; then

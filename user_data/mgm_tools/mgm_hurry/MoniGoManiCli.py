@@ -264,3 +264,25 @@ class MoniGoManiCli(object):
 
         process.wait()
         return return_code
+
+    @staticmethod
+    def timeframe_to_minutes(timeframe):
+        amount = int(timeframe[0:-1])
+        unit = timeframe[-1]
+        if 'y' == unit:
+            scale = 60 * 60 * 24 * 365
+        elif 'M' == unit:
+            scale = 60 * 60 * 24 * 30
+        elif 'w' == unit:
+            scale = 60 * 60 * 24 * 7
+        elif 'd' == unit:
+            scale = 60 * 60 * 24
+        elif 'h' == unit:
+            scale = 60 * 60
+        elif 'm' == unit:
+            scale = 60
+        elif 's' == unit:
+            scale = 1
+        else:
+            raise TypeError('timeframe unit {} is not supported'.format(unit))
+        return (amount * scale) // 60

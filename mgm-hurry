@@ -18,18 +18,17 @@
 
 import glob
 import json
+import logging
 import os
 import sys
-import logging
-
-from datetime import datetime
+from datetime import datetime, timedelta
+from math import ceil
 from string import Template
 
 import fire
-
+from art import tprint
 from InquirerPy import prompt
 from InquirerPy.validator import NumberValidator
-from art import tprint
 
 from user_data.mgm_tools.mgm_hurry.FreqtradeCli import FreqtradeCli
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
@@ -113,16 +112,9 @@ class MGMHurry:
                 'name': 'start_trading',
                 'message': '💨 Do you want to start trading?',
                 'choices': [
-                    {
-                        'name': 'No',
-                        'value': 0
-                    }, {
-                        'name': 'Yes, Dry-Run please',
-                        'value': 1
-                    }, {
-                        'name': 'Yes, for real!',
-                        'value': 2
-                    }
+                    {'name': 'No', 'value': 0},
+                    {'name': 'Yes, Dry-Run please', 'value': 1},
+                    {'name': 'Yes, for real!', 'value': 2}
                 ]
             }
         ]
@@ -478,7 +470,6 @@ class MGMHurry:
         :param timerange: (string, optional) Timerange from/to in string format (start-end): yyyymmdd-yyyymmdd.
             Defaults to timerange out of ".hurry" config file. -or- for preset timerange: down, side, up
         """
-        # ToDo: Download more candle data then the length of the timerange used (Concerning startup candle count)
         self._logger.info('💨 💨 💨')
         self._logger.info('👉 Download candle data')
         self._logger.info('💨 💨 💨')
@@ -524,6 +515,14 @@ class MGMHurry:
             'invalid_message': 'should be at least 1 selection',
             'instruction': '(select at least 1)',
             'filter': lambda val: ' '.join(val)
+        }, {
+            'type': 'list',
+            'name': 'extra_data',
+            'message': 'Download extra data for "mgm-config"\'s defined "startup_candle_count" & "timerange"?',
+            'choices': [
+                {'name': 'Yes', 'value': 1},
+                {'name': 'No', 'value': 0}
+            ]
         }]
 
         answers = prompt(questions=questions)
@@ -533,9 +532,21 @@ class MGMHurry:
 
         timerange = answers.get('timerange')
         tickers = answers.get('tickers')
+        extra_data = answers.get('extra_data')
 
-        self._logger.info(
-            f'👉 Downloading candle data ({tickers}) for timerange {timerange}')
+        if extra_data == 1:
+            mgm_config_files = self.monigomani_config.load_config_files()
+            timeframe_minutes = self.monigomani_cli.timeframe_to_minutes(
+                mgm_config_files['mgm-config']['monigomani_settings']['timeframe'])
+            startup_candle_count = mgm_config_files['mgm-config']['monigomani_settings']['startup_candle_count']
+
+            extra_days = ceil((timeframe_minutes * startup_candle_count) / (60 * 24))
+            split_timerange = timerange.split('-')
+            new_start_date = datetime.strptime(split_timerange[0], '%Y%m%d') - timedelta(extra_days)
+            timerange = f'{new_start_date.strftime("%Y%m%d")}-{split_timerange[1]}'
+            self._logger.info(f'👉 Added {extra_days} extra days to the timerange for the "startup_candle_count"')
+
+        self._logger.info(f'👉 Downloading candle data ({tickers}) for timerange {timerange}')
 
         dcd = f'{self.monigomani_config.config["ft_binary"]} download-data --timerange {timerange} \
               -t {tickers} -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json'

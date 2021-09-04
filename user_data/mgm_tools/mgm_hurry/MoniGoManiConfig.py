@@ -175,7 +175,7 @@ class MoniGoManiConfig(object):
         mgm_config_files = {
             'mgm-config': {},
             'mgm-config-private': {},
-            'mgm-config-hyperopt': {},
+            'mgm-config-hyperopt': {}
         }
 
         for mgm_config_filename in mgm_config_files:
