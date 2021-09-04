@@ -140,6 +140,30 @@ class MGMHurry:
             self.download_candle_data()
 
         if answers.get('do_hyperopt') is True:
+            ho_results_found = False
+            hurry_config = self.monigomani_config.read_hurry_config()
+            strategy = hurry_config['hyperopt']['strategy']
+            if strategy == 'MoniGoManiHyperStrategy':
+                mgm_config_ho = hurry_config['mgm_config_names']['mgm-config-hyperopt']
+                if os.path.isfile(f'{self._basedir}/user_data/{mgm_config_ho}'):
+                    ho_results_found = True
+            elif os.path.isfile(f'{self._basedir}/user_data/strategies/{strategy}.json'):
+                ho_results_found = True
+
+            if ho_results_found is True:
+                clean_start = prompt(questions=[{
+                    'type': 'list',
+                    'name': 'clean_start',
+                    'message': 'Previous HyperOpt Results where found. Do you wish to remove these for a clean start?',
+                    'choices': [
+                        {'name': 'Yes', 'value': 1},
+                        {'name': 'No', 'value': 0}
+                    ]}
+                ])
+
+                if clean_start.get('clean_start') == 1:
+                    self.cleanup(strategy)
+
             # First HO run
             self.hyperopt()
             ho_choice = prompt(questions=[{
