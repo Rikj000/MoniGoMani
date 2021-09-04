@@ -57,17 +57,17 @@ Setting it all up requires some knowledge of the entire process, until you found
   - [`mgm-hurry cleanup`](#mgm-hurry-cleanup)
   - [`mgm-hurry download_static_pairlist`](#mgm-hurry-download_static_pairlist)
   - [`mgm-hurry download_candle_data`](#mgm-hurry-download_candle_data)
-    - [Options](#options-2)
+    - [Option](#option)
   - [`mgm-hurry hyperopt`](#mgm-hurry-hyperopt)
-    - [Options](#options-3)
+    - [Options](#options-2)
   - [`mgm-hurry backtest`](#mgm-hurry-backtest)
+    - [Options](#options-3)
+  - [`mgm-hurry hyperopt_show_epoch`](#mgm-hurry-hyperopt_show_epoch)
     - [Options](#options-4)
   - [`mgm-hurry hyperopt_show_results`](#mgm-hurry-hyperopt_show_results)
     - [Options](#options-5)
-  - [`mgm-hurry hyperopt_show_epoch`](#mgm-hurry-hyperopt_show_epoch)
-    - [Options](#options-6)
   - [`mgm-hurry start_trader`](#mgm-hurry-start_trader)
-    - [Option](#option)
+    - [Option](#option-1)
 - [## Example timeranges](#-example-timeranges)
 - [Developer Notes](#developer-notes)
 - [### Virtual Environment](#-virtual-environment)
@@ -157,19 +157,16 @@ Further you can also change the `min_days_listed` to make sure that all download
 
 
 ### `mgm-hurry download_candle_data`
-Downloads candle data for a given timerange.
-#### Options
+Downloads candle data for a given timerange with the aid of an interactive prompt.
+#### Option
 - **`--timerange`:** *(Optional)* Specify the timerange for which you want to download candle data
   - Needs to be of the format `--timerange=yyyymmdd-yyyymmdd` or `--timerange=down/side/up`
   - ***Defaults to:** The `timerange` defined in your `.hurry` file.*
-- **`--timerange`:** *(Optional)* Specify the timerange for which you want to download candle data
-  - ***Defaults to:** The `timerange` defined in your `.hurry` file*
 
 
 ### `mgm-hurry hyperopt`
 [HyperOpt](https://www.freqtrade.io/en/latest/hyperopt/) *(HyperSpace Parameter Optimization, a form of machine learning)* magic that will make your life easier!
 Runs HyperOpt process to find out the most positive settings.
-
 #### Options
 - **`--timerange`:** *(Optional)* Specify the timerange upon which you want to HyperOpt
   - Needs to be of the format `--timerange=yyyymmdd-yyyymmdd` or `--timerange=down/side/up`
@@ -196,6 +193,7 @@ Runs HyperOpt process to find out the most positive settings.
 - **`--jobs`:** *(Optional)* Amount of parallel workers (CPU cores) to use
   - **Defaults to:** Automatic detection *(Amount used will depend on the amount of cores available on your system)*
 
+
 ### `mgm-hurry backtest`
 Runs BackTest process to find out more about the results found by HyperOpt.
 #### Options
@@ -208,8 +206,19 @@ Runs BackTest process to find out more about the results found by HyperOpt.
 - **`--output_file_name`:** *(Optional)* Custom name for the '.log' file being created.
   - **Defaults to:** Defaults to 'BackTestResults-<Current-DateTime>'
 
+### `mgm-hurry hyperopt_show_epoch`
+Prints & applies the HyperOpt Results for an epoch of choice.
+#### Options
+- **`--epoch`:** ***(Mandatory)*** Provide the epoch from which you wish to print the results.
+- **`--strategy`:** *(Optional)* Strategy used
+  - **Defaults to:** Value in `.hurry`.
+- **`--apply`:** *(Optional)* Apply the printed HyperOpt Results
+  - **Defaults to:** `True`. Provide `False` to only print the results
+- **`--fthypt`:** *(Optional)* Launches a prompt to easily choose a certain `.fthypt` file
+  - **Defaults to:** The last known `.fthypt` file. Provide `True` to launch a prompt to easily choose a specific. `.fthypt` file.
+
+
 ### `mgm-hurry hyperopt_show_results`
-- **ToDo:** *Scrap with [issue 105](https://github.com/Rikj000/MoniGoMani/issues/105)*
 Launches a prompt to easily choose a certain `.fthypt` file to print epochs from.
 #### Options
 - **`--only_best`:** *(Optional)* Show only best epochs.
@@ -218,21 +227,8 @@ Launches a prompt to easily choose a certain `.fthypt` file to print epochs from
   - **Defaults to:** `False`. Provide `True` to enable filter.
 
 
-### `mgm-hurry hyperopt_show_epoch`
-- **ToDo:** *Re-write with [issue 105](https://github.com/Rikj000/MoniGoMani/issues/105)*
-Prints & applies the HyperOpt Results for an epoch of choice.
-
-#### Options
-- **`--epoch`:** ***(Mandatory)*** Provide the epoch from which you wish to print the results.
-- **`--apply`:** *(Optional)* Apply the printed HyperOpt Results
-  - **Defaults to:** `True`. Provide `False` to only print the results
-- **`--fthypt`:** *(Optional)* Launches a prompt to easily choose a certain `.fthypt` file
-  - **Defaults to:** The last known `.fthypt` file. Provide `True` to launch a prompt to easily choose a specific. `.fthypt` file.
-
-
 ### `mgm-hurry start_trader`
 Start the trader. Your ultimate goal!
-
 #### Option
 - **`--dry_run`:** *(Optional)* Run the trader in Dry-Run mode.
   - **Defaults to:** `True`. Provide `False` to run in Live-Run mode.
