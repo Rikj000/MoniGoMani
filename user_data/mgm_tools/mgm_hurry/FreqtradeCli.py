@@ -15,6 +15,7 @@
 #                        |_|
 
 import distro
+import glob
 import json
 import os
 import subprocess
@@ -23,6 +24,7 @@ import tempfile
 from shutil import copytree
 
 import pygit2
+from InquirerPy import prompt
 from pygit2 import Repository, clone_repository
 from yaspin import yaspin
 
@@ -268,3 +270,26 @@ class FreqtradeCli:
             freqtrade_binary = f'source {basedir}/.env/bin/activate; freqtrade'
 
         return freqtrade_binary
+
+    def choose_fthypt_file(self) -> str:
+        """
+        Interactive prompt to choose an fthypt file.
+        :return:
+        """
+        fthypts = map(os.path.basename, sorted(glob.glob(f'{self.basedir}/user_data/hyperopt_results/*.fthypt'),
+                                               key=os.path.getmtime, reverse=True))
+        dat = list(fthypts)
+
+        if len(dat) == 0:
+            self.cli_logger.warning('Whoops, no hyperopt results could be found.')
+            sys.exit(1)
+
+        questions = [{
+            'type': 'list',
+            'name': 'fthypt_file',
+            'message': 'Please select the hyperopt results you want to show: ',
+            'choices': dat
+        }]
+
+        answers = prompt(questions=questions)
+        return answers.get('fthypt_file')

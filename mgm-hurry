@@ -727,29 +727,7 @@ class MGMHurry:
         :param only_profitable: (bool, Optional); Show only profitable epochs. Defaults to False.
         """
 
-        fthypts = map(os.path.basename,
-                      sorted(
-                          glob.glob(f'{self._basedir}/user_data/hyperopt_results/*.fthypt'),
-                          key=os.path.getmtime, reverse=True))
-
-        dat = list(fthypts)
-
-        if len(dat) == 0:
-            self._logger.warning('Whoops, no hyperopt results could be found.')
-            sys.exit(1)
-
-        questions = [
-            {
-                'type': 'list',
-                'name': 'fthypt_file',
-                'message': 'Please select the hyperopt results you want to show: ',
-                'choices': dat
-            },
-        ]
-
-        answers = prompt(questions=questions)
-
-        choice = answers.get('fthypt_file')
+        choice = self.freqtrade_cli.choose_fthypt_file()
 
         self._logger.info(f'👉 Showing hyperopt results for: {choice}')
 
