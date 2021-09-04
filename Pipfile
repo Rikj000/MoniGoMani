@@ -1,5 +1,5 @@
 [packages]
-art = "==5.2"
+art = "==5.3"
 coloredlogs = "==15.0.1"
 cryptography = "==3.4.8"
 discord-webhook = "==0.14.0"
