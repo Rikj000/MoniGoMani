@@ -435,7 +435,6 @@ class MGMHurry:
         else:
             ft_binary = 'docker-compose run --rm freqtrade'
 
-        # ToDo: Fill in HO quote aka stake_currency in mgm-config
         new_config = {
             'config': {
                 'username': answers.get('username'),
@@ -459,12 +458,14 @@ class MGMHurry:
         }
 
         self.monigomani_config.write_hurry_dotfile(new_config)
+        # Overwrite the new stake currency in '.hurry' & mgm-config[stake_currency]
+        self.monigomani_config.save_stake_currency(answers.get('ho_quotation'))
 
         if answers.get('proceed_exchange') is True:
             cred = {
                 'exchange': answers.get('exchange'),
                 'api_key': answers.get('api_key'),
-                'api_secret': answers.get('api_secret'),
+                'api_secret': answers.get('api_secret')
             }
 
             self.monigomani_config.save_exchange_credentials(cred)

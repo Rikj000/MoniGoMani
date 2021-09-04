@@ -324,9 +324,27 @@ class MoniGoManiConfig(object):
         """
         self.write_hurry_dotfile()
 
+    def save_stake_currency(self, stake_currency: str):
+        """
+        Saves the stake currency to 'mgm-config'
+
+        :param stake_currency: (str) The stake_currency you wish to use
+        """
+        # Overwrite the new stake currency in mgm-config[stake_currency]
+        mgm_config_file = self.get_config_filename('mgm-config')
+        if os.path.isfile(mgm_config_file):
+            with open(mgm_config_file, ) as mgm_config:
+                mgm_config_object = json.load(mgm_config)
+                mgm_config.close()
+
+            with open(mgm_config_file, 'w') as mgm_config:
+                mgm_config_object['stake_currency'] = stake_currency
+                json.dump(mgm_config_object, mgm_config, indent=4)
+                mgm_config.close()
+
     def save_exchange_credentials(self, cred: dict):
         """
-        Save exchange credentials to "mgm-config-private.json"
+        Save exchange credentials to 'mgm-config-private'
 
         :param cred: (dict) List containing values for [exchange,api_key,api_secret]
         """
