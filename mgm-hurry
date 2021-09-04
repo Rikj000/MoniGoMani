@@ -164,7 +164,7 @@ class MGMHurry:
                     self.cleanup(strategy)
 
             # First HO run
-            self.hyperopt()
+            self.hyperopt(do_backtest=answers.get('do_backtest'))
             ho_choice = prompt(questions=[{
                 'type': 'input',
                 'name': 'ho_epoch',
@@ -172,10 +172,10 @@ class MGMHurry:
                 'filter': lambda val: int(val),
                 'validate': NumberValidator()
             }])
-            self.hyperopt_apply_epoch(ho_choice.get('ho_epoch'), 1)
+            self.hyperopt_show_epoch(ho_choice.get('ho_epoch'))
 
             # Second HO run
-            self.hyperopt()
+            self.hyperopt(do_backtest=answers.get('do_backtest'))
             ho_choice = prompt(questions=[{
                 'type': 'input',
                 'name': 'ho_epoch',
@@ -183,7 +183,7 @@ class MGMHurry:
                 'filter': lambda val: int(val),
                 'validate': NumberValidator()
             }])
-            self.hyperopt_apply_epoch(ho_choice.get('ho_epoch'), 2)
+            self.hyperopt_show_epoch(ho_choice.get('ho_epoch'))
 
         if answers.get('do_backtest') is True:
             self.backtest()
@@ -709,6 +709,8 @@ class MGMHurry:
             self.monigomani_cli.apply_mgm_results(strategy)
         elif do_backtest is True:
             self._logger.warning('🤷 Backtesting without HyperOptResults applied?..')
+        if apply_best_results is False:
+            self.cleanup(strategy)
 
         if do_backtest is True:
             self.backtest(timerange=timerange, strategy=strategy,
@@ -740,55 +742,48 @@ class MGMHurry:
 
         self.monigomani_cli.run_command(dcd)
 
-    def hyperopt_show_epoch(self, epoch: int = 0):
+    def hyperopt_show_epoch(self, epoch: int = 0, strategy: str = None,
+                            apply: bool = True, fthypt: bool = None):
         """
-        Shows the HyperOpt results for given epoch.
+        Shows the HyperOpt results for a given epoch.
 
-        :param epoch: (int) The epoch number to show the results from.
-
-        ToDo:
-            - Add `--apply` (defaults to `True`)
-            - Scrap `hyperopt_apply_epoch`
-            - Add `--fthypt` (defaults to last known)
+        :param epoch: (int) The epoch number to show the results from
+        :param strategy: (str) The strategy used. Defaults to value in '.hurry'
+        :param apply: (bool) Apply the results of the epoch. Defaults to true
+        :param fthypt: (bool) If 'true' an interactive prompt will launch to pick an '.fthypt' file of choice.
+            Defaults to latest'
         """
         self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Hyperopt show results')
+        self._logger.info(f'👉 Hyperopt show {"" if apply is False else "and apply "}results')
         self._logger.info('💨 💨 💨')
+
+        if fthypt is True:
+            fthypt_name = self.freqtrade_cli.choose_fthypt_file()
 
         if epoch == 0:
-            self._logger.error(
-                '🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_show_epoch --epoch=837')
+            self._logger.error('🤷 Please pass the epoch number through. '
+                               'Hint: mgm-hurry hyperopt_show_epoch --epoch=837')
             sys.exit(1)
 
-        self._logger.info('👉 Showing HyperOpt results for epoch # {epoch}')
+        self._logger.info(f'👉 Showing {"" if apply is False else "and applying "}HyperOpt results for epoch #{epoch}')
 
-        self.monigomani_cli.run_command(f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch}')
+        command = f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} ' \
+                  f'{self.monigomani_config.command_configs()}'
 
-    def hyperopt_apply_epoch(self, epoch: int = 0):
-        """
-        Apply HyperOpt results from given epoch
+        if fthypt is True:
+            command += f' --hyperopt-filename {fthypt_name}'
 
-        :param epoch: (int): The epoch number to apply the results from.
-        """
-        self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Hyperopt apply epoch')
-        self._logger.info('💨 💨 💨')
+        self.monigomani_cli.run_command(command)
 
-        if epoch == 0:
-            self._logger.error(
-                '🤷 Please pass the epoch number through. Hint: mgm-hurry hyperopt_apply_epoch --epoch=837')
-            sys.exit(1)
+        if strategy is None:
+            strategy = self.monigomani_config.config['hyperopt']['strategy']
+        if (apply is True) and (strategy == 'MoniGoManiHyperStrategy'):
+            self.monigomani_cli.apply_mgm_results(strategy)
 
-        self._logger.info(f'👉 Applying HyperOpt results of epoch # {epoch}')
-
-        # View & Apply HyperOpt Results from a trusted <epoch of choice>:
-        self.monigomani_cli.run_command(
-            (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} -c ./user_data/mgm-config.json '
-             '-c ./user_data/mgm-config-private.json  && '
-             'mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json')
-        )
-
-        self._logger.info(f'🍺 Hyperopt results of epoch # {epoch} are applied.')
+        if apply is True:
+            self._logger.info(f'🍺 Hyperopt results of epoch #{epoch} are applied.')
+        else:
+            self.cleanup(strategy)
 
     def backtest(self, timerange: str = None, strategy: str = None,
                  enable_protections: bool = True, output_file_name: str = None):
