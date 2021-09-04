@@ -608,8 +608,8 @@ class MGMHurry:
 
         # Save new static pairlist to his own pairlist json file
         self._logger.info('🤖 Saving fresh static pairlist into mgm_pair_lists/...')
-        with open('{0}/user_data/mgm_pair_lists/{1}-{2}-'
-                  'Top-Volume-StaticPairList.json'.format(self._basedir, exchange, quote), 'w+') as pairlist_file:
+        with open(f'{self._basedir}/user_data/mgm_pair_lists/{exchange}-{quote}-Top-Volume-StaticPairList.json', 'w+') \
+                as pairlist_file:
             data_format = {'exchange': {'pair_whitelist': static_pairlist}}
             json.dump(data_format, pairlist_file, indent=4)
 

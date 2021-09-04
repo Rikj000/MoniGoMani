@@ -212,13 +212,13 @@ class MoniGoManiLogger:
         :param print_output (bool, optional): Print output or log to file. Defaults to True (so, printing output)
         """
         self.basedir = basedir
-        self.output_path = '{0}/user_data/logs/'.format(self.basedir)
+        self.output_path = f'{self.basedir}/user_data/logs/'
 
         if not os.path.exists(self.output_path):
             os.makedirs(self.output_path, exist_ok=True)
 
         self.date_format = '%d-%m-%Y-%H-%M-%S'
-        self.output_file_name = 'MGM-Hurry-Command-Results-{0}.log'.format(datetime.now().strftime(self.date_format))
+        self.output_file_name = f'MGM-Hurry-Command-Results-{datetime.now().strftime(self.date_format)}.log'
 
         self._setup_logging()
 
@@ -227,10 +227,10 @@ class MoniGoManiLogger:
         Use our own Logging setup to log what we want, and more importantly, how we want it!
         """
 
-        logging_file_debug = os.path.join(self.output_path, 'MGM-Hurry-Command-Debug-{0}.log'
-                                          .format(datetime.now().strftime(self.date_format)))
-        logging_file_error = os.path.join(self.output_path, 'MGM-Hurry-Command-Error-{0}.log'
-                                          .format(datetime.now().strftime(self.date_format)))
+        logging_file_debug = os.path.join(self.output_path,
+                                          f'MGM-Hurry-Command-Debug-{datetime.now().strftime(self.date_format)}.log')
+        logging_file_error = os.path.join(self.output_path,
+                                          f'MGM-Hurry-Command-Error-{datetime.now().strftime(self.date_format)}.log')
 
         # Here is configured how log lines are formatted for each Handler.
         logging.setLoggerClass(MGMLogger)

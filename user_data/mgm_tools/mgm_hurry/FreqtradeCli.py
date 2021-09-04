@@ -86,7 +86,7 @@ class FreqtradeCli:
 
         self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
 
-        self.cli_logger.debug('👉 Freqtrade binary: `{0}`'.format(self.freqtrade_binary))
+        self.cli_logger.debug(f'👉 Freqtrade binary: `{self.freqtrade_binary}`')
 
         return True
 
@@ -134,11 +134,11 @@ class FreqtradeCli:
 
         if self.install_type == 'source':
             self.cli_logger.debug('FreqtradeCli - installation_exists() install_type is "source".')
-            if os.path.exists('{0}/.env/bin/freqtrade'.format(self.basedir)):
+            if os.path.exists(f'{self.basedir}/.env/bin/freqtrade'):
                 return True
 
-            self.cli_logger.warning('FreqtradeCli - installation_exists() failed. '
-                                    'Freqtrade binary not found in {0}/.env/bin/freqtrade.'.format(self.basedir))
+            self.cli_logger.warning(f'FreqtradeCli - installation_exists() failed. '
+                                    f'Freqtrade binary not found in {self.basedir}/.env/bin/freqtrade.')
 
         return False
 
@@ -214,8 +214,8 @@ class FreqtradeCli:
         :return bool: True if setup ran successfully. False otherwise.
         """
 
-        if os.path.isfile('{0}/setup.exp'.format(target_dir)):
-            command = 'expect {0}/setup.exp'.format(target_dir)
+        if os.path.isfile(f'{target_dir}/setup.exp'):
+            command = f'expect {target_dir}/setup.exp'
             if distro.id() in ['ubuntu', 'debian']:
                 command = f'sudo {command}'
 
@@ -223,8 +223,7 @@ class FreqtradeCli:
             self.monigomani_cli.run_command(command)
             return True
 
-        self.cli_logger.error('Could not run {0}/setup.exp for Freqtrade because the file does not exist.'
-                              .format(target_dir))
+        self.cli_logger.error(f'Could not run {target_dir}/setup.exp for Freqtrade because the file does not exist.')
 
         return False
 
@@ -238,10 +237,9 @@ class FreqtradeCli:
         """
         with tempfile.NamedTemporaryFile() as temp_file:
             self.monigomani_cli.run_command(
-                ('source ./.env/bin/activate; '
-                 'freqtrade test-pairlist -c {0}/user_data/mgm_tools/{1}-Retrieve-Top-Volume-StaticPairList.json '
-                 '--quote {2} --print-json > {3}'
-                 .format(self.basedir, exchange.title(), stake_currency, temp_file.name)))
+                f'source ./.env/bin/activate; freqtrade test-pairlist '
+                f'-c {self.basedir}/user_data/mgm_tools/{exchange.title()}-Retrieve-Top-Volume-StaticPairList.json '
+                f'--quote {stake_currency} --print-json > {temp_file.name}')
 
             # Read last line from temp_file, which is the json list containing pairlists
             try:
@@ -266,6 +264,6 @@ class FreqtradeCli:
         freqtrade_binary = 'docker-compose run --rm freqtrade'
 
         if install_type == 'source':
-            freqtrade_binary = 'source {0}/.env/bin/activate; freqtrade'.format(basedir)
+            freqtrade_binary = f'source {basedir}/.env/bin/activate; freqtrade'
 
         return freqtrade_binary

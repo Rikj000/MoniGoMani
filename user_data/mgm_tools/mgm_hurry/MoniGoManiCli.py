@@ -91,7 +91,7 @@ class MoniGoManiCli(object):
 
         :return bool: Returns true if `MoniGoManiHyperStrategy.py` exists, returns false if not.
         """
-        return os.path.exists('{0}/user_data/strategies/MoniGoManiHyperStrategy.py'.format(self.basedir))
+        return os.path.exists(f'{self.basedir}/user_data/strategies/MoniGoManiHyperStrategy.py')
 
     def download_setup_mgm(self, target_dir: str = None, branch: str = 'develop', commit: str = None):
         """
@@ -201,9 +201,9 @@ class MoniGoManiCli(object):
         # ToDo: Use the filename as specified in configuration
         ho_config = '{0}/user_data/mgm-config-hyperopt.json'.format(self.basedir)
 
-        if os.path.isfile(ho_json) is False:
-            self.logger.error('🤷 Failed applying best results because the results file {} does not exist.'
-                              .format(ho_json))
+        if os.path.isfile(strategy_ho_json_path) is False:
+            self.logger.error(f'🤷 Failed applying best results because the HyperOpt results file '
+                              f'"{strategy_ho_json_name}" does not exist.')
             return False
 
         # Apply best results from `MoniGoManiHyperStrategy.json` to `mgm-config-hyperopt.json`
@@ -284,5 +284,5 @@ class MoniGoManiCli(object):
         elif 's' == unit:
             scale = 1
         else:
-            raise TypeError('timeframe unit {} is not supported'.format(unit))
+            raise TypeError(f'timeframe unit {unit} is not supported')
         return (amount * scale) // 60

@@ -51,7 +51,7 @@ class MoniGoManiConfig(object):
         """
         self.__basedir = basedir
         self.__mgm_logger = MoniGoManiLogger(basedir).get_logger()
-        self.__full_path_config = '{0}/.hurry'.format(self.__basedir)
+        self.__full_path_config = f'{self.__basedir}/.hurry'
 
         # if .hurry file does not exist
         if self.valid_hurry_dotfile_present() is False:
@@ -102,7 +102,7 @@ class MoniGoManiConfig(object):
         :return bool: Return true if the config files exist, false if not
         """
         if os.path.isfile(self.__full_path_config) is not True:
-            self.logger.warning('Could not find .hurry config file at {0}'.format(self.__full_path_config))
+            self.logger.warning(f'Could not find .hurry config file at {self.__full_path_config}')
             return False
 
         with open(self.__full_path_config, 'r') as yml_file:
@@ -134,17 +134,16 @@ class MoniGoManiConfig(object):
         ]
 
         for example_file in example_files:
-            src_file = target_dir + '/monigomani/user_data/' + example_file['src']
+            src_file = f'{target_dir}/monigomani/user_data/{example_file["src"]}'
 
             if not os.path.isfile(src_file):
-                self.logger.error('❌ Bummer. Cannot find the example file "{0}" '
-                                  'to copy from.'.format(example_file['src']))
+                self.logger.error(f'❌ Bummer. Cannot find the example file "{example_file["src"]}" to copy from.')
                 return False
 
-            dest_file = target_dir + '/user_data/' + example_file['dest']
+            dest_file = f'{target_dir}/user_data/{example_file["dest"]}'
 
             if os.path.isfile(dest_file):
-                self.logger.warning('⚠️ The target file "{0}" already exists. Is cool.'.format(example_file['dest']))
+                self.logger.warning(f'⚠️ The target file "{example_file["dest"]}" already exists. Is cool.')
                 continue
 
             shutil.copyfile(src_file, dest_file)
@@ -181,8 +180,8 @@ class MoniGoManiConfig(object):
         for mgm_config_filename in mgm_config_files:
             # Check if the MoniGoMani config filename exist in the ".hurry" config file
             if 'mgm_config_names' not in hurry_config or mgm_config_filename not in hurry_config['mgm_config_names']:
-                self.logger.critical('🤷 No "{0}" filename found in the ".hurry" config file. '
-                                     'Please run: mgm-hurry setup'.format(mgm_config_filename))
+                self.logger.critical(f'🤷 No "{mgm_config_filename}" filename found in the ".hurry" config file. '
+                                     f'Please run: mgm-hurry setup')
                 sys.exit(1)
 
             # Full path to current config file
@@ -199,7 +198,7 @@ class MoniGoManiConfig(object):
 
         :return dict: Dictionary containing the config section of .hurry file. None if failed.
         """
-        with open('{0}/.hurry'.format(self.basedir), 'r') as yml_file:
+        with open(f'{self.basedir}/.hurry', 'r') as yml_file:
             config = yaml.full_load(yml_file) or {}
 
         hurry_config = config['config'] if 'config' in config else None
@@ -224,8 +223,8 @@ class MoniGoManiConfig(object):
         :return dict: The json content of the file. json.load() return. None if failed.
         """
         if os.path.isfile(filename) is False:
-            self.logger.error('🤷 No "{0}" file found in the "user_data" directory. '
-                              'Please run: mgm-hurry setup'.format(filename))
+            self.logger.error(f'🤷 No "{filename}" file found in the "user_data" directory. '
+                              f'Please run: mgm-hurry setup')
             return None
 
         # Load the MoniGoMani config file as an object and parse it as a dictionary
@@ -291,7 +290,7 @@ class MoniGoManiConfig(object):
             cleaned_up_cfg = self._remove_file(file_abspath)
 
         # Remove the intermediate ho results file if exists
-        strategy_ho_intermediate_path = '{0}/user_data/strategies/{1}.json'.format(self.basedir, strategy)
+        strategy_ho_intermediate_path = f'{self.basedir}/user_data/strategies/{strategy}.json'
         cleaned_up_intermediate = self._remove_file(strategy_ho_intermediate_path)
 
         # return true if one of these is true
@@ -301,7 +300,7 @@ class MoniGoManiConfig(object):
         if os.path.exists(fil) is False:
             return False
 
-        self.logger.info('👉 Removing "{0}"'.format(os.path.basename(fil)))
+        self.logger.info(f'👉 Removing "{os.path.basename(fil)}"')
         os.remove(fil)
 
         return True
@@ -314,7 +313,7 @@ class MoniGoManiConfig(object):
         :return abs_path: The absolute path to the asked config file.
         """
         # Full path to current config file
-        mgm_config_filepath = '{0}/user_data/{1}'.format(self.basedir, hurry_config['mgm_config_names'][cfg_name])
+        mgm_config_filepath = f'{self.basedir}/user_data/{hurry_config["mgm_config_names"][cfg_name]}'
 
         return mgm_config_filepath
 
