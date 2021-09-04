@@ -66,7 +66,7 @@ def test_apply_best_results():
 
 def test_apply_best_results_should_return_false_without_ho_json():
     mgm_cli = __get_instance()
-    assert mgm_cli.apply_best_results('foobar-non-existing-strat') is False
+    assert mgm_cli.apply_mgm_results('foobar-non-existing-strat') is False
 
 # --- ↑
 

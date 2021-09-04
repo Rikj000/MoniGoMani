@@ -705,8 +705,8 @@ class MGMHurry:
                                                      results_path=output_file_path)
 
         # ToDo: Auto Create & Post a TotalOverallSignalImportanceCalculator Report
-        if apply_best_results is True:
-            self.monigomani_cli.apply_best_results(strategy)
+        if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
+            self.monigomani_cli.apply_mgm_results(strategy)
         elif do_backtest is True:
             self._logger.warning('🤷 Backtesting without HyperOptResults applied?..')
 

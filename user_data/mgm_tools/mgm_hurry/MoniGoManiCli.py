@@ -191,30 +191,32 @@ class MoniGoManiCli(object):
             self.logger.critical(str(e))
             return False
 
-    def apply_best_results(self, strategy: str, config: MoniGoManiConfig = None) -> bool:
+    def apply_mgm_results(self, strategy: str = 'MoniGoManiHyperStrategy') -> bool:
         """
-        Apply HyperOpt results to the `mgm-config-hyperopt.json` file.
+        Apply MoniGoMani HyperOpt results to the `mgm-config-hyperopt` file.
 
         :param strategy: (str) The name of the strategy. Is used to determine ho-results file.
-        :param config: (MoniGoManiConfig, optional) Use the `mgm-config-hyperopt path` from config.
         :return bool: True if ho-results file was successfully applied. False otherwise.
         """
-        ho_json = '{0}/user_data/strategies/{1}.json'.format(self.basedir, strategy)
-        # ToDo: Use the filename as specified in configuration
-        ho_config = '{0}/user_data/mgm-config-hyperopt.json'.format(self.basedir)
+        strategy_ho_json_name = f'{strategy}.json'
+        strategy_ho_json_path = f'{self.basedir}/user_data/strategies/{strategy_ho_json_name}'
 
         if os.path.isfile(strategy_ho_json_path) is False:
             self.logger.error(f'🤷 Failed applying best results because the HyperOpt results file '
                               f'"{strategy_ho_json_name}" does not exist.')
             return False
 
-        # Apply best results from `MoniGoManiHyperStrategy.json` to `mgm-config-hyperopt.json`
+        # Apply best results from `MoniGoManiHyperStrategy.json` to `mgm-config-hyperopt`
         if strategy == 'MoniGoManiHyperStrategy':
-            copy2(ho_json, ho_config)
+            mgm_ho_json_name = self.monigomani_config.config['mgm_config_names']['mgm-config-hyperopt']
+            mgm_ho_json_path = f'{self.basedir}/user_data/{mgm_ho_json_name}'
 
-        # Cleanup leftover file
-        if os.path.isfile(ho_json) is True:
-            os.remove(ho_json)
+            copy2(strategy_ho_json_path, mgm_ho_json_path)
+            # Cleanup leftover file `MoniGoManiHyperStrategy.json`
+            os.remove(strategy_ho_json_path)
+        else:
+            self.logger.debug(f'Freqtrade already automatically applied the results '
+                              f'for {strategy} at {strategy_ho_json_path}, all good!')
 
         return True
 
