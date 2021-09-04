@@ -62,8 +62,9 @@ class MoniGoManiCli(object):
         with yaspin(text='', color='cyan') as sp:
 
             if self._mgm_config_json_exists() is False:
-                sp.red.write('🤷 No "mgm-config.json" file found.')
-                self.logger.warning('🤷 No "mgm-config.json" file found.')
+                mgm_config_name = self.monigomani_config.config['mgm_config_names']['mgm-config']
+                sp.red.write(f'🤷 No "{mgm_config_name}" file found.')
+                self.logger.warning(f'🤷 No "{mgm_config_name}" file found.')
                 return False
 
             if self._mgm_hyperstrategy_file_exists() is False:
@@ -79,11 +80,12 @@ class MoniGoManiCli(object):
 
     def _mgm_config_json_exists(self) -> bool:
         """
-        Checks if `mgm-config.json` exists
+        Checks if `mgm-config` exists
 
-        :return bool: Returns true if `mgm-config.json` exists, returns false if not.
+        :return bool: Returns true if `mgm-config` exists, returns false if not.
         """
-        return os.path.exists('{0}/user_data/mgm-config.json'.format(self.basedir))
+        mgm_config_name = self.monigomani_config.config['mgm_config_names']['mgm-config']
+        return os.path.exists(f'{self.basedir}/user_data/{mgm_config_name}')
 
     def _mgm_hyperstrategy_file_exists(self) -> bool:
         """

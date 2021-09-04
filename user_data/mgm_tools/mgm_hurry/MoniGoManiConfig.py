@@ -123,14 +123,8 @@ class MoniGoManiConfig(object):
         :return bool: True if files are created successfully, false if something failed.
         """
         example_files = [
-            {
-                'src': 'mgm-config.example.json',
-                'dest': 'mgm-config.json',
-            },
-            {
-                'src': 'mgm-config-private.example.json',
-                'dest': 'mgm-config-private.json',
-            },
+            {'src': 'mgm-config.example.json', 'dest': 'mgm-config.json'},
+            {'src': 'mgm-config-private.example.json', 'dest': 'mgm-config-private.json'}
         ]
 
         for example_file in example_files:
@@ -347,47 +341,49 @@ class MoniGoManiConfig(object):
 
         :param cred: (dict) List containing values for [exchange,api_key,api_secret]
         """
+        mgm_config_private_name = self.config['mgm_config_names']['mgm-config-private']
         if len(cred) == 0:
-            self.logger.warning('Did not write exchange credentials to "mgm-config-private.json" '
-                                'because no data was passed.')
+            self.logger.warning(f'Did not write exchange credentials to "{mgm_config_private_name}" '
+                                f'because no data was passed.')
             return False
 
         try:
-            with open(self.basedir + '/user_data/mgm-config-private.json', 'a+') as file:
+            with open(f'{self.basedir}/user_data/{mgm_config_private_name}', 'a+') as file:
                 data = json.load(file)
         except Exception:
             data = {}
 
         data['exchange'] = {'name': cred['exchange'], 'key': cred['api_key'], 'secret': cred['api_secret']}
 
-        with open(f'{self.basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
+        with open(f'{self.basedir}/user_data/{mgm_config_private_name}', 'w+') as outfile:
             json.dump(data, outfile, indent=4)
 
-        self.logger.info('🍺 Exchange settings written to "mgm-config-private.json"')
+        self.logger.info(f'🍺 Exchange settings written to "{mgm_config_private_name}"')
 
     def save_telegram_credentials(self, opt: dict) -> bool:
         """
-        Save Telegram bot settings
+        Save Telegram bot settings to 'mgm-config-private'
 
         :param opt: (dict) Dictionary containing values for [enable_telegram,telegram_token,telegram_chat_id]
         :return bool: True if json data is written. False otherwise.
         """
+        mgm_config_private_name = self.config['mgm_config_names']['mgm-config-private']
         if len(opt) == 0:
-            self.logger.warning('Did not write telegram credentials to "mgm-config-private.json" '
-                                'because no data was passed.')
+            self.logger.warning(f'Did not write telegram credentials to "{mgm_config_private_name}" '
+                                f'because no data was passed.')
             return False
 
-        with open(f'{self.basedir}/user_data/mgm-config-private.json', ) as file:
+        with open(f'{self.basedir}/user_data/{mgm_config_private_name}', ) as file:
             data = json.load(file)
 
         data['telegram'] = {
             'enabled': opt['enable_telegram'], 'token': opt['telegram_token'], 'chat_id': opt['telegram_chat_id']
         }
 
-        with open(f'{self.basedir}/user_data/mgm-config-private.json', 'w+') as outfile:
+        with open(f'{self.basedir}/user_data/{mgm_config_private_name}', 'w+') as outfile:
             json.dump(data, outfile, indent=4)
 
-        self.logger.info('🍺 Telegram bot settings written to "mgm-config-private.json"')
+        self.logger.info(f'🍺 Telegram bot settings written to "{mgm_config_private_name}"')
 
         return True
 

@@ -141,10 +141,9 @@ class MGMHurry:
 
         if answers.get('do_hyperopt') is True:
             ho_results_found = False
-            hurry_config = self.monigomani_config.read_hurry_config()
-            strategy = hurry_config['hyperopt']['strategy']
+            strategy = self.monigomani_config.config['hyperopt']['strategy']
             if strategy == 'MoniGoManiHyperStrategy':
-                mgm_config_ho = hurry_config['mgm_config_names']['mgm-config-hyperopt']
+                mgm_config_ho = self.monigomani_config.config['mgm_config_names']['mgm-config-hyperopt']
                 if os.path.isfile(f'{self._basedir}/user_data/{mgm_config_ho}'):
                     ho_results_found = True
             elif os.path.isfile(f'{self._basedir}/user_data/strategies/{strategy}.json'):
@@ -268,12 +267,13 @@ class MGMHurry:
 
             # Check if the private config file already exists.
             cfg_filename = self.monigomani_config.get_config_filename('mgm-config-private')
+            mgm_private_json_name = self.monigomani_config.config['mgm_config_names']['mgm-config-private']
 
             questions = [
                 {
                     'type': 'confirm',
-                    'message': 'Should I print your "mgm-config-private.json" contents '
-                               'so you can copy it over to new installation?',
+                    'message': f'Should I print your "{mgm_private_json_name}" contents '
+                               f'so you can copy it over to new installation?',
                     'name': 'print',
                     'default': False,
                     'when': lambda result: os.path.isfile(cfg_filename)
@@ -291,8 +291,8 @@ class MGMHurry:
             result = prompt(questions)
 
             if result.get('print_confirmed') is True:
-                # Read "mgm-config-private.json" and pretty print it
-                with open(f'{self._basedir}/user_data/mgm-config-private.json', ) as mgm_private_config:
+                # Read 'mgm-config-private' and pretty print it
+                with open(f'{self._basedir}/user_data/{mgm_private_json_name}', ) as mgm_private_config:
                     print(json.dumps(json.load(mgm_private_config), indent=4))
 
         if target_dir is None:
@@ -577,9 +577,7 @@ class MGMHurry:
               -t {tickers} -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json'
 
         self._logger.debug(dcd)
-
         self.monigomani_cli.run_command(dcd)
-
         self._logger.info('🍺 Downloading candle data finished.')
 
     def download_static_pairlist(self):
@@ -613,8 +611,7 @@ class MGMHurry:
             data_format = {'exchange': {'pair_whitelist': static_pairlist}}
             json.dump(data_format, pairlist_file, indent=4)
 
-        hurry_config = self.monigomani_config.read_hurry_config()
-        mgm_json_name = hurry_config['mgm_config_names']['mgm-config']
+        mgm_json_name = self.monigomani_config.config['mgm_config_names']['mgm-config']
         self._logger.info(f'🍺 Saving pairlist as whitelist to "{mgm_json_name}"...')
         # Overwrite the new static pairlist to the exchange config in mgm-config[exchange][pair_whitelist]
         mgm_config_file = self.monigomani_config.get_config_filename('mgm-config')
@@ -675,13 +672,13 @@ class MGMHurry:
               --hyperopt-loss $ho_loss --spaces $ho_spaces -e $ho_epochs --timerange $timerange '
 
         if enable_protections is True:
-            cmd = f'{cmd.strip()} --enable-protections'
+            cmd = f'{cmd.strip()} --enable-protections '
 
         if random_state is not None:
-            cmd = f'{cmd.strip()} --random-state $random_state'
+            cmd = f'{cmd.strip()} --random-state $random_state '
 
         if jobs is not None:
-            cmd = f'{cmd.strip()} -j $jobs'
+            cmd = f'{cmd.strip()} -j $jobs '
 
         cmd = Template(cmd).substitute(
             ft_binary=self.monigomani_config.config['ft_binary'],
