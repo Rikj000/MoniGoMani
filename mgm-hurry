@@ -588,7 +588,9 @@ class MGMHurry:
             data_format = {'exchange': {'pair_whitelist': static_pairlist}}
             json.dump(data_format, pairlist_file, indent=4)
 
-        self._logger.info('🍺 Saving pairlist as whitelist to "mgm-config.json"...')
+        hurry_config = self.monigomani_config.read_hurry_config()
+        mgm_json_name = hurry_config['mgm_config_names']['mgm-config']
+        self._logger.info(f'🍺 Saving pairlist as whitelist to "{mgm_json_name}"...')
         # Overwrite the new static pairlist to the exchange config in mgm-config[exchange][pair_whitelist]
         mgm_config_file = self.monigomani_config.get_config_filename('mgm-config')
         with open(mgm_config_file, ) as mgm_config:
