@@ -71,11 +71,8 @@ class FreqtradeCli:
         self._install_type = self.monigomani_config.get('install_type') or None
         self.freqtrade_binary = self.monigomani_config.get('ft_binary') or None
 
-        if self._init_freqtrade() is True:
-            self.monigomani_cli = MoniGoManiCli(self.basedir)
-        else:
-            self.cli_logger.critical('I quit!')
-            sys.exit(1)
+        self._init_freqtrade()
+        self.monigomani_cli = MoniGoManiCli(self.basedir)
 
     def _init_freqtrade(self) -> bool:
         """
@@ -84,7 +81,8 @@ class FreqtradeCli:
         :return bool: True if Freqtrade installation is found and property is set. False otherwise.
         """
         if self.installation_exists() is False:
-            self.cli_logger.error('🤷 No Freqtrade installation found. Please run "mgm-hurry install_freqtrade" first!')
+            self.cli_logger.warning('🤷 No Freqtrade installation found. '
+                                    'Please run "mgm-hurry install_freqtrade" before attempting to go further!')
             return False
 
         self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
