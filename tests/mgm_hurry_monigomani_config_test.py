@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+
 import pytest
 
 sys.path.append('.')
@@ -12,101 +13,86 @@ def test_initialisation():
     cfg = __get_instance()
     assert isinstance(cfg, MoniGoManiConfig)
 
-# --- ↓
-# --- ↓ Unit Testing .reload(self) -> bool
-# --- ↓
 
 @pytest.mark.skip(reason='Test not implemented.')
 def test_reload_with_valid_config_file():
+    """
+    ↓ Unit Testing .reload(self) -> bool
+    """
     assert NotImplemented
 
-# --- ↑
-
-# --- ↓
-# --- ↓ Unit Testing .valid_hurry_dotfile_present(self) -> bool
-# --- ↓
 
 def test_valid_hurry_dotfile_present_should_return_true():
+    """
+    ↓ Unit Testing .valid_hurry_dotfile_present(self) -> bool
+    """
     obj = __get_instance()
     assert obj.valid_hurry_dotfile_present() is True
 
-# --- ↑
-
-
-# --- ↓
-# --- ↓ Unit Testing .create_config_files(self) -> bool
-# --- ↓
 
 @pytest.mark.skip(reason='Test not implemented.')
 def test_create_config_files_faulty_target_dir():
+    """
+    ↓ Unit Testing .create_config_files(self) -> bool
+    """
     assert NotImplemented
+
 
 @pytest.mark.skip(reason='Test not implemented.')
 def test_create_config_files_faulty_example_file():
+    """
+    ↓ Unit Testing .create_config_files(self) faulty example file
+    """
     assert NotImplemented
 
-# --- ↑
-
-
-# --- ↓
-# --- ↓ Unit Testing .load_config_files() -> dict
-# --- ↓
 
 @pytest.mark.skip(reason='Test not implemented.')
 def test_load_config_files():
+    """
+    ↓ Unit Testing .load_config_files() -> dict
+    """
     assert NotImplemented
 
-# --- ↑
-
-
-# --- ↓
-# --- ↓ Unit Testing .read_hurry_config() -> dict
-# --- ↓
 
 @pytest.mark.skip(reason='Test not implemented.')
 def test_read_hurry_config():
+    """
+    ↓ Unit Testing .read_hurry_config() -> dict:
+    """
     assert NotImplemented
 
-# --- ↑
-
-
-# --- ↓
-# --- ↓ Unit Testing "get_config_filename"
-# --- ↓
 
 @pytest.mark.skip(reason='Test not implemented.')
 def test_get_config_filename():
-	assert NotImplemented
+    """
+    ↓ Unit Testing "get_config_filename"
+    """
+    assert NotImplemented
 
-# --- ↑
-
-
-# --- ↓
-# --- ↓ Unit Testing "load_config_file"
-# --- ↓
 
 @pytest.mark.skip(reason='Test not implemented.')
 def test_load_config_file():
-	assert NotImplemented
+    """
+    ↓ Unit Testing "load_config_file"
+    """
+    assert NotImplemented
 
-# --- ↑
-
-
-# --- ↓
-# --- ↓ Unit Testing "write"
-# --- ↓
 
 @pytest.mark.skip(reason='Test not implemented.')
 def test_write():
-	assert NotImplemented
+    """
+    ↓ Unit Testing "write"
+    """
+    assert NotImplemented
 
-# --- ↑
 
-
-# --- ↓
-# --- ↓ Helper methods
+# ---
 # --- ↓
 def __get_instance():
+    """
+    ↓ Helper method: Create and get instance of MoniGoManiConfig
+    :return MoniGoManiConfig:
+    """
     basedir = '.'
     obj = MoniGoManiConfig(basedir)
     return obj
