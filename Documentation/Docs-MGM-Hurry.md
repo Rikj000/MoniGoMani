@@ -192,6 +192,8 @@ Runs HyperOpt process to find out the most positive settings.
   - **Defaults to:** `HyperOptResults-<Current-DateTime>.log`
 - **`--jobs`:** *(Optional)* Amount of parallel workers (CPU cores) to use
   - **Defaults to:** Automatic detection *(Amount used will depend on the amount of cores available on your system)*
+- **`--min_trades`: Minimal amount of trades wished to be reached.
+  - **Defaults to:** Not used.
 
 
 ### `mgm-hurry backtest`

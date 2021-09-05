@@ -182,11 +182,12 @@ freqtrade plot-profit --export-filename ./user_data/backtest_results/<backtest-r
   - `📢︱moni-go-mani` *(All Official MGM Releases & important messages can be followed here)*
   - `✨︱git-updates` *(All GitHub Commits can be followed here)*
   - `🗞︱github-discussions` *(All conversations tied to GitHub Issues & Pull Requests can be followed here)*
-  - `🖥︱development` *(Channel for discussing development on MGM. exclusive for MoniGoMani Developers)*
-  - `👑︱testing-elite` *(Channel for members that have proven to be true additions to the community. Exclusive for MoniGoMani Testing MVP and above))*
+  - `🖥︱development` *(Channel for discussing development on MGM. exclusive for `MoniGoMani Developers`)*
+  - `👑︱testing-elite` *(Channel for members that have proven to be true additions to the community. Exclusive for `MoniGoMani Testing MVP` and above)*
   - `🛠︱testing` *(Your go-to channel for partaking in the community. Feel free to drop your test results / config files / ideas here)*
   - `❔︱help` *(Be sure to take your time to read the [Documentation](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md) thoroughly before asking questions though!)*
   - `🎉︱setup-releases` *(Release your personal profitable MGM configurations/HyperOpted versions here)*
+  - `🍿︱test-results` *(Where HyperOpt & BackTest results are automatically posted by the community, exclusive for `MoniGoMani Testing MVP` and above)*
   - `🗄︱cluster-results` *(Automated Ph3nol Cluster Releases. Exclusive to the MoniGoMani Cluster Maintainer & MoniGoMani Developers, for now!)*
 
 More general chats for `📈︱technical-analysis`, `🤖︱freqtrade`, `📊︱iconomi` and `🍉︱random` discussion are also available there :slightly_smiling_face:

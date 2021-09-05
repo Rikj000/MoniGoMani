@@ -629,7 +629,8 @@ class MGMHurry:
 
     def hyperopt(self, timerange: str = None, strategy: str = None, loss: str = None, spaces: str = None,
                  enable_protections: bool = True, random_state: int = None, apply_best_results: bool = True,
-                 clean_start: bool = False, do_backtest: bool = True, output_file_name: str = None, jobs: int = None):
+                 clean_start: bool = False, do_backtest: bool = True, output_file_name: str = None, jobs: int = None,
+                 min_trades: int = None):
         """
         HyperOpt Magic. Runs HyperOpt process to find out the most positive settings, automatically saves results.
 
@@ -646,7 +647,8 @@ class MGMHurry:
         :param do_backtest: (bool, Optional): Do a BackTest after the HO? Defaults to True.
         :param output_file_name: (str, Optional) Name of the '.log' file(s).
             Defaults to 'HyperOpt/BackTestResults-<Current-DateTime>'
-        :param jobs: Amount of parallel workers (CPU cores) to use, gets set automatically by default
+        :param jobs: (int) Amount of parallel workers (CPU cores) to use, gets set automatically by default
+        :param min_trades: (int) Minimal amount of trades wished to be reached. Unused by default
         """
 
         if strategy is None:
@@ -672,12 +674,12 @@ class MGMHurry:
 
         if enable_protections is True:
             cmd = f'{cmd.strip()} --enable-protections '
-
         if random_state is not None:
             cmd = f'{cmd.strip()} --random-state $random_state '
-
         if jobs is not None:
             cmd = f'{cmd.strip()} -j $jobs '
+        if min_trades is not None:
+            cmd = f'{cmd.strip()} --min-trades $min_trades '
 
         cmd = Template(cmd).substitute(
             ft_binary=self.monigomani_config.config['ft_binary'],
@@ -687,7 +689,8 @@ class MGMHurry:
             ho_epochs=self.monigomani_config.config['hyperopt']['epochs'],
             timerange=timerange,
             random_state=random_state,
-            jobs=jobs)
+            jobs=jobs,
+            min_trades=min_trades)
 
         self._logger.debug(cmd)
 
