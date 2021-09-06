@@ -238,6 +238,9 @@ class MoniGoManiLogger:
         mgm_logger = logging.getLogger()
         mgm_logger.setLevel(logging.INFO)
 
+        while mgm_logger.handlers:
+            mgm_logger.handlers.pop()
+
         # How to log to console
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.INFO)
