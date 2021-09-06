@@ -6,7 +6,7 @@ import json
 import os
 import sys
 
-
+from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
 
@@ -14,21 +14,12 @@ class TotalOverallSignalImportanceCalculator:
     """
     Total Overall Signal Importance Calculator for MoniGoMani v0.13.0
     -----------------------------------------------------------------
-    First do 1 or 2 HyperOpt Runs and extract your results to a 'mgm-config-hyperopt.json'
+    First do 1 or 2 HyperOpt Runs and extract your results to a 'mgm-config-hyperopt' json file
 
     Then execute:
-    `python ./user_data/mgm_tools/Total-Overall-Signal-Importance-Calculator.py` from your favorite terminal / CLI
+    `python ./user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py` from your favorite terminal / CLI
     to calculate the overall importance of the signals being used. The higher the score of a signal the better!
     """
-
-    ####################################################################################################################
-    #                                           START OF CONFIG NAMES SECTION                                          #
-    ####################################################################################################################
-    mgm_config_name = 'mgm-config.json'
-    mgm_config_hyperopt_name = 'mgm-config-hyperopt.json'
-    ####################################################################################################################
-    #                                            END OF CONFIG NAMES SECTION                                           #
-    ####################################################################################################################
 
     buy_params = {}
     sell_params = {}
@@ -241,28 +232,27 @@ def main():
     total_overall_weights = {}
     avg_trend_weights = {}
 
-    # Load the MoniGoMani settings
-    mgm_config_path = f'{os.getcwd()}/user_data/{calculator_data.mgm_config_name}'
-    if os.path.isfile(mgm_config_path) is True:
-        # Load the 'mgm-config.json' file as an object and parse it as a dictionary
-        file_object = open(mgm_config_path, )
-        mgm_config_json_data = json.load(file_object)
-        mgm_config = mgm_config_json_data['monigomani_settings']
+    # Initialize the MoniGoManiConfig helper class to load config names settings from '.hurry'
+    monigomani_config = MoniGoManiConfig(os.getcwd())
 
+    # Load the MoniGoMani settings
+    mgm_config_path = monigomani_config.get_config_filepath('mgm-config')
+    if os.path.isfile(mgm_config_path) is True:
+        # Load the 'mgm-config' file as an object and parse it as a dictionary
+        mgm_config_json_data = monigomani_config.load_config_file(mgm_config_path)
+        mgm_config = mgm_config_json_data['monigomani_settings']
     else:
         sys.exit(f'TotalOverallSignalImportanceCalculator - ERROR - The main MoniGoMani configuration file '
-                 f'({calculator_data.mgm_config_name}) can\'t be found at: \'{mgm_config_path}\'... Please provide the '
-                 f'correct file and/or alter "mgm_config_name" in "Total-Overall-Signal-Importance-Calculator.py"')
+                 f'"mgm-config" can\'t be found at: \'{mgm_config_path}\'... Please provide the '
+                 f'correct file and/or alter "mgm-config" name in ".hurry"')
 
     # If results from a previous HyperOpt Run are found then continue the next HyperOpt Run upon them
-    mgm_config_hyperopt_path = f'{os.getcwd()}/user_data/{calculator_data.mgm_config_hyperopt_name}'
+    mgm_config_hyperopt_path = monigomani_config.get_config_filepath('mgm-config-hyperopt')
     if os.path.isfile(mgm_config_hyperopt_path) is True:
-        # Load the provided 'mgm-config-hyperopt.json' file as an object
-        file_object = open(mgm_config_hyperopt_path, )
-        # Parse it as a dictionary
-        mgm_config_hyperopt_json_data = json.load(file_object)
+        # Load the provided 'mgm-config-hyperopt' file as an object & parse it as a dictionary
+        mgm_config_hyperopt_json_data = monigomani_config.load_config_file(mgm_config_hyperopt_path)
 
-        # Convert the 'mgm-config-hyperopt.json' file data to params needed for the calculator
+        # Convert the 'mgm-config-hyperopt' file data to params needed for the calculator
         try:
             for space in spaces:
                 indicator_names = weighted_buy_signal_names if space == 'buy' else weighted_sell_signal_names
@@ -321,9 +311,8 @@ def main():
 
     else:
         sys.exit(f'TotalOverallSignalImportanceCalculator - ERROR - The loaded MoniGoMani configuration file '
-                 f'({calculator_data.mgm_config_hyperopt_name}) can\'t be found at: \'{mgm_config_hyperopt_path}\'... '
-                 f'Please provide the correct file and/or alter "mgm_config_hyperopt_name" in '
-                 f'"Total-Overall-Signal-Importance-Calculator.py"')
+                 f'"mgm-config-hyperopt" can\'t be found at: \'{mgm_config_hyperopt_path}\'... '
+                 f'Please provide the correct file and/or alter "mgm-config-hyperopt" name in ".hurry"')
 
     # Apply the precision used
     for params in [calculator_data.sell_params, calculator_data.buy_params]:
