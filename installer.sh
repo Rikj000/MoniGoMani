@@ -60,13 +60,19 @@ CURRENT_DIR=$(pwd)
 INSTALL_DIR="$CURRENT_DIR/$INSTALL_FOLDER_NAME"
 
 # ANSI text coloring
+BLUE='\033[94m'
 CYAN='\033[0;36m'
+DARKCYAN='\033[36m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-WHITE='\033[1;37m'
+PURPLE='\033[95m'
 RED='\033[0;31m'
+WHITE='\033[1;37m'
+YELLOW='\033[1;33m'
+
 NOCOLOR='\033[0m'
-CLOSE='\033[m'
+UNDERLINE='\033[4m'
+BOLD='\033[1m'
+END='\033[m'
 
 # Loop through arguments and process them
 DEV_BREAK="false"
@@ -99,7 +105,7 @@ do
         ;;
         *)
         echo ""
-        echo -e "${RED}  🙉  installer.sh - Illegal argument(s) used!${CLOSE}"
+        echo -e "${RED}  🙉  installer.sh - Illegal argument(s) used!${END}"
         echo ""
         echo "  Please see the 'installer.sh --help' output below for the correct usage:"
         usage
@@ -146,7 +152,7 @@ confirm() {
 do_exit() {
     echo "      cancel."
     echo ""
-    echo -e "${WHITE}  😽  KTHXBAI  ${CLOSE}"
+    echo -e "${WHITE}  😽  KTHXBAI  ${END}"
     echo ""
     exit 1
 }
@@ -154,33 +160,33 @@ do_exit() {
 trap do_exit SIGINT
 
 echo ""
-echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
 echo ""
-echo -e "${WHITE}  ⛱️  Welcome aboard! Let's get started ...${CLOSE}"
+echo -e "${WHITE}  ⛱️  Welcome aboard! Let's get started ...${END}"
 echo ""
-echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
 echo ""
 
 echo ""
-echo -e "${WHITE}  🚦  Requirements check${CLOSE}"
-echo -e "${WHITE}  ======================${CLOSE}"
+echo -e "${WHITE}  🚦  Requirements check${END}"
+echo -e "${WHITE}  ======================${END}"
 echo ""
 
 # Ensure that python3 is installed
 command -v python3 >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo -e "${RED}  🙉  Python3 is not installed. Can't proceed. See: https://realpython.com/installing-python/${CLOSE}"
+    echo -e "${RED}  🙉  Python3 is not installed. Can't proceed. See: https://realpython.com/installing-python/${END}"
     exit 1
 fi
-echo -e "${GREEN}  ✅  Python3 is installed.${CLOSE}"
+echo -e "${GREEN}  ✅  Python3 is installed.${END}"
 
 # Ensure that pip3 is installed
 command -v pip3 >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo -e "${RED}  🙉  Pip3 is not installed. Can't proceed. See: https://pypi.org/project/pip/${CLOSE}"
+    echo -e "${RED}  🙉  Pip3 is not installed. Can't proceed. See: https://pypi.org/project/pip/${END}"
     exit 1
 fi
-echo -e "${GREEN}  ✅  Pip3 is installed.${CLOSE}"
+echo -e "${GREEN}  ✅  Pip3 is installed.${END}"
 
 # Ensure that python3-venv is installed
 OS=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
@@ -188,46 +194,46 @@ if [ "$OS" == "\"Ubuntu\"" -o "$OS" == "\"Debian\"" ]; then
     VENV_PACKAGE_NAME="`readlink -f $(which python3)  | awk -F'/' '{print $NF}'`-venv"
     dpkg -s  $VENV_PACKAGE_NAME | grep "ok installed" >/dev/null 2>&1
     if [ $? -ne 0 ]; then
-        echo -e "${RED}  🙉  Python3-venv is not installed. Can't proceed. install it with: sudo apt-get install ${VENV_PACKAGE_NAME}${CLOSE}"
+        echo -e "${RED}  🙉  Python3-venv is not installed. Can't proceed. install it with: sudo apt-get install ${VENV_PACKAGE_NAME}${END}"
         exit 1
     fi
-    echo -e "${GREEN}  ✅  Python3-venv is installed.${CLOSE}"
+    echo -e "${GREEN}  ✅  Python3-venv is installed.${END}"
 fi
 
 # Ensure that git is installed
 command -v git >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo -e "${RED}  🙉  Git is not installed. Can't proceed. See: https://gist.github.com/derhuerst/1b15ff4652a867391f03${CLOSE}"
+    echo -e "${RED}  🙉  Git is not installed. Can't proceed. See: https://gist.github.com/derhuerst/1b15ff4652a867391f03${END}"
     exit 1
 fi
-echo -e "${GREEN}  ✅  Git is installed.${CLOSE}"
+echo -e "${GREEN}  ✅  Git is installed.${END}"
 
 # Ensure that cURL is installed
 command -v curl >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo -e "${RED}  🙉  cURL is not installed. Can't proceed. See: https://www.tecmint.com/install-curl-in-linux/${CLOSE}"
+    echo -e "${RED}  🙉  cURL is not installed. Can't proceed. See: https://www.tecmint.com/install-curl-in-linux/${END}"
     exit 1
 fi
 
-echo -e "${GREEN}  ✅  cURL is installed.${CLOSE}"
+echo -e "${GREEN}  ✅  cURL is installed.${END}"
 
 # Ensure that expect is installed
 command -v expect >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo -e "${RED}  🙉  Expect is not installed. Can't proceed. See: https://core.tcl-lang.org/expect/index${CLOSE}"
+    echo -e "${RED}  🙉  Expect is not installed. Can't proceed. See: https://core.tcl-lang.org/expect/index${END}"
     exit 1
 fi
 
-echo -e "${GREEN}  ✅  Expect is installed.${CLOSE}"
+echo -e "${GREEN}  ✅  Expect is installed.${END}"
 
 # ToDo: Remove after updating Freqtrade (There TA-Lib installation process is improved)
 # Ensure that TA-Lib (C dependency package) is installed
 command -v ta-lib-config >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo -e "${RED}  🙉  TA-Lib (C dependency package) is not installed. Can't proceed. See: https://github.com/mrjbq7/ta-lib#dependencies${CLOSE}"
+    echo -e "${RED}  🙉  TA-Lib (C dependency package) is not installed. Can't proceed. See: https://github.com/mrjbq7/ta-lib#dependencies${END}"
     exit 1
 fi
-echo -e "${GREEN}  ✅  TA-Lib (C dependency package) is installed.${CLOSE}"
+echo -e "${GREEN}  ✅  TA-Lib (C dependency package) is installed.${END}"
 
 
 echo ""
@@ -242,9 +248,9 @@ fi
 
 echo ""
 echo ""
-echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
-echo -e "${WHITE}  ⚙️  Downloading required files...${CLOSE}"
-echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
+echo -e "${WHITE}  ⚙️  Downloading required files...${END}"
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
 echo ""
 
 git clone -n "$MGM_REPO_URL" "$INSTALL_DIR/monigomani"
@@ -267,18 +273,18 @@ if [ "$DEV_BREAK" == "true" ]; then
 fi
 
 echo ""
-echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
-echo -e "${WHITE}  ⚙️  Installing dependency packages...${CLOSE}"
-echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
+echo -e "${WHITE}  ⚙️  Installing dependency packages...${END}"
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
 echo ""
 
 cd "$INSTALL_DIR" && pip3 install -r ./monigomani/requirements-mgm.txt && python3 ./monigomani/mgm-hurry up
 
 echo ""
 echo ""
-echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
 echo ""
-echo -e "${CYAN}  🎉  You are all set! We hope you enjoy your ride.${CLOSE}"
+echo -e "${CYAN}  🎉  You are all set! We hope you enjoy your ride.${END}"
 echo ""
-echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${CLOSE}"
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
 echo ""
