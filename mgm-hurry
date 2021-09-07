@@ -129,9 +129,9 @@ class MGMHurry:
         if answers.get('download_data') is True:
             self.download_candle_data()
 
+        strategy = self.monigomani_config.config['hyperopt']['strategy']
         if answers.get('do_hyperopt') is True:
             ho_results_found = False
-            strategy = self.monigomani_config.config['hyperopt']['strategy']
             if strategy == 'MoniGoManiHyperStrategy':
                 mgm_config_ho = self.monigomani_config.config['mgm_config_names']['mgm-config-hyperopt']
                 if os.path.isfile(f'{self.basedir}/user_data/{mgm_config_ho}'):
@@ -153,8 +153,21 @@ class MGMHurry:
                 if clean_start.get('clean_start') == 1:
                     self.cleanup(strategy)
 
+            if strategy == 'MoniGoManiHyperStrategy':
+                importance_report_answer = prompt(questions=[{
+                    'type': 'confirm',
+                    'name': 'importance_report',
+                    'message': '💨 Do you want to generate signal importance reports?'
+                }])
+                report_answer = importance_report_answer.get('importance_report')
+
+                if report_answer is True:
+                    self.importance_report()
+            else:
+                report_answer = False
+
             # First HO run
-            self.hyperopt(do_backtest=answers.get('do_backtest'))
+            self.hyperopt(do_backtest=answers.get('do_backtest'), importance_report=report_answer)
             ho_choice = prompt(questions=[{
                 'type': 'input',
                 'name': 'ho_epoch',
@@ -164,16 +177,17 @@ class MGMHurry:
             }])
             self.hyperopt_show_epoch(ho_choice.get('ho_epoch'))
 
-            # Second HO run
-            self.hyperopt(do_backtest=answers.get('do_backtest'))
-            ho_choice = prompt(questions=[{
-                'type': 'input',
-                'name': 'ho_epoch',
-                'message': '(HO 2) Choose the epoch which fits the best to your liking: (0-1000) ',
-                'filter': lambda val: int(val),
-                'validate': NumberValidator()
-            }])
-            self.hyperopt_show_epoch(ho_choice.get('ho_epoch'))
+            if strategy == 'MoniGoManiHyperStrategy':
+                # Second HO run
+                self.hyperopt(do_backtest=answers.get('do_backtest'), importance_report=report_answer)
+                ho_choice = prompt(questions=[{
+                    'type': 'input',
+                    'name': 'ho_epoch',
+                    'message': '(HO 2) Choose the epoch which fits the best to your liking: (0-1000) ',
+                    'filter': lambda val: int(val),
+                    'validate': NumberValidator()
+                }])
+                self.hyperopt_show_epoch(ho_choice.get('ho_epoch'))
 
         if answers.get('do_backtest') is True:
             self.backtest()
