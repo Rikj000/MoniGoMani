@@ -150,10 +150,17 @@ Cleans up HyperOpt Result `.json` files so you can easily start a fresh HyperOpt
 
 
 ### `mgm-hurry download_static_pairlist`
-Retrieve and apply a current **Binance-USDT-Top-Volume-StaticPairList.json** file *(Using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))*.
-
-The amount of pairs in these top volume lists can be altered by opening up `Binance-Retrieve-Top-Volume-StaticPairList.json` and changing the `number_assets` value near the bottom of the file to the amount of pairs you'd like in your list.
-Further you can also change the `min_days_listed` to make sure that all downloaded pairs where available for the duration of your whole HyperOpt timerange.
+Retrieve and apply a current **Top-Volume-StaticPairList.json** file *(Using [RetrieveTopVolumeStaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/RetrieveTopVolumeStaticPairList.json))*.
+The retrieved StaticPairList contains the top X pairs with the most trading volume at that point in time.
+#### Options
+  - **`--stake_currency`:** The stake currency to find the list of.
+    - ***Defaults to:** Value in `.hurry` or `USDT`*
+  - **`--exchange`:** The exchange to read the data from.
+    - ***Defaults to:** Value in `.hurry` or `binance`*
+  - **`--pairlist_length`:** Amount of pairs wish to use in your pairlist.
+    - ***Defaults to:** Prompts you for the amount*
+  - **`--min_days_listed`:** The minimal days that coin pairs need to be listed on the exchange.
+    - ***Defaults to:** Defaults to the amount of days in between now and the start of the timerange in `.hurry` minus the `startup_candle_count`.*
 
 
 ### `mgm-hurry download_candle_data`
@@ -188,6 +195,8 @@ Runs HyperOpt process to find out the most positive settings.
 - **`--clean_start`:** *(Optional)* Perform [`mgm-hurry cleanup`](#mgm-hurry-cleanup) before starting HyperOpt.
 - **`--do_backtest`:** *(bool, Optional)* Do a BackTest after the HyperOpt?
   - **Defaults to:** True.
+- **`--importance_report`:** *(bool, Optional)* Calculate a Signal Importance Report for MoniGoMani after the HyperOpt?
+  - **Defaults to:** True.
 - **`--output_file_name`:** *(Optional)* Custom filename for the `.log` file being created.
   - **Defaults to:** `HyperOptResults-<Current-DateTime>.log`
 - **`--jobs`:** *(Optional)* Amount of parallel workers (CPU cores) to use
@@ -207,6 +216,14 @@ Runs BackTest process to find out more about the results found by HyperOpt.
   - **Defaults to:** True.
 - **`--output_file_name`:** *(Optional)* Custom name for the '.log' file being created.
   - **Defaults to:** Defaults to 'BackTestResults-<Current-DateTime>'
+
+
+### `mgm-hurry importance_report`
+Runs the TotalOverallSignalImportanceCalculator process to find out which signals reached more importance in your MoniGoMani results found by HyperOpt.
+#### Option
+- **`--output_file_name`:** *(Optional)* Custom name for the `.log` file being created.
+  - **Defaults to:** Defaults to 'SignalImportanceResults-<Current-DateTime>'
+
 
 ### `mgm-hurry hyperopt_show_epoch`
 Prints & applies the HyperOpt Results for an epoch of choice.
