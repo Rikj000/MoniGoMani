@@ -261,7 +261,8 @@ class FreqtradeCli:
                 'name': 'pairlist_length',
                 'message': 'How much pairs would you like in your TopVolumeStaticPairList? (1 - 200)',
                 'filter': lambda val: int(val),
-                'validate': NumberValidator()
+                'validate': NumberValidator(),
+                'default': '15'
             }])
             pairlist_length = length_choice.get('pairlist_length')
 
@@ -279,9 +280,9 @@ class FreqtradeCli:
 
             with open(retrieve_json_path, 'w') as retrieve_json_file:
                 retrieve_json_object['exchange']['name'] = exchange.lower()
-                retrieve_json_object['pairlist'][1]['min_days_listed'] = min_days_listed
-                retrieve_json_object['pairlist'][
-                    len(retrieve_json_object['pairlist'])-1]['number_assets'] = pairlist_length
+                retrieve_json_object['pairlists'][1]['min_days_listed'] = min_days_listed
+                retrieve_json_object['pairlists'][
+                    len(retrieve_json_object['pairlists'])-1]['number_assets'] = pairlist_length
                 json.dump(retrieve_json_object, retrieve_json_file, indent=4)
                 retrieve_json_file.close()
 

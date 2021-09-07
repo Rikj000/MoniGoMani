@@ -272,8 +272,8 @@ class MGMHurry:
                 'when': lambda result: os.path.isfile(cfg_filename)
             }, {
                 'type': 'confirm',
-                'message': 'WARNING: You are printing sensitive information '
-                           'which you should NEVER SHARE with anybody. Really proceed?',
+                'message': Color.yellow('WARNING: You are printing sensitive information '
+                                        'which you should NEVER SHARE with anybody. Really proceed?'),
                 'name': 'print_confirmed',
                 'default': False,
                 'when': lambda result: result['print']
