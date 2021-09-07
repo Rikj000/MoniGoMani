@@ -72,55 +72,44 @@ class MGMHurry:
         """
         self._logger.info(Color.title('👉 The all in one command. Hurry up, turn it up!'))
 
-        questions = [
-            {
-                'type': 'confirm',
-                'name': 'install_freqtrade',
-                'message': '💨 Do you want to install Freqtrade?'
-            },
-            {
-                'type': 'confirm',
-                'name': 'install_mgm',
-                'message': '💨 Do you want to install MoniGoMani?'
-            },
-            {
-                'type': 'confirm',
-                'name': 'run_setup',
-                'message': '💨 Do you want to configure it now?'
-            },
-            {
-                'type': 'confirm',
-                'name': 'download_static_pairlist',
-                'message': '💨 Do you want to generate a static pairlist now?'
-            },
-            {
-                'type': 'confirm',
-                'name': 'download_data',
-                'message': '💨 Do you want to download candle data now?'
-            },
-            {
-                'type': 'confirm',
-                'name': 'do_hyperopt',
-                'message': '💨 Do you want to hyperopt now?'
-            },
-            {
-                'type': 'confirm',
-                'name': 'do_backtest',
-                'message': '💨 Do you want to backtest now?'
-            },
-            {
-                'type': 'list',
-                'name': 'start_trading',
-                'message': '💨 Do you want to start trading?',
-                'choices': [
-                    {'name': 'No', 'value': 0},
-                    {'name': 'Yes, Dry-Run please', 'value': 1},
-                    {'name': 'Yes, for real!', 'value': 2}
-                ]
-            }
-        ]
-
-        answers = prompt(questions=questions)
+        answers = prompt(questions=[{
+            'type': 'confirm',
+            'name': 'install_freqtrade',
+            'message': '💨 Do you want to install Freqtrade?'
+        }, {
+            'type': 'confirm',
+            'name': 'install_mgm',
+            'message': '💨 Do you want to install MoniGoMani?'
+        }, {
+            'type': 'confirm',
+            'name': 'run_setup',
+            'message': '💨 Do you want to configure it now?'
+        }, {
+            'type': 'confirm',
+            'name': 'download_static_pairlist',
+            'message': '💨 Do you want to generate a static pairlist now?'
+        }, {
+            'type': 'confirm',
+            'name': 'download_data',
+            'message': '💨 Do you want to download candle data now?'
+        }, {
+            'type': 'confirm',
+            'name': 'do_hyperopt',
+            'message': '💨 Do you want to hyperopt now?'
+        }, {
+            'type': 'confirm',
+            'name': 'do_backtest',
+            'message': '💨 Do you want to backtest now?'
+        }, {
+            'type': 'list',
+            'name': 'start_trading',
+            'message': '💨 Do you want to start trading?',
+            'choices': [
+                {'name': 'No', 'value': 0},
+                {'name': 'Yes, Dry-Run please', 'value': 1},
+                {'name': 'Yes, for real!', 'value': 2}
+            ]
+        }])
 
         if answers == {}:
             sys.exit()
@@ -210,16 +199,12 @@ class MGMHurry:
 
         # Checking Freqtrade installation to confirm for overwrite
         if self.freqtrade_cli.installation_exists() is True:
-            questions = [
-                {
-                    'type': 'confirm',
-                    'message': 'It looks like Freqtrade is already installed. Proceed to overwrite?',
-                    'name': 'proceed',
-                    'default': False
-                },
-            ]
-
-            result = prompt(questions)
+            result = prompt(questions=[{
+                'type': 'confirm',
+                'message': 'It looks like Freqtrade is already installed. Proceed to overwrite?',
+                'name': 'proceed',
+                'default': False
+            }])
 
             if result.get('proceed') is False:
                 self._logger.info('Skipping overwriting Freqtrade installation.')
@@ -247,16 +232,12 @@ class MGMHurry:
 
         # Checking MoniGoMani installation to confirm for overwrite
         if self.monigomani_cli.installation_exists() is True:
-            questions = [
-                {
-                    'type': 'confirm',
-                    'message': 'It looks like MoniGoMani is already installed. Proceed to overwrite?',
-                    'name': 'proceed',
-                    'default': False
-                }
-            ]
-
-            result = prompt(questions)
+            result = prompt(questions=[{
+                'type': 'confirm',
+                'message': 'It looks like MoniGoMani is already installed. Proceed to overwrite?',
+                'name': 'proceed',
+                'default': False
+            }])
 
             if result.get('proceed') is False:
                 self._logger.info('Skipping overwriting MoniGoMani installation.')
@@ -266,26 +247,21 @@ class MGMHurry:
             cfg_filename = self.monigomani_config.get_config_filepath('mgm-config-private')
             mgm_private_json_name = self.monigomani_config.config['mgm_config_names']['mgm-config-private']
 
-            questions = [
-                {
-                    'type': 'confirm',
-                    'message': f'Should I print your "{mgm_private_json_name}" contents '
-                               f'so you can copy it over to new installation?',
-                    'name': 'print',
-                    'default': False,
-                    'when': lambda result: os.path.isfile(cfg_filename)
-                },
-                {
-                    'type': 'confirm',
-                    'message': 'WARNING: You are printing sensitive information '
-                               'which you should NEVER SHARE with anybody. Really proceed?',
-                    'name': 'print_confirmed',
-                    'default': False,
-                    'when': lambda result: result['print']
-                }
-            ]
-
-            result = prompt(questions)
+            result = prompt(questions=[{
+                'type': 'confirm',
+                'message': f'Should I print your "{mgm_private_json_name}" contents '
+                           f'so you can copy it over to new installation?',
+                'name': 'print',
+                'default': False,
+                'when': lambda result: os.path.isfile(cfg_filename)
+            }, {
+                'type': 'confirm',
+                'message': 'WARNING: You are printing sensitive information '
+                           'which you should NEVER SHARE with anybody. Really proceed?',
+                'name': 'print_confirmed',
+                'default': False,
+                'when': lambda result: result['print']
+            }])
 
             if result.get('print_confirmed') is True:
                 # Read 'mgm-config-private' and pretty print it
@@ -339,7 +315,7 @@ class MGMHurry:
 
         self.monigomani_config.reload()
 
-        questions = [{
+        answers = prompt(questions=[{
             'type': 'list',
             'name': 'install_type',
             'message': 'Which way you want to use Freqtrade?',
@@ -418,9 +394,7 @@ class MGMHurry:
             'name': 'username',
             'message': 'Please enter the Username you want to use:',
             'default': self.monigomani_config.get('username') or 'MoniGoMani Community'
-        }]
-
-        answers = prompt(questions=questions)
+        }])
 
         if answers == {}:
             sys.exit(1)
@@ -500,7 +474,7 @@ class MGMHurry:
         if self.freqtrade_cli.installation_exists() is False:
             self._logger.error(Color.red('🤷 No Freqtrade installation found. I crash.'))
 
-        questions = [{
+        answers = prompt(questions=[{
             'type': 'input',
             'name': 'timerange',
             'message': 'Please enter the timerange you want to use: ',
@@ -540,9 +514,7 @@ class MGMHurry:
                 {'name': 'Yes', 'value': 1},
                 {'name': 'No', 'value': 0}
             ]
-        }]
-
-        answers = prompt(questions=questions)
+        }])
 
         if answers == {}:
             sys.exit()
@@ -849,37 +821,30 @@ class MGMHurry:
 
         :return bool: False if no answers are given, True if all went ok.
         """
-        questions = [
-            {
-                'type': 'confirm',
-                'message': 'Do you want to also setup your Telegram bot? ',
-                'name': 'proceed_telegram',
-                'default': True
-            },
-            {
-                'type': 'confirm',
-                'message': 'Do you want to enable the Telegram Bot?',
-                'name': 'enable_telegram',
-                'default': True,
-                'when': lambda result: result['proceed_telegram']
-            },
-            {
-                'type': 'password',
-                'name': 'telegram_token',
-                'message': 'Please enter your Telegram Bot token: ',
-                'default': '',
-                'when': lambda result: result['proceed_telegram'] and result['enable_telegram']
-            },
-            {
-                'type': 'input',
-                'name': 'telegram_chat_id',
-                'message': 'Please enter the chat ID: ',
-                'default': '',
-                'when': lambda result: result['proceed_telegram'] and result['enable_telegram']
-            }
-        ]
-
-        answers = prompt(questions=questions)
+        answers = prompt(questions=[{
+            'type': 'confirm',
+            'message': 'Do you want to also setup your Telegram bot? ',
+            'name': 'proceed_telegram',
+            'default': True
+        }, {
+            'type': 'confirm',
+            'message': 'Do you want to enable the Telegram Bot?',
+            'name': 'enable_telegram',
+            'default': True,
+            'when': lambda result: result['proceed_telegram']
+        }, {
+            'type': 'password',
+            'name': 'telegram_token',
+            'message': 'Please enter your Telegram Bot token: ',
+            'default': '',
+            'when': lambda result: result['proceed_telegram'] and result['enable_telegram']
+        }, {
+            'type': 'input',
+            'name': 'telegram_chat_id',
+            'message': 'Please enter the chat ID: ',
+            'default': '',
+            'when': lambda result: result['proceed_telegram'] and result['enable_telegram']
+        }])
 
         if answers == {}:
             return False
