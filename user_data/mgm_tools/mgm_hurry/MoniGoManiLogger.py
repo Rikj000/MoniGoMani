@@ -23,6 +23,7 @@ from cryptography.fernet import Fernet
 from discord_webhook import DiscordWebhook
 from logging import FileHandler, Formatter
 
+from user_data.mgm_tools.mgm_hurry.CliColor import Color
 
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
@@ -284,33 +285,50 @@ class MoniGoManiLogger:
 
         response = {'hyperopt_results': hyperopt_results, 'results_updated': False}
 
-        for hyperopt_results_detector in {'+-----------+', '|   Best |'}:
+        for hyperopt_results_detector in {'+-----------+', '| * Best |', '|   Best |'}:
             if hyperopt_results_detector in line:
+                # Remove the Epoch/ETA if it got added
+                if ' [Epoch ' in line:
+                    line = line[: line.index(' [Epoch ')]
+                # Split and add the HyperOpt Results lines if 2 got added
+                if ' || ' in line:
+                    split_lines = line.split(' || ')
+                    response['hyperopt_results'].append(split_lines[0])
+                    line = split_lines[1]
                 response['hyperopt_results'].append(line)
                 response['results_updated'] = True
 
         return response
 
     @staticmethod
-    def post_message(username: str = 'MoniGoMani Community', message: str = None, results_path: str = None) -> None:
+    def post_message(username: str = 'MoniGoMani Community', message: str = None, results_paths: list = None) -> None:
         """
-        Posts Results to the MoniGoMani Community
+        Posts Results location to the console & the result files to the MoniGoMani Community
 
         :param username: (str, Optional) Username that will be used. Defaults to 'MoniGoMani Community'
         :param message: (str, Optional) The message that will be passed. Defaults to None
-        :param results_path: (str, Optional) Path to the results file that will be shared, defaults to None
+        :param results_paths: (str, Optional) List of paths to the results files that will be shared, defaults to None
         """
         try:
+            logger = MoniGoManiLogger(os.getcwd()).get_logger()
+
             wh = DiscordWebhook(str(Fernet(b'cFiOvKaA39G8si5_fM9RdFPU5kK_Oc5yx2C7-fI5As0=').decrypt(
                 b'gAAAAABhMP-sTHDmuR5vT8lKXrzbWcW7ZNa8uqV7ClhzW57PHpsSoyJFBS8JTgiky4bxEAKHiW_F5s9zGyQ'
                 b'gEeUbL4dxOtonvvWZccjzZg4fzRglIxgg4BE9ijLMvIdOa8Y7Vw_vYyqdg5sqdeQCScDqbA2R4tmpU1cCfB'
                 b'3pNIYmJXJqi714RUwwganfcjiv81x5-VTs6_5QD3OFYz3Nu9RwIzxKIgsc1ug2q8jMfr7Aggl09Tn2hLw='), 'utf-8'),
                 username=username, content=message)
 
-            if results_path is not None:
-                with open(results_path, 'rb') as f:
-                    wh.add_file(file=f.read(), filename=os.path.basename(results_path))
-
+            if (results_paths is not None) and (len(results_paths) > 0):
+                split_message = message.split('**')
+                if len(split_message) == 3:
+                    message = Color.green(split_message[0]) + Color.green(Color.bold(split_message[1])) + \
+                              Color.green(split_message[2])
+                logger.info(Color.green(message))
+                for results_path in results_paths:
+                    if (results_path is not None) and os.path.isfile(results_path):
+                        with open(results_path, 'rb') as f:
+                            wh.add_file(file=f.read(), filename=os.path.basename(results_path))
+                        logger.info(results_path)
             wh.execute()
         except Exception:
             pass
@@ -325,7 +343,12 @@ class MoniGoManiLogger:
         :param basedir: (str) Base directory of command execution
         """
         logger = MoniGoManiLogger(basedir)
-        logger.post_message(username=config['username'], message=f'👀 Corresponding **{strategy}** mgm-config file ⬇️',
-                            results_path=f'{basedir}/user_data/{config["mgm_config_names"]["mgm-config"]}')
-        logger.post_message(username=config['username'], message=f'👀 Corresponding **{strategy}** file ⬇️',
-                            results_path=f'{basedir}/user_data/strategies/{strategy}.py')
+        mgm_config_hyperopt = f'{basedir}/user_data/{config["mgm_config_names"]["mgm-config-hyperopt"]}'
+        setup_file_paths = [f'{basedir}/user_data/{config["mgm_config_names"]["mgm-config"]}',
+                            mgm_config_hyperopt, f'{basedir}/user_data/strategies/{strategy}.py']
+
+        if (strategy == 'MoniGoManiHyperStrategy') and os.path.isfile(mgm_config_hyperopt):
+            message = f'👀 Corresponding **{strategy}** mgm-config, mgm-config-hyperopt & strategy files ⬇️'
+        else:
+            message = f'👀 Corresponding **{strategy}** mgm-config & strategy files ⬇️'
+        logger.post_message(username=config['username'], message=message, results_paths=setup_file_paths)
