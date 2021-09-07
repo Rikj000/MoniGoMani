@@ -337,7 +337,7 @@ class MGMHurry:
             'name': 'ho_loss',
             'message': 'Which HyperOpt Loss do you want to use?',
             'choices': hyperopts_choices,
-            'default': self.monigomani_config.get('hyperopt')['loss'] or 'WinRatioAndProfitRatioLoss'
+            'default': self.monigomani_config.get('hyperopt')['loss'] or 'MGM_WinRatioAndProfitRatioHyperOptLoss'
         }, {
             'type': 'checkbox',
             'name': 'ho_spaces',
