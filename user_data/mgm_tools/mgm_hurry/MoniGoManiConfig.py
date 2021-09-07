@@ -202,9 +202,9 @@ class MoniGoManiConfig(object):
 
         return hurry_config
 
-    def get_config_filename(self, cfg_key: str) -> str:
+    def get_config_filepath(self, cfg_key: str) -> str:
         """
-        Transforms given cfg_key into the corresponding config filename.
+        Transforms given cfg_key into the corresponding absolute config filepath.
 
         :param cfg_key: (str) The config name (key) to parse.
         :return str: The absolute path to the asked config file.
@@ -327,7 +327,7 @@ class MoniGoManiConfig(object):
         :param stake_currency: (str) The stake_currency you wish to use
         """
         # Overwrite the new stake currency in mgm-config[stake_currency]
-        mgm_config_file = self.get_config_filename('mgm-config')
+        mgm_config_file = self.get_config_filepath('mgm-config')
         if os.path.isfile(mgm_config_file):
             with open(mgm_config_file, ) as mgm_config:
                 mgm_config_object = json.load(mgm_config)

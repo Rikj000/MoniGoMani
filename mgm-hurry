@@ -263,7 +263,7 @@ class MGMHurry:
                 return False
 
             # Check if the private config file already exists.
-            cfg_filename = self.monigomani_config.get_config_filename('mgm-config-private')
+            cfg_filename = self.monigomani_config.get_config_filepath('mgm-config-private')
             mgm_private_json_name = self.monigomani_config.config['mgm_config_names']['mgm-config-private']
 
             questions = [
