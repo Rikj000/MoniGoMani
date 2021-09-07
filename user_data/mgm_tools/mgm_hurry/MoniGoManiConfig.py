@@ -247,7 +247,7 @@ class MoniGoManiConfig(object):
                         'strategy': 'MoniGoManiHyperStrategy',
                         'loss': 'MGM_WinRatioAndProfitRatioHyperOptLoss',
                         'spaces': 'buy sell',
-                        'quote': 'USDT',
+                        'stake_currency': 'USDT',
                         'epochs': 1000
                     },
                     'mgm_config_names': {

@@ -384,9 +384,9 @@ class MGMHurry:
             'filter': lambda val: ' '.join(val)
         }, {
             'type': 'input',
-            'name': 'ho_quotation',
-            'message': 'Please enter the default stake currency (aka quote) you want to use:',
-            'default': self.monigomani_config.get('hyperopt')['quote'] or 'USDT'
+            'name': 'stake_currency',
+            'message': 'Please enter the default stake currency you want to use:',
+            'default': self.monigomani_config.get('hyperopt')['stake_currency'] or 'USDT'
         }, {
             'type': 'input',
             'name': 'ho_epochs',
@@ -442,7 +442,7 @@ class MGMHurry:
                     'strategy': answers.get('ho_strategy'),
                     'loss': answers.get('ho_loss'),
                     'spaces': answers.get('ho_spaces') or 'default',
-                    'quote': answers.get('ho_quotation'),
+                    'stake_currency': answers.get('stake_currency'),
                     'epochs': answers.get('ho_epochs')
                 },
                 'mgm_config_names': {
@@ -455,7 +455,7 @@ class MGMHurry:
 
         self.monigomani_config.write_hurry_dotfile(new_config)
         # Overwrite the new stake currency in '.hurry' & mgm-config[stake_currency]
-        self.monigomani_config.save_stake_currency(answers.get('ho_quotation'))
+        self.monigomani_config.save_stake_currency(answers.get('stake_currency'))
 
         if answers.get('proceed_exchange') is True:
             cred = {
