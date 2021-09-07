@@ -447,13 +447,11 @@ class MGMHurry:
         self.monigomani_config.save_stake_currency(answers.get('stake_currency'))
 
         if answers.get('proceed_exchange') is True:
-            cred = {
+            self.monigomani_config.save_exchange_credentials({
                 'exchange': answers.get('exchange'),
                 'api_key': answers.get('api_key'),
                 'api_secret': answers.get('api_secret')
-            }
-
-            self.monigomani_config.save_exchange_credentials(cred)
+            })
 
         self.__setup_telegram()
 
@@ -630,8 +628,10 @@ class MGMHurry:
         :param apply_best_results: (bool, Optional): Apply 'best' HO results direct after HO? Defaults to True.
         :param clean_start: (bool, Optional): Cleanup MoniGoMani before starting the HO? Defaults to False.
         :param do_backtest: (bool, Optional): Do a BackTest after the HO? Defaults to True.
-        :param output_file_name: (str, Optional) Name of the '.log' file(s).
-            Defaults to 'HyperOpt/BackTestResults-<Current-DateTime>'
+        :param plot_profits: (bool, Optional): Plot a Profits graph after the BackTest? Defaults to True.
+        :param importance_report: (bool, Optional): Calculate a signal importance report after the HO? Defaults to True.
+        :param output_file_name: (str, Optional) Custom filename for the HyperOptResults '.log' file that will be
+            stored in the format: 'HyperOptResults-<output_file_name>.log'. Defaults to 'Strategy + Current DateTime'
         :param jobs: (int) Amount of parallel workers (CPU cores) to use, gets set automatically by default
         :param min_trades: (int) Minimal amount of trades wished to be reached. Unused by default
         """
@@ -681,12 +681,10 @@ class MGMHurry:
 
         self._logger.debug(command)
 
-        backtest_file_name = output_file_name
-        hyperopt_file_name = output_file_name
         if output_file_name is None:
-            datetime_now = datetime.now().strftime('%d-%m-%Y-%H-%M-%S')
-            backtest_file_name = f'BackTestResults-{datetime_now}'
-            hyperopt_file_name = f'HyperOptResults-{datetime_now}'
+            output_file_name = f'{strategy}-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+        hyperopt_file_name = f'HyperOptResults-{output_file_name}'
+        output_file_path = f'{self.basedir}/user_data/hyperopt_results/{hyperopt_file_name}.log'
 
         self.monigomani_cli.run_command(command, output_file_path)
         if initial_run is True:
@@ -698,7 +696,6 @@ class MGMHurry:
         MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
                                                     message=message, results_paths=[output_file_path])
 
-        # ToDo: Auto Create & Post a TotalOverallSignalImportanceCalculator Report
         if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
             self.monigomani_cli.apply_mgm_results(strategy)
         elif do_backtest is True:
@@ -709,8 +706,8 @@ class MGMHurry:
             self.cleanup(strategy)
 
         if do_backtest is True:
-            self.backtest(timerange=timerange, strategy=strategy,
-                          enable_protections=enable_protections, output_file_name=backtest_file_name)
+            self.backtest(timerange=timerange, strategy=strategy, enable_protections=enable_protections,
+                          plot_profits=plot_profits, output_file_name=output_file_name)
         else:
             MoniGoManiLogger(self.basedir).post_setup(config=self.monigomani_config.config,
                                                       strategy=strategy, basedir=self.basedir)
@@ -738,8 +735,7 @@ class MGMHurry:
 
         self.monigomani_cli.run_command(command)
 
-    def hyperopt_show_epoch(self, epoch: int = 0, strategy: str = None,
-                            apply: bool = True, fthypt: bool = None):
+    def hyperopt_show_epoch(self, epoch: int = 0, strategy: str = None, apply: bool = True, fthypt: bool = None):
         """
         Shows the HyperOpt results for a given epoch.
 
@@ -751,6 +747,7 @@ class MGMHurry:
         """
         self._logger.info(Color.title(f'👉 Hyperopt show {"" if apply is False else "and apply "}results'))
 
+        fthypt_name = None
         if fthypt is True:
             fthypt_name = self.freqtrade_cli.choose_fthypt_file()
 
@@ -779,16 +776,17 @@ class MGMHurry:
         else:
             self.cleanup(strategy)
 
-    def backtest(self, timerange: str = None, strategy: str = None,
-                 enable_protections: bool = True, output_file_name: str = None):
+    def backtest(self, timerange: str = None, strategy: str = None, enable_protections: bool = True,
+                 plot_profits: bool = True, output_file_name: str = None):
         """
         Run a backtest session and automatically save the results.
 
         :param timerange: (string, Optional): The target timerange for backtesting. Defaults to timerange in '.hurry'.
         :param strategy: (str, Optional): Strategy to use during BackTesting. Defaults to value in '.hurry'
         :param enable_protections: (bool, Optional): Whether or not to enable protections. Defaults to True.
-        :param output_file_name: (str, Optional) Name of the '.log' file(s).
-            Defaults to 'BackTestResults-<Current-DateTime>'
+        :param plot_profits: (bool, Optional): Automatically plot visual profit graphs in '.html'. Defaults to True.
+        :param output_file_name: (str, Optional) Custom filename for the BackTestResults '.log' file that will be stored
+            in the format: 'BackTestResults-<output_file_name>.log'. Defaults to 'Strategy + Current DateTime'.
         """
         self._logger.info(Color.title('👉 Start BackTesting. Lets see how it all turns out!'))
 
@@ -815,7 +813,9 @@ class MGMHurry:
             timerange=timerange)
 
         if output_file_name is None:
-            output_file_name = f'BackTestResults-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+            output_file_name = f'{strategy}-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+        backtest_file_name = f'BackTestResults-{output_file_name}'
+        output_file_path = f'{self.basedir}/user_data/backtest_results/{backtest_file_name}.log'
 
         self.monigomani_cli.run_command(command, output_file_path)
         MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
@@ -847,7 +847,71 @@ class MGMHurry:
 
         self._logger.info(Color.title(f'👉 Plotting profit graph for BackTest results'))
 
-        self._logger.info('🍺 Backtesting ready... 🤑')
+        if timerange is None:
+            timerange = self.monigomani_config.config['timerange']
+        if strategy is None:
+            strategy = self.monigomani_config.config['hyperopt']['strategy']
+
+        backtest_results_file = self.freqtrade_cli.choose_backtest_results_file(choose_results=choose_results)
+        backtest_results_path = f'{self.basedir}/user_data/backtest_results/{backtest_results_file}'
+
+        if os.path.isfile(backtest_results_path) is True:
+            # Load the 'backtest-result-<timestamp>.json' file as an object and parse it as a dictionary
+            file_object = open(backtest_results_path, )
+            backtest_results = json.load(file_object)
+
+            if len(backtest_results['strategy'][strategy]['trades']) == 0:
+                self._logger.error(Color.red(f'🤷 No trades where done in the given {backtest_results_file} file.\n'
+                                             f'Please provide a BackTest results file in which '
+                                             f'actual trading has been done!'))
+                return None
+        else:
+            self._logger.error(Color.red(f'🤷 {backtest_results_file} file could not be found.\nPlease make sure that '
+                                         f'the provided BackTest results file actually exists!'))
+            return None
+
+        if output_file_name is None:
+            output_file_name = f'{strategy}-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+        plot_profit_file_name = f'PlotProfitResults-{output_file_name}'
+        output_file_path = f'{self.basedir}/user_data/plot/{plot_profit_file_name}.html'
+
+        self.monigomani_cli.run_command(
+            f'{self.monigomani_config.config["ft_binary"]} plot-profit {self.monigomani_config.command_configs()}'
+            f'--export-filename {backtest_results_path} --timerange {timerange} --timeframe {timeframe} && '
+            f'mv {self.basedir}/user_data/plot/freqtrade-profit-plot.html {output_file_path}')
+
+        MoniGoManiLogger(self.basedir).post_message(
+            username=self.monigomani_config.config['username'],
+            message=f'🚀 Fresh **{strategy}** Plot Profit Results ⬇️', results_paths=[output_file_path])
+
+    def importance_report(self, output_file_name: str = None) -> None:
+        """
+        Run the TotalOverallSignalImportanceCalculator to create a signal importance report
+
+        :param output_file_name: (str, Optional) Custom filename for the SignalImportanceResults '.log' file
+            that will be stored in the format: 'SignalImportanceResults-<output_file_name>.log'.
+            Defaults to 'MoniGoManiHyperStrategy + Current DateTime'.
+        """
+
+        self._logger.info(Color.title(f'👉 Calculating Total Overall Signal Importance Report for MoniGoMani'))
+
+        mgm_config_files = self.monigomani_config.load_config_files()
+        if (mgm_config_files["mgm-config"] is None) or (mgm_config_files["mgm-config-hyperopt"] is None):
+            sys.exit(1)  # Warning should already be thrown when loading the config files
+
+        if output_file_name is None:
+            output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+        importance_report_file_name = f'SignalImportanceResults-{output_file_name}'
+        output_file_path = f'{self.basedir}/user_data/importance_results/{importance_report_file_name}.log'
+
+        self.monigomani_cli.run_command(
+            f'python3 {self.basedir}/user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py '
+            f'-pu {mgm_config_files["mgm-config"]["monigomani_settings"]["precision"]} -cf {output_file_path}')
+
+        MoniGoManiLogger(self.basedir).post_message(
+            username=self.monigomani_config.config['username'],
+            message=f'🚀 Fresh **MoniGoManiHyperStrategy** Signal Importance Report ⬇️',
+            results_paths=[output_file_path])
 
     def start_trader(self, dry_run: bool = True):
         """
@@ -901,13 +965,11 @@ class MGMHurry:
             return False
 
         if answers.get('proceed_telegram') is True:
-            opt = {
+            self.monigomani_config.save_telegram_credentials({
                 'enable_telegram': answers.get('enable_telegram'),
                 'telegram_token': answers.get('telegram_token'),
                 'telegram_chat_id': answers.get('telegram_chat_id')
-            }
-
-            self.monigomani_config.save_telegram_credentials(opt)
+            })
 
         return True
 
