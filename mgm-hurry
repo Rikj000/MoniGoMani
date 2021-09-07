@@ -56,15 +56,15 @@ class MGMHurry:
     def __init__(self):
         tprint('mgm-hurry')
 
-        self._basedir = os.getcwd()
-        self._logger = MoniGoManiLogger(self._basedir).get_logger()
-        self.monigomani_config = MoniGoManiConfig(self._basedir)
+        self.basedir = os.getcwd()
+        self._logger = MoniGoManiLogger(self.basedir).get_logger()
+        self.monigomani_config = MoniGoManiConfig(self.basedir)
 
         if self.monigomani_config.reload() is False:
             self._logger.error(Color.red('⚠️ Failed to load or create ".hurry" config file.'))
 
-        self.freqtrade_cli = FreqtradeCli(self._basedir)
-        self.monigomani_cli = MoniGoManiCli(self._basedir)
+        self.freqtrade_cli = FreqtradeCli(self.basedir)
+        self.monigomani_cli = MoniGoManiCli(self.basedir)
 
     def up(self):  # pylint: disable=invalid-name
         """
@@ -145,9 +145,9 @@ class MGMHurry:
             strategy = self.monigomani_config.config['hyperopt']['strategy']
             if strategy == 'MoniGoManiHyperStrategy':
                 mgm_config_ho = self.monigomani_config.config['mgm_config_names']['mgm-config-hyperopt']
-                if os.path.isfile(f'{self._basedir}/user_data/{mgm_config_ho}'):
+                if os.path.isfile(f'{self.basedir}/user_data/{mgm_config_ho}'):
                     ho_results_found = True
-            elif os.path.isfile(f'{self._basedir}/user_data/strategies/{strategy}.json'):
+            elif os.path.isfile(f'{self.basedir}/user_data/strategies/{strategy}.json'):
                 ho_results_found = True
 
             if ho_results_found is True:
@@ -226,7 +226,7 @@ class MGMHurry:
                 return False
 
         if target_dir is None:
-            target_dir = self._basedir
+            target_dir = self.basedir
 
         self.freqtrade_cli.download_setup_freqtrade(target_dir, branch, commit)
 
@@ -289,16 +289,16 @@ class MGMHurry:
 
             if result.get('print_confirmed') is True:
                 # Read 'mgm-config-private' and pretty print it
-                with open(f'{self._basedir}/user_data/{mgm_private_json_name}', ) as mgm_private_config:
+                with open(f'{self.basedir}/user_data/{mgm_private_json_name}', ) as mgm_private_config:
                     print(json.dumps(json.load(mgm_private_config), indent=4))
 
         if target_dir is None:
-            target_dir = self._basedir
+            target_dir = self.basedir
 
         self.monigomani_cli.download_setup_mgm(target_dir, branch, commit)
-        self.monigomani_config.create_config_files(self._basedir)
-        self._logger.info('🍺 MoniGoMani has been installed. You can now proceed to setup your instance. '
-                          '(Hint: mgm-hurry setup)')
+        self.monigomani_config.create_config_files(self.basedir)
+        self._logger.info(Color.green('🍺 MoniGoMani has been installed. You can now proceed to setup your instance. '
+                                      '(Hint: mgm-hurry setup)'))
 
     def setup(self):
         """
@@ -309,7 +309,7 @@ class MGMHurry:
         self._logger.info('🤓 Let\'s answer some questions to make your life easier.')
 
         strategies = map(lambda f: os.path.basename(f).replace('.py', ''),
-                         glob.glob(f'{self._basedir}/user_data/strategies/*.py'))
+                         glob.glob(f'{self.basedir}/user_data/strategies/*.py'))
 
         strategies_choices = []
         for strat in strategies:
@@ -317,24 +317,24 @@ class MGMHurry:
                 strategies_choices.append({'name': strat, 'value': strat})
 
         if len(strategies_choices) == 0:
-            strat_dir = f'{self._basedir}/user_data/strategies/'
-            self._logger.error(f'🤷 I could not find any strategy in {strat_dir}. '
-                               f'Did you install Freqtrade & MoniGoMani?')
+            strat_dir = f'{self.basedir}/user_data/strategies/'
+            self._logger.error(Color.red(f'🤷 I could not find any strategy in {strat_dir}. '
+                                         f'Did you install Freqtrade & MoniGoMani?'))
             sys.exit(1)
 
-        self.monigomani_config.create_config_files(self._basedir)
+        self.monigomani_config.create_config_files(self.basedir)
 
         hyperopts = map(lambda f: os.path.basename(f).replace('.py', ''),
-                        glob.glob(f'{self._basedir}/user_data/hyperopts/*.py'))
+                        glob.glob(f'{self.basedir}/user_data/hyperopts/*.py'))
 
         hyperopts_choices = []
         for hyperopt in hyperopts:
             hyperopts_choices.append({'name': hyperopt, 'value': hyperopt})
 
         if len(hyperopts_choices) == 0:
-            ho_dir = f'{self._basedir}/user_data/hyperopts/'
-            self._logger.error(f'🤷 I could not find any hyperopts in {ho_dir}. '
-                               f'Did you install Freqtrade & MoniGoMani?')
+            ho_dir = f'{self.basedir}/user_data/hyperopts/'
+            self._logger.error(Color.red(f'🤷 I could not find any hyperopts in {ho_dir}. '
+                                         f'Did you install Freqtrade & MoniGoMani?'))
             sys.exit(1)
 
         self.monigomani_config.reload()
@@ -426,7 +426,7 @@ class MGMHurry:
             sys.exit(1)
 
         if answers.get('install_type') == 'source':
-            ft_binary = f'source {self._basedir}/.env/bin/activate; freqtrade'
+            ft_binary = f'source {self.basedir}/.env/bin/activate; freqtrade'
         else:
             ft_binary = 'docker-compose run --rm freqtrade'
 
@@ -715,8 +715,8 @@ class MGMHurry:
             self.backtest(timerange=timerange, strategy=strategy,
                           enable_protections=enable_protections, output_file_name=backtest_file_name)
         else:
-            MoniGoManiLogger(self._basedir).post_setup(config=self.monigomani_config.config, strategy=strategy,
-                                                       basedir=self._basedir)
+            MoniGoManiLogger(self.basedir).post_setup(config=self.monigomani_config.config,
+                                                      strategy=strategy, basedir=self.basedir)
 
         self._logger.info(Color.green('🍺 HyperOpt run ready... 🥵'))
 
