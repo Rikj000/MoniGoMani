@@ -293,3 +293,32 @@ class FreqtradeCli:
 
         answers = prompt(questions=questions)
         return answers.get('fthypt_file')
+
+    def choose_backtest_results_file(self, choose_results: bool = True) -> str:
+        """
+        Interactive prompt to choose a 'backtest-result-<timestamp>.json' file.
+
+        :param choose_results: (bool) If false automatically selects the last results. Defaults to true
+        :return str: The chosen backtest results filename
+        """
+        backtest_results_path = f'{self.basedir}/user_data/backtest_results/backtest-result-*.json'
+        backtest_result_files = map(os.path.basename, sorted(glob.glob(backtest_results_path),
+                                                             key=os.path.getmtime, reverse=True))
+        backtest_result_options = list(backtest_result_files)
+
+        if len(backtest_result_options) == 0:
+            self.cli_logger.warning(Color.yellow('Whoops, no BackTest results could be found.'))
+            sys.exit(1)
+
+        if choose_results is True:
+            questions = [{
+                'type': 'list',
+                'name': 'backtest_result_file',
+                'message': 'Please select the BackTest results you want to use: ',
+                'choices': backtest_result_options
+            }]
+
+            answers = prompt(questions=questions)
+            return answers.get('backtest_result_file')
+        else:
+            return backtest_result_options[0]
