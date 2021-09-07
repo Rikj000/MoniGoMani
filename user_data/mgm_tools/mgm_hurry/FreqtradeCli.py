@@ -206,7 +206,8 @@ class FreqtradeCli:
             sys.exit(1)
 
         os.chmod(f'{target_dir}/monigomani/setup.exp', 0o444)
-        os.symlink(f'{target_dir}/monigomani/setup.exp', f'{target_dir}/setup.exp')
+        if os.path.islink(f'{target_dir}/setup.exp') is False:
+            os.symlink(f'{target_dir}/monigomani/setup.exp', f'{target_dir}/setup.exp')
 
     def run_setup_installer(self, target_dir: str) -> bool:
         """

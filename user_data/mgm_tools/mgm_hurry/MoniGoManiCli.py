@@ -172,8 +172,10 @@ class MoniGoManiCli(object):
             }
 
             for symlink_object in symlink_objects:
-                os.symlink(f'{target_dir + mgm_folder}/{symlink_object}', f'{target_dir}/{symlink_object}')
-            os.symlink(f'{target_dir + mgm_folder}/README.md', f'{target_dir}/README-MGM.md')
+                if os.path.islink(f'{target_dir}/{symlink_object}') is False:
+                    os.symlink(f'{target_dir + mgm_folder}/{symlink_object}', f'{target_dir}/{symlink_object}')
+            if os.path.islink(f'{target_dir}/README-MGM.md') is False:
+                os.symlink(f'{target_dir + mgm_folder}/README.md', f'{target_dir}/README-MGM.md')
 
             # Symlink all files inside the given directories separately
             symlink_directory_contents = {
