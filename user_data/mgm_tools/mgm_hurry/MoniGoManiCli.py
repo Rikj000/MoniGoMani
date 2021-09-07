@@ -145,8 +145,9 @@ class MoniGoManiCli(object):
         """
         try:
             mgm_folder = '/monigomani'
-            if not os.path.exists(target_dir + mgm_folder):
-                os.makedirs(target_dir + mgm_folder, exist_ok=True)
+            for make_dir in [target_dir + mgm_folder, f'{target_dir}/user_data/importance_results']:
+                if not os.path.exists(make_dir):
+                    os.makedirs(make_dir, exist_ok=True)
 
             if os.path.isfile(f'{target_dir + mgm_folder}/setup.exp'):
                 os.remove(f'{target_dir + mgm_folder}/setup.exp')
