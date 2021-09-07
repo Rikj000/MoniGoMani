@@ -146,13 +146,15 @@ class FreqtradeCli:
 
         return False
 
-    def download_setup_freqtrade(self, target_dir: str = None, branch: str = 'develop', commit: str = None) -> bool:
+    def download_setup_freqtrade(self, target_dir: str = None, branch: str = 'develop',
+                                 commit: str = None, install_ui: bool = True) -> bool:
         """
         Install Freqtrade using a git clone to target_dir.
 
         :param target_dir: (str) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         :param branch: (str) Checkout a specific branch. Defaults to 'develop'.
         :param commit: (str) Checkout a specific commit. Defaults to None aka latest.
+        :param install_ui: (bool) Install FreqUI. Defaults to True.
         :return bool: True if setup completed without errors, else False.
         """
         if target_dir is None:
@@ -182,10 +184,10 @@ class FreqtradeCli:
 
                 # Hide the spinner as the Freqtrade installer asks for user input.
                 with sp.hidden():
-                    result = self.run_setup_installer(target_dir)
+                    result = self.run_setup_installer(target_dir=target_dir, install_ui=install_ui)
 
                 if result is True:
-                    sp.green.ok('✔ Freqtrade setup completed')
+                    sp.green.ok('✔ Freqtrade setup completed!')
                     return True
 
             sp.red.write('😕 Freqtrade setup failed')
@@ -211,11 +213,12 @@ class FreqtradeCli:
         if os.path.islink(f'{target_dir}/setup.exp') is False:
             os.symlink(f'{target_dir}/monigomani/setup.exp', f'{target_dir}/setup.exp')
 
-    def run_setup_installer(self, target_dir: str) -> bool:
+    def run_setup_installer(self, target_dir: str, install_ui: bool = True) -> bool:
         """
-        Run Freqtrade setup.sh --install through setup.exp
+        Run Freqtrade setup.sh --install through setup.exp + Install Freq-UI
 
         :param target_dir: (str) The target directory where Freqtrade is installed.
+        :param install_ui: (bool) Install FreqUI. Defaults to True.
         :return bool: True if setup ran successfully. False otherwise.
         """
 
@@ -226,6 +229,11 @@ class FreqtradeCli:
 
             # Using 'except' to automatically skip resetting the git repo, but do install all dependencies
             self.monigomani_cli.run_command(command)
+            if install_ui is True:
+                # Explicitly re-fetch the Freqtrade binary path after installation
+                self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
+                self.monigomani_cli.run_command(f'{self.freqtrade_binary} install-ui')
+                self.cli_logger.info(Color.green('✔ Successfully installed FreqUI!'))
             return True
 
         self.cli_logger.error(Color.red(f'Could not run {target_dir}/setup.exp '

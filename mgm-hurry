@@ -201,13 +201,14 @@ class MGMHurry:
             self._logger.info(Color.green('💨 Executing mgm-hurry up finished.'))
 
     def install_freqtrade(self, target_dir: str = None, branch: str = 'develop',
-                          commit: str = '3503fdb4ec31be99f433fdce039543e0911964d6'):
+                          commit: str = '3503fdb4ec31be99f433fdce039543e0911964d6', install_ui: bool = True):
         """
         Install Freqtrade the easy way.
 
         :param target_dir: (string, optional) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         :param branch: (string, optional) Checkout a specific branch. Defaults to 'develop'.
         :param commit: (str) Checkout a specific commit. Defaults to latest supported by MoniGoMani.
+        :param install_ui: (bool) Install FreqUI. Defaults to True.
         """
         self._logger.info(Color.title('👉 Install Freqtrade'))
 
@@ -227,7 +228,8 @@ class MGMHurry:
         if target_dir is None:
             target_dir = self.basedir
 
-        self.freqtrade_cli.download_setup_freqtrade(target_dir, branch, commit)
+        self.freqtrade_cli.download_setup_freqtrade(target_dir=target_dir, branch=branch,
+                                                    commit=commit, install_ui=install_ui)
 
         self._logger.info(Color.green('🍺 Freqtrade has been installed. You can now proceed to install MoniGoMani. '
                                       '(Hint: mgm-hurry install_mgm)'))
