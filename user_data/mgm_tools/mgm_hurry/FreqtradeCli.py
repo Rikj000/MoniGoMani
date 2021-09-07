@@ -21,10 +21,12 @@ import os
 import subprocess
 import sys
 import tempfile
+from datetime import datetime
 from shutil import copytree
 
 import pygit2
 from InquirerPy import prompt
+from InquirerPy.validator import NumberValidator
 from pygit2 import Repository, clone_repository
 from yaspin import yaspin
 
@@ -231,19 +233,53 @@ class FreqtradeCli:
 
         return False
 
-    def download_static_pairlist(self, stake_currency: str, exchange: str) -> dict:
+    def download_static_pairlist(self, stake_currency: str = 'USDT', exchange: str = 'binance',
+                                 pairlist_length: int = None, min_days_listed: int = None) -> dict:
         """
         Use Freqtrade test-pairlist command to download and test valid pair whitelist.
 
-        :param stake_currency: (str) The stake currency to find the list of. Eg. BTC
-        :param exchange: (str) The exchange to read the data from. Eg. Binance
+        :param stake_currency: (str) The stake currency to find the list of. Defaults to USDT
+        :param exchange: (str) The exchange to read the data from. Defaults to Binance
+        :param pairlist_length (int) Amount of pairs wish to use in your pairlist
+        :param min_days_listed (int) The minimal days that coin pairs need to be listed on the exchange.
+            Defaults to the amount of days in between now and the start of
+            the timerange in '.hurry' minus the startup_candle_count
         :return dict: The static pair whitelist as a dictionary.
         """
+
+        if pairlist_length is None:
+            length_choice = prompt(questions=[{
+                'type': 'input',
+                'name': 'pairlist_length',
+                'message': 'How much pairs would you like in your TopVolumeStaticPairList? (1 - 200)',
+                'filter': lambda val: int(val),
+                'validate': NumberValidator()
+            }])
+            pairlist_length = length_choice.get('pairlist_length')
+
+        if min_days_listed is None:
+            new_timerange_dict = self.monigomani_cli.calculate_timerange_start_minus_startup_candle_count()
+            new_start_date = new_timerange_dict['new_start_date']
+            min_days_listed = (datetime.today() - new_start_date).days
+
+        # Update the exchange & min days listed in the pairlist download tool
+        retrieve_json_path = f'{self.basedir}/user_data/mgm_tools/RetrieveTopVolumeStaticPairList.json'
+        if os.path.isfile(retrieve_json_path):
+            with open(retrieve_json_path, ) as retrieve_json_file:
+                retrieve_json_object = json.load(retrieve_json_file)
+                retrieve_json_file.close()
+
+            with open(retrieve_json_path, 'w') as retrieve_json_file:
+                retrieve_json_object['exchange']['name'] = exchange.lower()
+                retrieve_json_object['pairlist'][1]['min_days_listed'] = min_days_listed
+                retrieve_json_object['pairlist'][
+                    len(retrieve_json_object['pairlist'])-1]['number_assets'] = pairlist_length
+                json.dump(retrieve_json_object, retrieve_json_file, indent=4)
+                retrieve_json_file.close()
+
         with tempfile.NamedTemporaryFile() as temp_file:
-            self.monigomani_cli.run_command(
-                f'source ./.env/bin/activate; freqtrade test-pairlist '
-                f'-c {self.basedir}/user_data/mgm_tools/{exchange.title()}-Retrieve-Top-Volume-StaticPairList.json '
-                f'--quote {stake_currency} --print-json > {temp_file.name}')
+            self.monigomani_cli.run_command(f'{self.freqtrade_binary} test-pairlist -c {retrieve_json_path} '
+                                            f'--quote {stake_currency} --print-json > {temp_file.name}')
 
             # Read last line from temp_file, which is the json list containing pairlists
             try:

@@ -2,28 +2,28 @@
     "pairlists": [
         {
             "method": "VolumePairList",
-            "number_assets": 60,
+            "number_assets": 200,
             "sort_key": "quoteVolume",
             "refresh_period": 1800
         },
-        { 
-            "method": "AgeFilter", 
+        {
+            "method": "AgeFilter",
             "min_days_listed": 200
         },
-        { 
-            "method": "PriceFilter", 
-            "low_price_ratio": 0.10 
+        {
+            "method": "PriceFilter",
+            "low_price_ratio": 0.10
         },
-        { 
-            "method": "ShuffleFilter" 
+        {
+            "method": "ShuffleFilter"
         },
-        { 
-            "method": "SpreadFilter", 
-            "max_spread_ratio": 0.005 
+        {
+            "method": "SpreadFilter",
+            "max_spread_ratio": 0.005
         },
-        {   
+        {
             "method": "RangeStabilityFilter",
-            "lookback_days": 10, 
+            "lookback_days": 10,
             "min_rate_of_change": 0.01,
             "refresh_period": 1440
         },

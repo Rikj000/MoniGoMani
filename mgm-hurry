@@ -564,10 +564,17 @@ class MGMHurry:
         self.monigomani_cli.run_command(dcd)
         self._logger.info('🍺 Downloading candle data finished.')
 
-    def download_static_pairlist(self):
+    def download_static_pairlist(self, stake_currency: str = None, exchange: str = None,
+                                 pairlist_length: int = None, min_days_listed: int = None):
         """
-        Downloads StaticPairList and saves into mgm_pair_lists folder.
+        Downloads StaticPairList and saves into 'mgm-config' and the 'mgm_pair_lists' folder.
 
+        :param stake_currency: (str) The stake currency to find the list of. Defaults to value in '.hurry' or 'USDT'
+        :param exchange: (str) The exchange to read the data from. Defaults to value in '.hurry' or 'binance'
+        :param pairlist_length (int) Amount of pairs wish to use in your pairlist. Prompts you for the amount
+        :param min_days_listed (int) The minimal days that coin pairs need to be listed on the exchange.
+            Defaults to the amount of days in between now and the start of
+            the timerange in '.hurry' minus the startup_candle_count
         :return None
         """
         self._logger.info(Color.title('👉 Download Top Volume Static Pairlist'))
@@ -582,13 +589,20 @@ class MGMHurry:
 
         # Download and generate a static pairlist
         self._logger.info('🤖 Generating new static pairlist...')
-        quote = self.monigomani_config.config['hyperopt']['quote']
-        exchange = self.monigomani_config.config['exchange'].title()
-        static_pairlist = self.freqtrade_cli.download_static_pairlist(quote, exchange)
+
+        if stake_currency is None:
+            stake_currency = self.monigomani_config.config['hyperopt']['stake_currency']
+        if exchange is None:
+            exchange = self.monigomani_config.config['exchange'].title()
+
+        static_pairlist = self.freqtrade_cli.download_static_pairlist(
+            stake_currency=stake_currency, exchange=exchange,
+            pairlist_length=pairlist_length, min_days_listed=min_days_listed)
 
         # Save new static pairlist to his own pairlist json file
-        self._logger.info('🤖 Saving fresh static pairlist into mgm_pair_lists/...')
-        with open(f'{self._basedir}/user_data/mgm_pair_lists/{exchange}-{quote}-Top-Volume-StaticPairList.json', 'w+') \
+        relative_location = f'mgm_pair_lists/{exchange}-{stake_currency}-Top-Volume-StaticPairList.json'
+        self._logger.info(f'🤖 Saving fresh static pairlist into {relative_location}')
+        with open(f'{self.basedir}/user_data/{relative_location}', 'w+') \
                 as pairlist_file:
             data_format = {'exchange': {'pair_whitelist': static_pairlist}}
             json.dump(data_format, pairlist_file, indent=4)
@@ -596,7 +610,7 @@ class MGMHurry:
         mgm_json_name = self.monigomani_config.config['mgm_config_names']['mgm-config']
         self._logger.info(Color.green(f'🍺 Saving pairlist as whitelist to "{mgm_json_name}"...'))
         # Overwrite the new static pairlist to the exchange config in mgm-config[exchange][pair_whitelist]
-        mgm_config_file = self.monigomani_config.get_config_filename('mgm-config')
+        mgm_config_file = self.monigomani_config.get_config_filepath('mgm-config')
         with open(mgm_config_file, ) as mgm_config:
             try:
                 mgm_config_object = json.load(mgm_config)
