@@ -28,6 +28,7 @@ from InquirerPy import prompt
 from pygit2 import Repository, clone_repository
 from yaspin import yaspin
 
+from user_data.mgm_tools.mgm_hurry.CliColor import Color
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
@@ -81,8 +82,8 @@ class FreqtradeCli:
         :return bool: True if Freqtrade installation is found and property is set. False otherwise.
         """
         if self.installation_exists() is False:
-            self.cli_logger.warning('🤷 No Freqtrade installation found. '
-                                    'Please run "mgm-hurry install_freqtrade" before attempting to go further!')
+            self.cli_logger.warning(Color.yellow('🤷 No Freqtrade installation found. Please run '
+                                                 '"mgm-hurry install_freqtrade" before attempting to go further!'))
             return False
 
         self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
@@ -120,17 +121,17 @@ class FreqtradeCli:
         :return bool: True if install_type is docker or Freqtrade is found. False otherwise.
         """
         if self.install_type is None:
-            self.cli_logger.warning('FreqtradeCli - installation_exists() failed. No install_type.')
+            self.cli_logger.warning(Color.yellow('FreqtradeCli - installation_exists() failed. No install_type.'))
             return False
 
         # Well if install_type is docker, we return True because we don't verify if docker is installed
         if self.install_type == 'docker':
-            self.cli_logger.debug(
-                'FreqtradeCli - installation_exists() succeeded because install_type is set to docker.')
+            self.cli_logger.debug('FreqtradeCli - installation_exists() succeeded because '
+                                  'install_type is set to docker.')
             return True
 
         if self.freqtrade_binary is None:
-            self.cli_logger.warning('FreqtradeCli - installation_exists() failed. No freqtrade_binary.')
+            self.cli_logger.warning(Color.yellow('FreqtradeCli - installation_exists() failed. No freqtrade_binary.'))
             return False
 
         if self.install_type == 'source':
@@ -138,8 +139,8 @@ class FreqtradeCli:
             if os.path.exists(f'{self.basedir}/.env/bin/freqtrade'):
                 return True
 
-            self.cli_logger.warning(f'FreqtradeCli - installation_exists() failed. '
-                                    f'Freqtrade binary not found in {self.basedir}/.env/bin/freqtrade.')
+            self.cli_logger.warning(Color.yellow(f'FreqtradeCli - installation_exists() failed. Freqtrade binary not '
+                                                 f'found in {self.basedir}/.env/bin/freqtrade.'))
 
         return False
 
@@ -165,7 +166,7 @@ class FreqtradeCli:
 
                 if not isinstance(repo, Repository):
                     sp.red.write('😕  Failed to clone Freqtrade repo. I quit!')
-                    self.cli_logger.critical('😕  Failed to clone Freqtrade repo. I quit!')
+                    self.cli_logger.critical(Color.red('😕  Failed to clone Freqtrade repo. I quit!'))
                     sys.exit(1)
 
                 sp.green.ok('✔')
@@ -201,7 +202,7 @@ class FreqtradeCli:
         copytree(temp_dirname, target_dir, dirs_exist_ok=True)
 
         if not os.path.isfile(f'{target_dir}/monigomani/setup.exp'):
-            self.cli_logger.error('🤷 No "setup.exp" found, back to the MoniGoMani installation docs it is!')
+            self.cli_logger.error(Color.red('🤷 No "setup.exp" found, back to the MoniGoMani installation docs it is!'))
             sys.exit(1)
 
         os.chmod(f'{target_dir}/monigomani/setup.exp', 0o444)
@@ -224,7 +225,8 @@ class FreqtradeCli:
             self.monigomani_cli.run_command(command)
             return True
 
-        self.cli_logger.error(f'Could not run {target_dir}/setup.exp for Freqtrade because the file does not exist.')
+        self.cli_logger.error(Color.red(f'Could not run {target_dir}/setup.exp '
+                                        f'for Freqtrade because the file does not exist.'))
 
         return False
 
@@ -247,7 +249,7 @@ class FreqtradeCli:
                 last_line = subprocess.check_output(['tail', '-1', temp_file.name])
                 pair_whitelist = json.loads(last_line)
             except json.JSONDecodeError as e:
-                self.cli_logger.critical('Unfortunately we could generate the static pairlist.')
+                self.cli_logger.critical(Color.red('Unfortunately we could generate the static pairlist.'))
                 self.cli_logger.debug(e)
                 return False
 
@@ -271,22 +273,22 @@ class FreqtradeCli:
 
     def choose_fthypt_file(self) -> str:
         """
-        Interactive prompt to choose an fthypt file.
-        :return:
+        Interactive prompt to choose an 'strategy_<strategy-name>_<timestamp>.fthypt' file.
+        :return: The chosen fthypt filename
         """
-        fthypts = map(os.path.basename, sorted(glob.glob(f'{self.basedir}/user_data/hyperopt_results/*.fthypt'),
-                                               key=os.path.getmtime, reverse=True))
-        dat = list(fthypts)
+        fthypt_files = map(os.path.basename, sorted(glob.glob(f'{self.basedir}/user_data/hyperopt_results/*.fthypt'),
+                                                    key=os.path.getmtime, reverse=True))
+        fthypt_options = list(fthypt_files)
 
-        if len(dat) == 0:
-            self.cli_logger.warning('Whoops, no hyperopt results could be found.')
+        if len(fthypt_options) == 0:
+            self.cli_logger.warning(Color.yellow('Whoops, no HyperOpt results could be found.'))
             sys.exit(1)
 
         questions = [{
             'type': 'list',
             'name': 'fthypt_file',
-            'message': 'Please select the hyperopt results you want to show: ',
-            'choices': dat
+            'message': 'Please select the HyperOpt results you want to show: ',
+            'choices': fthypt_options
         }]
 
         answers = prompt(questions=questions)

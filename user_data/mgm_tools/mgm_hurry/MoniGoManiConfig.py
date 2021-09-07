@@ -22,6 +22,7 @@ from operator import xor
 
 import yaml
 
+from user_data.mgm_tools.mgm_hurry.CliColor import Color
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger
 
 
@@ -88,7 +89,7 @@ class MoniGoManiConfig(object):
         :return bool: True if config is read, False if config could not be read.
         """
         if self.valid_hurry_dotfile_present() is not True:
-            self.logger.error('Failed to reload config. No valid hurry dotfile present.')
+            self.logger.error(Color.red('Failed to reload config. No valid hurry dotfile present.'))
             return False
 
         self.config = self.read_hurry_config()
@@ -102,7 +103,7 @@ class MoniGoManiConfig(object):
         :return bool: Return true if the config files exist, false if not
         """
         if os.path.isfile(self.__full_path_config) is not True:
-            self.logger.warning(f'Could not find .hurry config file at {self.__full_path_config}')
+            self.logger.warning(Color.yellow(f'Could not find .hurry config file at {self.__full_path_config}'))
             return False
 
         with open(self.__full_path_config, 'r') as yml_file:
@@ -131,18 +132,20 @@ class MoniGoManiConfig(object):
             src_file = f'{target_dir}/monigomani/user_data/{example_file["src"]}'
 
             if not os.path.isfile(src_file):
-                self.logger.error(f'❌ Bummer. Cannot find the example file "{example_file["src"]}" to copy from.')
+                self.logger.error(Color.red(f'❌ Bummer. Cannot find the example file '
+                                            f'"{example_file["src"]}" to copy from.'))
                 return False
 
             dest_file = f'{target_dir}/user_data/{example_file["dest"]}'
 
             if os.path.isfile(dest_file):
-                self.logger.warning(f'⚠️ The target file "{example_file["dest"]}" already exists. Is cool.')
+                self.logger.warning(Color.yellow(f'⚠️ The target file "{example_file["dest"]}" '
+                                                 f'already exists. Is cool.'))
                 continue
 
             shutil.copyfile(src_file, dest_file)
 
-        self.logger.info('👉 MoniGoMani config files prepared √')
+        self.logger.info(Color.green('👉 MoniGoMani config files prepared √'))
         return True
 
     def load_config_files(self) -> dict:
@@ -161,7 +164,7 @@ class MoniGoManiConfig(object):
         hurry_config = self.read_hurry_config()
 
         if hurry_config is None:
-            self.logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
+            self.logger.error(Color.red('🤷 No Hurry config file found. Please run: mgm-hurry setup'))
             sys.exit(1)
 
         # Start loading the MoniGoMani config files
@@ -174,8 +177,8 @@ class MoniGoManiConfig(object):
         for mgm_config_filename in mgm_config_files:
             # Check if the MoniGoMani config filename exist in the ".hurry" config file
             if 'mgm_config_names' not in hurry_config or mgm_config_filename not in hurry_config['mgm_config_names']:
-                self.logger.critical(f'🤷 No "{mgm_config_filename}" filename found in the ".hurry" config file. '
-                                     f'Please run: mgm-hurry setup')
+                self.logger.critical(Color.red(f'🤷 No "{mgm_config_filename}" filename found in the '
+                                               f'".hurry" config file. Please run: mgm-hurry setup'))
                 sys.exit(1)
 
             # Full path to current config file
@@ -217,8 +220,8 @@ class MoniGoManiConfig(object):
         :return dict: The json content of the file. json.load() return. None if failed.
         """
         if os.path.isfile(filename) is False:
-            self.logger.error(f'🤷 No "{filename}" file found in the "user_data" directory. '
-                              f'Please run: mgm-hurry setup')
+            self.logger.warning(Color.yellow(f'🤷 No "{filename}" file found in the "user_data" directory. '
+                                             f'Please run: mgm-hurry setup'))
             return None
 
         # Load the MoniGoMani config file as an object and parse it as a dictionary
@@ -257,8 +260,8 @@ class MoniGoManiConfig(object):
 
         # Protection to prevent from writing no data at all to mgm-config.
         if len(config) == 0 or 'config' not in config or 'mgm_config_names' not in config['config']:
-            self.logger.error('🤯 Sorry, but looks like no configuration data would have been written, '
-                              'resulting in an empty config file. I quit.')
+            self.logger.error(Color.red('🤯 Sorry, but looks like no configuration data would have been written, '
+                                        'resulting in an empty config file. I quit.'))
             sys.exit(1)
 
         with open(self.__full_path_config, 'w+') as cfg_file:
@@ -266,7 +269,7 @@ class MoniGoManiConfig(object):
 
         self.reload()
 
-        self.logger.info('🍺 Configuration data written to ".hurry" file')
+        self.logger.info(Color.green('🍺 Configuration data written to ".hurry" file'))
 
     def cleanup_hyperopt_files(self, strategy: str = 'MoniGoManiHyperStrategy') -> bool:
         """
@@ -343,8 +346,8 @@ class MoniGoManiConfig(object):
         """
         mgm_config_private_name = self.config['mgm_config_names']['mgm-config-private']
         if len(cred) == 0:
-            self.logger.warning(f'Did not write exchange credentials to "{mgm_config_private_name}" '
-                                f'because no data was passed.')
+            self.logger.warning(Color.yellow(f'Did not write exchange credentials to "{mgm_config_private_name}" '
+                                             f'because no data was passed.'))
             return False
 
         try:
@@ -358,7 +361,7 @@ class MoniGoManiConfig(object):
         with open(f'{self.basedir}/user_data/{mgm_config_private_name}', 'w+') as outfile:
             json.dump(data, outfile, indent=4)
 
-        self.logger.info(f'🍺 Exchange settings written to "{mgm_config_private_name}"')
+        self.logger.info(Color.green(f'🍺 Exchange settings written to "{mgm_config_private_name}"'))
 
     def save_telegram_credentials(self, opt: dict) -> bool:
         """
@@ -369,8 +372,8 @@ class MoniGoManiConfig(object):
         """
         mgm_config_private_name = self.config['mgm_config_names']['mgm-config-private']
         if len(opt) == 0:
-            self.logger.warning(f'Did not write telegram credentials to "{mgm_config_private_name}" '
-                                f'because no data was passed.')
+            self.logger.warning(Color.yellow(f'Did not write telegram credentials to "{mgm_config_private_name}" '
+                                             f'because no data was passed.'))
             return False
 
         with open(f'{self.basedir}/user_data/{mgm_config_private_name}', ) as file:
@@ -383,7 +386,7 @@ class MoniGoManiConfig(object):
         with open(f'{self.basedir}/user_data/{mgm_config_private_name}', 'w+') as outfile:
             json.dump(data, outfile, indent=4)
 
-        self.logger.info(f'🍺 Telegram bot settings written to "{mgm_config_private_name}"')
+        self.logger.info(Color.green(f'🍺 Telegram bot settings written to "{mgm_config_private_name}"'))
 
         return True
 

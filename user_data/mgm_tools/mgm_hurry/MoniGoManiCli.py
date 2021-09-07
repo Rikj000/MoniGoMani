@@ -24,6 +24,7 @@ import pygit2
 from pygit2 import Repository, clone_repository
 from yaspin import yaspin
 
+from user_data.mgm_tools.mgm_hurry.CliColor import Color
 from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
 from user_data.mgm_tools.mgm_hurry.MoniGoManiLogger import MoniGoManiLogger, MGMLogger
 
@@ -63,18 +64,18 @@ class MoniGoManiCli(object):
 
             if self._mgm_config_json_exists() is False:
                 mgm_config_name = self.monigomani_config.config['mgm_config_names']['mgm-config']
-                sp.red.write(f'🤷 No "{mgm_config_name}" file found.')
-                self.logger.warning(f'🤷 No "{mgm_config_name}" file found.')
+                sp.yellow.write(f'🤷 No "{mgm_config_name}" file found.')
+                self.logger.warning(Color.yellow(f'🤷 No "{mgm_config_name}" file found.'))
                 return False
 
             if self._mgm_hyperstrategy_file_exists() is False:
-                sp.red.write('🤷 No "MoniGoManiHyperStrategy.py" file found.')
-                self.logger.warning('🤷 No "MoniGoManiHyperStrategy.py" file found.')
+                sp.yellow.write('🤷 No "MoniGoManiHyperStrategy.py" file found.')
+                self.logger.warning(Color.yellow('🤷 No "MoniGoManiHyperStrategy.py" file found.'))
                 return False
 
             sp.green.ok('✔ MoniGoManiHyperStrategy and configuration found')
 
-        self.logger.debug('MoniGoManiHyperStrategy and configuration found √')
+        self.logger.debug(Color.green('MoniGoManiHyperStrategy and configuration found √'))
 
         return True
 
@@ -116,7 +117,7 @@ class MoniGoManiCli(object):
 
                 if not isinstance(repo, Repository):
                     sp.red.write('Failed to download MoniGoMani repo. I quit!')
-                    self.logger.critical('Failed to clone MoniGoMani repo. I quit!')
+                    self.logger.critical(Color.red('Failed to clone MoniGoMani repo. I quit!'))
                     sys.exit(1)
 
                 sp.green.ok('✔')
@@ -202,8 +203,8 @@ class MoniGoManiCli(object):
         strategy_ho_json_path = f'{self.basedir}/user_data/strategies/{strategy_ho_json_name}'
 
         if os.path.isfile(strategy_ho_json_path) is False:
-            self.logger.error(f'🤷 Failed applying best results because the HyperOpt results file '
-                              f'"{strategy_ho_json_name}" does not exist.')
+            self.logger.error(Color.red(f'🤷 Failed applying best results because the HyperOpt results file '
+                                        f'"{strategy_ho_json_name}" does not exist.'))
             return False
 
         # Apply best results from `MoniGoManiHyperStrategy.json` to `mgm-config-hyperopt`
@@ -230,7 +231,7 @@ class MoniGoManiCli(object):
         """
 
         if command is None or command == '':
-            self.logger.error('🤷 Please pass a command through. Without command no objective, sir!')
+            self.logger.error(Color.red('🤷 Please pass a command through. Without command no objective, sir!'))
             sys.exit(1)
         return_code = 1
 
@@ -260,11 +261,16 @@ class MoniGoManiCli(object):
                 # Skip the initial header
                 if len(hyperopt_results) > 3:
                     for hyperopt_results_line in hyperopt_results:
-                        sys.stdout.write(hyperopt_results_line)
+                        sys.stdout.write(Color.green(hyperopt_results_line))
                 if (eta not in final_line) and (elapsed_time in final_line):
                     sys.stdout.write(final_line)
             else:
-                sys.stdout.write(final_line)
+                if final_line.count('ERROR') > 0:
+                    sys.stdout.write(Color.red(final_line))
+                elif final_line.count('WARNING') > 0:
+                    sys.stdout.write(Color.yellow(final_line))
+                else:
+                    sys.stdout.write(final_line)
 
         process.wait()
         return return_code

@@ -30,6 +30,7 @@ from art import tprint
 from InquirerPy import prompt
 from InquirerPy.validator import NumberValidator
 
+from user_data.mgm_tools.mgm_hurry.CliColor import Color
 from user_data.mgm_tools.mgm_hurry.FreqtradeCli import FreqtradeCli
 from user_data.mgm_tools.mgm_hurry.MoniGoManiCli import MoniGoManiCli
 from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
@@ -61,7 +62,7 @@ class MGMHurry:
         self.monigomani_config = MoniGoManiConfig(self._basedir)
 
         if self.monigomani_config.reload() is False:
-            self._logger.error('⚠️ Failed to load or create ".hurry" config file.')
+            self._logger.error(Color.red('⚠️ Failed to load or create ".hurry" config file.'))
 
         self.freqtrade_cli = FreqtradeCli(self._basedir)
         self.monigomani_cli = MoniGoManiCli(self._basedir)
@@ -70,6 +71,7 @@ class MGMHurry:
         """
         The all in one command. Hurry up, turn it up!
         """
+        self._logger.info(Color.title('👉 The all in one command. Hurry up, turn it up!'))
 
         questions = [
             {
@@ -194,7 +196,7 @@ class MGMHurry:
             else:
                 self.start_trader(True)
         else:
-            self._logger.info('💨 Executing mgm-hurry up finished.')
+            self._logger.info(Color.green('💨 Executing mgm-hurry up finished.'))
 
     def install_freqtrade(self, target_dir: str = None, branch: str = 'develop',
                           commit: str = '3503fdb4ec31be99f433fdce039543e0911964d6'):
@@ -205,9 +207,7 @@ class MGMHurry:
         :param branch: (string, optional) Checkout a specific branch. Defaults to 'develop'.
         :param commit: (str) Checkout a specific commit. Defaults to latest supported by MoniGoMani.
         """
-        self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Install Freqtrade')
-        self._logger.info('💨 💨 💨')
+        self._logger.info(Color.title('👉 Install Freqtrade'))
 
         # Checking Freqtrade installation to confirm for overwrite
         if self.freqtrade_cli.installation_exists() is True:
@@ -231,8 +231,8 @@ class MGMHurry:
 
         self.freqtrade_cli.download_setup_freqtrade(target_dir, branch, commit)
 
-        self._logger.info('🍺 Freqtrade has been installed. '
-                          'You can now proceed to install MoniGoMani. (Hint: mgm-hurry install_mgm)')
+        self._logger.info(Color.green('🍺 Freqtrade has been installed. You can now proceed to install MoniGoMani. '
+                                      '(Hint: mgm-hurry install_mgm)'))
 
         return True
 
@@ -244,9 +244,7 @@ class MGMHurry:
         :param target_dir: (string, optional) Specify a target_dir to install MoniGoMani. Defaults to os.getcwd().
         :param commit: (str) Checkout a specific commit. Defaults to None aka latest.
         """
-        self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Install MoniGoMani')
-        self._logger.info('💨 💨 💨')
+        self._logger.info(Color.title('👉 Install MoniGoMani'))
 
         # Checking MoniGoMani installation to confirm for overwrite
         if self.monigomani_cli.installation_exists() is True:
@@ -307,9 +305,7 @@ class MGMHurry:
         """
         Saves setup data based on your answers
         """
-        self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Setup')
-        self._logger.info('💨 💨 💨')
+        self._logger.info(Color.title('👉 Setup'))
 
         self._logger.info('🤓 Let\'s answer some questions to make your life easier.')
 
@@ -478,15 +474,14 @@ class MGMHurry:
 
         :param strategy: (Optional, string) Name of the Strategy to cleanup, defaults to 'MoniGoManiHyperStrategy'
         """
-        self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Cleanup')
-        self._logger.info('💨 💨 💨')
+        self._logger.info(Color.title('👉 Cleanup'))
 
         # Remove hyperopt files to cleanup
         cleaned_up = self.monigomani_config.cleanup_hyperopt_files(strategy)
 
-        self._logger.info(f'🍺 Cleanup successful, {strategy} ready for a fresh HyperOpt Run...') if cleaned_up is True \
-            else self._logger.info(f'🍺 No Cleanup was needed, {strategy} ready for a fresh HyperOpt Run...')
+        message = f'🍺 Cleanup successful, {strategy} ready for a fresh HyperOpt Run...' if cleaned_up is True \
+            else f'🍺 No Cleanup was needed, {strategy} ready for a fresh HyperOpt Run...'
+        self._logger.info(Color.green(message))
 
     def download_candle_data(self, timerange: str = None):
         """
@@ -495,18 +490,16 @@ class MGMHurry:
         :param timerange: (string, optional) Timerange from/to in string format (start-end): yyyymmdd-yyyymmdd.
             Defaults to timerange out of ".hurry" config file. -or- for preset timerange: down, side, up
         """
-        self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Download candle data')
-        self._logger.info('💨 💨 💨')
+        self._logger.info(Color.title('👉 Download candle data'))
 
         if self.monigomani_config.reload() is False:
-            self._logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
+            self._logger.error(Color.red('🤷 No Hurry config file found. Please run: mgm-hurry setup'))
             sys.exit(1)
 
         timerange = self.monigomani_config.get_preset_timerange(timerange)
 
         if self.freqtrade_cli.installation_exists() is False:
-            self._logger.error('🤷 No Freqtrade installation found. I crash.')
+            self._logger.error(Color.red('🤷 No Freqtrade installation found. I crash.'))
 
         questions = [{
             'type': 'input',
@@ -586,16 +579,14 @@ class MGMHurry:
 
         :return None
         """
-        self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Download Top Volume Static Pairlist')
-        self._logger.info('💨 💨 💨')
+        self._logger.info(Color.title('👉 Download Top Volume Static Pairlist'))
 
         if self.monigomani_config.reload() is False:
-            self._logger.error('🤷 No Hurry config file found. Please run: mgm-hurry setup')
+            self._logger.error(Color.red('🤷 No Hurry config file found. Please run: mgm-hurry setup'))
             sys.exit(1)
 
         if self.freqtrade_cli.installation_exists() is False:
-            self._logger.error('🤷 Whaaaa.. No Freqtrade installation found. Beats me...')
+            self._logger.error(Color.red('🤷 Whaaaa.. No Freqtrade installation found. Beats me...'))
             sys.exit(1)
 
         # Download and generate a static pairlist
@@ -612,7 +603,7 @@ class MGMHurry:
             json.dump(data_format, pairlist_file, indent=4)
 
         mgm_json_name = self.monigomani_config.config['mgm_config_names']['mgm-config']
-        self._logger.info(f'🍺 Saving pairlist as whitelist to "{mgm_json_name}"...')
+        self._logger.info(Color.green(f'🍺 Saving pairlist as whitelist to "{mgm_json_name}"...'))
         # Overwrite the new static pairlist to the exchange config in mgm-config[exchange][pair_whitelist]
         mgm_config_file = self.monigomani_config.get_config_filename('mgm-config')
         with open(mgm_config_file, ) as mgm_config:
@@ -657,9 +648,7 @@ class MGMHurry:
         if clean_start is True:
             self.cleanup(strategy)
 
-        self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥')
-        self._logger.info('💨 💨 💨')
+        self._logger.info(Color.title('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥'))
 
         timerange = self.monigomani_config.get_preset_timerange(timerange)
 
@@ -711,7 +700,9 @@ class MGMHurry:
         if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
             self.monigomani_cli.apply_mgm_results(strategy)
         elif do_backtest is True:
-            self._logger.warning('🤷 Backtesting without HyperOptResults applied?..')
+            self._logger.warning(Color.yellow('🤷 Backtesting without HyperOptResults applied?..'))
+        if (importance_report is True) and (strategy == 'MoniGoManiHyperStrategy'):
+            self.importance_report(output_file_name=output_file_name)
         if apply_best_results is False:
             self.cleanup(strategy)
 
@@ -722,7 +713,7 @@ class MGMHurry:
             MoniGoManiLogger(self._basedir).post_setup(config=self.monigomani_config.config, strategy=strategy,
                                                        basedir=self._basedir)
 
-        self._logger.info('🍺 HyperOpt run ready... 🥵')
+        self._logger.info(Color.green('🍺 HyperOpt run ready... 🥵'))
 
     def hyperopt_show_results(self, only_best: bool = True, only_profitable: bool = False):
         """
@@ -734,7 +725,7 @@ class MGMHurry:
 
         choice = self.freqtrade_cli.choose_fthypt_file()
 
-        self._logger.info(f'👉 Showing hyperopt results for: {choice}')
+        self._logger.info(Color.title(f'👉 Showing hyperopt results for: {choice}'))
 
         best = '--best' if only_best is True else ''
         profit = '--profitable' if only_profitable is True else ''
@@ -756,16 +747,14 @@ class MGMHurry:
         :param fthypt: (bool) If 'true' an interactive prompt will launch to pick an '.fthypt' file of choice.
             Defaults to latest'
         """
-        self._logger.info('💨 💨 💨')
-        self._logger.info(f'👉 Hyperopt show {"" if apply is False else "and apply "}results')
-        self._logger.info('💨 💨 💨')
+        self._logger.info(Color.title(f'👉 Hyperopt show {"" if apply is False else "and apply "}results'))
 
         if fthypt is True:
             fthypt_name = self.freqtrade_cli.choose_fthypt_file()
 
         if epoch == 0:
-            self._logger.error('🤷 Please pass the epoch number through. '
-                               'Hint: mgm-hurry hyperopt_show_epoch --epoch=837')
+            self._logger.error(Color.red('🤷 Please pass the epoch number through. '
+                                         'Hint: mgm-hurry hyperopt_show_epoch --epoch=837'))
             sys.exit(1)
 
         self._logger.info(f'👉 Showing {"" if apply is False else "and applying "}HyperOpt results for epoch #{epoch}')
@@ -784,7 +773,7 @@ class MGMHurry:
             self.monigomani_cli.apply_mgm_results(strategy)
 
         if apply is True:
-            self._logger.info(f'🍺 Hyperopt results of epoch #{epoch} are applied.')
+            self._logger.info(Color.green(f'🍺 Hyperopt results of epoch #{epoch} are applied.'))
         else:
             self.cleanup(strategy)
 
@@ -799,9 +788,7 @@ class MGMHurry:
         :param output_file_name: (str, Optional) Name of the '.log' file(s).
             Defaults to 'BackTestResults-<Current-DateTime>'
         """
-        self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Start BackTesting. Lets see how it all turns out!')
-        self._logger.info('💨 💨 💨')
+        self._logger.info(Color.title('👉 Start BackTesting. Lets see how it all turns out!'))
 
         timerange = self.monigomani_config.get_preset_timerange(timerange)
         cmd = f'$ft_binary backtesting -s $ho_strategy {self.monigomani_config.command_configs()}' \
@@ -840,9 +827,8 @@ class MGMHurry:
 
         :param dry_run: (bool, Optional): Use dry_run mode. Defaults to True
         """
-        self._logger.info('💨 💨 💨')
-        self._logger.info('👉 Start trader')
-        self._logger.info('💨 💨 💨')
+        self._logger.info(Color.title(f'👉 Starting the trader, '
+                                      f'{"in Dry-Run Mode!" if dry_run else "in Live-Run Mode, fingers crossed! 🤞"}'))
 
         command = f'{self.monigomani_config.config["ft_binary"]} trade {self.monigomani_config.command_configs()}' \
                   f'--strategy {self.monigomani_config.config["hyperopt"]["strategy"]}'
