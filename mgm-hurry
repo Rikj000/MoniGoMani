@@ -21,8 +21,7 @@ import json
 import logging
 import os
 import sys
-from datetime import datetime, timedelta
-from math import ceil
+from datetime import datetime
 from string import Template
 
 import fire
@@ -553,16 +552,8 @@ class MGMHurry:
         extra_data = answers.get('extra_data')
 
         if extra_data == 1:
-            mgm_config_files = self.monigomani_config.load_config_files()
-            timeframe_minutes = self.monigomani_cli.timeframe_to_minutes(
-                mgm_config_files['mgm-config']['monigomani_settings']['timeframe'])
-            startup_candle_count = mgm_config_files['mgm-config']['monigomani_settings']['startup_candle_count']
-
-            extra_days = ceil((timeframe_minutes * startup_candle_count) / (60 * 24))
-            split_timerange = timerange.split('-')
-            new_start_date = datetime.strptime(split_timerange[0], '%Y%m%d') - timedelta(extra_days)
-            timerange = f'{new_start_date.strftime("%Y%m%d")}-{split_timerange[1]}'
-            self._logger.info(f'👉 Added {extra_days} extra days to the timerange for the "startup_candle_count"')
+            new_timerange_dict = self.monigomani_cli.calculate_timerange_start_minus_startup_candle_count()
+            timerange = new_timerange_dict['new_timerange']
 
         self._logger.info(f'👉 Downloading candle data ({tickers}) for timerange {timerange}')
 
