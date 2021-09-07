@@ -17,6 +17,7 @@ import talib.abstract as ta
 from numpy import timedelta64
 from pandas import DataFrame
 from scipy.interpolate import interp1d
+from yaml import full_load
 
 from freqtrade.data.history import load_pair_history
 from freqtrade.enums import RunMode
@@ -57,14 +58,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     ####                                                                            ####
     ####################################################################################
     """
-    ####################################################################################################################
-    #                                           START OF CONFIG NAMES SECTION                                          #
-    ####################################################################################################################
-    mgm_config_name = 'mgm-config.json'
-    mgm_config_hyperopt_name = 'mgm-config-hyperopt.json'
-    ####################################################################################################################
-    #                                            END OF CONFIG NAMES SECTION                                           #
-    ####################################################################################################################
 
     # MGM trend names
     mgm_trends = ['downwards', 'sideways', 'upwards']
@@ -73,6 +66,22 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     buy_params = {}
     sell_params = {}
 
+    # Load the MoniGoMani config names from '.hurry'
+    mgm_config_name = mgm_config_hyperopt_name = None
+    hurry_config_path = f'{os.getcwd()}/.hurry'
+    if os.path.isfile(hurry_config_path) is True:
+        with open(hurry_config_path, 'r') as yml_file:
+            config = full_load(yml_file) or {}
+
+        if 'config' in config:
+            hurry_config = config['config']
+            mgm_config_name = hurry_config['mgm_config_names']['mgm-config']
+            mgm_config_hyperopt_name = hurry_config['mgm_config_names']['mgm-config-hyperopt']
+
+    if (mgm_config_name is None) or (mgm_config_hyperopt_name is None):
+        sys.exit(f'MoniGoManiHyperStrategy - ERROR - The MoniGoMani Configuration filenames could not be loaded from'
+                 f'".hurry"... Please run "python3 ./mgm-hurry setup" to create your ".hurry" file')
+
     # Load the MoniGoMani settings
     mgm_config_path = f'{os.getcwd()}/user_data/{mgm_config_name}'
     if os.path.isfile(mgm_config_path) is True:
@@ -80,11 +89,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         file_object = open(mgm_config_path, )
         json_data = json.load(file_object)
         mgm_config = json_data['monigomani_settings']
-
     else:
-        sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file ({mgm_config_name}) can\'t '
+        sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file "mgm-config" can\'t '
                  f'be found at: {mgm_config_path}... Please provide the correct file and/or alter "mgm_config_name" in '
-                 f'"MoniGoManiHyperStrategy.py"')
+                 f'".hurry"')
 
     # Apply the loaded MoniGoMani Settings
     try:
@@ -131,14 +139,14 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         use_mgm_logging = mgm_config['use_mgm_logging']
         mgm_log_levels_enabled = mgm_config['mgm_log_levels_enabled']
     except KeyError as missing_setting:
-        sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file ({mgm_config_name}) is '
+        sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file "mgm-config" is '
                  f'missing some settings. Please make sure that all MoniGoMani related settings are existing inside '
                  f'this file. {missing_setting} has been detected as missing from the file...')
 
     # If results from a previous HyperOpt Run are found then continue the next HyperOpt Run upon them
     mgm_config_hyperopt_path = f'{os.getcwd()}/user_data/{mgm_config_hyperopt_name}'
     if os.path.isfile(mgm_config_hyperopt_path) is True:
-        # Try to load the previous 'mgm-config-hyperopt.json' file as an object and parse it as a dictionary
+        # Try to load the previous 'mgm-config-hyperopt' file as an object and parse it as a dictionary
         # if the parse fails, warn and continue as if it didn't exist.
         try:
             file_object = open(mgm_config_hyperopt_path, )
@@ -146,11 +154,11 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         except ValueError as e:
             mgm_config_hyperopt = {}
             logger.warning(f'MoniGoManiHyperStrategy - WARN - {mgm_config_hyperopt_path} is inaccessible or is '
-                           f'not valid JSON, disregarding existing {mgm_config_hyperopt_name} file and '
+                           f'not valid JSON, disregarding existing "mgm-config-hyperopt" file and '
                            f'treating as first hyperopt run!')
 
-        # Convert the loaded 'mgm-config-hyperopt.json' data to the needed HyperOpt Results format if it's found
-        # Default stub values from 'mgm-config.json' are used otherwise.
+        # Convert the loaded 'mgm-config-hyperopt' data to the needed HyperOpt Results format if it's found
+        # Default stub values from 'mgm-config' are used otherwise.
         if mgm_config_hyperopt != {}:
             for space in mgm_config_hyperopt['params']:
                 if space in ['buy', 'sell']:
@@ -169,7 +177,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 if space == 'trailing':
                     trailing_stop = mgm_config_hyperopt['params'][space]['trailing_stop']
                     trailing_stop_positive = mgm_config_hyperopt['params'][space]['trailing_stop_positive']
-                    trailing_stop_positive_offset = mgm_config_hyperopt['params'][space]['trailing_stop_positive_offset']
+                    trailing_stop_positive_offset = \
+                        mgm_config_hyperopt['params'][space]['trailing_stop_positive_offset']
                     trailing_only_offset_is_reached = \
                         mgm_config_hyperopt['params'][space]['trailing_only_offset_is_reached']
     else:
@@ -308,7 +317,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         @staticmethod
         def trailing_space() -> List[Dimension]:
             """
-            Define custom trailing search space with parameters configurable in 'mgm-config.json'
+            Define custom trailing search space with parameters configurable in 'mgm-config'
 
             :return List: Generated Trailing Space
             """
