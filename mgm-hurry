@@ -545,12 +545,12 @@ class MGMHurry:
 
         self._logger.info(f'👉 Downloading candle data ({tickers}) for timerange {timerange}')
 
-        dcd = f'{self.monigomani_config.config["ft_binary"]} download-data --timerange {timerange} \
-              -t {tickers} {self.monigomani_config.command_configs()}'
+        command = (f'{self.monigomani_config.config["ft_binary"]} download-data --timerange {timerange} '
+                   f'-t {tickers} {self.monigomani_config.command_configs()}')
 
-        self._logger.debug(dcd)
-        self.monigomani_cli.run_command(dcd)
-        self._logger.info('🍺 Downloading candle data finished.')
+        self._logger.debug(command)
+        self.monigomani_cli.run_command(command)
+        self._logger.info(Color.green('🍺 Downloading candle data finished.'))
 
     def download_static_pairlist(self, stake_currency: str = None, exchange: str = None,
                                  pairlist_length: int = None, min_days_listed: int = None):
@@ -656,19 +656,19 @@ class MGMHurry:
         if spaces is None:
             spaces = self.monigomani_config.config['hyperopt']['spaces']
 
-        cmd = f'$ft_binary hyperopt -s $ho_strategy {self.monigomani_config.command_configs()}' \
-              f'--hyperopt-loss $ho_loss --spaces $ho_spaces -e $ho_epochs --timerange $timerange '
+        command = (f'$ft_binary hyperopt -s $ho_strategy {self.monigomani_config.command_configs()}'
+                   f'--hyperopt-loss $ho_loss --spaces $ho_spaces -e $ho_epochs --timerange $timerange ')
 
         if enable_protections is True:
-            cmd = f'{cmd.strip()} --enable-protections '
+            command = f'{command.strip()} --enable-protections '
         if random_state is not None:
-            cmd = f'{cmd.strip()} --random-state $random_state '
+            command = f'{command.strip()} --random-state $random_state '
         if jobs is not None:
-            cmd = f'{cmd.strip()} -j $jobs '
+            command = f'{command.strip()} -j $jobs '
         if min_trades is not None:
-            cmd = f'{cmd.strip()} --min-trades $min_trades '
+            command = f'{command.strip()} --min-trades $min_trades '
 
-        cmd = Template(cmd).substitute(
+        command = Template(command).substitute(
             ft_binary=self.monigomani_config.config['ft_binary'],
             ho_strategy=strategy,
             ho_loss=loss,
@@ -679,7 +679,7 @@ class MGMHurry:
             jobs=jobs,
             min_trades=min_trades)
 
-        self._logger.debug(cmd)
+        self._logger.debug(command)
 
         backtest_file_name = output_file_name
         hyperopt_file_name = output_file_name
@@ -732,11 +732,11 @@ class MGMHurry:
         best = '--best' if only_best is True else ''
         profit = '--profitable' if only_profitable is True else ''
 
-        dcd = f'{self.monigomani_config.config["ft_binary"]} hyperopt-list ' \
-              f'--hyperopt-filename "{choice}" {best} {profit}'
-        self._logger.debug(dcd)
+        command = (f'{self.monigomani_config.config["ft_binary"]} hyperopt-list '
+                   f'--hyperopt-filename "{choice}" {best} {profit}')
+        self._logger.debug(command)
 
-        self.monigomani_cli.run_command(dcd)
+        self.monigomani_cli.run_command(command)
 
     def hyperopt_show_epoch(self, epoch: int = 0, strategy: str = None,
                             apply: bool = True, fthypt: bool = None):
@@ -761,8 +761,8 @@ class MGMHurry:
 
         self._logger.info(f'👉 Showing {"" if apply is False else "and applying "}HyperOpt results for epoch #{epoch}')
 
-        command = f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} ' \
-                  f'{self.monigomani_config.command_configs()}'
+        command = (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} '
+                   f'{self.monigomani_config.command_configs()}')
 
         if fthypt is True:
             command += f' --hyperopt-filename {fthypt_name}'
@@ -793,19 +793,23 @@ class MGMHurry:
         self._logger.info(Color.title('👉 Start BackTesting. Lets see how it all turns out!'))
 
         timerange = self.monigomani_config.get_preset_timerange(timerange)
-        cmd = f'$ft_binary backtesting -s $ho_strategy {self.monigomani_config.command_configs()}' \
-              f'--timerange $timerange'
+        command = (f'$ft_binary backtesting -s $ho_strategy {self.monigomani_config.command_configs()}'
+                   f'--timerange $timerange')
 
         if timerange is None:
             timerange = self.monigomani_config.config['timerange']
-
         if strategy is None:
             strategy = self.monigomani_config.config['hyperopt']['strategy']
-
         if enable_protections is True:
-            cmd = f'{cmd} --enable-protections'
+            command = f'{command} --enable-protections'
 
-        cmd = Template(cmd).substitute(
+        if (strategy == 'MoniGoManiHyperStrategy') and (
+                os.path.isfile(self.monigomani_config.get_config_filepath('mgm-config-hyperopt')) is False):
+            self._logger.error(Color.red(f'🤷 MoniGoManiHyperStrategy needs to be HyperOpted before it will '
+                                         f'start to produce valid BackTest Results!\n(Hint: Run "mgm-hurry hyperopt")'))
+            return None
+
+        command = Template(command).substitute(
             ft_binary=self.monigomani_config.config['ft_binary'],
             ho_strategy=strategy,
             timerange=timerange)
@@ -813,13 +817,35 @@ class MGMHurry:
         if output_file_name is None:
             output_file_name = f'BackTestResults-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
 
-        output_file_path = f'{self._basedir}/user_data/backtest_results/{output_file_name}.log'
-        self.monigomani_cli.run_command(cmd, output_file_path)
-        MoniGoManiLogger(self._basedir).post_message(username=self.monigomani_config.config['username'],
-                                                     message=f'🚀 Fresh **{strategy}** BackTest Results ⬇️',
-                                                     results_path=output_file_path)
-        MoniGoManiLogger(self._basedir).post_setup(config=self.monigomani_config.config, strategy=strategy,
-                                                   basedir=self._basedir)
+        self.monigomani_cli.run_command(command, output_file_path)
+        MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
+                                                    message=f'🚀 Fresh **{strategy}** BackTest Results ⬇️',
+                                                    results_paths=[output_file_path])
+
+        if plot_profits is True:
+            self.plot_profit(choose_results=False, timerange=timerange,
+                             strategy=strategy, output_file_name=output_file_name)
+
+        MoniGoManiLogger(self.basedir).post_setup(config=self.monigomani_config.config,
+                                                  strategy=strategy, basedir=self.basedir)
+
+        self._logger.info(Color.green('🍺 Backtesting ready... 🤑'))
+
+    def plot_profit(self, choose_results: bool = True, timerange: str = None,
+                    timeframe: str = '1h', strategy: str = None, output_file_name: str = None) -> None:
+        """
+        Plot the profits from a BackTest into visual graphs.
+
+        :param choose_results: (bool) If 'False' then the last BackTest result will be used.
+            Defaults to an interactive prompt to choose a 'backtest-result-<timestamp>.json' file.
+        :param timerange: (str) Timerange that corresponds to the timerange used for the backtest-result
+        :param timeframe: (str) Candle sizes to be used in the graphs that will be plotted. Defaults to '1h'
+        :param strategy: (str, Optional): Strategy to use during BackTesting. Defaults to value in '.hurry'
+        :param output_file_name: (str, Optional) Custom filename for the profit plot '.html' file that will be stored
+            in the format: 'PlotProfitResults-<output_file_name>.html'. Defaults to 'Strategy + Current DateTime'.
+        """
+
+        self._logger.info(Color.title(f'👉 Plotting profit graph for BackTest results'))
 
         self._logger.info('🍺 Backtesting ready... 🤑')
 
@@ -832,8 +858,8 @@ class MGMHurry:
         self._logger.info(Color.title(f'👉 Starting the trader, '
                                       f'{"in Dry-Run Mode!" if dry_run else "in Live-Run Mode, fingers crossed! 🤞"}'))
 
-        command = f'{self.monigomani_config.config["ft_binary"]} trade {self.monigomani_config.command_configs()}' \
-                  f'--strategy {self.monigomani_config.config["hyperopt"]["strategy"]}'
+        command = (f'{self.monigomani_config.config["ft_binary"]} trade {self.monigomani_config.command_configs()}'
+                   f'--strategy {self.monigomani_config.config["hyperopt"]["strategy"]}')
 
         if dry_run is True:
             command += ' --dry-run'
