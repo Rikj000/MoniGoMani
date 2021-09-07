@@ -6,6 +6,7 @@ import json
 import os
 import sys
 
+sys.path.insert(0, os.getcwd())
 from user_data.mgm_tools.mgm_hurry.MoniGoManiConfig import MoniGoManiConfig
 # ---- ↑ Do not remove these libs ↑ ------------------------------------------------------------------------------------
 
