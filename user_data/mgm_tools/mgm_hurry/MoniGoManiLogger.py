@@ -29,14 +29,14 @@ from logging import FileHandler, Formatter
 
 class MgmConsoleFormatter(Formatter):
     def __init__(self):
-        log_file_format = '[%(levelname)s] - : %(message)s'
+        log_file_format = '%(levelname)s - %(message)s'
         date_format = '%F %A %T'  # In fact this is not used if no %(asctime)s exists in log_file_format
         super(MgmConsoleFormatter, self).__init__(log_file_format, date_format)
 
 
 class MgmFileFormatter(Formatter):
     def __init__(self):
-        log_file_format = '[%(levelname)s] - %(asctime)s - %(name)s - : %(message)s in %(pathname)s:%(lineno)d'
+        log_file_format = '%(levelname)s - %(asctime)s - %(name)s - %(message)s in %(pathname)s:%(lineno)d'
         date_format = '%F %A %T'
         super(MgmFileFormatter, self).__init__(log_file_format, date_format)
 
