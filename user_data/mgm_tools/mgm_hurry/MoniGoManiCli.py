@@ -226,12 +226,12 @@ class MoniGoManiCli(object):
 
         return True
 
-    def run_command(self, command: str, output_file_name: str = None):
+    def run_command(self, command: str, output_file_name: str = None) -> int:
         """
-        Execute shell command and log output to mgm logfile.
+        Execute shell command and log output to mgm logfile if a path + filename is provided.
 
         :param command: (str) Shell command to execute, sir!
-        :param output_file_name: (str) Name of the absolute path to the '.log' file.
+        :param output_file_name: (str, Optional) Name of the absolute path to the '.log' file.
         :return returncode: (int) The returncode of the subprocess
         """
 
@@ -255,8 +255,8 @@ class MoniGoManiCli(object):
             final_line = mgm_logger.clean_line(line)
 
             # Save the output to a '.log' file if enabled
-            if (mgm_logger.filter_line(final_line) is False) and \
-                (output_file_name is not None) and (eta not in final_line):
+            if (mgm_logger.filter_line(final_line) is False) and (output_file_name
+                                                                  is not None) and (eta not in final_line):
                 output_file.write(final_line)
 
             # Check if a new HyperOpt Results line is found, store it in RAM and re-print the whole HyperOpt Table if so
