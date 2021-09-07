@@ -160,9 +160,6 @@ class MGMHurry:
                     'message': '💨 Do you want to generate signal importance reports?'
                 }])
                 report_answer = importance_report_answer.get('importance_report')
-
-                if report_answer is True:
-                    self.importance_report()
             else:
                 report_answer = False
 
@@ -897,7 +894,7 @@ class MGMHurry:
 
         mgm_config_files = self.monigomani_config.load_config_files()
         if (mgm_config_files["mgm-config"] is None) or (mgm_config_files["mgm-config-hyperopt"] is None):
-            sys.exit(1)  # Warning should already be thrown when loading the config files
+            return None  # Warning should already be thrown when loading the config files
 
         if output_file_name is None:
             output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
