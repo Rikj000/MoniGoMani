@@ -613,8 +613,9 @@ class MGMHurry:
 
     def hyperopt(self, timerange: str = None, strategy: str = None, loss: str = None, spaces: str = None,
                  enable_protections: bool = True, random_state: int = None, apply_best_results: bool = True,
-                 clean_start: bool = False, do_backtest: bool = True, output_file_name: str = None, jobs: int = None,
-                 min_trades: int = None):
+                 clean_start: bool = False, do_backtest: bool = True, plot_profits: bool = True,
+                 importance_report: bool = True, output_file_name: str = None,
+                 jobs: int = None, min_trades: int = None):
         """
         HyperOpt Magic. Runs HyperOpt process to find out the most positive settings, automatically saves results.
 
@@ -638,8 +639,13 @@ class MGMHurry:
         if strategy is None:
             strategy = self.monigomani_config.config['hyperopt']['strategy']
 
+        initial_run = True
         if clean_start is True:
             self.cleanup(strategy)
+        elif os.path.isfile(f'{self.basedir}/user_data/strategies/{strategy}.json') or (
+                (strategy == 'MoniGoManiHyperStrategy') and (
+                os.path.isfile(self.monigomani_config.get_config_filepath('mgm-config-hyperopt')) is True)):
+            initial_run = False
 
         self._logger.info(Color.title('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥'))
 
@@ -647,7 +653,6 @@ class MGMHurry:
 
         if loss is None:
             loss = self.monigomani_config.config['hyperopt']['loss']
-
         if spaces is None:
             spaces = self.monigomani_config.config['hyperopt']['spaces']
 
@@ -683,11 +688,15 @@ class MGMHurry:
             backtest_file_name = f'BackTestResults-{datetime_now}'
             hyperopt_file_name = f'HyperOptResults-{datetime_now}'
 
-        output_file_path = f'{self._basedir}/user_data/hyperopt_results/{hyperopt_file_name}.log'
-        self.monigomani_cli.run_command(cmd, output_file_path)
-        MoniGoManiLogger(self._basedir).post_message(username=self.monigomani_config.config['username'],
-                                                     message=f'🚀 Fresh **{strategy}** HyperOpt Results ⬇️',
-                                                     results_path=output_file_path)
+        self.monigomani_cli.run_command(command, output_file_path)
+        if initial_run is True:
+            message = f'🚀 Fresh **{strategy}** Initial HyperOpt Run Results ⬇️'
+        elif strategy == 'MoniGoManiHyperStrategy':
+            message = f'🚀 Fresh **{strategy}** Refinement HyperOpt Run Results ⬇️'
+        else:
+            message = f'🚀 Fresh **{strategy}** HyperOpt Run Results ⬇️'
+        MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
+                                                    message=message, results_paths=[output_file_path])
 
         # ToDo: Auto Create & Post a TotalOverallSignalImportanceCalculator Report
         if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
