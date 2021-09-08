@@ -185,7 +185,10 @@ class MoniGoManiConfig(object):
             mgm_config_filepath = self._get_full_path_for_config_name(hurry_config, mgm_config_filename)
 
             # Read config file contents
-            mgm_config_files[mgm_config_filename] = self.load_config_file(mgm_config_filepath)
+            if mgm_config_filename != 'mgm-config-hyperopt':
+                mgm_config_files[mgm_config_filename] = self.load_config_file(filename=mgm_config_filepath)
+            else:
+                mgm_config_files[mgm_config_filename] = self.load_config_file(filename=mgm_config_filepath, silent=True)
 
         return mgm_config_files
 
@@ -212,16 +215,18 @@ class MoniGoManiConfig(object):
         hurry_config = self.read_hurry_config()
         return self._get_full_path_for_config_name(hurry_config, cfg_key)
 
-    def load_config_file(self, filename: str) -> dict:
+    def load_config_file(self, filename: str, silent: bool = False) -> dict:
         """
         Read json-file contents and return its data.
 
         :param filename: (str) The absolute path + filename to the json config file.
+        :param silent: (bool, Optional) Silently run method (without command line output)
         :return dict: The json content of the file. json.load() return. None if failed.
         """
         if os.path.isfile(filename) is False:
-            self.logger.warning(Color.yellow(f'🤷 No "{filename}" file found in the "user_data" directory. '
-                                             f'Please run: mgm-hurry setup'))
+            if silent is False:
+                self.logger.warning(Color.yellow(f'🤷 No "{filename}" file found in the "user_data" directory. '
+                                                 f'Please run: mgm-hurry setup'))
             return None
 
         # Load the MoniGoMani config file as an object and parse it as a dictionary

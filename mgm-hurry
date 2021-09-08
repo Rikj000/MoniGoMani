@@ -912,8 +912,14 @@ class MGMHurry:
         self.logger.info(Color.title(f'👉 Calculating Total Overall Signal Importance Report for MoniGoMani'))
 
         mgm_config_files = self.monigomani_config.load_config_files()
-        if (mgm_config_files["mgm-config"] is None) or (mgm_config_files["mgm-config-hyperopt"] is None):
-            return None  # Warning should already be thrown when loading the config files
+        if mgm_config_files["mgm-config"] is None:
+            self.logger.warning(Color.yellow(f'🤷 No "mgm-config" file found in the "user_data" directory. '
+                                             f'Please run: mgm-hurry setup'))
+            return None
+        elif mgm_config_files["mgm-config-hyperopt"] is None:
+            self.logger.warning(Color.yellow(f'🤷 No "mgm-config-hyperopt" file found in the "user_data" directory. '
+                                             f'Please run: mgm-hurry hyperopt'))
+            return None
 
         if output_file_name is None:
             output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
