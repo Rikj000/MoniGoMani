@@ -285,6 +285,11 @@ class MoniGoManiCli(object):
                     sys.stdout.write(final_line)
 
         process.wait()
+
+        for log_file in glob.glob(f'{self.basedir}/user_data/logs/MGM-Hurry-Command-*.log'):
+            if os.stat(log_file).st_size == 0:
+                os.remove(log_file)
+
         return return_code
 
     def calculate_timerange_start_minus_startup_candle_count(self) -> dict:
