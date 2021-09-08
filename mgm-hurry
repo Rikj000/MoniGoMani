@@ -57,7 +57,7 @@ class MGMHurry:
         tprint('mgm-hurry')
 
         self.basedir = os.getcwd()
-        self.logger = MoniGoManiLogger(self.basedir).getlogger()
+        self.logger = MoniGoManiLogger(self.basedir).get_logger()
         self.monigomani_config = MoniGoManiConfig(self.basedir)
 
         if self.monigomani_config.reload() is False:
@@ -65,6 +65,23 @@ class MGMHurry:
 
         self.freqtrade_cli = FreqtradeCli(self.basedir)
         self.monigomani_cli = MoniGoManiCli(self.basedir)
+
+    def version(self):
+        if self.freqtrade_cli.install_type == 'source':
+            if self.freqtrade_cli.installation_exists(silent=True):
+                self.logger.info(Color.green(Color.bold(Color.underline('MoniGoMani Version:'))))
+                self.monigomani_cli.run_command(f'cd {self.basedir}/monigomani; git log -1; cd ..; echo "";')
+            else:
+                self.logger.warning(Color.yellow('"No MoniGoMani installation detected!'))
+
+            if self.freqtrade_cli.installation_exists(silent=True):
+                self.logger.info(Color.green(Color.bold(Color.underline('Freqtrade Version:'))))
+                self.monigomani_cli.run_command('git log -1; echo "";')
+            else:
+                self.logger.warning(Color.yellow('"No Freqtrade installation detected!'))
+
+        else:
+            self.logger.warning(Color.yellow('"version" command currently only supported on "source" installations.'))
 
     def up(self):  # pylint: disable=invalid-name
         """
