@@ -92,11 +92,13 @@ class MGMHurry:
         answers = prompt(questions=[{
             'type': 'confirm',
             'name': 'install_freqtrade',
-            'message': '💨 Do you want to install Freqtrade?'
+            'message': f'💨 Do you want to '
+                       f'{"update" if self.freqtrade_cli.installation_exists(silent=True) else "install"} Freqtrade?'
         }, {
             'type': 'confirm',
             'name': 'install_mgm',
-            'message': '💨 Do you want to install MoniGoMani?'
+            'message': f'💨 Do you want to '
+                       f'{"update" if self.monigomani_cli.installation_exists(silent=True) else "install"} MoniGoMani?'
         }, {
             'type': 'confirm',
             'name': 'run_setup',
@@ -217,7 +219,7 @@ class MGMHurry:
     def install_freqtrade(self, target_dir: str = None, branch: str = 'develop',
                           commit: str = '3503fdb4ec31be99f433fdce039543e0911964d6', install_ui: bool = True):
         """
-        Install Freqtrade the easy way.
+        Install or update Freqtrade the easy way.
 
         :param target_dir: (string, optional) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         :param branch: (string, optional) Checkout a specific branch. Defaults to 'develop'.
@@ -252,7 +254,7 @@ class MGMHurry:
 
     def install_mgm(self, target_dir: str = None, branch: str = 'development', commit: str = None):
         """
-        Install the MoniGoMani Framework & Strategy.
+        Install or update the MoniGoMani Framework & Strategy.
 
         :param branch: (string, optional) Checkout a specific branch. Defaults to 'development'.
         :param target_dir: (string, optional) Specify a target_dir to install MoniGoMani. Defaults to os.getcwd().
