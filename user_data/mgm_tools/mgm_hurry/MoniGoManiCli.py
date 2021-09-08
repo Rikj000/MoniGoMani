@@ -136,7 +136,7 @@ class MoniGoManiCli(object):
                              'symbolic linking files', color='cyan') as sp:
                 try:
                     if self.copy_and_link_installation_files(temp_dirname, target_dir):
-                        sp.green.ok('✔ Downloading & Installing MoniGoMani completed!')
+                        sp.green.ok('✔ Copy & linking MoniGoMani installation files completed!')
                     else:
                         sp.red.write('😕 MoniGoMani installation failed')
                         sys.exit(1)
@@ -144,6 +144,10 @@ class MoniGoManiCli(object):
                     sp.red.write(str(e))
                     sp.red.write('😕 MoniGoMani installation failed')
                     sys.exit(1)
+
+            self.logger.info('👉  Installing/Updating MoniGoMani Python dependency packages')
+            self.run_command('pip3 install -r ./monigomani/requirements-mgm.txt')
+            self.logger.info(Color.green('✔ Downloading & Installing MoniGoMani completed!'))
 
     def copy_and_link_installation_files(self, temp_dirname: str, target_dir: str) -> bool:
         """
