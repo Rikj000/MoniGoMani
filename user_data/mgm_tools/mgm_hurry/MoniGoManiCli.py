@@ -161,8 +161,9 @@ class MoniGoManiCli(object):
             os.chmod(f'{temp_dirname}/setup.exp', 0o444)
             copytree(temp_dirname, target_dir + mgm_folder, dirs_exist_ok=True)
 
-            if os.path.isfile(f'{target_dir}/docker-compose.yml'):
-                os.remove(f'{target_dir}/docker-compose.yml')
+            for delete_file in ['docker-compose.yml', 'user_data/logs/freqtrade.log']:
+                if os.path.isfile(f'{target_dir}/{delete_file}'):
+                    os.remove(f'{target_dir}/{delete_file}')
 
             # Symlink separate files and whole directories
             symlink_objects = {
@@ -193,8 +194,9 @@ class MoniGoManiCli(object):
 
             for directory in symlink_directory_contents:
                 for symlink_object in glob.glob(f'{target_dir + mgm_folder}/{directory}/*'):
-                    if os.path.isfile(symlink_object):
-                        os.symlink(symlink_object, symlink_object.replace(mgm_folder, ''))
+                    target_location = symlink_object.replace(mgm_folder, '')
+                    if os.path.islink(target_location) is False:
+                        os.symlink(symlink_object, target_location)
 
             return True
         except Exception as e:
