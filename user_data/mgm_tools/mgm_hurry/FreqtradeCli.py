@@ -120,6 +120,7 @@ class FreqtradeCli:
         """
         Return true if all is setup correctly.
 
+        :param silent: (bool, Optional) Silently run method (without command line output)
         :return bool: True if install_type is docker or Freqtrade is found. False otherwise.
         """
         if self.install_type is None:

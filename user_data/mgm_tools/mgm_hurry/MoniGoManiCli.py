@@ -60,6 +60,7 @@ class MoniGoManiCli(object):
         """
         Check if the MGM Hyper Strategy installation exists.
 
+        :param silent: (bool, Optional) Silently run method (without command line output)
         :return success (bool): Whether or not the config and strategy files are found.
         """
         with yaspin(text='', color='cyan') as sp:

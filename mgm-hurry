@@ -902,7 +902,7 @@ class MGMHurry:
 
     def importance_report(self, output_file_name: str = None) -> None:
         """
-        Run the TotalOverallSignalImportanceCalculator to create a signal importance report
+        Run the TotalOverallSignalImportanceCalculator to create a signal importance report for MoniGoMani
 
         :param output_file_name: (str, Optional) Custom filename for the SignalImportanceResults '.log' file
             that will be stored in the format: 'SignalImportanceResults-<output_file_name>.log'.
