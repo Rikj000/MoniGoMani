@@ -48,6 +48,7 @@ Setting it all up requires some knowledge of the entire process, until you found
 - [## Installation instructions](#-installation-instructions)
 - [## `mgm-hurry` Command Usage](#-mgm-hurry-command-usage)
   - [`mgm-hurry --help`](#mgm-hurry---help)
+  - [`mgm-hurry version`](#mgm-hurry-version)
   - [`mgm-hurry up`](#mgm-hurry-up)
   - [`mgm-hurry install_freqtrade`](#mgm-hurry-install_freqtrade)
     - [Options](#options)
@@ -106,6 +107,10 @@ Displays information about the commands and their usage.
 General usage format: `python3 mgm-hurry [command] [options]`
 
 
+### `mgm-hurry version`
+Displays the currently installed MoniGoMani & Freqtrade versions on `source` installations.
+
+
 ### `mgm-hurry up`
 Quick start command, launches an interactive wizard which guides you through the entire process of:
 - Installing & configuring Freqtrade
@@ -120,24 +125,24 @@ Quick start command, launches an interactive wizard which guides you through the
 
 
 ### `mgm-hurry install_freqtrade`
-Individual command to install Freqtrade.
+Individual command to install & update Freqtrade.
 #### Options
 - **`--target_dir`:** *(Optional)* Specify where you wish to install Freqtrade
   - ***Defaults to:** The current directory*
 - **`--branch`:** *(Optional)* Specify the Freqtrade branch you wish to install
   - ***Defaults to:** The `develop` branch, can also be `stable` branch for less bleeding edge but generally more stable version*
-- **`--commit`:** *(Optional)* Specify a specific Freqtrade commit you wish to utilize
-  - ***Defaults to:** The recommended commit for MoniGoMani*
+- **`--commit`:** *(Optional)* Specify a specific Freqtrade commit you wish to utilize *(Can be a specific commit or `latest`)*
+  - ***Defaults to:** The latest supported / recommended commit for MoniGoMani*
 
 
 ### `mgm-hurry install_mgm`
-Individual command to install MoniGoMani.
+Individual command to install & update MoniGoMani.
 #### Options
 - **`--target_dir`:** *(Optional)* Specify where you wish to install MoniGoMani
   - ***Defaults to:** The current directory*
 - **`--branch`:** *(Optional)* Specify the MoniGoMani branch you wish to install
   - ***Defaults to:** The `development` branch, can also be `main` branch for less bleeding edge but generally more stable version*
-- **`--commit`:** *(Optional)* Specify a specific MoniGoMani commit you wish to utilize
+- **`--commit`:** *(Optional)* Specify a specific MoniGoMani commit you wish to utilize *(Can be a specific commit or `latest`)*
   - ***Defaults to:** The latest MoniGoMani commit*
 
 
