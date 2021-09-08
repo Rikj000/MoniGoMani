@@ -223,7 +223,8 @@ class MGMHurry:
 
         :param target_dir: (string, optional) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         :param branch: (string, optional) Checkout a specific branch. Defaults to 'develop'.
-        :param commit: (str) Checkout a specific commit. Defaults to latest supported by MoniGoMani.
+        :param commit: (str) Checkout a specific commit. Defaults to latest supported by MoniGoMani,
+            but 'latest' can also be used.
         :param install_ui: (bool) Install FreqUI. Defaults to True.
         """
         self.logger.info(Color.title('👉 Install Freqtrade'))
@@ -258,7 +259,7 @@ class MGMHurry:
 
         :param branch: (string, optional) Checkout a specific branch. Defaults to 'development'.
         :param target_dir: (string, optional) Specify a target_dir to install MoniGoMani. Defaults to os.getcwd().
-        :param commit: (str) Checkout a specific commit. Defaults to None aka latest.
+        :param commit: (str) Checkout a specific commit. Defaults to None aka 'latest'.
         """
         self.logger.info(Color.title('👉 Install MoniGoMani'))
 

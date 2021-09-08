@@ -160,7 +160,8 @@ class FreqtradeCli:
 
         :param target_dir: (str) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         :param branch: (str) Checkout a specific branch. Defaults to 'develop'.
-        :param commit: (str) Checkout a specific commit. Defaults to None aka latest.
+        :param commit: (str) Checkout a specific commit. Defaults to latest supported by MoniGoMani,
+            but 'latest' can also be used.
         :param install_ui: (bool) Install FreqUI. Defaults to True.
         :return bool: True if setup completed without errors, else False.
         """
@@ -169,10 +170,13 @@ class FreqtradeCli:
 
         with tempfile.TemporaryDirectory() as temp_dirname:
             text = '👉  Clone Freqtrade repository'
-            text = text if commit is None else f'{text} and resetting to commit {commit}'
+            if (commit == 'latest') or (commit is None):
+                text = f'{text} on the latest commit'
+            else:
+                text = f'{text} and resetting to commit {commit}'
             with yaspin(text=text, color='cyan') as sp:
                 repo = clone_repository(GIT_URL_FREQTRADE, temp_dirname, checkout_branch=branch)
-                if commit is not None:
+                if (commit is not None) and (commit != 'latest'):
                     repo.reset(commit, pygit2.GIT_RESET_HARD)
 
                 if not isinstance(repo, Repository):
