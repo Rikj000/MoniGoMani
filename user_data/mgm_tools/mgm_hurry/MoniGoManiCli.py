@@ -56,7 +56,7 @@ class MoniGoManiCli(object):
         self.logger = MoniGoManiLogger(self.basedir).get_logger()
         self.monigomani_config = MoniGoManiConfig(self.basedir)
 
-    def installation_exists(self) -> bool:
+    def installation_exists(self, silent: bool = False) -> bool:
         """
         Check if the MGM Hyper Strategy installation exists.
 
@@ -66,18 +66,22 @@ class MoniGoManiCli(object):
 
             if self._mgm_config_json_exists() is False:
                 mgm_config_name = self.monigomani_config.config['mgm_config_names']['mgm-config']
-                sp.yellow.write(f'🤷 No "{mgm_config_name}" file found.')
-                self.logger.warning(Color.yellow(f'🤷 No "{mgm_config_name}" file found.'))
+                if silent is False:
+                    sp.yellow.write(f'🤷 No "{mgm_config_name}" file found.')
+                    self.logger.warning(Color.yellow(f'🤷 No "{mgm_config_name}" file found.'))
                 return False
 
             if self._mgm_hyperstrategy_file_exists() is False:
-                sp.yellow.write('🤷 No "MoniGoManiHyperStrategy.py" file found.')
-                self.logger.warning(Color.yellow('🤷 No "MoniGoManiHyperStrategy.py" file found.'))
+                if silent is False:
+                    sp.yellow.write('🤷 No "MoniGoManiHyperStrategy.py" file found.')
+                    self.logger.warning(Color.yellow('🤷 No "MoniGoManiHyperStrategy.py" file found.'))
                 return False
 
-            sp.green.ok('✔ MoniGoManiHyperStrategy and configuration found')
+            if silent is False:
+                sp.green.ok('✔ MoniGoManiHyperStrategy and configuration found')
 
-        self.logger.debug(Color.green('MoniGoManiHyperStrategy and configuration found √'))
+        if silent is False:
+            self.logger.debug(Color.green('MoniGoManiHyperStrategy and configuration found √'))
 
         return True
 

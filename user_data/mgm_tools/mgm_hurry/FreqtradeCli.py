@@ -116,33 +116,39 @@ class FreqtradeCli:
         """
         return self.cli_logger
 
-    def installation_exists(self) -> bool:
+    def installation_exists(self, silent: bool = False) -> bool:
         """
         Return true if all is setup correctly.
 
         :return bool: True if install_type is docker or Freqtrade is found. False otherwise.
         """
         if self.install_type is None:
-            self.cli_logger.warning(Color.yellow('FreqtradeCli - installation_exists() failed. No install_type.'))
+            if silent is False:
+                self.cli_logger.warning(Color.yellow('FreqtradeCli - installation_exists() failed. No install_type.'))
             return False
 
         # Well if install_type is docker, we return True because we don't verify if docker is installed
         if self.install_type == 'docker':
-            self.cli_logger.debug('FreqtradeCli - installation_exists() succeeded because '
-                                  'install_type is set to docker.')
+            if silent is False:
+                self.cli_logger.debug('FreqtradeCli - installation_exists() succeeded because '
+                                      'install_type is set to docker.')
             return True
 
         if self.freqtrade_binary is None:
-            self.cli_logger.warning(Color.yellow('FreqtradeCli - installation_exists() failed. No freqtrade_binary.'))
+            if silent is False:
+                self.cli_logger.warning(Color.yellow('FreqtradeCli - installation_exists() failed. '
+                                                     'No freqtrade_binary.'))
             return False
 
         if self.install_type == 'source':
-            self.cli_logger.debug('FreqtradeCli - installation_exists() install_type is "source".')
+            if silent is False:
+                self.cli_logger.debug('FreqtradeCli - installation_exists() install_type is "source".')
             if os.path.exists(f'{self.basedir}/.env/bin/freqtrade'):
                 return True
 
-            self.cli_logger.warning(Color.yellow(f'FreqtradeCli - installation_exists() failed. Freqtrade binary not '
-                                                 f'found in {self.basedir}/.env/bin/freqtrade.'))
+            if silent is False:
+                self.cli_logger.warning(Color.yellow(f'FreqtradeCli - installation_exists() failed. Freqtrade binary '
+                                                     f'not found in {self.basedir}/.env/bin/freqtrade.'))
 
         return False
 
