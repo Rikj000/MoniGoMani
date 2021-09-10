@@ -34,7 +34,7 @@ def ExportMGMresult(config_file, input_file, output_file) :
     epochs = epochs.loc[epochs['results_metrics.profit_total'] > 0]
 
     #define result dataframe columns
-    results_df = DataFrame(columns = ["current_epoch","total_profit","stake_currency","avg_profit","median_profit","total_trades","wins",\
+    results_df = DataFrame(columns = ["current_epoch","HOLoss_result","total_profit","stake_currency","avg_profit","median_profit","total_trades","wins",\
                                         "losses","draws","trades_per_day","rejected_signals","avgduration_h","avgduration_winner_h",\
                                         "avgduration_loser_h","max_drawdown","drawdown_ratio","drawdown_start","drawdown_end",\
                                         "pairlist","max_open_trades_setting","timeframe","backtest_timeframe","timerange",\
@@ -46,6 +46,7 @@ def ExportMGMresult(config_file, input_file, output_file) :
 
     #populate results df with selected values + rearrange format
     results_df["current_epoch"] = epochs["current_epoch"]
+    results_df["HOLoss_result"] = epochs["loss"]
     results_df["total_profit"] = epochs["results_metrics.profit_total_abs"].apply(lambda x: round(x,2))
     results_df["stake_currency"] = epochs["results_metrics.stake_currency"]
     results_df["avg_profit"] = epochs["results_metrics.profit_mean"].apply(lambda x: round(x * 100,2))
