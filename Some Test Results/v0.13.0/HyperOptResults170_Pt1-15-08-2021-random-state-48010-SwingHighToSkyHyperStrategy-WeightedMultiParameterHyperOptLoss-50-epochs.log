@@ -1,0 +1,478 @@
+ 
+/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/.env/bin/python /home/rikj000/.local/share/JetBrains/Toolbox/apps/PyCharm-P/ch-0/212.4746.96/plugins/python/helpers/pydev/pydevd.py --multiproc --qt-support=auto --client 127.0.0.1 --port 36809 --file /mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/.env/bin/freqtrade hyperopt -s SwingHighToSkyHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WeightedMultiParameterHyperOptLoss --spaces all -e 50 --timerange 20210501-20210616 -j 1
+Connected to pydev debugger (build 212.4746.96)
+2021-08-15 14:04:23,971 - freqtrade.configuration.configuration - INFO - Using config: ./user_data/mgm-config.json ...
+2021-08-15 14:04:23,972 - freqtrade.configuration.configuration - INFO - Using config: ./user_data/mgm-config-private.json ...
+2021-08-15 14:04:23,974 - freqtrade.loggers - INFO - Verbosity set to 0
+2021-08-15 14:04:23,974 - freqtrade.configuration.configuration - INFO - Using max_open_trades: -1 ...
+2021-08-15 14:04:23,974 - freqtrade.configuration.configuration - INFO - Parameter --timerange detected: 20210501-20210616 ...
+2021-08-15 14:04:23,974 - freqtrade.configuration.configuration - INFO - Using user-data directory: /mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data ...
+2021-08-15 14:04:23,974 - freqtrade.configuration.configuration - INFO - Using data directory: /mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/data/binance ...
+2021-08-15 14:04:23,975 - freqtrade.configuration.configuration - INFO - Parameter --epochs detected ... Will run Hyperopt with for 50 epochs ...
+2021-08-15 14:04:23,975 - freqtrade.configuration.configuration - INFO - Parameter -s/--spaces detected: ['all']
+2021-08-15 14:04:23,975 - freqtrade.configuration.configuration - INFO - Parameter -j/--job-workers detected: 1
+2021-08-15 14:04:23,975 - freqtrade.configuration.configuration - INFO - Parameter --min-trades detected: 1
+2021-08-15 14:04:23,975 - freqtrade.configuration.configuration - INFO - Using Hyperopt loss class name: WeightedMultiParameterHyperOptLoss
+2021-08-15 14:04:23,975 - freqtrade.configuration.check_exchange - INFO - Checking exchange...
+2021-08-15 14:04:23,986 - freqtrade.configuration.check_exchange - INFO - Exchange "binance" is officially supported by the Freqtrade development team.
+2021-08-15 14:04:23,986 - freqtrade.configuration.configuration - INFO - Using pairlist from configuration.
+2021-08-15 14:04:23,987 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2021-08-15 14:04:23,992 - freqtrade.commands.optimize_commands - INFO - Starting freqtrade in Hyperopt mode
+2021-08-15 14:04:23,993 - filelock - INFO - Lock 139936058113136 acquired on /mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/hyperopt.lock
+2021-08-15 14:04:23,993 - freqtrade.exchange.exchange - INFO - Instance is running with dry_run enabled
+2021-08-15 14:04:23,993 - freqtrade.exchange.exchange - INFO - Using CCXT 1.52.83
+2021-08-15 14:04:23,993 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True}
+2021-08-15 14:04:24,004 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'rateLimit': 500, 'aiohttp_trust_env': False}
+2021-08-15 14:04:24,017 - freqtrade.exchange.exchange - INFO - Using Exchange "Binance"
+2021-08-15 14:04:25,541 - freqtrade.resolvers.exchange_resolver - INFO - Using resolved exchange 'Binance'...
+2021-08-15 14:04:25,602 - freqtrade.resolvers.iresolver - INFO - Using resolved strategy SwingHighToSkyHyperStrategy from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/strategies/SwingHighToSkyHyperStrategy.py'...
+2021-08-15 14:04:25,602 - freqtrade.strategy.hyper - INFO - Found no parameter file.
+2021-08-15 14:04:25,602 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_cci_max = -112
+2021-08-15 14:04:25,603 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_use_cci = 1
+2021-08-15 14:04:25,603 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_cci_min = -190
+2021-08-15 14:04:25,603 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_use_cci = no-use
+2021-08-15 14:04:25,604 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'order_types' with value in config file: {'buy': 'limit', 'sell': 'limit', 'emergencysell': 'market', 'forcesell': 'market', 'forcebuy': 'market', 'stoploss': 'market', 'stoploss_on_exchange': False, 'stoploss_on_exchange_interval': 60}.
+2021-08-15 14:04:25,604 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'order_time_in_force' with value in config file: {'buy': 'gtc', 'sell': 'gtc'}.
+2021-08-15 14:04:25,604 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_currency' with value in config file: USDT.
+2021-08-15 14:04:25,604 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_amount' with value in config file: 45.
+2021-08-15 14:04:25,604 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'protections' with value in config file: [{'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 10, 'stop_duration': 1440, 'only_per_pair': False}, {'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 2, 'stop_duration': 1440, 'only_per_pair': True}].
+2021-08-15 14:04:25,604 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'unfilledtimeout' with value in config file: {'buy': 10, 'sell': 30, 'unit': 'minutes'}.
+2021-08-15 14:04:25,604 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'use_sell_signal' with value in config file: True.
+2021-08-15 14:04:25,604 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'sell_profit_only' with value in config file: False.
+2021-08-15 14:04:25,605 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'ignore_roi_if_buy_signal' with value in config file: True.
+2021-08-15 14:04:25,605 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'sell_profit_offset' with value in config file: 0.
+2021-08-15 14:04:25,605 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'disable_dataframe_checks' with value in config file: False.
+2021-08-15 14:04:25,605 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using minimal_roi: {'0': 0.30813, '127': 0.14381, '370': 0.07412, '1038': 0}
+2021-08-15 14:04:25,605 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using timeframe: 5m
+2021-08-15 14:04:25,605 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stoploss: -0.04175
+2021-08-15 14:04:25,605 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop: True
+2021-08-15 14:04:25,605 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop_positive: 0.1202
+2021-08-15 14:04:25,605 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop_positive_offset: 0.1645
+2021-08-15 14:04:25,605 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_only_offset_is_reached: True
+2021-08-15 14:04:25,605 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_custom_stoploss: False
+2021-08-15 14:04:25,606 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using process_only_new_candles: False
+2021-08-15 14:04:25,606 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_types: {'buy': 'limit', 'sell': 'limit', 'emergencysell': 'market', 'forcesell': 'market', 'forcebuy': 'market', 'stoploss': 'market', 'stoploss_on_exchange': False, 'stoploss_on_exchange_interval': 60}
+2021-08-15 14:04:25,606 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_time_in_force: {'buy': 'gtc', 'sell': 'gtc'}
+2021-08-15 14:04:25,606 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_currency: USDT
+2021-08-15 14:04:25,606 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_amount: 45
+2021-08-15 14:04:25,606 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using protections: [{'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 10, 'stop_duration': 1440, 'only_per_pair': False}, {'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 2, 'stop_duration': 1440, 'only_per_pair': True}]
+2021-08-15 14:04:25,606 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using startup_candle_count: 0
+2021-08-15 14:04:25,606 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using unfilledtimeout: {'buy': 10, 'sell': 30, 'unit': 'minutes'}
+2021-08-15 14:04:25,606 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_sell_signal: True
+2021-08-15 14:04:25,606 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using sell_profit_only: False
+2021-08-15 14:04:25,606 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_roi_if_buy_signal: True
+2021-08-15 14:04:25,607 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using sell_profit_offset: 0
+2021-08-15 14:04:25,607 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using disable_dataframe_checks: False
+2021-08-15 14:04:25,607 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_buying_expired_candle_after: 0
+2021-08-15 14:04:25,607 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2021-08-15 14:04:25,620 - freqtrade.resolvers.iresolver - INFO - Using resolved pairlist StaticPairList from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/freqtrade/plugins/pairlist/StaticPairList.py'...
+2021-08-15 14:04:25 rikj000-gf63thin10scxr user_data.mgm_tools.mgm_hurry.LeetLogger[194059] INFO No "mgm-config-hyperopt" file found in the "user_data" directory.
+2021-08-15 14:04:25,756 - user_data.mgm_tools.mgm_hurry.LeetLogger - INFO - No "mgm-config-hyperopt" file found in the "user_data" directory.
+2021-08-15 14:04:25,768 - freqtrade.resolvers.iresolver - INFO - Using resolved hyperoptloss WeightedMultiParameterHyperOptLoss from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/hyperopts/WeightedMultiParameterHyperOptLoss.py'...
+2021-08-15 14:04:25,769 - freqtrade.optimize.hyperopt - INFO - Removing `/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/hyperopt_results/hyperopt_tickerdata.pkl`.
+2021-08-15 14:04:25,774 - freqtrade.optimize.hyperopt - INFO - Using optimizer random state: 48010
+2021-08-15 14:04:25,777 - freqtrade.optimize.hyperopt_interface - INFO - Min roi table: {0: 0.03, 10: 0.02, 20: 0.01, 30: 0}
+2021-08-15 14:04:25,777 - freqtrade.optimize.hyperopt_interface - INFO - Max roi table: {0: 0.31, 40: 0.11, 100: 0.04, 220: 0}
+2021-08-15 14:04:25,916 - numexpr.utils - INFO - Note: NumExpr detected 12 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2021-08-15 14:04:25,916 - numexpr.utils - INFO - NumExpr defaulting to 8 threads.
+2021-08-15 14:04:27,592 - freqtrade.optimize.backtesting - INFO - Loading data from 2021-05-01 00:00:00 up to 2021-06-16 00:00:00 (46 days).
+2021-08-15 14:04:27,592 - freqtrade.optimize.hyperopt - INFO - Dataload complete. Calculating indicators
+2021-08-15 14:04:27,714 - freqtrade.optimize.hyperopt - INFO - Hyperopting with data from 2021-05-01 00:00:00 up to 2021-06-16 00:00:00 (46 days)..
+2021-08-15 14:04:27,887 - freqtrade.optimize.hyperopt - INFO - Found 12 CPU cores. Let's make them scream!
+2021-08-15 14:04:27,888 - freqtrade.optimize.hyperopt - INFO - Number of parallel jobs set as: 1
+2021-08-15 14:04:27,888 - freqtrade.optimize.hyperopt - INFO - Effective number of parallel workers used: 1
+INFO - WeightedMultiParameterHyperOptLoss Values Found:
+    Average Duration: 29.584745762711865 (Weighted Objective: 0.5916949152542372)
+    DrawDown: 1.9175217199999997 (Weighted Objective: 5.093417068749999)
+    Sortino Ratio: -5.868170667532076 (Weighted Objective: 2.2235493587631265)
+    Total Profit: -1.7308447299999998 (Weighted Objective: 2.4615585946666667)
+    Trade Count: 1180 (Weighted Objective: -0.6293333333333333)
+    Total Objective: 9.740886604100696
++--------+---------+----------+------------------+--------------+-------------------------------+-----------------+-------------------------------+-------------+
+|   Best |   Epoch |   Trades |    Win Draw Loss |   Avg profit |                        Profit |    Avg duration |                  Max Drawdown |   Objective |
+|--------+---------+----------+------------------+--------------+-------------------------------+-----------------+-------------------------------+-------------|
+| * Best |    1/50 |     1180 |    265    0  915 |       -0.15% |       -77.966 USDT  (-15.59%) | 0 days 00:30:00 |        86.375 USDT  (191.75%) |     9.74089 |
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 49.201609487505294 (Weighted Objective: 0.9840321897501059)
+    DrawDown: 10.098847709999998 (Weighted Objective: 26.82506422968749)
+    Sortino Ratio: -10.539775265244463 (Weighted Objective: 2.401515248199789)
+    Total Profit: -10.09763645 (Weighted Objective: 4.692703053333334)
+    Trade Count: 2361 (Weighted Objective: -1.2592)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 48.74666666666667 (Weighted Objective: 0.9749333333333334)
+    DrawDown: 10.137182940000015 (Weighted Objective: 26.92689218437504)
+    Sortino Ratio: -12.418380602219786 (Weighted Objective: 2.473081165798849)
+    Total Profit: -10.101417009999999 (Weighted Objective: 4.693711202666666)
+    Trade Count: 3000 (Weighted Objective: -1.6)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 145.0 (Weighted Objective: 2.9)
+    DrawDown: 0.14250873 (Weighted Objective: 0.30283105125)
+    Sortino Ratio: -3.6161912755631285 (Weighted Objective: 2.1377596676405)
+    Total Profit: -0.11729724999999999 (Weighted Objective: 2.0312792666666666)
+    Trade Count: 12 (Weighted Objective: 1.9872)
+                                                                                                                                                                                
+| * Best |    4/50 |       12 |      4    2    6 |       -0.98% |        -5.284 USDT   (-1.06%) | 0 days 02:25:00 |         6.419 USDT   (14.25%) |     9.35907 |
+INFO - WeightedMultiParameterHyperOptLoss Values Found:
+    Average Duration: 22.161616161616163 (Weighted Objective: 0.44323232323232326)
+    DrawDown: 1.1071354699999991 (Weighted Objective: 2.940828592187497)
+    Sortino Ratio: -6.6198226318573585 (Weighted Objective: 2.2521837193088516)
+    Total Profit: -1.1031464899999999 (Weighted Objective: 2.2941723973333334)
+    Trade Count: 495 (Weighted Objective: 1.472)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:
+    Average Duration: 48.75996961640714 (Weighted Objective: 0.9751993923281427)
+    DrawDown: 10.089378130000012 (Weighted Objective: 26.799910657812532)
+    Sortino Ratio: -12.0984850806401 (Weighted Objective: 2.4608946697386704)
+    Total Profit: -10.094793280000001 (Weighted Objective: 4.691944874666667)
+    Trade Count: 2633 (Weighted Objective: -1.4042666666666668)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 48.763513513513516 (Weighted Objective: 0.9752702702702702)
+    DrawDown: 10.131651360000014 (Weighted Objective: 26.912198925000034)
+    Sortino Ratio: -12.421634871726681 (Weighted Objective: 2.4732051379705404)
+    Total Profit: -10.09339715 (Weighted Objective: 4.6915725733333336)
+    Trade Count: 2960 (Weighted Objective: -1.5786666666666669)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 34.886032335011926 (Weighted Objective: 0.6977206467002385)
+    DrawDown: 8.559747320000044 (Weighted Objective: 22.736828818750116)
+    Sortino Ratio: -10.990542313489149 (Weighted Objective: 2.418687326228158)
+    Total Profit: -8.45343351 (Weighted Objective: 4.254248936)
+    Trade Count: 3773 (Weighted Objective: 2.0122666666666666)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 38.77066115702479 (Weighted Objective: 0.7754132231404958)
+    DrawDown: 10.098388469999993 (Weighted Objective: 26.823844373437478)
+    Sortino Ratio: -7.616753226965478 (Weighted Objective: 2.290162027693923)
+    Total Profit: -10.10380362 (Weighted Objective: 4.694347632)
+    Trade Count: 1452 (Weighted Objective: -0.7744)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 47.25691847419596 (Weighted Objective: 0.9451383694839193)
+    DrawDown: 10.11516422000002 (Weighted Objective: 26.86840495937505)
+    Sortino Ratio: -11.695684951075489 (Weighted Objective: 2.445549902898114)
+    Total Profit: -10.09175428 (Weighted Objective: 4.691134474666667)
+    Trade Count: 2674 (Weighted Objective: -1.4261333333333335)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 48.69699166364625 (Weighted Objective: 0.973939833272925)
+    DrawDown: 10.103211990000014 (Weighted Objective: 26.836656848437535)
+    Sortino Ratio: -12.217179170063659 (Weighted Objective: 2.4654163493357584)
+    Total Profit: -10.10788119 (Weighted Objective: 4.695434984)
+    Trade Count: 2759 (Weighted Objective: -1.4714666666666667)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 31.53011658031088 (Weighted Objective: 0.6306023316062176)
+    DrawDown: 7.981041290000003 (Weighted Objective: 21.199640926562505)
+    Sortino Ratio: -11.153116435857186 (Weighted Objective: 2.4248806261278926)
+    Total Profit: -7.878867769999999 (Weighted Objective: 4.101031405333334)
+    Trade Count: 3088 (Weighted Objective: -1.6469333333333336)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 249.8375451263538 (Weighted Objective: 4.996750902527076)
+    DrawDown: 8.899726039999988 (Weighted Objective: 23.639897293749964)
+    Sortino Ratio: -7.325512158653813 (Weighted Objective: 2.2790671298534786)
+    Total Profit: -8.611182669999998 (Weighted Objective: 4.296315378666666)
+    Trade Count: 1385 (Weighted Objective: -0.7386666666666667)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 31.612142646625404 (Weighted Objective: 0.6322428529325081)
+    DrawDown: 10.251656649999985 (Weighted Objective: 27.23096297656246)
+    Sortino Ratio: -11.316627195446967 (Weighted Objective: 2.431109607445599)
+    Total Profit: -10.093761729999999 (Weighted Objective: 4.691669794666666)
+    Trade Count: 3393 (Weighted Objective: -1.8096)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 16.52173913043478 (Weighted Objective: 0.33043478260869563)
+    DrawDown: 0.03178272 (Weighted Objective: 1.86492344)
+    Sortino Ratio: 0.008016761641127444 (Weighted Objective: 1.9996945995565285)
+    Total Profit: 0.011577460000000001 (Weighted Objective: 1.9969126773333334)
+    Trade Count: 23 (Weighted Objective: 1.9754666666666667)
+                                                                                                                                                                                
+| * Best |   15/50 |       23 |      8    0   15 |        0.05% |         0.522 USDT    (0.10%) | 0 days 00:17:00 |         1.432 USDT    (3.18%) |     8.16743 |
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 51.821102468718294 (Weighted Objective: 1.0364220493743659)
+    DrawDown: 10.108282590000027 (Weighted Objective: 26.850125629687568)
+    Sortino Ratio: -12.452698265981029 (Weighted Objective: 2.474388505370706)
+    Total Profit: -10.09414951 (Weighted Objective: 4.691773202666667)
+    Trade Count: 2957 (Weighted Objective: -1.5770666666666668)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 47.033762057877816 (Weighted Objective: 0.9406752411575563)
+    DrawDown: 10.100010660000029 (Weighted Objective: 26.828153315625073)
+    Sortino Ratio: -9.113127366800322 (Weighted Objective: 2.3471667568304886)
+    Total Profit: -10.10542581 (Weighted Objective: 4.694780216)
+    Trade Count: 1866 (Weighted Objective: -0.9952000000000001)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 46.299009047824214 (Weighted Objective: 0.9259801809564843)
+    DrawDown: 10.115783659999986 (Weighted Objective: 26.87005034687496)
+    Sortino Ratio: -10.533682114787975 (Weighted Objective: 2.401283128182399)
+    Total Profit: -10.100254369999998 (Weighted Objective: 4.6934011653333325)
+    Trade Count: 2321 (Weighted Objective: -1.2378666666666667)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 48.55004827808175 (Weighted Objective: 0.9710009655616351)
+    DrawDown: 10.153890730000024 (Weighted Objective: 26.97127225156256)
+    Sortino Ratio: -12.406711609838696 (Weighted Objective: 2.47263663275576)
+    Total Profit: -10.11173504 (Weighted Objective: 4.696462677333333)
+    Trade Count: 3107 (Weighted Objective: -1.657066666666667)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 47.75802752293578 (Weighted Objective: 0.9551605504587155)
+    DrawDown: 10.132743029999974 (Weighted Objective: 26.91509867343743)
+    Sortino Ratio: -11.601173446802788 (Weighted Objective: 2.441949464640106)
+    Total Profit: -10.10767438 (Weighted Objective: 4.695379834666667)
+    Trade Count: 2616 (Weighted Objective: -1.3952)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 59.08330799635147 (Weighted Objective: 1.1816661599270293)
+    DrawDown: 8.556164360000022 (Weighted Objective: 22.727311581250053)
+    Sortino Ratio: -9.843045931179846 (Weighted Objective: 2.3749731783306607)
+    Total Profit: -8.36523536 (Weighted Objective: 4.2307294293333335)
+    Trade Count: 3289 (Weighted Objective: -1.7541333333333335)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 20.0 (Weighted Objective: 0.39999999999999997)
+    DrawDown: 0.012824399999999998 (Weighted Objective: 1.9454963)
+    Sortino Ratio: -2.1505392214618593 (Weighted Objective: 2.0819253036747374)
+    Total Profit: -0.0036367999999999986 (Weighted Objective: 2.000969813333333)
+    Trade Count: 7 (Weighted Objective: 1.9925333333333333)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:
+    Average Duration: 675.8227848101266 (Weighted Objective: 13.51645569620253)
+    DrawDown: 7.230650039999997 (Weighted Objective: 19.20641416874999)
+    Sortino Ratio: -4.893699196188832 (Weighted Objective: 2.186426636045289)
+    Total Profit: -6.710290430000001 (Weighted Objective: 3.7894107813333333)
+    Trade Count: 632 (Weighted Objective: 1.3258666666666667)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:
+    Average Duration: 44.675456389452336 (Weighted Objective: 0.8935091277890467)
+    DrawDown: 10.09681937000001 (Weighted Objective: 26.819676451562522)
+    Sortino Ratio: -9.6189293013109 (Weighted Objective: 2.3664354019547007)
+    Total Profit: -10.10223452 (Weighted Objective: 4.693929205333333)
+    Trade Count: 1972 (Weighted Objective: -1.0517333333333334)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 36.83550824175824 (Weighted Objective: 0.7367101648351647)
+    DrawDown: 6.728421860000005 (Weighted Objective: 17.872370565625012)
+    Sortino Ratio: -10.102807713461813 (Weighted Objective: 2.384868865274736)
+    Total Profit: -6.50071492 (Weighted Objective: 3.7335239786666667)
+    Trade Count: 2912 (Weighted Objective: -1.5530666666666668)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 48.56307583274273 (Weighted Objective: 0.9712615166548546)
+    DrawDown: 10.104633080000006 (Weighted Objective: 26.840431618750017)
+    Sortino Ratio: -12.224870580928194 (Weighted Objective: 2.465709355463931)
+    Total Profit: -10.09727024 (Weighted Objective: 4.692605397333334)
+    Trade Count: 2822 (Weighted Objective: -1.5050666666666668)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 173.50370981038748 (Weighted Objective: 3.4700741962077495)
+    DrawDown: 10.406507150000094 (Weighted Objective: 27.642284617187745)
+    Sortino Ratio: -8.888686401945117 (Weighted Objective: 2.3386166248360043)
+    Total Profit: -10.11585222 (Weighted Objective: 4.697560592)
+    Trade Count: 1213 (Weighted Objective: -0.6469333333333334)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 47.99497293116783 (Weighted Objective: 0.9598994586233565)
+    DrawDown: 10.109599360000011 (Weighted Objective: 26.85362330000003)
+    Sortino Ratio: -12.155683522244868 (Weighted Objective: 2.4630736579902806)
+    Total Profit: -10.115014509999998 (Weighted Objective: 4.697337202666667)
+    Trade Count: 2586 (Weighted Objective: -1.3792)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 48.70040043684019 (Weighted Objective: 0.9740080087368038)
+    DrawDown: 10.088389060000008 (Weighted Objective: 26.79728344062502)
+    Sortino Ratio: -12.198524236077898 (Weighted Objective: 2.4647056851839197)
+    Total Profit: -10.09380421 (Weighted Objective: 4.691681122666667)
+    Trade Count: 2747 (Weighted Objective: -1.4650666666666667)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 6.25 (Weighted Objective: 0.125)
+    DrawDown: 0.002292829999999999 (Weighted Objective: 1.9902554725)
+    Sortino Ratio: -1.1475644665640345 (Weighted Objective: 2.043716741583392)
+    Total Profit: -0.002791219999999999 (Weighted Objective: 2.0007443253333332)
+    Trade Count: 4 (Weighted Objective: 1.9957333333333334)
+                                                                                                                                                                                
+| * Best |   30/50 |        4 |      2    0    2 |       -0.07% |        -0.126 USDT   (-0.03%) | 0 days 00:06:00 |         0.103 USDT    (0.23%) |     8.15545 |
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 7.2727272727272725 (Weighted Objective: 0.14545454545454545)
+    DrawDown: 0.012159769999999997 (Weighted Objective: 1.9483209775)
+    Sortino Ratio: 2.8116028106700477 (Weighted Objective: 1.8928913214982839)
+    Total Profit: 0.020835590000000005 (Weighted Objective: 1.9944438426666666)
+    Trade Count: 11 (Weighted Objective: 1.9882666666666666)
+                                                                                                                                                                                
+|   Best |   31/50 |       11 |      5    0    6 |        0.19% |         0.939 USDT    (0.19%) | 0 days 00:07:00 |         0.548 USDT    (1.22%) |     7.96938 |
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 11.818181818181818 (Weighted Objective: 0.23636363636363633)
+    DrawDown: 0.012159769999999997 (Weighted Objective: 1.9483209775)
+    Sortino Ratio: -1.4009695213269604 (Weighted Objective: 2.053370267479122)
+    Total Profit: -0.00214144 (Weighted Objective: 2.0005710506666667)
+    Trade Count: 11 (Weighted Objective: 1.9882666666666666)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 5.833333333333333 (Weighted Objective: 0.11666666666666667)
+    DrawDown: 0.007064890000000001 (Weighted Objective: 1.9699742175)
+    Sortino Ratio: -2.100298402600691 (Weighted Objective: 2.0800113677181216)
+    Total Profit: -0.006627220000000003 (Weighted Objective: 2.001767258666667)
+    Trade Count: 6 (Weighted Objective: 1.9936)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 5.714285714285714 (Weighted Objective: 0.1142857142857143)
+    DrawDown: 0.012159769999999997 (Weighted Objective: 1.9483209775)
+    Sortino Ratio: -3.041901079077935 (Weighted Objective: 2.115881945869636)
+    Total Profit: -0.0117221 (Weighted Objective: 2.0031258933333334)
+    Trade Count: 7 (Weighted Objective: 1.9925333333333333)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 5.714285714285714 (Weighted Objective: 0.1142857142857143)
+    DrawDown: 0.012159769999999997 (Weighted Objective: 1.9483209775)
+    Sortino Ratio: -3.041901079077935 (Weighted Objective: 2.115881945869636)
+    Total Profit: -0.0117221 (Weighted Objective: 2.0031258933333334)
+    Trade Count: 7 (Weighted Objective: 1.9925333333333333)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 6.0 (Weighted Objective: 0.12)
+    DrawDown: 0.002292829999999999 (Weighted Objective: 1.9902554725)
+    Sortino Ratio: -1.0431219735685315 (Weighted Objective: 2.039737979945468)
+    Total Profit: -0.0018551599999999985 (Weighted Objective: 2.000494709333333)
+    Trade Count: 5 (Weighted Objective: 1.9946666666666666)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 6.25 (Weighted Objective: 0.125)
+    DrawDown: 0.002292829999999999 (Weighted Objective: 1.9902554725)
+    Sortino Ratio: -1.1475644665640345 (Weighted Objective: 2.043716741583392)
+    Total Profit: -0.002791219999999999 (Weighted Objective: 2.0007443253333332)
+    Trade Count: 4 (Weighted Objective: 1.9957333333333334)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 5.714285714285714 (Weighted Objective: 0.1142857142857143)
+    DrawDown: 0.012159769999999997 (Weighted Objective: 1.9483209775)
+    Sortino Ratio: -3.041901079077935 (Weighted Objective: 2.115881945869636)
+    Total Profit: -0.0117221 (Weighted Objective: 2.0031258933333334)
+    Trade Count: 7 (Weighted Objective: 1.9925333333333333)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 5.714285714285714 (Weighted Objective: 0.1142857142857143)
+    DrawDown: 0.012159769999999997 (Weighted Objective: 1.9483209775)
+    Sortino Ratio: -3.041901079077935 (Weighted Objective: 2.115881945869636)
+    Total Profit: -0.0117221 (Weighted Objective: 2.0031258933333334)
+    Trade Count: 7 (Weighted Objective: 1.9925333333333333)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 6.25 (Weighted Objective: 0.125)
+    DrawDown: 0.002292829999999999 (Weighted Objective: 1.9902554725)
+    Sortino Ratio: -1.1475644665640345 (Weighted Objective: 2.043716741583392)
+    Total Profit: -0.002791219999999999 (Weighted Objective: 2.0007443253333332)
+    Trade Count: 4 (Weighted Objective: 1.9957333333333334)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 5.714285714285714 (Weighted Objective: 0.1142857142857143)
+    DrawDown: 0.012159769999999997 (Weighted Objective: 1.9483209775)
+    Sortino Ratio: -3.041901079077935 (Weighted Objective: 2.115881945869636)
+    Total Profit: -0.0117221 (Weighted Objective: 2.0031258933333334)
+    Trade Count: 7 (Weighted Objective: 1.9925333333333333)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 6.25 (Weighted Objective: 0.125)
+    DrawDown: 0.002292829999999999 (Weighted Objective: 1.9902554725)
+    Sortino Ratio: -1.1475644665640345 (Weighted Objective: 2.043716741583392)
+    Total Profit: -0.002791219999999999 (Weighted Objective: 2.0007443253333332)
+    Trade Count: 4 (Weighted Objective: 1.9957333333333334)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 5.833333333333333 (Weighted Objective: 0.11666666666666667)
+    DrawDown: 0.007064890000000001 (Weighted Objective: 1.9699742175)
+    Sortino Ratio: -2.100298402600691 (Weighted Objective: 2.0800113677181216)
+    Total Profit: -0.006627220000000003 (Weighted Objective: 2.001767258666667)
+    Trade Count: 6 (Weighted Objective: 1.9936)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 6.0 (Weighted Objective: 0.12)
+    DrawDown: 0.002292829999999999 (Weighted Objective: 1.9902554725)
+    Sortino Ratio: -1.0431219735685315 (Weighted Objective: 2.039737979945468)
+    Total Profit: -0.0018551599999999985 (Weighted Objective: 2.000494709333333)
+    Trade Count: 5 (Weighted Objective: 1.9946666666666666)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 10.909090909090908 (Weighted Objective: 0.21818181818181814)
+    DrawDown: 0.012159769999999997 (Weighted Objective: 1.9483209775)
+    Sortino Ratio: 0.3484474972188992 (Weighted Objective: 1.9867258096297562)
+    Total Profit: 0.00740057 (Weighted Objective: 1.9980265146666667)
+    Trade Count: 11 (Weighted Objective: 1.9882666666666666)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 6.0 (Weighted Objective: 0.12)
+    DrawDown: 0.002292829999999999 (Weighted Objective: 1.9902554725)
+    Sortino Ratio: -1.0431219735685315 (Weighted Objective: 2.039737979945468)
+    Total Profit: -0.0018551599999999985 (Weighted Objective: 2.000494709333333)
+    Trade Count: 5 (Weighted Objective: 1.9946666666666666)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 15.0 (Weighted Objective: 0.3)
+    DrawDown: 0.012159769999999997 (Weighted Objective: 1.9483209775)
+    Sortino Ratio: 2.628445897640456 (Weighted Objective: 1.899868727708935)
+    Total Profit: 0.019836580000000003 (Weighted Objective: 1.9947102453333334)
+    Trade Count: 11 (Weighted Objective: 1.9882666666666666)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 15.0 (Weighted Objective: 0.3)
+    DrawDown: 0.012159769999999997 (Weighted Objective: 1.9483209775)
+    Sortino Ratio: 2.4452908179950437 (Weighted Objective: 1.9068460640763794)
+    Total Profit: 0.018837580000000003 (Weighted Objective: 1.9949766453333333)
+    Trade Count: 11 (Weighted Objective: 1.9882666666666666)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 5.625 (Weighted Objective: 0.11249999999999999)
+    DrawDown: 0.012159769999999997 (Weighted Objective: 1.9483209775)
+    Sortino Ratio: -3.5767407057491063 (Weighted Objective: 2.1362567887904422)
+    Total Profit: -0.01434058 (Weighted Objective: 2.003824154666667)
+    Trade Count: 8 (Weighted Objective: 1.9914666666666667)
+                                                                                                                                                                                
+INFO - WeightedMultiParameterHyperOptLoss Values Found:                                                                                                                         
+    Average Duration: 5.714285714285714 (Weighted Objective: 0.1142857142857143)
+    DrawDown: 0.012159769999999997 (Weighted Objective: 1.9483209775)
+    Sortino Ratio: -3.041901079077935 (Weighted Objective: 2.115881945869636)
+    Total Profit: -0.0117221 (Weighted Objective: 2.0031258933333334)
+    Trade Count: 7 (Weighted Objective: 1.9925333333333333)
+                                                                                                                                                                                
+ [Epoch 50 of 50 (100%)] ||                                                                                                            | [Time:  0:12:38, Elapsed Time: 0:12:38]
+2021-08-15 14:17:14,616 - freqtrade.optimize.hyperopt - INFO - 50 epochs saved to '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/hyperopt_results/strategy_SwingHighToSkyHyperStrategy_2021-08-15_14-04-25.fthypt'.
+2021-08-15 14:17:14,712 - freqtrade.optimize.hyperopt_tools - INFO - Dumping parameters to user_data/strategies/SwingHighToSkyHyperStrategy.json
+
+Best result:
+
+    31/50:     11 trades. 5/0/6 Wins/Draws/Losses. Avg profit   0.19%. Median profit  -0.23%. Total profit  0.93853843 USDT (   0.19%). Avg duration 0:07:00 min. Objective: 7.96938
+
+
+    # Buy hyperspace params:
+    buy_params = {
+        "buy_cci_max": -263.15492,
+        "buy_use_cci": True,
+    }
+
+    # Sell hyperspace params:
+    sell_params = {
+        "sell_cci_min": -30.94153,
+        "sell_use_cci": "no-use",
+    }
+
+    # ROI table:
+    minimal_roi = {
+        "0": 0.069,
+        "24": 0.036,
+        "81": 0.015,
+        "194": 0
+    }
+
+    # Stoploss:
+    stoploss = -0.078
+
+    # Trailing stop:
+    trailing_stop = True
+    trailing_stop_positive = 0.143
+    trailing_stop_positive_offset = 0.145
+    trailing_only_offset_is_reached = True

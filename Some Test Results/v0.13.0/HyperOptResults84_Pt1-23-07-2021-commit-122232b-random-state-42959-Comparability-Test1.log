@@ -1,0 +1,219 @@
+INFO - Using config: ./user_data/mgm-config.json ...
+INFO - Using config: ./user_data/mgm-config-private.json ...
+INFO - Parameter --enable-protections detected, enabling Protections. ...
+INFO - Using max_open_trades: -1 ...
+INFO - Parameter --timerange detected: 20210501-20210616 ...
+INFO - Parameter --epochs detected ... Will run Hyperopt with for 1000 epochs ...
+INFO - Parameter -s/--spaces detected: ['all']
+INFO - Parameter --min-trades detected: 1
+INFO - Using Hyperopt loss class name: MGM_WinRatioAndProfitRatioHyperOptLoss
+WARNING - DEPRECATED: The `ask_strategy.use_sell_signal` setting is deprecated and will be removed in the next versions of Freqtrade. Please use the `use_sell_signal` setting in your configuration instead.
+WARNING - DEPRECATED: The `ask_strategy.sell_profit_only` setting is deprecated and will be removed in the next versions of Freqtrade. Please use the `sell_profit_only` setting in your configuration instead.
+WARNING - DEPRECATED: The `ask_strategy.ignore_roi_if_buy_signal` setting is deprecated and will be removed in the next versions of Freqtrade. Please use the `ignore_roi_if_buy_signal` setting in your configuration instead.
+WARNING - DEPRECATED: Please use `order_book_top` instead of `order_book_min` and `order_book_max` for your `ask_strategy` configuration.
+INFO - Using resolved strategy MoniGoManiHyperStrategy from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/tmp/MoniGoMani/user_data/strategies/MoniGoManiHyperStrategy.py'...
+INFO - Strategy Parameter: buy__downwards_trend_total_signal_needed = 465
+INFO - Strategy Parameter: buy__downwards_trend_total_signal_needed_candles_lookback_window = 3
+INFO - Strategy Parameter: buy__upwards_trend_total_signal_needed = 465
+INFO - Strategy Parameter: buy__upwards_trend_total_signal_needed_candles_lookback_window = 3
+INFO - Strategy Parameter: buy_downwards_trend_adx_strong_up_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_bollinger_bands_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_ema_long_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_ema_short_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_macd_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_rsi_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_sma_long_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_sma_short_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_vwap_cross_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_adx_strong_up_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_bollinger_bands_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_ema_long_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_ema_short_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_macd_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_rsi_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_sma_long_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_sma_short_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_vwap_cross_weight = 50
+INFO - Strategy Parameter: sell___unclogger_minimal_losing_trade_duration_minutes = 37
+INFO - Strategy Parameter: sell___unclogger_minimal_losing_trades_open = 3
+INFO - Strategy Parameter: sell___unclogger_open_trades_losing_percentage_needed = 30
+INFO - Strategy Parameter: sell___unclogger_trend_lookback_candles_window = 35
+INFO - Strategy Parameter: sell___unclogger_trend_lookback_candles_window_percentage_needed = 25
+INFO - Strategy Parameter: sell__downwards_trend_total_signal_needed = 465
+INFO - Strategy Parameter: sell__downwards_trend_total_signal_needed_candles_lookback_window = 3
+INFO - Strategy Parameter: sell__upwards_trend_total_signal_needed = 465
+INFO - Strategy Parameter: sell__upwards_trend_total_signal_needed_candles_lookback_window = 3
+INFO - Strategy Parameter: sell_downwards_trend_adx_strong_down_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_bollinger_bands_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_ema_long_death_cross_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_ema_short_death_cross_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_macd_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_rsi_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_sma_long_death_cross_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_sma_short_death_cross_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_vwap_cross_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_adx_strong_down_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_bollinger_bands_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_ema_long_death_cross_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_ema_short_death_cross_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_macd_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_rsi_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_sma_long_death_cross_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_sma_short_death_cross_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_vwap_cross_weight = 50
+INFO - Override strategy 'order_types' with value in config file: {'buy': 'limit', 'sell': 'limit', 'stoploss': 'market', 'stoploss_on_exchange': False}.
+INFO - Override strategy 'order_time_in_force' with value in config file: {'buy': 'gtc', 'sell': 'gtc'}.
+INFO - Override strategy 'stake_currency' with value in config file: USDT.
+INFO - Override strategy 'stake_amount' with value in config file: 45.
+INFO - Override strategy 'protections' with value in config file: [{'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 10, 'stop_duration': 1440, 'only_per_pair': False}, {'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 2, 'stop_duration': 1440, 'only_per_pair': True}].
+INFO - Override strategy 'unfilledtimeout' with value in config file: {'buy': 10, 'sell': 30, 'unit': 'minutes'}.
+INFO - Override strategy 'use_sell_signal' with value in config file: True.
+INFO - Override strategy 'sell_profit_only' with value in config file: False.
+INFO - Override strategy 'ignore_roi_if_buy_signal' with value in config file: True.
+INFO - Strategy using minimal_roi: {'0': 10}
+INFO - Strategy using timeframe: 5m
+INFO - Strategy using stoploss: -0.25
+INFO - Strategy using trailing_stop: True
+INFO - Strategy using trailing_stop_positive: 0.01
+INFO - Strategy using trailing_stop_positive_offset: 0.03
+INFO - Strategy using trailing_only_offset_is_reached: True
+INFO - Strategy using use_custom_stoploss: True
+INFO - Strategy using process_only_new_candles: False
+INFO - Strategy using startup_candle_count: 4800
+INFO - Strategy using ignore_buying_expired_candle_after: 0
+WARNING - DEPRECATED: Please use `order_book_top` instead of `order_book_min` and `order_book_max` for your `ask_strategy` configuration.
+INFO - Using resolved protection StoplossGuard from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/freqtrade/plugins/protections/stoploss_guard.py'...
+INFO - Using resolved protection StoplossGuard from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/freqtrade/plugins/protections/stoploss_guard.py'...
+INFO - No "mgm-config-hyperopt" file found in the "user_data" directory.
+INFO - Using optimizer random state: 42959
+INFO - Min roi table: {0: 0.03, 5: 0.025, 10: 0.02, 15: 0.015, 20: 0.01, 25: 0.005, 30: 0}
+INFO - Max roi table: {0: 0.31, 5: 0.285, 10: 0.26, 15: 0.235, 20: 0.21, 25: 0.185, 30: 0.16, 35: 0.135, 40: 0.11, 45: 0.104, 50: 0.098, 55: 0.093, 60: 0.087, 65: 0.081, 70: 0.075, 75: 0.069, 80: 0.063, 85: 0.058, 90: 0.052, 95: 0.046, 100: 0.04, 105: 0.038, 110: 0.037, 115: 0.035, 120: 0.033, 125: 0.032, 130: 0.03, 135: 0.028, 140: 0.027, 145: 0.025, 150: 0.023, 155: 0.022, 160: 0.02, 165: 0.018, 170: 0.017, 175: 0.015, 180: 0.013, 185: 0.012, 190: 0.01, 195: 0.008, 200: 0.007, 205: 0.005, 210: 0.003, 215: 0.002, 220: 0}
+INFO - Loading data from 2021-04-14 08:00:00 up to 2021-06-16 00:00:00 (62 days).
+INFO - Hyperopting with data from 2021-05-01 00:00:00 up to 2021-06-16 00:00:00 (46 days)..
++--------+-----------+----------+------------------+--------------+-------------------------------+-----------------+-------------------------------+-------------+
+|   Best |     Epoch |   Trades |    Win Draw Loss |   Avg profit |                        Profit |    Avg duration |                  Max Drawdown |   Objective |
+|--------+-----------+----------+------------------+--------------+-------------------------------+-----------------+-------------------------------+-------------|
+| * Best |    1/1000 |      103 |     33   39   31 |        0.10% |         4.475 USDT    (0.90%) | 0 days 06:35:00 |        21.912 USDT   (48.64%) |    -318.293 |
+| * Best |    2/1000 |      121 |     61   49   11 |        0.08% |         4.426 USDT    (0.89%) | 0 days 06:23:00 |        58.082 USDT  (128.94%) |    -495.324 |
+| * Best |   14/1000 |       19 |     11    7    1 |        1.78% |        15.254 USDT    (3.05%) | 0 days 06:14:00 |         8.092 USDT   (17.96%) | -1,960.57406 |
+| * Best |   23/1000 |      141 |     55   39   47 |        1.11% |        70.202 USDT   (14.04%) | 0 days 10:17:00 |        18.528 USDT   (41.13%) | -6,079.17801 |
+|   Best |  109/1000 |      146 |     63   59   24 |        0.99% |        65.196 USDT   (13.04%) | 0 days 18:10:00 |        44.380 USDT   (98.52%) | -6,245.47311 |
+|   Best |  122/1000 |      109 |     42   21   46 |        1.56% |        76.775 USDT   (15.36%) | 0 days 13:13:00 |        22.379 USDT   (49.68%) | -6,567.43831 |
+|   Best |  152/1000 |      137 |     45   36   56 |        1.47% |        90.619 USDT   (18.12%) | 0 days 10:41:00 |        18.951 USDT   (42.07%) | -6,607.90209 |
+|   Best |  232/1000 |      110 |     44   21   45 |        1.61% |        79.934 USDT   (15.99%) | 0 days 13:38:00 |        15.654 USDT   (34.75%) | -7,098.13420 |
+|   Best |  401/1000 |      172 |     75   20   77 |        1.00% |        77.157 USDT   (15.43%) | 0 days 09:45:00 |        28.510 USDT   (63.29%) | -7,468.94551 |
+|   Best |  522/1000 |      152 |     75   23   54 |        1.31% |        89.464 USDT   (17.89%) | 0 days 18:21:00 |        50.303 USDT  (111.67%) | -9,799.86390 |
+|   Best |  924/1000 |      297 |    143   34  120 |        1.17% |       156.410 USDT   (31.28%) | 0 days 11:39:00 |        74.937 USDT  (166.36%) | -16,718.55457 |
+
+Elapsed Time: 1:34:40
+INFO - 1000 epochs saved to '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/hyperopt_results/strategy_MoniGoManiHyperStrategy_2021-07-23_20-15-42.fthypt'.
+INFO - Dumping parameters to /mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/strategies/MoniGoManiHyperStrategy.json
+
+Best result:
+
+   924/1000:
+    297 trades. 
+     143/34/120 Wins/Draws/Losses. 
+     Avg profit   1.17%. 
+     Median profit   0.00%. 
+     Total profit  156.41045937 USDT (  31.28%). 
+     Avg duration 11:39:00 min. 
+     Objective: -16718.55457
+
+
+    # Buy hyperspace params:
+    buy_params = {
+        "buy__downwards_trend_total_signal_needed": 110,
+        "buy__downwards_trend_total_signal_needed_candles_lookback_window": 3,
+        "buy__upwards_trend_total_signal_needed": 36,
+        "buy__upwards_trend_total_signal_needed_candles_lookback_window": 2,
+        "buy_downwards_trend_adx_strong_up_weight": 94,
+        "buy_downwards_trend_bollinger_bands_weight": 18,
+        "buy_downwards_trend_ema_long_golden_cross_weight": 1,
+        "buy_downwards_trend_ema_short_golden_cross_weight": 64,
+        "buy_downwards_trend_macd_weight": 100,
+        "buy_downwards_trend_rsi_weight": 35,
+        "buy_downwards_trend_sma_long_golden_cross_weight": 59,
+        "buy_downwards_trend_sma_short_golden_cross_weight": 61,
+        "buy_downwards_trend_vwap_cross_weight": 55,
+        "buy_upwards_trend_adx_strong_up_weight": 8,
+        "buy_upwards_trend_bollinger_bands_weight": 71,
+        "buy_upwards_trend_ema_long_golden_cross_weight": 12,
+        "buy_upwards_trend_ema_short_golden_cross_weight": 43,
+        "buy_upwards_trend_macd_weight": 75,
+        "buy_upwards_trend_rsi_weight": 29,
+        "buy_upwards_trend_sma_long_golden_cross_weight": 41,
+        "buy_upwards_trend_sma_short_golden_cross_weight": 21,
+        "buy_upwards_trend_vwap_cross_weight": 27,
+    }
+
+    # Sell hyperspace params:
+    sell_params = {
+        "sell___unclogger_minimal_losing_trade_duration_minutes": 29,
+        "sell___unclogger_minimal_losing_trades_open": 1,
+        "sell___unclogger_open_trades_losing_percentage_needed": 1,
+        "sell___unclogger_trend_lookback_candles_window": 11,
+        "sell___unclogger_trend_lookback_candles_window_percentage_needed": 35,
+        "sell__downwards_trend_total_signal_needed": 724,
+        "sell__downwards_trend_total_signal_needed_candles_lookback_window": 5,
+        "sell__upwards_trend_total_signal_needed": 166,
+        "sell__upwards_trend_total_signal_needed_candles_lookback_window": 3,
+        "sell_downwards_trend_adx_strong_down_weight": 72,
+        "sell_downwards_trend_bollinger_bands_weight": 61,
+        "sell_downwards_trend_ema_long_death_cross_weight": 3,
+        "sell_downwards_trend_ema_short_death_cross_weight": 44,
+        "sell_downwards_trend_macd_weight": 49,
+        "sell_downwards_trend_rsi_weight": 11,
+        "sell_downwards_trend_sma_long_death_cross_weight": 4,
+        "sell_downwards_trend_sma_short_death_cross_weight": 94,
+        "sell_downwards_trend_vwap_cross_weight": 89,
+        "sell_upwards_trend_adx_strong_down_weight": 95,
+        "sell_upwards_trend_bollinger_bands_weight": 3,
+        "sell_upwards_trend_ema_long_death_cross_weight": 92,
+        "sell_upwards_trend_ema_short_death_cross_weight": 86,
+        "sell_upwards_trend_macd_weight": 22,
+        "sell_upwards_trend_rsi_weight": 97,
+        "sell_upwards_trend_sma_long_death_cross_weight": 70,
+        "sell_upwards_trend_sma_short_death_cross_weight": 9,
+        "sell_upwards_trend_vwap_cross_weight": 100,
+    }
+
+    # ROI table:
+    minimal_roi = {
+        "0": 0.165,
+        "5": 0.14025,
+        "10": 0.1155,
+        "15": 0.09075,
+        "20": 0.066,
+        "25": 0.06304,
+        "30": 0.06007,
+        "35": 0.05711,
+        "40": 0.05415,
+        "45": 0.05119,
+        "50": 0.04822,
+        "55": 0.04526,
+        "60": 0.0423,
+        "65": 0.03933,
+        "70": 0.03637,
+        "75": 0.03328,
+        "80": 0.02966,
+        "85": 0.02604,
+        "90": 0.02243,
+        "95": 0.01881,
+        "100": 0.01519,
+        "105": 0.01157,
+        "110": 0.00796,
+        "115": 0.00434,
+        "120": 0.00072,
+        "125": 0
+    }
+
+    # Stoploss:
+    stoploss = -0.266
+
+    # Trailing stop:
+    trailing_stop = True
+    trailing_stop_positive = 0.346
+    trailing_stop_positive_offset = 0.364
+    trailing_only_offset_is_reached = False
+    

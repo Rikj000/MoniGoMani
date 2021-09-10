@@ -1,0 +1,639 @@
+INFO - Using config: ./user_data/mgm-config.json ...
+INFO - Using config: ./user_data/mgm-config-private.json ...
+INFO - Parameter --enable-protections detected, enabling Protections. ...
+INFO - Using max_open_trades: -1 ...
+INFO - Parameter --timerange detected: 20210501-20210616 ...
+INFO - Parameter --epochs detected ... Will run Hyperopt with for 1000 epochs ...
+INFO - Parameter -s/--spaces detected: ['all']
+INFO - Parameter --min-trades detected: 1
+INFO - Using Hyperopt loss class name: MGM_WinRatioAndProfitRatioHyperOptLoss
+WARNING - Exchange "ftx" is known to the the ccxt library, available for the bot, but not officially supported by the Freqtrade development team. It may work flawlessly (please report back) or have serious issues. Use it at your own discretion.
+INFO - Using resolved strategy MoniGoManiHyperStrategy from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/MoniGoMani/user_data/strategies/MoniGoManiHyperStrategy.py'...
+INFO - Strategy Parameter: buy__downwards_trend_signal_triggers_needed = 6
+INFO - Strategy Parameter: buy__downwards_trend_total_signal_needed = 530
+INFO - Strategy Parameter: buy__downwards_trend_total_signal_needed_candles_lookback_window = 3
+INFO - Strategy Parameter: buy__sideways_trend_signal_triggers_needed = 6
+INFO - Strategy Parameter: buy__sideways_trend_total_signal_needed = 530
+INFO - Strategy Parameter: buy__sideways_trend_total_signal_needed_candles_lookback_window = 3
+INFO - Strategy Parameter: buy__upwards_trend_signal_triggers_needed = 6
+INFO - Strategy Parameter: buy__upwards_trend_total_signal_needed = 530
+INFO - Strategy Parameter: buy__upwards_trend_total_signal_needed_candles_lookback_window = 3
+INFO - Strategy Parameter: buy_downwards_trend_adx_strong_up_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_bollinger_bands_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_ema_long_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_ema_short_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_macd_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_mfi_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_rsi_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_sma_long_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_sma_short_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_downwards_trend_vwap_cross_weight = 50
+INFO - Strategy Parameter: buy_sideways_trend_adx_strong_up_weight = 50
+INFO - Strategy Parameter: buy_sideways_trend_bollinger_bands_weight = 50
+INFO - Strategy Parameter: buy_sideways_trend_ema_long_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_sideways_trend_ema_short_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_sideways_trend_macd_weight = 50
+INFO - Strategy Parameter: buy_sideways_trend_mfi_weight = 50
+INFO - Strategy Parameter: buy_sideways_trend_rsi_weight = 50
+INFO - Strategy Parameter: buy_sideways_trend_sma_long_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_sideways_trend_sma_short_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_sideways_trend_vwap_cross_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_adx_strong_up_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_bollinger_bands_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_ema_long_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_ema_short_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_macd_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_mfi_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_rsi_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_sma_long_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_sma_short_golden_cross_weight = 50
+INFO - Strategy Parameter: buy_upwards_trend_vwap_cross_weight = 50
+INFO - Strategy Parameter: sell___unclogger_buy_cooldown_minutes_window = 270
+INFO - Strategy Parameter: sell___unclogger_minimal_losing_trade_duration_minutes = 37
+INFO - Strategy Parameter: sell___unclogger_minimal_losing_trades_open = 3
+INFO - Strategy Parameter: sell___unclogger_open_trades_losing_percentage_needed = 30
+INFO - Strategy Parameter: sell___unclogger_trend_lookback_candles_window = 35
+INFO - Strategy Parameter: sell___unclogger_trend_lookback_candles_window_percentage_needed = 30
+INFO - Strategy Parameter: sell__downwards_trend_signal_triggers_needed = 6
+INFO - Strategy Parameter: sell__downwards_trend_total_signal_needed = 530
+INFO - Strategy Parameter: sell__downwards_trend_total_signal_needed_candles_lookback_window = 3
+INFO - Strategy Parameter: sell__sideways_trend_signal_triggers_needed = 6
+INFO - Strategy Parameter: sell__sideways_trend_total_signal_needed = 530
+INFO - Strategy Parameter: sell__sideways_trend_total_signal_needed_candles_lookback_window = 3
+INFO - Strategy Parameter: sell__upwards_trend_signal_triggers_needed = 6
+INFO - Strategy Parameter: sell__upwards_trend_total_signal_needed = 530
+INFO - Strategy Parameter: sell__upwards_trend_total_signal_needed_candles_lookback_window = 3
+INFO - Strategy Parameter: sell_downwards_trend_adx_strong_down_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_bollinger_bands_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_ema_long_death_cross_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_ema_short_death_cross_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_macd_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_mfi_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_rsi_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_sma_long_death_cross_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_sma_short_death_cross_weight = 50
+INFO - Strategy Parameter: sell_downwards_trend_vwap_cross_weight = 50
+INFO - Strategy Parameter: sell_sideways_trend_adx_strong_down_weight = 50
+INFO - Strategy Parameter: sell_sideways_trend_bollinger_bands_weight = 50
+INFO - Strategy Parameter: sell_sideways_trend_ema_long_death_cross_weight = 50
+INFO - Strategy Parameter: sell_sideways_trend_ema_short_death_cross_weight = 50
+INFO - Strategy Parameter: sell_sideways_trend_macd_weight = 50
+INFO - Strategy Parameter: sell_sideways_trend_mfi_weight = 50
+INFO - Strategy Parameter: sell_sideways_trend_rsi_weight = 50
+INFO - Strategy Parameter: sell_sideways_trend_sma_long_death_cross_weight = 50
+INFO - Strategy Parameter: sell_sideways_trend_sma_short_death_cross_weight = 50
+INFO - Strategy Parameter: sell_sideways_trend_vwap_cross_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_adx_strong_down_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_bollinger_bands_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_ema_long_death_cross_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_ema_short_death_cross_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_macd_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_mfi_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_rsi_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_sma_long_death_cross_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_sma_short_death_cross_weight = 50
+INFO - Strategy Parameter: sell_upwards_trend_vwap_cross_weight = 50
+INFO - Override strategy 'order_types' with value in config file: {'buy': 'limit', 'sell': 'limit', 'emergencysell': 'market', 'forcesell': 'market', 'forcebuy': 'market', 'stoploss': 'market', 'stoploss_on_exchange': False, 'stoploss_on_exchange_interval': 60}.
+INFO - Override strategy 'order_time_in_force' with value in config file: {'buy': 'gtc', 'sell': 'gtc'}.
+INFO - Override strategy 'stake_currency' with value in config file: USD.
+INFO - Override strategy 'stake_amount' with value in config file: 45.
+INFO - Override strategy 'protections' with value in config file: [{'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 10, 'stop_duration': 1440, 'only_per_pair': False}, {'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 2, 'stop_duration': 1440, 'only_per_pair': True}].
+INFO - Override strategy 'unfilledtimeout' with value in config file: {'buy': 10, 'sell': 30, 'unit': 'minutes'}.
+INFO - Override strategy 'use_sell_signal' with value in config file: True.
+INFO - Override strategy 'sell_profit_only' with value in config file: False.
+INFO - Override strategy 'ignore_roi_if_buy_signal' with value in config file: True.
+INFO - Override strategy 'sell_profit_offset' with value in config file: 0.
+INFO - Override strategy 'disable_dataframe_checks' with value in config file: False.
+INFO - Strategy using minimal_roi: {'0': 100}
+INFO - Strategy using timeframe: 5m
+INFO - Strategy using stoploss: -1
+INFO - Strategy using trailing_stop: False
+INFO - Strategy using trailing_stop_positive: 0.01
+INFO - Strategy using trailing_stop_positive_offset: 0.03
+INFO - Strategy using trailing_only_offset_is_reached: False
+INFO - Strategy using use_custom_stoploss: True
+INFO - Strategy using process_only_new_candles: False
+INFO - Strategy using startup_candle_count: 400
+INFO - Strategy using ignore_buying_expired_candle_after: 0
+INFO - Using resolved protection StoplossGuard from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/freqtrade/plugins/protections/stoploss_guard.py'...
+INFO - Using resolved protection StoplossGuard from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/freqtrade/plugins/protections/stoploss_guard.py'...
+INFO - No "mgm-config-hyperopt" file found in the "user_data" directory.
+INFO - Using optimizer random state: 29173
+INFO - Min ROI table: {0: 0.069, 5: 0.068, 10: 0.067, 15: 0.066, 20: 0.065, 25: 0.064, 30: 0.063, 35: 0.062, 40: 0.061, 45: 0.06, 50: 0.059, 55: 0.058, 60: 0.057, 65: 0.056, 70: 0.055, 75: 0.054, 80: 0.054, 85: 0.053, 90: 0.052, 95: 0.051, 100: 0.05, 105: 0.049, 110: 0.048, 115: 0.047, 120: 0.046, 125: 0.045, 130: 0.044, 135: 0.043, 140: 0.042, 145: 0.041, 150: 0.04, 155: 0.039, 160: 0.038, 165: 0.037, 170: 0.036, 175: 0.035, 180: 0.034, 185: 0.033, 190: 0.033, 195: 0.032, 200: 0.031, 205: 0.03, 210: 0.029, 215: 0.028, 220: 0.027, 225: 0.026, 230: 0.025, 235: 0.024, 240: 0.023, 245: 0.022, 250: 0.021, 255: 0.02, 260: 0.019, 265: 0.018, 270: 0.017, 275: 0.016, 280: 0.015, 285: 0.014, 290: 0.013, 295: 0.012, 300: 0.011, 305: 0.011, 310: 0.01, 315: 0.009, 320: 0.008, 325: 0.007, 330: 0.006, 335: 0.005, 340: 0.004, 345: 0.003, 350: 0.002, 355: 0.001, 360: 0}
+INFO - Max ROI table: {0: 0.711, 5: 0.706, 10: 0.702, 15: 0.697, 20: 0.692, 25: 0.687, 30: 0.683, 35: 0.678, 40: 0.673, 45: 0.668, 50: 0.663, 55: 0.659, 60: 0.654, 65: 0.649, 70: 0.644, 75: 0.64, 80: 0.635, 85: 0.63, 90: 0.625, 95: 0.62, 100: 0.616, 105: 0.611, 110: 0.606, 115: 0.601, 120: 0.597, 125: 0.592, 130: 0.587, 135: 0.582, 140: 0.577, 145: 0.573, 150: 0.568, 155: 0.563, 160: 0.558, 165: 0.554, 170: 0.549, 175: 0.544, 180: 0.539, 185: 0.534, 190: 0.53, 195: 0.525, 200: 0.52, 205: 0.515, 210: 0.51, 215: 0.506, 220: 0.501, 225: 0.496, 230: 0.491, 235: 0.487, 240: 0.482, 245: 0.477, 250: 0.472, 255: 0.467, 260: 0.463, 265: 0.458, 270: 0.453, 275: 0.448, 280: 0.444, 285: 0.439, 290: 0.434, 295: 0.429, 300: 0.424, 305: 0.42, 310: 0.415, 315: 0.41, 320: 0.405, 325: 0.401, 330: 0.396, 335: 0.391, 340: 0.386, 345: 0.381, 350: 0.377, 355: 0.372, 360: 0.367, 365: 0.362, 370: 0.358, 375: 0.353, 380: 0.348, 385: 0.343, 390: 0.338, 395: 0.334, 400: 0.329, 405: 0.324, 410: 0.319, 415: 0.315, 420: 0.31, 425: 0.305, 430: 0.3, 435: 0.295, 440: 0.291, 445: 0.286, 450: 0.281, 455: 0.276, 460: 0.271, 465: 0.267, 470: 0.262, 475: 0.257, 480: 0.252, 485: 0.251, 490: 0.25, 495: 0.249, 500: 0.248, 505: 0.247, 510: 0.246, 515: 0.245, 520: 0.243, 525: 0.242, 530: 0.241, 535: 0.24, 540: 0.239, 545: 0.238, 550: 0.237, 555: 0.236, 560: 0.235, 565: 0.233, 570: 0.232, 575: 0.231, 580: 0.23, 585: 0.229, 590: 0.228, 595: 0.227, 600: 0.226, 605: 0.224, 610: 0.223, 615: 0.222, 620: 0.221, 625: 0.22, 630: 0.219, 635: 0.218, 640: 0.217, 645: 0.216, 650: 0.214, 655: 0.213, 660: 0.212, 665: 0.211, 670: 0.21, 675: 0.209, 680: 0.208, 685: 0.207, 690: 0.206, 695: 0.204, 700: 0.203, 705: 0.202, 710: 0.201, 715: 0.2, 720: 0.199, 725: 0.198, 730: 0.197, 735: 0.195, 740: 0.194, 745: 0.193, 750: 0.192, 755: 0.191, 760: 0.19, 765: 0.189, 770: 0.188, 775: 0.187, 780: 0.185, 785: 0.184, 790: 0.183, 795: 0.182, 800: 0.181, 805: 0.18, 810: 0.179, 815: 0.178, 820: 0.177, 825: 0.175, 830: 0.174, 835: 0.173, 840: 0.172, 845: 0.171, 850: 0.17, 855: 0.169, 860: 0.168, 865: 0.166, 870: 0.165, 875: 0.164, 880: 0.163, 885: 0.162, 890: 0.161, 895: 0.16, 900: 0.159, 905: 0.158, 910: 0.156, 915: 0.155, 920: 0.154, 925: 0.153, 930: 0.152, 935: 0.151, 940: 0.15, 945: 0.149, 950: 0.148, 955: 0.146, 960: 0.145, 965: 0.144, 970: 0.143, 975: 0.142, 980: 0.141, 985: 0.14, 990: 0.139, 995: 0.138, 1000: 0.136, 1005: 0.135, 1010: 0.134, 1015: 0.133, 1020: 0.132, 1025: 0.131, 1030: 0.13, 1035: 0.129, 1040: 0.127, 1045: 0.126, 1050: 0.125, 1055: 0.124, 1060: 0.123, 1065: 0.122, 1070: 0.121, 1075: 0.12, 1080: 0.119, 1085: 0.117, 1090: 0.116, 1095: 0.115, 1100: 0.114, 1105: 0.113, 1110: 0.112, 1115: 0.111, 1120: 0.11, 1125: 0.109, 1130: 0.107, 1135: 0.106, 1140: 0.105, 1145: 0.104, 1150: 0.103, 1155: 0.102, 1160: 0.101, 1165: 0.1, 1170: 0.098, 1175: 0.097, 1180: 0.096, 1185: 0.095, 1190: 0.094, 1195: 0.093, 1200: 0.092, 1205: 0.091, 1210: 0.091, 1215: 0.091, 1220: 0.09, 1225: 0.09, 1230: 0.09, 1235: 0.09, 1240: 0.089, 1245: 0.089, 1250: 0.089, 1255: 0.088, 1260: 0.088, 1265: 0.088, 1270: 0.087, 1275: 0.087, 1280: 0.087, 1285: 0.086, 1290: 0.086, 1295: 0.086, 1300: 0.085, 1305: 0.085, 1310: 0.085, 1315: 0.084, 1320: 0.084, 1325: 0.084, 1330: 0.083, 1335: 0.083, 1340: 0.083, 1345: 0.083, 1350: 0.082, 1355: 0.082, 1360: 0.082, 1365: 0.081, 1370: 0.081, 1375: 0.081, 1380: 0.08, 1385: 0.08, 1390: 0.08, 1395: 0.079, 1400: 0.079, 1405: 0.079, 1410: 0.078, 1415: 0.078, 1420: 0.078, 1425: 0.077, 1430: 0.077, 1435: 0.077, 1440: 0.076, 1445: 0.076, 1450: 0.076, 1455: 0.076, 1460: 0.075, 1465: 0.075, 1470: 0.075, 1475: 0.074, 1480: 0.074, 1485: 0.074, 1490: 0.073, 1495: 0.073, 1500: 0.073, 1505: 0.072, 1510: 0.072, 1515: 0.072, 1520: 0.071, 1525: 0.071, 1530: 0.071, 1535: 0.07, 1540: 0.07, 1545: 0.07, 1550: 0.069, 1555: 0.069, 1560: 0.069, 1565: 0.069, 1570: 0.068, 1575: 0.068, 1580: 0.068, 1585: 0.067, 1590: 0.067, 1595: 0.067, 1600: 0.066, 1605: 0.066, 1610: 0.066, 1615: 0.065, 1620: 0.065, 1625: 0.065, 1630: 0.064, 1635: 0.064, 1640: 0.064, 1645: 0.063, 1650: 0.063, 1655: 0.063, 1660: 0.062, 1665: 0.062, 1670: 0.062, 1675: 0.062, 1680: 0.061, 1685: 0.061, 1690: 0.061, 1695: 0.06, 1700: 0.06, 1705: 0.06, 1710: 0.059, 1715: 0.059, 1720: 0.059, 1725: 0.058, 1730: 0.058, 1735: 0.058, 1740: 0.057, 1745: 0.057, 1750: 0.057, 1755: 0.056, 1760: 0.056, 1765: 0.056, 1770: 0.055, 1775: 0.055, 1780: 0.055, 1785: 0.054, 1790: 0.054, 1795: 0.054, 1800: 0.054, 1805: 0.053, 1810: 0.053, 1815: 0.053, 1820: 0.052, 1825: 0.052, 1830: 0.052, 1835: 0.051, 1840: 0.051, 1845: 0.051, 1850: 0.05, 1855: 0.05, 1860: 0.05, 1865: 0.049, 1870: 0.049, 1875: 0.049, 1880: 0.048, 1885: 0.048, 1890: 0.048, 1895: 0.047, 1900: 0.047, 1905: 0.047, 1910: 0.047, 1915: 0.046, 1920: 0.046, 1925: 0.046, 1930: 0.045, 1935: 0.045, 1940: 0.045, 1945: 0.044, 1950: 0.044, 1955: 0.044, 1960: 0.043, 1965: 0.043, 1970: 0.043, 1975: 0.042, 1980: 0.042, 1985: 0.042, 1990: 0.041, 1995: 0.041, 2000: 0.041, 2005: 0.04, 2010: 0.04, 2015: 0.04, 2020: 0.04, 2025: 0.039, 2030: 0.039, 2035: 0.039, 2040: 0.038, 2045: 0.038, 2050: 0.038, 2055: 0.037, 2060: 0.037, 2065: 0.037, 2070: 0.036, 2075: 0.036, 2080: 0.036, 2085: 0.035, 2090: 0.035, 2095: 0.035, 2100: 0.034, 2105: 0.034, 2110: 0.034, 2115: 0.033, 2120: 0.033, 2125: 0.033, 2130: 0.033, 2135: 0.032, 2140: 0.032, 2145: 0.032, 2150: 0.031, 2155: 0.031, 2160: 0.031, 2165: 0.03, 2170: 0.03, 2175: 0.03, 2180: 0.029, 2185: 0.029, 2190: 0.029, 2195: 0.028, 2200: 0.028, 2205: 0.028, 2210: 0.027, 2215: 0.027, 2220: 0.027, 2225: 0.026, 2230: 0.026, 2235: 0.026, 2240: 0.025, 2245: 0.025, 2250: 0.025, 2255: 0.025, 2260: 0.024, 2265: 0.024, 2270: 0.024, 2275: 0.023, 2280: 0.023, 2285: 0.023, 2290: 0.022, 2295: 0.022, 2300: 0.022, 2305: 0.021, 2310: 0.021, 2315: 0.021, 2320: 0.02, 2325: 0.02, 2330: 0.02, 2335: 0.019, 2340: 0.019, 2345: 0.019, 2350: 0.018, 2355: 0.018, 2360: 0.018, 2365: 0.018, 2370: 0.017, 2375: 0.017, 2380: 0.017, 2385: 0.016, 2390: 0.016, 2395: 0.016, 2400: 0.015, 2405: 0.015, 2410: 0.015, 2415: 0.014, 2420: 0.014, 2425: 0.014, 2430: 0.013, 2435: 0.013, 2440: 0.013, 2445: 0.012, 2450: 0.012, 2455: 0.012, 2460: 0.011, 2465: 0.011, 2470: 0.011, 2475: 0.011, 2480: 0.01, 2485: 0.01, 2490: 0.01, 2495: 0.009, 2500: 0.009, 2505: 0.009, 2510: 0.008, 2515: 0.008, 2520: 0.008, 2525: 0.007, 2530: 0.007, 2535: 0.007, 2540: 0.006, 2545: 0.006, 2550: 0.006, 2555: 0.005, 2560: 0.005, 2565: 0.005, 2570: 0.004, 2575: 0.004, 2580: 0.004, 2585: 0.004, 2590: 0.003, 2595: 0.003, 2600: 0.003, 2605: 0.002, 2610: 0.002, 2615: 0.002, 2620: 0.001, 2625: 0.001, 2630: 0.001, 2635: 0.0, 2640: 0}
+WARNING - Missing data at start for pair STEP/USD, data starts at 2021-04-30 10:05:00
+INFO - Loading data from 2021-04-29 14:40:00 up to 2021-06-16 00:00:00 (47 days).
+INFO - Hyperopting with data from 2021-05-01 00:00:00 up to 2021-06-16 00:00:00 (46 days)..
++--------+-----------+----------+------------------+--------------+------------------------------+-----------------+------------------------------+--------------+
+|   Best |     Epoch |   Trades |    Win Draw Loss |   Avg profit |                       Profit |    Avg duration |                 Max Drawdown |    Objective |
+|--------+-----------+----------+------------------+--------------+------------------------------+-----------------+------------------------------+--------------|
+|   Best |  160/1000 |        3 |      3    0    0 |        3.82% |         5.155 USD    (1.03%) | 0 days 12:45:00 |                           -- | -1,145.34710 |
+|   Best |  484/1000 |      162 |     82   22   58 |        0.29% |        20.844 USD    (4.17%) | 0 days 14:17:00 |        56.251 USD  (124.98%) | -2,344.13663 |
+|   Best |  501/1000 |      567 |    178    6  383 |        0.25% |        62.943 USD   (12.59%) | 0 days 08:46:00 |       157.666 USD  (350.30%) | -4,390.20274 |
+|   Best |  566/1000 |      390 |    100    0  290 |        0.48% |        83.699 USD   (16.74%) | 0 days 07:47:00 |        92.740 USD  (206.05%) | -4,768.20767 |
+|   Best |  790/1000 |      506 |    185    0  321 |        0.44% |        99.773 USD   (19.95%) | 0 days 07:47:00 |        91.028 USD  (202.24%) | -8,104.66584 |
+
+Elapsed Time: 3:50:55
+INFO - 1000 epochs saved to '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/hyperopt_results/strategy_MoniGoManiHyperStrategy_2021-08-20_01-22-37.fthypt'.
+INFO - Dumping parameters to user_data/strategies/MoniGoManiHyperStrategy.json
+
+Best result:
+
+   790/1000:
+    506 trades. 
+     185/0/321 Wins/Draws/Losses. 
+     Avg profit   0.44%. 
+     Median profit  -2.44%. 
+     Total profit  99.77301331 USD (  19.95%). 
+     Avg duration 7:47:00 min. 
+     Objective: -8104.66584
+
+
+    # Buy hyperspace params:
+    buy_params = {
+        "buy__downwards_trend_signal_triggers_needed": 6,
+        "buy__downwards_trend_total_signal_needed": 190,
+        "buy__downwards_trend_total_signal_needed_candles_lookback_window": 2,
+        "buy__sideways_trend_signal_triggers_needed": 9,
+        "buy__sideways_trend_total_signal_needed": 328,
+        "buy__sideways_trend_total_signal_needed_candles_lookback_window": 3,
+        "buy__upwards_trend_signal_triggers_needed": 2,
+        "buy__upwards_trend_total_signal_needed": 75,
+        "buy__upwards_trend_total_signal_needed_candles_lookback_window": 1,
+        "buy_downwards_trend_adx_strong_up_weight": 13,
+        "buy_downwards_trend_bollinger_bands_weight": 62,
+        "buy_downwards_trend_ema_long_golden_cross_weight": 22,
+        "buy_downwards_trend_ema_short_golden_cross_weight": 73,
+        "buy_downwards_trend_macd_weight": 29,
+        "buy_downwards_trend_mfi_weight": 8,
+        "buy_downwards_trend_rsi_weight": 10,
+        "buy_downwards_trend_sma_long_golden_cross_weight": 68,
+        "buy_downwards_trend_sma_short_golden_cross_weight": 52,
+        "buy_downwards_trend_vwap_cross_weight": 73,
+        "buy_sideways_trend_adx_strong_up_weight": 4,
+        "buy_sideways_trend_bollinger_bands_weight": 84,
+        "buy_sideways_trend_ema_long_golden_cross_weight": 76,
+        "buy_sideways_trend_ema_short_golden_cross_weight": 84,
+        "buy_sideways_trend_macd_weight": 91,
+        "buy_sideways_trend_mfi_weight": 75,
+        "buy_sideways_trend_rsi_weight": 67,
+        "buy_sideways_trend_sma_long_golden_cross_weight": 62,
+        "buy_sideways_trend_sma_short_golden_cross_weight": 61,
+        "buy_sideways_trend_vwap_cross_weight": 21,
+        "buy_upwards_trend_adx_strong_up_weight": 73,
+        "buy_upwards_trend_bollinger_bands_weight": 31,
+        "buy_upwards_trend_ema_long_golden_cross_weight": 82,
+        "buy_upwards_trend_ema_short_golden_cross_weight": 23,
+        "buy_upwards_trend_macd_weight": 13,
+        "buy_upwards_trend_mfi_weight": 5,
+        "buy_upwards_trend_rsi_weight": 2,
+        "buy_upwards_trend_sma_long_golden_cross_weight": 91,
+        "buy_upwards_trend_sma_short_golden_cross_weight": 97,
+        "buy_upwards_trend_vwap_cross_weight": 53,
+    }
+
+    # Sell hyperspace params:
+    sell_params = {
+        "sell___unclogger_buy_cooldown_minutes_window": 303,
+        "sell___unclogger_minimal_losing_trade_duration_minutes": 44,
+        "sell___unclogger_minimal_losing_trades_open": 5,
+        "sell___unclogger_open_trades_losing_percentage_needed": 41,
+        "sell___unclogger_trend_lookback_candles_window": 15,
+        "sell___unclogger_trend_lookback_candles_window_percentage_needed": 35,
+        "sell__downwards_trend_signal_triggers_needed": 2,
+        "sell__downwards_trend_total_signal_needed": 198,
+        "sell__downwards_trend_total_signal_needed_candles_lookback_window": 3,
+        "sell__sideways_trend_signal_triggers_needed": 10,
+        "sell__sideways_trend_total_signal_needed": 273,
+        "sell__sideways_trend_total_signal_needed_candles_lookback_window": 2,
+        "sell__upwards_trend_signal_triggers_needed": 7,
+        "sell__upwards_trend_total_signal_needed": 246,
+        "sell__upwards_trend_total_signal_needed_candles_lookback_window": 4,
+        "sell_downwards_trend_adx_strong_down_weight": 23,
+        "sell_downwards_trend_bollinger_bands_weight": 44,
+        "sell_downwards_trend_ema_long_death_cross_weight": 70,
+        "sell_downwards_trend_ema_short_death_cross_weight": 12,
+        "sell_downwards_trend_macd_weight": 86,
+        "sell_downwards_trend_mfi_weight": 6,
+        "sell_downwards_trend_rsi_weight": 63,
+        "sell_downwards_trend_sma_long_death_cross_weight": 58,
+        "sell_downwards_trend_sma_short_death_cross_weight": 46,
+        "sell_downwards_trend_vwap_cross_weight": 65,
+        "sell_sideways_trend_adx_strong_down_weight": 78,
+        "sell_sideways_trend_bollinger_bands_weight": 25,
+        "sell_sideways_trend_ema_long_death_cross_weight": 72,
+        "sell_sideways_trend_ema_short_death_cross_weight": 43,
+        "sell_sideways_trend_macd_weight": 71,
+        "sell_sideways_trend_mfi_weight": 39,
+        "sell_sideways_trend_rsi_weight": 75,
+        "sell_sideways_trend_sma_long_death_cross_weight": 45,
+        "sell_sideways_trend_sma_short_death_cross_weight": 69,
+        "sell_sideways_trend_vwap_cross_weight": 42,
+        "sell_upwards_trend_adx_strong_down_weight": 42,
+        "sell_upwards_trend_bollinger_bands_weight": 97,
+        "sell_upwards_trend_ema_long_death_cross_weight": 74,
+        "sell_upwards_trend_ema_short_death_cross_weight": 21,
+        "sell_upwards_trend_macd_weight": 16,
+        "sell_upwards_trend_mfi_weight": 57,
+        "sell_upwards_trend_rsi_weight": 32,
+        "sell_upwards_trend_sma_long_death_cross_weight": 3,
+        "sell_upwards_trend_sma_short_death_cross_weight": 6,
+        "sell_upwards_trend_vwap_cross_weight": 42,
+    }
+
+    # ROI table:
+    minimal_roi = {
+        "0": 0.395,
+        "5": 0.38887,
+        "10": 0.38274,
+        "15": 0.37661,
+        "20": 0.37048,
+        "25": 0.36435,
+        "30": 0.35821,
+        "35": 0.35208,
+        "40": 0.34595,
+        "45": 0.33982,
+        "50": 0.33369,
+        "55": 0.32756,
+        "60": 0.32143,
+        "65": 0.3153,
+        "70": 0.30917,
+        "75": 0.30304,
+        "80": 0.2969,
+        "85": 0.29077,
+        "90": 0.28464,
+        "95": 0.27851,
+        "100": 0.27238,
+        "105": 0.26625,
+        "110": 0.26012,
+        "115": 0.25399,
+        "120": 0.24786,
+        "125": 0.24173,
+        "130": 0.2356,
+        "135": 0.22946,
+        "140": 0.22333,
+        "145": 0.2172,
+        "150": 0.21107,
+        "155": 0.20494,
+        "160": 0.19881,
+        "165": 0.19268,
+        "170": 0.18838,
+        "175": 0.18684,
+        "180": 0.1853,
+        "185": 0.18375,
+        "190": 0.18221,
+        "195": 0.18067,
+        "200": 0.17912,
+        "205": 0.17758,
+        "210": 0.17604,
+        "215": 0.17449,
+        "220": 0.17295,
+        "225": 0.17141,
+        "230": 0.16986,
+        "235": 0.16832,
+        "240": 0.16678,
+        "245": 0.16523,
+        "250": 0.16369,
+        "255": 0.16215,
+        "260": 0.1606,
+        "265": 0.15906,
+        "270": 0.15752,
+        "275": 0.15598,
+        "280": 0.15443,
+        "285": 0.15289,
+        "290": 0.15135,
+        "295": 0.1498,
+        "300": 0.14826,
+        "305": 0.14672,
+        "310": 0.14517,
+        "315": 0.14363,
+        "320": 0.14209,
+        "325": 0.14054,
+        "330": 0.139,
+        "335": 0.13746,
+        "340": 0.13591,
+        "345": 0.13437,
+        "350": 0.13283,
+        "355": 0.13128,
+        "360": 0.12974,
+        "365": 0.1282,
+        "370": 0.12665,
+        "375": 0.12511,
+        "380": 0.12357,
+        "385": 0.12202,
+        "390": 0.12048,
+        "395": 0.11894,
+        "400": 0.1174,
+        "405": 0.11585,
+        "410": 0.11431,
+        "415": 0.11277,
+        "420": 0.11122,
+        "425": 0.10968,
+        "430": 0.10814,
+        "435": 0.10659,
+        "440": 0.10505,
+        "445": 0.10351,
+        "450": 0.10196,
+        "455": 0.10042,
+        "460": 0.09888,
+        "465": 0.09733,
+        "470": 0.09579,
+        "475": 0.09425,
+        "480": 0.0927,
+        "485": 0.09116,
+        "490": 0.08962,
+        "495": 0.08807,
+        "500": 0.08653,
+        "505": 0.08499,
+        "510": 0.08344,
+        "515": 0.0819,
+        "520": 0.08036,
+        "525": 0.07881,
+        "530": 0.07727,
+        "535": 0.07573,
+        "540": 0.07419,
+        "545": 0.07264,
+        "550": 0.0711,
+        "555": 0.06956,
+        "560": 0.06801,
+        "565": 0.06647,
+        "570": 0.06493,
+        "575": 0.06338,
+        "580": 0.06184,
+        "585": 0.0603,
+        "590": 0.05875,
+        "595": 0.05721,
+        "600": 0.05567,
+        "605": 0.05412,
+        "610": 0.05258,
+        "615": 0.05104,
+        "620": 0.04949,
+        "625": 0.04795,
+        "630": 0.04641,
+        "635": 0.04486,
+        "640": 0.04332,
+        "645": 0.04178,
+        "650": 0.04023,
+        "655": 0.03897,
+        "660": 0.03881,
+        "665": 0.03866,
+        "670": 0.0385,
+        "675": 0.03835,
+        "680": 0.03819,
+        "685": 0.03804,
+        "690": 0.03788,
+        "695": 0.03772,
+        "700": 0.03757,
+        "705": 0.03741,
+        "710": 0.03726,
+        "715": 0.0371,
+        "720": 0.03695,
+        "725": 0.03679,
+        "730": 0.03663,
+        "735": 0.03648,
+        "740": 0.03632,
+        "745": 0.03617,
+        "750": 0.03601,
+        "755": 0.03586,
+        "760": 0.0357,
+        "765": 0.03555,
+        "770": 0.03539,
+        "775": 0.03523,
+        "780": 0.03508,
+        "785": 0.03492,
+        "790": 0.03477,
+        "795": 0.03461,
+        "800": 0.03446,
+        "805": 0.0343,
+        "810": 0.03414,
+        "815": 0.03399,
+        "820": 0.03383,
+        "825": 0.03368,
+        "830": 0.03352,
+        "835": 0.03337,
+        "840": 0.03321,
+        "845": 0.03306,
+        "850": 0.0329,
+        "855": 0.03274,
+        "860": 0.03259,
+        "865": 0.03243,
+        "870": 0.03228,
+        "875": 0.03212,
+        "880": 0.03197,
+        "885": 0.03181,
+        "890": 0.03165,
+        "895": 0.0315,
+        "900": 0.03134,
+        "905": 0.03119,
+        "910": 0.03103,
+        "915": 0.03088,
+        "920": 0.03072,
+        "925": 0.03057,
+        "930": 0.03041,
+        "935": 0.03025,
+        "940": 0.0301,
+        "945": 0.02994,
+        "950": 0.02979,
+        "955": 0.02963,
+        "960": 0.02948,
+        "965": 0.02932,
+        "970": 0.02916,
+        "975": 0.02901,
+        "980": 0.02885,
+        "985": 0.0287,
+        "990": 0.02854,
+        "995": 0.02839,
+        "1000": 0.02823,
+        "1005": 0.02808,
+        "1010": 0.02792,
+        "1015": 0.02776,
+        "1020": 0.02761,
+        "1025": 0.02745,
+        "1030": 0.0273,
+        "1035": 0.02714,
+        "1040": 0.02699,
+        "1045": 0.02683,
+        "1050": 0.02667,
+        "1055": 0.02652,
+        "1060": 0.02636,
+        "1065": 0.02621,
+        "1070": 0.02605,
+        "1075": 0.0259,
+        "1080": 0.02574,
+        "1085": 0.02558,
+        "1090": 0.02543,
+        "1095": 0.02527,
+        "1100": 0.02512,
+        "1105": 0.02496,
+        "1110": 0.02481,
+        "1115": 0.02465,
+        "1120": 0.0245,
+        "1125": 0.02434,
+        "1130": 0.02418,
+        "1135": 0.02403,
+        "1140": 0.02387,
+        "1145": 0.02372,
+        "1150": 0.02356,
+        "1155": 0.02341,
+        "1160": 0.02325,
+        "1165": 0.02309,
+        "1170": 0.02294,
+        "1175": 0.02278,
+        "1180": 0.02263,
+        "1185": 0.02247,
+        "1190": 0.02232,
+        "1195": 0.02216,
+        "1200": 0.02201,
+        "1205": 0.02185,
+        "1210": 0.02169,
+        "1215": 0.02154,
+        "1220": 0.02138,
+        "1225": 0.02123,
+        "1230": 0.02107,
+        "1235": 0.02092,
+        "1240": 0.02076,
+        "1245": 0.0206,
+        "1250": 0.02045,
+        "1255": 0.02029,
+        "1260": 0.02014,
+        "1265": 0.01998,
+        "1270": 0.01983,
+        "1275": 0.01967,
+        "1280": 0.01952,
+        "1285": 0.01936,
+        "1290": 0.0192,
+        "1295": 0.01905,
+        "1300": 0.01889,
+        "1305": 0.01874,
+        "1310": 0.01858,
+        "1315": 0.01843,
+        "1320": 0.01827,
+        "1325": 0.01811,
+        "1330": 0.01796,
+        "1335": 0.0178,
+        "1340": 0.01765,
+        "1345": 0.01749,
+        "1350": 0.01734,
+        "1355": 0.01718,
+        "1360": 0.01703,
+        "1365": 0.01687,
+        "1370": 0.01671,
+        "1375": 0.01656,
+        "1380": 0.0164,
+        "1385": 0.01625,
+        "1390": 0.01609,
+        "1395": 0.01594,
+        "1400": 0.01578,
+        "1405": 0.01562,
+        "1410": 0.01547,
+        "1415": 0.01531,
+        "1420": 0.01516,
+        "1425": 0.015,
+        "1430": 0.01485,
+        "1435": 0.01469,
+        "1440": 0.01454,
+        "1445": 0.01438,
+        "1450": 0.01422,
+        "1455": 0.01407,
+        "1460": 0.01391,
+        "1465": 0.01376,
+        "1470": 0.0136,
+        "1475": 0.01345,
+        "1480": 0.01329,
+        "1485": 0.01313,
+        "1490": 0.01298,
+        "1495": 0.01282,
+        "1500": 0.01267,
+        "1505": 0.01251,
+        "1510": 0.01236,
+        "1515": 0.0122,
+        "1520": 0.01205,
+        "1525": 0.01189,
+        "1530": 0.01173,
+        "1535": 0.01158,
+        "1540": 0.01142,
+        "1545": 0.01127,
+        "1550": 0.01111,
+        "1555": 0.01096,
+        "1560": 0.0108,
+        "1565": 0.01064,
+        "1570": 0.01049,
+        "1575": 0.01033,
+        "1580": 0.01018,
+        "1585": 0.01002,
+        "1590": 0.00987,
+        "1595": 0.00971,
+        "1600": 0.00956,
+        "1605": 0.0094,
+        "1610": 0.00924,
+        "1615": 0.00909,
+        "1620": 0.00893,
+        "1625": 0.00878,
+        "1630": 0.00862,
+        "1635": 0.00847,
+        "1640": 0.00831,
+        "1645": 0.00815,
+        "1650": 0.008,
+        "1655": 0.00784,
+        "1660": 0.00769,
+        "1665": 0.00753,
+        "1670": 0.00738,
+        "1675": 0.00722,
+        "1680": 0.00707,
+        "1685": 0.00691,
+        "1690": 0.00675,
+        "1695": 0.0066,
+        "1700": 0.00644,
+        "1705": 0.00629,
+        "1710": 0.00613,
+        "1715": 0.00598,
+        "1720": 0.00582,
+        "1725": 0.00566,
+        "1730": 0.00551,
+        "1735": 0.00535,
+        "1740": 0.0052,
+        "1745": 0.00504,
+        "1750": 0.00489,
+        "1755": 0.00473,
+        "1760": 0.00458,
+        "1765": 0.00442,
+        "1770": 0.00426,
+        "1775": 0.00411,
+        "1780": 0.00395,
+        "1785": 0.0038,
+        "1790": 0.00364,
+        "1795": 0.00349,
+        "1800": 0.00333,
+        "1805": 0.00317,
+        "1810": 0.00302,
+        "1815": 0.00286,
+        "1820": 0.00271,
+        "1825": 0.00255,
+        "1830": 0.0024,
+        "1835": 0.00224,
+        "1840": 0.00209,
+        "1845": 0.00193,
+        "1850": 0.00177,
+        "1855": 0.00162,
+        "1860": 0.00146,
+        "1865": 0.00131,
+        "1870": 0.00115,
+        "1875": 0.001,
+        "1880": 0.00084,
+        "1885": 0.00068,
+        "1890": 0.00053,
+        "1895": 0.00037,
+        "1900": 0.00022,
+        "1905": 6e-05,
+        "1910": 0
+    }
+
+    # Stoploss:
+    stoploss = -0.04
+
+    # Trailing stop:
+    trailing_stop = True
+    trailing_stop_positive = 0.039
+    trailing_stop_positive_offset = 0.124
+    trailing_only_offset_is_reached = False
+    

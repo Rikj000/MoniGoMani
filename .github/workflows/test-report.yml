@@ -21,17 +21,17 @@ jobs:
     name: Workflow test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: ./
-      with:
-        artifact: test-results
-        name: Workflow Report
-        path: '*.xml'
-        reporter: jest-junit
-    - name: Test Report
-      uses: dorny/test-reporter@v1
-      if: success() || failure()
-      with:
-        name: Test Report
-        path: tests/junit/test-results*.xml
-        reporter: java-junit
+      - uses: actions/checkout@v2
+      - uses: ./
+        with:
+          artifact: test-results
+          name: Workflow Report
+          path: '*.xml'
+          reporter: jest-junit
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Test Report
+          path: tests/junit/test-results*.xml
+          reporter: java-junit

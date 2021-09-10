@@ -1,0 +1,71 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+default_language_version:
+    python: python3.8
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 38b88246ccc552bffaaf54259d064beeee434539  # frozen: v4.0.1
+    hooks:
+    -   id: trailing-whitespace
+        types: [file, python]
+    -   id: end-of-file-fixer
+        types: [file, python]
+    -   id: check-ast # Simply check whether files parse as valid python.
+        types: [file, python]
+    -   id: check-docstring-first
+        types: [file, python]
+    -   id: check-json
+        types: [file, json]
+    -   id: check-added-large-files
+        types: [file]
+    -   id: check-yaml
+        types: [file, yaml]
+    -   id: debug-statements
+        types: [file, python]
+    -   id: name-tests-test
+        files: ^tests/
+        types: [file, python]
+    -   id: double-quote-string-fixer
+        types: [file, python]
+    -   id: requirements-txt-fixer
+        files: ^requirements
+        types: [file, plain-text]
+    -   id: check-case-conflict # Check for files with names that would conflict on a case-insensitive filesystem like MacOS HFS+ or Windows FAT.
+        types: [file, python]
+    -   id: check-merge-conflict
+    -   id: detect-private-key
+    -   id: fix-encoding-pragma
+        files: ^(tests/|mgm_hurry)* # All files in tests/ and all files matching mgm_hurry*
+        types: [file, python]
+
+    # flake8 mainly for style smells
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: dcd740bc0ebaf2b3d43e59a0060d157c97de13f3  # frozen: 3.9.2
+    hooks:
+    -   id: flake8
+        types: [python]
+        files: '.*?(mgm)|(MoniGoMani).*?\.py$' # all python files containing mgm or monigomani
+        exclude: ^.*?(PairList|Strategy|TotalOverallSignalImportanceCalculator)\.py$ # except *PairList.py and *Strategy.py
+        args:
+        - --select=F,E112,E113,E304,E501,E502,E701,E702,E703,E71,E72,E731,W191,W6
+        - --max-line-length=240
+        - --statistics
+
+-   repo: local
+    hooks:
+    -   id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        files: '.*?(mgm)|(MoniGoMani).*?\.py$' # all python files containing mgm or monigomani
+        exclude: ^.*?(PairList|Strategy|TotalOverallSignalImportanceCalculator)\.py$ # except *PairList.py and *Strategy.py
+        args:
+        - --disable=C,R,W0613,W0511,W0212,W0201,W0311,W0106,W0603,W0621,W0703,E1136
+    -   id: pytest
+        name: pytest
+        entry: pytest
+        language: system
+        types: [python]
+        files: '.*?(mgm).*?(_test)\.py$'
+        verbose: true

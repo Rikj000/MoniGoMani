@@ -1,0 +1,179 @@
+freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210501-20210616 --enable-protections
+=========================================================================================================================================================================
+INFO - Strategy Parameter: buy__downwards_trend_signal_triggers_needed = 2
+INFO - Strategy Parameter: buy__downwards_trend_total_signal_needed = 102
+INFO - Strategy Parameter: buy__downwards_trend_total_signal_needed_candles_lookback_window = 3
+INFO - Strategy Parameter: buy__sideways_trend_signal_triggers_needed = 5
+INFO - Strategy Parameter: buy__sideways_trend_total_signal_needed = 219
+INFO - Strategy Parameter: buy__sideways_trend_total_signal_needed_candles_lookback_window = 2
+INFO - Strategy Parameter: buy__upwards_trend_signal_triggers_needed = 8
+INFO - Strategy Parameter: buy__upwards_trend_total_signal_needed = 76
+INFO - Strategy Parameter: buy__upwards_trend_total_signal_needed_candles_lookback_window = 4
+INFO - Strategy Parameter: buy_downwards_trend_adx_strong_up_weight = 79
+INFO - Strategy Parameter: buy_downwards_trend_bollinger_bands_weight = 100
+INFO - Strategy Parameter: buy_downwards_trend_ema_long_golden_cross_weight = 61
+INFO - Strategy Parameter: buy_downwards_trend_ema_short_golden_cross_weight = 64
+INFO - Strategy Parameter: buy_downwards_trend_macd_weight = 100
+INFO - Strategy Parameter: buy_downwards_trend_mfi_weight = 100
+INFO - Strategy Parameter: buy_downwards_trend_rsi_weight = 54
+INFO - Strategy Parameter: buy_downwards_trend_sma_long_golden_cross_weight = 81
+INFO - Strategy Parameter: buy_downwards_trend_sma_short_golden_cross_weight = 16
+INFO - Strategy Parameter: buy_downwards_trend_vwap_cross_weight = 47
+INFO - Strategy Parameter: buy_sideways_trend_adx_strong_up_weight = 100
+INFO - Strategy Parameter: buy_sideways_trend_bollinger_bands_weight = 23
+INFO - Strategy Parameter: buy_sideways_trend_ema_long_golden_cross_weight = 21
+INFO - Strategy Parameter: buy_sideways_trend_ema_short_golden_cross_weight = 65
+INFO - Strategy Parameter: buy_sideways_trend_macd_weight = 36
+INFO - Strategy Parameter: buy_sideways_trend_mfi_weight = 81
+INFO - Strategy Parameter: buy_sideways_trend_rsi_weight = 62
+INFO - Strategy Parameter: buy_sideways_trend_sma_long_golden_cross_weight = 0
+INFO - Strategy Parameter: buy_sideways_trend_sma_short_golden_cross_weight = 34
+INFO - Strategy Parameter: buy_sideways_trend_vwap_cross_weight = 0
+INFO - Strategy Parameter: buy_upwards_trend_adx_strong_up_weight = 59
+INFO - Strategy Parameter: buy_upwards_trend_bollinger_bands_weight = 33
+INFO - Strategy Parameter: buy_upwards_trend_ema_long_golden_cross_weight = 16
+INFO - Strategy Parameter: buy_upwards_trend_ema_short_golden_cross_weight = 24
+INFO - Strategy Parameter: buy_upwards_trend_macd_weight = 60
+INFO - Strategy Parameter: buy_upwards_trend_mfi_weight = 49
+INFO - Strategy Parameter: buy_upwards_trend_rsi_weight = 28
+INFO - Strategy Parameter: buy_upwards_trend_sma_long_golden_cross_weight = 16
+INFO - Strategy Parameter: buy_upwards_trend_sma_short_golden_cross_weight = 0
+INFO - Strategy Parameter: buy_upwards_trend_vwap_cross_weight = 0
+INFO - Strategy Parameter: sell___unclogger_buy_cooldown_minutes_window = 141
+INFO - Strategy Parameter: sell___unclogger_minimal_losing_trade_duration_minutes = 51
+INFO - Strategy Parameter: sell___unclogger_minimal_losing_trades_open = 5
+INFO - Strategy Parameter: sell___unclogger_open_trades_losing_percentage_needed = 56
+INFO - Strategy Parameter: sell___unclogger_trend_lookback_candles_window = 45
+INFO - Strategy Parameter: sell___unclogger_trend_lookback_candles_window_percentage_needed = 33
+INFO - Strategy Parameter: sell__downwards_trend_signal_triggers_needed = 4
+INFO - Strategy Parameter: sell__downwards_trend_total_signal_needed = 305
+INFO - Strategy Parameter: sell__downwards_trend_total_signal_needed_candles_lookback_window = 5
+INFO - Strategy Parameter: sell__sideways_trend_signal_triggers_needed = 4
+INFO - Strategy Parameter: sell__sideways_trend_total_signal_needed = 60
+INFO - Strategy Parameter: sell__sideways_trend_total_signal_needed_candles_lookback_window = 6
+INFO - Strategy Parameter: sell__upwards_trend_signal_triggers_needed = 2
+INFO - Strategy Parameter: sell__upwards_trend_total_signal_needed = 152
+INFO - Strategy Parameter: sell__upwards_trend_total_signal_needed_candles_lookback_window = 6
+INFO - Strategy Parameter: sell_downwards_trend_adx_strong_down_weight = 40
+INFO - Strategy Parameter: sell_downwards_trend_bollinger_bands_weight = 25
+INFO - Strategy Parameter: sell_downwards_trend_ema_long_death_cross_weight = 15
+INFO - Strategy Parameter: sell_downwards_trend_ema_short_death_cross_weight = 51
+INFO - Strategy Parameter: sell_downwards_trend_macd_weight = 22
+INFO - Strategy Parameter: sell_downwards_trend_mfi_weight = 63
+INFO - Strategy Parameter: sell_downwards_trend_rsi_weight = 38
+INFO - Strategy Parameter: sell_downwards_trend_sma_long_death_cross_weight = 62
+INFO - Strategy Parameter: sell_downwards_trend_sma_short_death_cross_weight = 58
+INFO - Strategy Parameter: sell_downwards_trend_vwap_cross_weight = 88
+INFO - Strategy Parameter: sell_sideways_trend_adx_strong_down_weight = 0
+INFO - Strategy Parameter: sell_sideways_trend_bollinger_bands_weight = 0
+INFO - Strategy Parameter: sell_sideways_trend_ema_long_death_cross_weight = 13
+INFO - Strategy Parameter: sell_sideways_trend_ema_short_death_cross_weight = 12
+INFO - Strategy Parameter: sell_sideways_trend_macd_weight = 29
+INFO - Strategy Parameter: sell_sideways_trend_mfi_weight = 88
+INFO - Strategy Parameter: sell_sideways_trend_rsi_weight = 100
+INFO - Strategy Parameter: sell_sideways_trend_sma_long_death_cross_weight = 85
+INFO - Strategy Parameter: sell_sideways_trend_sma_short_death_cross_weight = 49
+INFO - Strategy Parameter: sell_sideways_trend_vwap_cross_weight = 20
+INFO - Strategy Parameter: sell_upwards_trend_adx_strong_down_weight = 68
+INFO - Strategy Parameter: sell_upwards_trend_bollinger_bands_weight = 0
+INFO - Strategy Parameter: sell_upwards_trend_ema_long_death_cross_weight = 100
+INFO - Strategy Parameter: sell_upwards_trend_ema_short_death_cross_weight = 39
+INFO - Strategy Parameter: sell_upwards_trend_macd_weight = 29
+INFO - Strategy Parameter: sell_upwards_trend_mfi_weight = 19
+INFO - Strategy Parameter: sell_upwards_trend_rsi_weight = 36
+INFO - Strategy Parameter: sell_upwards_trend_sma_long_death_cross_weight = 88
+INFO - Strategy Parameter: sell_upwards_trend_sma_short_death_cross_weight = 83
+INFO - Strategy Parameter: sell_upwards_trend_vwap_cross_weight = 74
+INFO - Override strategy 'order_types' with value in config file: {'buy': 'limit', 'sell': 'limit', 'emergencysell': 'market', 'forcesell': 'market', 'forcebuy': 'market', 'stoploss': 'market', 'stoploss_on_exchange': False, 'stoploss_on_exchange_interval': 60}.
+INFO - Override strategy 'order_time_in_force' with value in config file: {'buy': 'gtc', 'sell': 'gtc'}.
+INFO - Override strategy 'stake_currency' with value in config file: USDT.
+INFO - Override strategy 'stake_amount' with value in config file: 45.
+INFO - Override strategy 'protections' with value in config file: [{'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 10, 'stop_duration': 1440, 'only_per_pair': False}, {'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 2, 'stop_duration': 1440, 'only_per_pair': True}].
+INFO - Override strategy 'unfilledtimeout' with value in config file: {'buy': 10, 'sell': 30, 'unit': 'minutes'}.
+INFO - Override strategy 'use_sell_signal' with value in config file: True.
+INFO - Override strategy 'sell_profit_only' with value in config file: False.
+INFO - Override strategy 'ignore_roi_if_buy_signal' with value in config file: True.
+INFO - Override strategy 'sell_profit_offset' with value in config file: 0.
+INFO - Override strategy 'disable_dataframe_checks' with value in config file: False.
+INFO - Strategy using minimal_roi: {'0': 0.122, '5': 0.11962589928057554, '10': 0.11725179856115107, '15': 0.11487769784172662, '20': 0.11250359712230215, '25': 0.1101294964028777, '30': 0.10775539568345323, '35': 0.10538129496402877, '40': 0.1030071942446043, '45': 0.10063309352517985, '50': 0.0982589928057554, '55': 0.09588489208633093, '60': 0.09351079136690647, '65': 0.091136690647482, '70': 0.08876258992805755, '75': 0.0863884892086331, '80': 0.08401438848920863, '85': 0.08164028776978416, '90': 0.0792661870503597, '95': 0.07689208633093525, '100': 0.0745179856115108, '105': 0.07214388489208633, '110': 0.06976978417266186, '115': 0.0673956834532374, '120': 0.06502158273381295, '125': 0.0626474820143885, '130': 0.060273381294964026, '135': 0.05789928057553956, '140': 0.055850000000000004, '145': 0.0551, '150': 0.05435, '155': 0.0536, '160': 0.05285, '165': 0.0521, '170': 0.05135, '175': 0.0506, '180': 0.049850000000000005, '185': 0.049100000000000005, '190': 0.048350000000000004, '195': 0.0476, '200': 0.04685, '205': 0.0461, '210': 0.04535, '215': 0.0446, '220': 0.04385, '225': 0.0431, '230': 0.04235, '235': 0.0416, '240': 0.040850000000000004, '245': 0.040100000000000004, '250': 0.03935, '255': 0.0386, '260': 0.03785, '265': 0.03710000000000001, '270': 0.03635000000000001, '275': 0.03560000000000001, '280': 0.034850000000000006, '285': 0.034100000000000005, '290': 0.033350000000000005, '295': 0.032600000000000004, '300': 0.03185, '305': 0.031100000000000003, '310': 0.030350000000000002, '315': 0.029600000000000005, '320': 0.0289592123769339, '325': 0.02875527426160338, '330': 0.028551336146272855, '335': 0.028347398030942335, '340': 0.028143459915611815, '345': 0.027939521800281295, '350': 0.027735583684950774, '355': 0.027531645569620254, '360': 0.027327707454289734, '365': 0.027123769338959214, '370': 0.026919831223628694, '375': 0.026715893108298173, '380': 0.026511954992967653, '385': 0.026308016877637133, '390': 0.026104078762306613, '395': 0.025900140646976093, '400': 0.02569620253164557, '405': 0.02549226441631505, '410': 0.02528832630098453, '415': 0.02508438818565401, '420': 0.02488045007032349, '425': 0.02467651195499297, '430': 0.024472573839662448, '435': 0.024268635724331928, '440': 0.024064697609001408, '445': 0.023860759493670888, '450': 0.023656821378340367, '455': 0.023452883263009847, '460': 0.023248945147679327, '465': 0.023045007032348803, '470': 0.022841068917018287, '475': 0.022637130801687763, '480': 0.022433192686357243, '485': 0.022229254571026723, '490': 0.022025316455696203, '495': 0.021821378340365682, '500': 0.021617440225035162, '505': 0.021413502109704642, '510': 0.021209563994374122, '515': 0.021005625879043602, '520': 0.02080168776371308, '525': 0.02059774964838256, '530': 0.020393811533052038, '535': 0.02018987341772152, '540': 0.019985935302390997, '545': 0.01978199718706048, '550': 0.019578059071729957, '555': 0.01937412095639944, '560': 0.019170182841068917, '565': 0.018966244725738397, '570': 0.018762306610407876, '575': 0.018558368495077356, '580': 0.018354430379746836, '585': 0.018150492264416316, '590': 0.017946554149085796, '595': 0.017742616033755272, '600': 0.017538677918424755, '605': 0.017334739803094232, '610': 0.017130801687763715, '615': 0.01692686357243319, '620': 0.016722925457102675, '625': 0.01651898734177215, '630': 0.01631504922644163, '635': 0.01611111111111111, '640': 0.01590717299578059, '645': 0.01570323488045007, '650': 0.01549929676511955, '655': 0.01529535864978903, '660': 0.01509142053445851, '665': 0.014887482419127988, '670': 0.014683544303797468, '675': 0.014479606188466948, '680': 0.014275668073136428, '685': 0.014071729957805907, '690': 0.013867791842475387, '695': 0.013663853727144867, '700': 0.013459915611814345, '705': 0.013255977496483825, '710': 0.013052039381153305, '715': 0.012848101265822785, '720': 0.012644163150492264, '725': 0.012440225035161744, '730': 0.012236286919831224, '735': 0.012032348804500704, '740': 0.011828410689170184, '745': 0.011624472573839664, '750': 0.011420534458509143, '755': 0.01121659634317862, '760': 0.0110126582278481, '765': 0.01080872011251758, '770': 0.01060478199718706, '775': 0.010400843881856539, '780': 0.010196905766526019, '785': 0.009992967651195499, '790': 0.009789029535864979, '795': 0.009585091420534458, '800': 0.009381153305203938, '805': 0.009177215189873418, '810': 0.008973277074542898, '815': 0.008769338959212378, '820': 0.008565400843881858, '825': 0.008361462728551334, '830': 0.008157524613220814, '835': 0.007953586497890294, '840': 0.007749648382559773, '845': 0.007545710267229253, '850': 0.007341772151898733, '855': 0.007137834036568213, '860': 0.006933895921237693, '865': 0.0067299578059071725, '870': 0.006526019690576652, '875': 0.006322081575246132, '880': 0.006118143459915612, '885': 0.005914205344585092, '890': 0.005710267229254572, '895': 0.0055063291139240515, '900': 0.005302390998593528, '905': 0.005098452883263008, '910': 0.0048945147679324875, '915': 0.004690576652601967, '920': 0.004486638537271447, '925': 0.004282700421940927, '930': 0.004078762306610407, '935': 0.0038748241912798867, '940': 0.0036708860759493665, '945': 0.0034669479606188464, '950': 0.003263009845288326, '955': 0.003059071729957806, '960': 0.002855133614627286, '965': 0.0026511954992967657, '970': 0.002447257383966242, '975': 0.002243319268635722, '980': 0.0020393811533052017, '985': 0.0018354430379746815, '990': 0.0016315049226441614, '995': 0.0014275668073136412, '1000': 0.001223628691983121, '1005': 0.0010196905766526008, '1010': 0.0008157524613220807, '1015': 0.0006118143459915605, '1020': 0.00040787623066104034, '1025': 0.00020393811533052017, '1030': 0}
+INFO - Strategy using timeframe: 5m
+INFO - Strategy using stoploss: -0.286
+INFO - Strategy using trailing_stop: True
+INFO - Strategy using trailing_stop_positive: 0.165
+INFO - Strategy using trailing_stop_positive_offset: 0.255
+INFO - Strategy using trailing_only_offset_is_reached: True
+INFO - Strategy using use_custom_stoploss: True
+INFO - Strategy using process_only_new_candles: False
+INFO - Strategy using startup_candle_count: 2400
+INFO - Strategy using ignore_buying_expired_candle_after: 0
+INFO - Loading data from 2021-04-22 16:00:00 up to 2021-06-16 00:00:00 (54 days).
+INFO - Backtesting with data from 2021-05-01 00:00:00 up to 2021-06-16 00:00:00 (46 days).
+Result for strategy MoniGoManiHyperStrategy
+=========================================================== BACKTESTING REPORT ==========================================================
+|       Pair |   Buys |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |   Avg Duration |   Win  Draw  Loss  Win% |
+|------------+--------+----------------+----------------+-------------------+----------------+----------------+-------------------------|
+| MATIC/USDT |     73 |           1.19 |          87.02 |            39.198 |           7.84 |        5:10:00 |    42     0    31  57.5 |
+|   AXS/USDT |     73 |           0.72 |          52.50 |            23.646 |           4.73 |        5:01:00 |    37     3    33  50.7 |
+|   ETH/USDT |     80 |           0.62 |          49.34 |            22.225 |           4.44 |        5:18:00 |    43     0    37  53.8 |
+|  DOGE/USDT |     70 |           0.56 |          39.14 |            17.632 |           3.53 |        5:42:00 |    35     1    34  50.0 |
+|   SOL/USDT |     84 |           0.32 |          27.00 |            12.162 |           2.43 |        4:43:00 |    46     1    37  54.8 |
+|   XRP/USDT |     74 |           0.35 |          26.10 |            11.755 |           2.35 |        6:18:00 |    37     1    36  50.0 |
+|   ADA/USDT |     68 |           0.22 |          15.07 |             6.787 |           1.36 |        5:52:00 |    35     2    31  51.5 |
+|   ETC/USDT |     61 |           0.22 |          13.70 |             6.170 |           1.23 |        4:57:00 |    32     0    29  52.5 |
+|   BTC/USDT |     61 |          -0.07 |          -3.97 |            -1.790 |          -0.36 |        5:59:00 |    24     0    37  39.3 |
+|   DOT/USDT |     77 |          -0.11 |          -8.50 |            -3.828 |          -0.77 |        4:32:00 |    37     2    38  48.1 |
+|      TOTAL |    721 |           0.41 |         297.39 |           133.957 |          26.79 |        5:20:00 |   368    10   343  51.0 |
+============================================================ SELL REASON STATS ============================================================
+|                 Sell Reason |   Sells |   Win  Draws  Loss  Win% |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |
+|-----------------------------+---------+--------------------------+----------------+----------------+-------------------+----------------|
+|                         roi |     340 |    330    10     0   100 |           4.24 |        1441.54 |           649.341 |         144.15 |
+| MGM_unclogging_losing_trade |     296 |      0     0   296     0 |          -2.89 |        -854.98 |          -385.124 |         -85.5  |
+|                 sell_signal |      67 |     32     0    35  47.8 |          -0.55 |         -37.01 |           -16.67  |          -3.7  |
+|                   stop_loss |      10 |      0     0    10     0 |         -28.74 |        -287.43 |          -129.471 |         -28.74 |
+|                  force_sell |       4 |      2     0     2  50.0 |          -0.06 |          -0.24 |            -0.108 |          -0.02 |
+|          trailing_stop_loss |       4 |      4     0     0   100 |           8.87 |          35.5  |            15.991 |           3.55 |
+======================================================= LEFT OPEN TRADES REPORT =======================================================
+|     Pair |   Buys |   Avg Profit % |   Cum Profit % |   Tot Profit USDT |   Tot Profit % |   Avg Duration |   Win  Draw  Loss  Win% |
+|----------+--------+----------------+----------------+-------------------+----------------+----------------+-------------------------|
+| DOT/USDT |      1 |           0.24 |           0.24 |             0.106 |           0.02 |        4:00:00 |     1     0     0   100 |
+| ETH/USDT |      1 |           0.21 |           0.21 |             0.093 |           0.02 |        3:35:00 |     1     0     0   100 |
+| XRP/USDT |      1 |          -0.25 |          -0.25 |            -0.111 |          -0.02 |        8:30:00 |     0     0     1     0 |
+| ADA/USDT |      1 |          -0.44 |          -0.44 |            -0.197 |          -0.04 |        3:30:00 |     0     0     1     0 |
+|    TOTAL |      4 |          -0.06 |          -0.24 |            -0.108 |          -0.02 |        4:54:00 |     2     0     2  50.0 |
+=============== SUMMARY METRICS ================
+| Metric                 | Value               |
+|------------------------+---------------------|
+| Backtesting from       | 2021-05-01 00:00:00 |
+| Backtesting to         | 2021-06-16 00:00:00 |
+| Max open trades        | 10                  |
+|                        |                     |
+| Total/Daily Avg Trades | 721 / 15.67         |
+| Starting balance       | 500.000 USDT        |
+| Final balance          | 633.957 USDT        |
+| Absolute profit        | 133.957 USDT        |
+| Total profit %         | 26.79%              |
+| Avg. stake amount      | 45.000 USDT         |
+| Total trade volume     | 32445.000 USDT      |
+|                        |                     |
+| Best Pair              | MATIC/USDT 87.02%   |
+| Worst Pair             | DOT/USDT -8.5%      |
+| Best trade             | XRP/USDT 34.64%     |
+| Worst trade            | ETC/USDT -28.74%    |
+| Best day               | 69.858 USDT         |
+| Worst day              | -50.229 USDT        |
+| Days win/draw/lose     | 32 / 0 / 15         |
+| Avg. Duration Winners  | 5:24:00             |
+| Avg. Duration Loser    | 4:45:00             |
+| Zero Duration Trades   | 0.28% (2)           |
+| Rejected Buy signals   | 0                   |
+|                        |                     |
+| Min balance            | 460.929 USDT        |
+| Max balance            | 642.095 USDT        |
+| Drawdown               | 284.39%             |
+| Drawdown               | 128.104 USDT        |
+| Drawdown high          | 89.033 USDT         |
+| Drawdown low           | -39.071 USDT        |
+| Drawdown Start         | 2021-05-19 00:25:00 |
+| Drawdown End           | 2021-05-19 12:55:00 |
+| Market change          | 22.67%              |
+================================================
