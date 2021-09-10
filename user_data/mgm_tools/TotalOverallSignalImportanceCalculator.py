@@ -57,7 +57,8 @@ def initialize_argument_parser():
                              'Total-Average-Signal-Importance-Report as a .log file')
     return parser
 
-
+# ToDo: Automatically update the signals used depending on the contents
+#   of 'mgm-config-hyperopt' or the strategy file itself
 def initialize_weighted_buy_signal_names():
     return [
         'adx_strong_up',
@@ -65,6 +66,7 @@ def initialize_weighted_buy_signal_names():
         'ema_long_golden_cross',
         'ema_short_golden_cross',
         'macd',
+        'mfi',
         'rsi',
         'sma_long_golden_cross',
         'sma_short_golden_cross',
@@ -79,6 +81,7 @@ def initialize_weighted_sell_signal_names():
         'ema_long_death_cross',
         'ema_short_death_cross',
         'macd',
+        'mfi',
         'rsi',
         'sma_long_death_cross',
         'sma_short_death_cross',
