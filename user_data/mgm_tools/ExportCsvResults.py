@@ -9,14 +9,14 @@ from pandas import DataFrame, json_normalize
 
 
 def ExportCsvResults(config_file, input_file, output_file):
-    # Load the 'mgm-config.json' file as an object and parse it as a dictionary
+    # Load the 'mgm-config' file as an object and parse it as a dictionary
     mgm_config = {}
     if os.path.isfile(config_file) is True:
         file_object = open(config_file, )
         json_data = json.load(file_object)
         mgm_config = json_data['monigomani_settings']
 
-    # Fet the latest 'fthypt' filename from last_result
+    # Fetch the latest '.fthypt' filename from last_result
     if input_file is None or input_file == '':
         last_result_file = Path('../hyperopt_results/.last_result.json')
         with last_result_file.open('r') as f:
@@ -29,7 +29,7 @@ def ExportCsvResults(config_file, input_file, output_file):
 
     run_id = results_file.name.split('.')[0]
 
-    # Open 'fthypt' file and normalize json to dataframe
+    # Open '.fthypt' file and normalize '.json' to dataframe
     with results_file.open('r') as f:
         data = [rapidjson.loads(line) for line in f]
     epochs = json_normalize(data, max_level=1)
@@ -104,7 +104,7 @@ def ExportCsvResults(config_file, input_file, output_file):
     results_df['trailing_only_offset_is_reached'] = epochs['results_metrics.trailing_only_offset_is_reached']
     results_df.insert(0, 'run_id', run_id)
 
-    # Export result as csv file for readable result
+    # Export result as '.csv' file for readable result
     if output_file is None or output_file == '':
         output_file = f'../hyperopt_results/{run_id}.csv'
 
