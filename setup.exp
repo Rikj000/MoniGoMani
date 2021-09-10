@@ -1,0 +1,20 @@
+#!/usr/bin/expect -f
+
+set force_conservative 0
+if {$force_conservative} {
+	set send_slow {1 .1}
+	proc send {ignore arg} {
+		sleep .1
+		exp_send -s -- $arg
+	}
+}
+
+set timeout -1
+spawn ./setup.sh --install
+match_max 100000
+
+expect "*Reset git branch? (This will remove all changes you made!)*" { send -- "n\r" }
+expect "*Do you want to install dependencies for dev*" { send -- "y\r" }
+expect "*Do you want to install plotting dependencies (plotly)*" { send -- "y\r" }
+expect "*Do you want to install hyperopt dependencies*" { send -- "y\r" }
+expect eof

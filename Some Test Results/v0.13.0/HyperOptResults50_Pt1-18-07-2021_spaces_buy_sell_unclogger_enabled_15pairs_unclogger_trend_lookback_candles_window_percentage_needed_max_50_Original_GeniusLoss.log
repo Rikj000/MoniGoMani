@@ -1,0 +1,279 @@
+freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss GeniusLoss --spaces buy sell -e 1000 --timerange 20210501-20210616 --random-state 6341 && mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json
+=========================================================================================================================================================================================================================================================================================================================
+2021-07-18 01:21:34,868 - freqtrade.configuration.configuration - INFO - Using config: ./user_data/mgm-config.json ...
+2021-07-18 01:21:34,869 - freqtrade.configuration.configuration - INFO - Using config: ./user_data/mgm-config-private.json ...
+2021-07-18 01:21:34,869 - freqtrade.loggers - INFO - Verbosity set to 0
+2021-07-18 01:21:34,869 - freqtrade.configuration.configuration - INFO - Using max_open_trades: -1 ...
+2021-07-18 01:21:34,869 - freqtrade.configuration.configuration - INFO - Parameter --timerange detected: 20210501-20210616 ...
+2021-07-18 01:21:34,870 - freqtrade.configuration.configuration - INFO - Using user-data directory: /mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data ...
+2021-07-18 01:21:34,870 - freqtrade.configuration.configuration - INFO - Using data directory: /mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/data/binance ...
+2021-07-18 01:21:34,870 - freqtrade.configuration.configuration - INFO - Parameter --epochs detected ... Will run Hyperopt with for 1000 epochs ...
+2021-07-18 01:21:34,870 - freqtrade.configuration.configuration - INFO - Parameter -s/--spaces detected: ['buy', 'sell']
+2021-07-18 01:21:34,870 - freqtrade.configuration.configuration - INFO - Parameter -j/--job-workers detected: -1
+2021-07-18 01:21:34,870 - freqtrade.configuration.configuration - INFO - Parameter --random-state detected: 6341
+2021-07-18 01:21:34,870 - freqtrade.configuration.configuration - INFO - Parameter --min-trades detected: 1
+2021-07-18 01:21:34,870 - freqtrade.configuration.configuration - INFO - Using Hyperopt loss class name: GeniusLoss
+2021-07-18 01:21:34,870 - freqtrade.configuration.check_exchange - INFO - Checking exchange...
+2021-07-18 01:21:34,874 - freqtrade.configuration.check_exchange - INFO - Exchange "binance" is officially supported by the Freqtrade development team.
+2021-07-18 01:21:34,874 - freqtrade.configuration.configuration - INFO - Using pairlist from configuration.
+2021-07-18 01:21:34,874 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2021-07-18 01:21:34,876 - freqtrade.commands.optimize_commands - INFO - Starting freqtrade in Hyperopt mode
+2021-07-18 01:21:34,876 - filelock - INFO - Lock 140280957611648 acquired on /mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/hyperopt.lock
+2021-07-18 01:21:34,876 - freqtrade.exchange.exchange - INFO - Instance is running with dry_run enabled
+2021-07-18 01:21:34,876 - freqtrade.exchange.exchange - INFO - Using CCXT 1.52.83
+2021-07-18 01:21:34,876 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True}
+2021-07-18 01:21:34,880 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'rateLimit': 500, 'aiohttp_trust_env': False}
+2021-07-18 01:21:34,883 - freqtrade.exchange.exchange - INFO - Using Exchange "Binance"
+2021-07-18 01:21:36,649 - freqtrade.resolvers.exchange_resolver - INFO - Using resolved exchange 'Binance'...
+2021-07-18 01:21:36,676 - freqtrade.resolvers.iresolver - INFO - Using resolved strategy MoniGoManiHyperStrategy from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/MoniGoMani/user_data/strategies/MoniGoManiHyperStrategy.py'...
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Found no parameter file.
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__downwards_trend_signal_triggers_needed = 6
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__downwards_trend_total_signal_needed = 530
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__downwards_trend_total_signal_needed_candles_lookback_window = 3
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__sideways_trend_signal_triggers_needed = 6
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__sideways_trend_total_signal_needed = 530
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__sideways_trend_total_signal_needed_candles_lookback_window = 3
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__upwards_trend_signal_triggers_needed = 6
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__upwards_trend_total_signal_needed = 530
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy__upwards_trend_total_signal_needed_candles_lookback_window = 3
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_adx_strong_up_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_bollinger_bands_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_ema_long_golden_cross_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_ema_short_golden_cross_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_macd_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_mfi_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_rsi_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_sma_long_golden_cross_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_sma_short_golden_cross_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_downwards_trend_vwap_cross_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_adx_strong_up_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_bollinger_bands_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_ema_long_golden_cross_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_ema_short_golden_cross_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_macd_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_mfi_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_rsi_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_sma_long_golden_cross_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_sma_short_golden_cross_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_sideways_trend_vwap_cross_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_adx_strong_up_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_bollinger_bands_weight = 50
+2021-07-18 01:21:36,677 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_ema_long_golden_cross_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_ema_short_golden_cross_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_macd_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_mfi_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_rsi_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_sma_long_golden_cross_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_sma_short_golden_cross_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: buy_upwards_trend_vwap_cross_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell___unclogger_buy_cooldown_minutes_window = 270
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell___unclogger_minimal_losing_trade_duration_minutes = 37
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell___unclogger_minimal_losing_trades_open = 3
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell___unclogger_open_trades_losing_percentage_needed = 30
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell___unclogger_trend_lookback_candles_window = 35
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell___unclogger_trend_lookback_candles_window_percentage_needed = 30
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__downwards_trend_signal_triggers_needed = 6
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__downwards_trend_total_signal_needed = 530
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__downwards_trend_total_signal_needed_candles_lookback_window = 3
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__sideways_trend_signal_triggers_needed = 6
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__sideways_trend_total_signal_needed = 530
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__sideways_trend_total_signal_needed_candles_lookback_window = 3
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__upwards_trend_signal_triggers_needed = 6
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__upwards_trend_total_signal_needed = 530
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell__upwards_trend_total_signal_needed_candles_lookback_window = 3
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_adx_strong_down_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_bollinger_bands_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_ema_long_death_cross_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_ema_short_death_cross_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_macd_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_mfi_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_rsi_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_sma_long_death_cross_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_sma_short_death_cross_weight = 50
+2021-07-18 01:21:36,678 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_downwards_trend_vwap_cross_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_adx_strong_down_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_bollinger_bands_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_ema_long_death_cross_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_ema_short_death_cross_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_macd_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_mfi_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_rsi_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_sma_long_death_cross_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_sma_short_death_cross_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_sideways_trend_vwap_cross_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_adx_strong_down_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_bollinger_bands_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_ema_long_death_cross_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_ema_short_death_cross_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_macd_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_mfi_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_rsi_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_sma_long_death_cross_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_sma_short_death_cross_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.strategy.hyper - INFO - Strategy Parameter: sell_upwards_trend_vwap_cross_weight = 50
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'order_types' with value in config file: {'buy': 'limit', 'sell': 'limit', 'emergencysell': 'market', 'forcesell': 'market', 'forcebuy': 'market', 'stoploss': 'market', 'stoploss_on_exchange': False, 'stoploss_on_exchange_interval': 60}.
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'order_time_in_force' with value in config file: {'buy': 'gtc', 'sell': 'gtc'}.
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_currency' with value in config file: USDT.
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_amount' with value in config file: 45.
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'protections' with value in config file: [{'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 10, 'stop_duration': 1440, 'only_per_pair': False}, {'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 2, 'stop_duration': 1440, 'only_per_pair': True}].
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'unfilledtimeout' with value in config file: {'buy': 10, 'sell': 30, 'unit': 'minutes'}.
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'use_sell_signal' with value in config file: True.
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'sell_profit_only' with value in config file: False.
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'ignore_roi_if_buy_signal' with value in config file: True.
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'sell_profit_offset' with value in config file: 0.
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'disable_dataframe_checks' with value in config file: False.
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using minimal_roi: {'0': 100}
+2021-07-18 01:21:36,679 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using timeframe: 5m
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stoploss: -1
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop: False
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop_positive: 0.01
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop_positive_offset: 0.03
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_only_offset_is_reached: False
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_custom_stoploss: True
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using process_only_new_candles: False
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_types: {'buy': 'limit', 'sell': 'limit', 'emergencysell': 'market', 'forcesell': 'market', 'forcebuy': 'market', 'stoploss': 'market', 'stoploss_on_exchange': False, 'stoploss_on_exchange_interval': 60}
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_time_in_force: {'buy': 'gtc', 'sell': 'gtc'}
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_currency: USDT
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_amount: 45
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using protections: [{'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 10, 'stop_duration': 1440, 'only_per_pair': False}, {'method': 'StoplossGuard', 'lookback_period': 1440, 'trade_limit': 2, 'stop_duration': 1440, 'only_per_pair': True}]
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using startup_candle_count: 2400
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using unfilledtimeout: {'buy': 10, 'sell': 30, 'unit': 'minutes'}
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_sell_signal: True
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using sell_profit_only: False
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_roi_if_buy_signal: True
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using sell_profit_offset: 0
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using disable_dataframe_checks: False
+2021-07-18 01:21:36,680 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_buying_expired_candle_after: 0
+2021-07-18 01:21:36,680 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2021-07-18 01:21:36,684 - freqtrade.resolvers.iresolver - INFO - Using resolved pairlist StaticPairList from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/freqtrade/plugins/pairlist/StaticPairList.py'...
+2021-07-18 01:21:36,716 - freqtrade.resolvers.iresolver - INFO - Using resolved hyperoptloss GeniusLoss from '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/MoniGoMani/user_data/hyperopts/GeniusLoss.py'...
+2021-07-18 01:21:36,716 - freqtrade.optimize.hyperopt - INFO - Removing `/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/hyperopt_results/hyperopt_tickerdata.pkl`.
+2021-07-18 01:21:36,716 - freqtrade.optimize.hyperopt - INFO - Using optimizer random state: 6341
+2021-07-18 01:21:36,752 - freqtrade.data.history.history_utils - INFO - Using indicator startup period: 2400 ...
+2021-07-18 01:21:36,868 - numexpr.utils - INFO - Note: NumExpr detected 12 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2021-07-18 01:21:36,868 - numexpr.utils - INFO - NumExpr defaulting to 8 threads.
+2021-07-18 01:21:38,217 - freqtrade.optimize.backtesting - INFO - Loading data from 2021-04-22 16:00:00 up to 2021-06-16 00:00:00 (54 days).
+2021-07-18 01:21:38,217 - freqtrade.optimize.hyperopt - INFO - Dataload complete. Calculating indicators
+2021-07-18 01:21:38,868 - freqtrade.optimize.hyperopt - INFO - Hyperopting with data from 2021-05-01 00:00:00 up to 2021-06-16 00:00:00 (46 days)..
+2021-07-18 01:21:39,248 - freqtrade.optimize.hyperopt - INFO - Found 12 CPU cores. Let's make them scream!
+2021-07-18 01:21:39,248 - freqtrade.optimize.hyperopt - INFO - Number of parallel jobs set as: -1
+2021-07-18 01:21:39,255 - freqtrade.optimize.hyperopt - INFO - Effective number of parallel workers used: 12
++--------+-----------+----------+------------------+--------------+-------------------------------+-----------------+-------------------------------+-------------+                    
+|   Best |     Epoch |   Trades |    Win Draw Loss |   Avg profit |                        Profit |    Avg duration |                  Max Drawdown |   Objective |
+|--------+-----------+----------+------------------+--------------+-------------------------------+-----------------+-------------------------------+-------------|
+|   Best |  352/1000 |        9 |      8    0    1 |       -3.30% |       -13.379 USDT   (-2.68%) | 6 days 07:37:00 |        23.596 USDT   (52.38%) |    -132.776 |
+[Epoch 492 of 1000 ( 49%)] |███████████████████████████████████████████████████████|                                                         | [ETA:   0:52:18, Elapsed Time: 0:50:39]^C
+User interrupted..
+2021-07-18 02:15:24,247 - freqtrade.optimize.hyperopt - INFO - 492 epochs saved to '/mnt/Windows/Users/Rik/Desktop/Rikj-Home/Projects/Freqtrade/user_data/hyperopt_results/strategy_MoniGoManiHyperStrategy_2021-07-18_01-21-36.fthypt'.
+2021-07-18 02:15:24,438 - freqtrade.optimize.hyperopt_tools - INFO - Dumping parameters to user_data/strategies/MoniGoManiHyperStrategy.json
+
+Best result:
+
+   352/1000:      9 trades. 8/0/1 Wins/Draws/Losses. Avg profit  -3.30%. Median profit   0.88%. Total profit -13.37905845 USDT (  -2.68%). Avg duration 6 days, 7:37:00 min. Objective: -132.77610
+
+
+    # Buy hyperspace params:
+    buy_params = {
+        "buy__downwards_trend_signal_triggers_needed": 9,
+        "buy__downwards_trend_total_signal_needed": 130,
+        "buy__downwards_trend_total_signal_needed_candles_lookback_window": 6,
+        "buy__sideways_trend_signal_triggers_needed": 3,
+        "buy__sideways_trend_total_signal_needed": 216,
+        "buy__sideways_trend_total_signal_needed_candles_lookback_window": 1,
+        "buy__upwards_trend_signal_triggers_needed": 7,
+        "buy__upwards_trend_total_signal_needed": 210,
+        "buy__upwards_trend_total_signal_needed_candles_lookback_window": 1,
+        "buy_downwards_trend_adx_strong_up_weight": 60,
+        "buy_downwards_trend_bollinger_bands_weight": 18,
+        "buy_downwards_trend_ema_long_golden_cross_weight": 53,
+        "buy_downwards_trend_ema_short_golden_cross_weight": 75,
+        "buy_downwards_trend_macd_weight": 39,
+        "buy_downwards_trend_mfi_weight": 81,
+        "buy_downwards_trend_rsi_weight": 70,
+        "buy_downwards_trend_sma_long_golden_cross_weight": 72,
+        "buy_downwards_trend_sma_short_golden_cross_weight": 24,
+        "buy_downwards_trend_vwap_cross_weight": 75,
+        "buy_sideways_trend_adx_strong_up_weight": 83,
+        "buy_sideways_trend_bollinger_bands_weight": 6,
+        "buy_sideways_trend_ema_long_golden_cross_weight": 59,
+        "buy_sideways_trend_ema_short_golden_cross_weight": 20,
+        "buy_sideways_trend_macd_weight": 92,
+        "buy_sideways_trend_mfi_weight": 48,
+        "buy_sideways_trend_rsi_weight": 83,
+        "buy_sideways_trend_sma_long_golden_cross_weight": 4,
+        "buy_sideways_trend_sma_short_golden_cross_weight": 87,
+        "buy_sideways_trend_vwap_cross_weight": 34,
+        "buy_upwards_trend_adx_strong_up_weight": 61,
+        "buy_upwards_trend_bollinger_bands_weight": 58,
+        "buy_upwards_trend_ema_long_golden_cross_weight": 24,
+        "buy_upwards_trend_ema_short_golden_cross_weight": 66,
+        "buy_upwards_trend_macd_weight": 31,
+        "buy_upwards_trend_mfi_weight": 61,
+        "buy_upwards_trend_rsi_weight": 99,
+        "buy_upwards_trend_sma_long_golden_cross_weight": 67,
+        "buy_upwards_trend_sma_short_golden_cross_weight": 79,
+        "buy_upwards_trend_vwap_cross_weight": 95,
+    }
+
+    # Sell hyperspace params:
+    sell_params = {
+        "sell___unclogger_buy_cooldown_minutes_window": 250,
+        "sell___unclogger_minimal_losing_trade_duration_minutes": 33,
+        "sell___unclogger_minimal_losing_trades_open": 5,
+        "sell___unclogger_open_trades_losing_percentage_needed": 31,
+        "sell___unclogger_trend_lookback_candles_window": 26,
+        "sell___unclogger_trend_lookback_candles_window_percentage_needed": 45,
+        "sell__downwards_trend_signal_triggers_needed": 2,
+        "sell__downwards_trend_total_signal_needed": 515,
+        "sell__downwards_trend_total_signal_needed_candles_lookback_window": 1,
+        "sell__sideways_trend_signal_triggers_needed": 3,
+        "sell__sideways_trend_total_signal_needed": 88,
+        "sell__sideways_trend_total_signal_needed_candles_lookback_window": 5,
+        "sell__upwards_trend_signal_triggers_needed": 8,
+        "sell__upwards_trend_total_signal_needed": 140,
+        "sell__upwards_trend_total_signal_needed_candles_lookback_window": 3,
+        "sell_downwards_trend_adx_strong_down_weight": 74,
+        "sell_downwards_trend_bollinger_bands_weight": 62,
+        "sell_downwards_trend_ema_long_death_cross_weight": 38,
+        "sell_downwards_trend_ema_short_death_cross_weight": 75,
+        "sell_downwards_trend_macd_weight": 65,
+        "sell_downwards_trend_mfi_weight": 34,
+        "sell_downwards_trend_rsi_weight": 99,
+        "sell_downwards_trend_sma_long_death_cross_weight": 92,
+        "sell_downwards_trend_sma_short_death_cross_weight": 7,
+        "sell_downwards_trend_vwap_cross_weight": 39,
+        "sell_sideways_trend_adx_strong_down_weight": 32,
+        "sell_sideways_trend_bollinger_bands_weight": 17,
+        "sell_sideways_trend_ema_long_death_cross_weight": 71,
+        "sell_sideways_trend_ema_short_death_cross_weight": 18,
+        "sell_sideways_trend_macd_weight": 97,
+        "sell_sideways_trend_mfi_weight": 50,
+        "sell_sideways_trend_rsi_weight": 100,
+        "sell_sideways_trend_sma_long_death_cross_weight": 3,
+        "sell_sideways_trend_sma_short_death_cross_weight": 90,
+        "sell_sideways_trend_vwap_cross_weight": 72,
+        "sell_upwards_trend_adx_strong_down_weight": 81,
+        "sell_upwards_trend_bollinger_bands_weight": 22,
+        "sell_upwards_trend_ema_long_death_cross_weight": 34,
+        "sell_upwards_trend_ema_short_death_cross_weight": 36,
+        "sell_upwards_trend_macd_weight": 74,
+        "sell_upwards_trend_mfi_weight": 50,
+        "sell_upwards_trend_rsi_weight": 35,
+        "sell_upwards_trend_sma_long_death_cross_weight": 29,
+        "sell_upwards_trend_sma_short_death_cross_weight": 93,
+        "sell_upwards_trend_vwap_cross_weight": 68,
+    }
+
+    # ROI table:  # value loaded from strategy
+    minimal_roi = {
+        "0": 100
+    }
+
+    # Stoploss:
+    stoploss = -1.0  # value loaded from strategy
+
+    # Trailing stop:
+    trailing_stop = False  # value loaded from strategy
+    trailing_stop_positive = 0.01  # value loaded from strategy
+    trailing_stop_positive_offset = 0.03  # value loaded from strategy
+    trailing_only_offset_is_reached = False  # value loaded from strategy
