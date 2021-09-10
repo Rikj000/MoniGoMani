@@ -425,7 +425,7 @@ class MGMHurry:
         }, {
             'type': 'input',
             'name': 'username',
-            'message': 'Please enter the Username you want to use:',
+            'message': 'Please enter the username you want to use to share test results with the MoniGoMani community:',
             'default': self.monigomani_config.get('username') or 'MoniGoMani Community'
         }])
 

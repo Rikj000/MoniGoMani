@@ -168,6 +168,16 @@ echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 echo ""
 
 echo ""
+confirm "👉  MoniGoMani will automatically share test results created with it's community, are you okay with this?" "(y/n)"
+
+if [ "$REPLY" == "1" ] # 1 = False, why shell why..
+then
+    echo -e "${RED}  Aborting installation... (This project is only intended for users who seek to contribute to the MGM community)${END}"
+    do_exit
+    exit 1
+fi
+
+echo ""
 echo -e "${WHITE}  🚦  Requirements check${END}"
 echo -e "${WHITE}  ======================${END}"
 echo ""
