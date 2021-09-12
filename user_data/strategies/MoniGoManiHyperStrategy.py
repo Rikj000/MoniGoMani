@@ -10,10 +10,10 @@ import numpy as np  # noqa
 import pandas as pd  # noqa
 import talib.abstract as ta
 from pandas import DataFrame
-from technical.indicators import ichimoku, zema, SSLChannels
-import technical.indicators as ftt
+
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 from freqtrade.constants import ListPairsWithTimeframes
+
 
 # Master Framework file must reside in same folder as Strategy file
 sys.path.append(str(Path(__file__).parent))
@@ -26,17 +26,17 @@ buy_signals = {
     'macd': lambda df: (df['macd'] > df['macdsignal']),
     # Weighted Buy Signal: MFI crosses above 20 (Under-bought / low-price and rising indication)
     'mfi': lambda df: (qtpylib.crossed_above(df['mfi'], 20)),
-    # Weighted Sell Signal: VWAP crosses above current price
+    # Weighted Buy Signal: VWAP crosses above current price
     'vwap_cross': lambda df: (qtpylib.crossed_above(df['vwap'], df['close'])),
-    # Parabolic Buy Signal: price crosses above SAR
+    # Weighted Buy Signal: Price crosses above Parabolic SAR
     'sar_cross': lambda df: (qtpylib.crossed_above(df['sar'], df['close'])),
-    #Stochastic buying signal: Below 20 and is starting to move up with increased volume.
+    # Weighted Buy Signal: Stochastic Slow below 20 (Under-bought, indication of starting to move up)
     'stoch': lambda df: (df['slowk'] < 20),
     # Weighted Buy Signal: SMA long term Golden Cross (Medium term SMA crosses above Long term SMA)
     'sma_long_golden_cross': lambda df: (qtpylib.crossed_above(df['sma50'], df['sma200'])),
     # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
     'sma_short_golden_cross': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
-    # TEMA
+    # Weighted Buy Signal: TEMA
     'tema': lambda df: (df['tema'] <= df['bb_middleband']) & (df['tema'] > df['tema'].shift(1))
 }
 
@@ -48,15 +48,15 @@ sell_signals = {
     'mfi': lambda df: (qtpylib.crossed_below(df['mfi'], 80)),
     # Weighted Sell Signal: VWAP crosses below current price
     'vwap_cross': lambda df: (qtpylib.crossed_below(df['vwap'], df['close'])),
-    # Parabolic Sell Signal: price crosses below SAR
+    # Weighted Sell Signal: Price crosses below Parabolic SAR
     'sar_cross': lambda df: (qtpylib.crossed_below(df['sar'], df['close'])),
-    # Stochastic Sell signal: Above 80 and is strating to move down.
+    # Weighted Sell Signal: Stochastic Slow above 80 (Over-bought, indication of starting to move down)
     'stoch': lambda df: (df['slowk'] > 80),
     # Weighted Sell Signal: SMA long term Death Cross (Medium term SMA crosses below Long term SMA)
     'sma_long_death_cross': lambda df: (qtpylib.crossed_below(df['sma50'], df['sma200'])),
     # Weighted Sell Signal: SMA short term Death Cross (Short term SMA crosses below Medium term SMA)
     'sma_short_death_cross': lambda df: (qtpylib.crossed_below(df['sma9'], df['sma50'])),
-    # TEMA
+    # Weighted Buy Signal: TEMA
     'tema': lambda df: (df['tema'] > df['bb_middleband']) & (df['tema'] < df['tema'].shift(1))
 }
 
@@ -100,7 +100,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
     # Plot configuration to show all Weighted Signals/Indicators used by MoniGoMani in FreqUI.
     # Also loads in MGM Framework Plots for Buy/Sell Signals/Indicators and Trend Detection.
     plot_config = MasterMoniGoManiHyperStrategy.populate_frequi_plots({
-        # Main Plots Signals/Indicators (SMAs, EMAs, Bollinger Bands, VWAP)
+        # Main Plots Signals/Indicators (SMAs, EMAs, Bollinger Bands, VWAP, TEMA)
         'main_plot': {
             'sma9': {'color': '#2c05f6'},
             'sma50': {'color': '#19038a'},
@@ -108,19 +108,13 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             'ema9': {'color': '#12e5a6'},
             'ema50': {'color': '#0a8963'},
             'ema200': {'color': '#074b36'},
-            'bb_upperband': {'color': '#6f1a7b'},
-            'bb_lowerband': {'color': '#6f1a7b'},
+            'bb_middleband': {'color': '#6f1a7b'},
             'vwap': {'color': '#727272'},
-            'sar': {'color': '#2c05f6'},
-            'stoch':{'color': '#f80d18'}
-            'tema':{'color': '#9345ee'}
+            'tema': {'color': '#9345ee'}
         },
         # Sub Plots - Each dict defines one additional plot
         'subplots': {
             # Sub Plots - Individual Weighted Signals/Indicators
-            'MGM Trend': {
-                'MGM_Trend': {'color': '#7fba3c'}
-            },
             'ADX (Average Directional Index)': {
                 'adx': {'color': '#6f1a7b'}
             },
@@ -131,15 +125,11 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             'MFI (Money Flow Index)': {
                 'mfi': {'color': '#7fba3c'}
             },
-            'Hilbert Transform (Trend vs Cycle)': {
-                'HT_TRENDMODE': {'color': '#6f1a7b'}
-            },
-            'PVT': {
-                'pvt': {'color': '#64ed02'},
-                'pvt_sma': {'color': '#12e3a1'}
-            },
             'RSI (Relative Strength Index)': {
                 'rsi': {'color': '#7fb92a'}
+            },
+            'Stochastic Slow': {
+                'slowk': {'color': '#14efe7'}
             }
         }
     })
@@ -181,15 +171,14 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         :return DataFrame: DataFrame for MoniGoMani with all mandatory indicator data populated
         """
 
-         # Momentum Indicators (timeperiod is expressed in candles)
+        # Momentum Indicators (timeperiod is expressed in candles)
         # -------------------
 
         # Parabolic SAR
         dataframe['sar'] = ta.SAR(dataframe)
 
-        #Stochastic
+        # Stochastic Slow
         stoch = ta.STOCH(dataframe)
-        dataframe['slowd'] = stoch['slowd']
         dataframe['slowk'] = stoch['slowk']
 
         # MACD - Moving Average Convergence Divergence
@@ -200,17 +189,18 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         # MFI - Money Flow Index (Under bought / Over sold & Over bought / Under sold / volume Indicator)
         dataframe['mfi'] = ta.MFI(dataframe)
 
-
         # Overlap Studies
         # ---------------
 
+        # Bollinger Bands
+        bollinger = qtpylib.bollinger_bands(qtpylib.typical_price(dataframe), window=20, stds=2)
+        dataframe['bb_middleband'] = bollinger['mid']
 
         # SMA's & EMA's are trend following tools (Should not be used when line goes sideways)
         # SMA - Simple Moving Average (Moves slower compared to EMA, price trend over X periods)
         dataframe['sma9'] = ta.SMA(dataframe, timeperiod=9)
         dataframe['sma50'] = ta.SMA(dataframe, timeperiod=50)
         dataframe['sma200'] = ta.SMA(dataframe, timeperiod=200)
-
 
         # TEMA - Triple Exponential Moving Average
         dataframe['tema'] = ta.TEMA(dataframe, timeperiod=9)
@@ -222,7 +212,6 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         dataframe['vwap'] = qtpylib.vwap(dataframe)
 
         return dataframe
-
 
     def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
