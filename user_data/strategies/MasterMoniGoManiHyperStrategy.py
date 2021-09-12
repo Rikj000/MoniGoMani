@@ -27,7 +27,6 @@ from freqtrade.optimize.space import Categorical, Dimension, Integer, SKDecimal
 from freqtrade.persistence import Trade
 from freqtrade.strategy import IntParameter, IStrategy, merge_informative_pair, timeframe_to_minutes
 
-
 logger = logging.getLogger(__name__)
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
@@ -62,7 +61,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     # MGM trend names
     mgm_trends = ['downwards', 'sideways', 'upwards']
 
-    # Initialize empty buy/sell_params dictionaries and initial (trailing)stoploss values
+    # Initialize empty buy/sell_params dictionaries
     buy_params = {}
     sell_params = {}
 
@@ -429,7 +428,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return deep_merge_dicts(framework_plots, weighted_signal_plots)
 
-
     def _populate_core_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Adds the core indicators used to define trends to the strategy engine.
@@ -659,7 +657,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         custom_information_storage = 'custom_sell - Custom Information Storage'
 
         if (self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True) and \
-                (pair in self.custom_info['open_trades']) and (self.custom_info['open_trades'][pair] != {}):
+            (pair in self.custom_info['open_trades']) and (self.custom_info['open_trades'][pair] != {}):
             try:
                 # Open Trade Custom Information Storage
                 # -------------------------------------
@@ -698,7 +696,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                     f'information storage!')
 
                     if len(losing_open_trades) < (
-                            self.sell___unclogger_minimal_losing_trades_open.value / self.precision):
+                        self.sell___unclogger_minimal_losing_trades_open.value / self.precision):
                         self.mgm_logger('debug', open_trade_unclogger,
                                         f'No unclogging needed! Not enough losing trades currently open!')
                     else:
@@ -814,7 +812,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                         for trend in self.mgm_trends:
                                             if (self.mgm_config['unclogger_spaces'][
                                                     f'unclogger_trend_lookback_window_uses_{trend}_candles'] is False) \
-                                                    & (stored_trend_dataframe[1] == trend):
+                                                & (stored_trend_dataframe[1] == trend):
                                                 negative_trend = False
                                                 break
 
@@ -835,7 +833,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                                 for trend in self.mgm_trends:
                                                     if self.mgm_config['unclogger_spaces'][
                                                         f'unclogger_trend_lookback_window_uses_{trend}_candles'] \
-                                                            & (stored_trend_dataframe[lookback_candle] == trend):
+                                                        & (stored_trend_dataframe[lookback_candle] == trend):
                                                         unclogger_weighted_candles_satisfied += \
                                                             self.separator \
                                                             - (lookback_candle * self.separator_candle_weight_reducer)
@@ -903,7 +901,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         unclogger_cooldown = 'Unclogger Cooldown'
 
         if (self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True) and \
-                (pair in self.custom_info['unclogger_cooldown_pairs']):
+            (pair in self.custom_info['unclogger_cooldown_pairs']):
             for cooldown_period in self.custom_info['unclogger_cooldown_pairs'][pair][:]:
                 self.mgm_logger('debug', unclogger_cooldown,
                                 f'{pair} CoolDown Period:\n'
@@ -948,7 +946,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         """
 
         if (self.mgm_config['weighted_signal_spaces']['sell_profit_only'] is True) and \
-                (sell_reason == 'sell_signal') and (trade.calc_profit_ratio(rate) < 0):
+            (sell_reason == 'sell_signal') and (trade.calc_profit_ratio(rate) < 0):
             return False
 
         return True  # By default we want the sell signal to go through
@@ -1001,9 +999,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
                 conditions_weight.append(
                     (
-                            (dataframe['trend'] == trend) &
-                            (dataframe[f'total_{space}_signal_strength'] >= signal_needed.value / self.precision) &
-                            (dataframe[f'{space}_signals_triggered'] >= signal_triggers_needed.value / self.precision)
+                        (dataframe['trend'] == trend) &
+                        (dataframe[f'total_{space}_signal_strength'] >= signal_needed.value / self.precision) &
+                        (dataframe[f'{space}_signals_triggered'] >= signal_triggers_needed.value / self.precision)
                     ))
 
         return reduce(lambda x, y: x | y, conditions_weight)
@@ -1236,14 +1234,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         """
 
         # Reset some parameters when a new BackTest starts (during HyperOpting)
-        if self.is_dry_live_run_detected is False:
-            # Reset the total signals possible
-            for total_signal_possible in self.total_signals_possible:
-                self.total_signals_possible[total_signal_possible] = 0
-
-            # If needed, reset the custom_info dictionary when a new BackTest starts (during HyperOpting)
-            if self.custom_info != self.initial_custom_info:
-                self.custom_info = copy.deepcopy(self.initial_custom_info)
+        if (self.is_dry_live_run_detected is False) and (space == 'buy'):
+            self.init_hyperopt_epoch()
 
         signals = getattr(self, f'{space}_signals')
 
@@ -1264,3 +1256,27 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                         dataframe['buy'] = dataframe['sell'] = 0
 
         return dataframe
+
+    def init_hyperopt_epoch(self) -> None:
+        """
+        Re-Initialize some parameters specifically for a new HyperOpt epoch
+
+        Necessary because 'joblib' will only do a clean initialization
+        of the MGM framework during the first iteration/batch of epochs.
+        """
+
+        # Reset the total signals possible
+        for total_signal_possible in self.total_signals_possible:
+            self.total_signals_possible[total_signal_possible] = 0
+
+        # Reset the custom_info dictionary when a new BackTest starts (during HyperOpting) if needed
+        if self.custom_info != self.initial_custom_info:
+            self.custom_info = copy.deepcopy(self.initial_custom_info)
+
+        # Re-calculate the 'separator_candle_weight_reducer' if the unclogger is enabled
+        if self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True:
+            self.separator = self.mgm_config['unclogger_spaces'][
+                'unclogger_trend_lookback_candles_window_recent_past_weight_separator']
+            separator_window = (self.separator / 1) - (1 / self.separator)
+            self.separator_candle_weight_reducer = \
+                separator_window / (self.sell___unclogger_trend_lookback_candles_window.value / self.precision)
