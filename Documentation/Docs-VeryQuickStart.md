@@ -28,17 +28,19 @@
  - You need to [optimized](https://github.com/Rikj000/MoniGoMani/blob/main/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
 <hr>
    
-**<span style="color:blue">TIP:</span> Native installation is recommended since MoniGoMani sometimes requires a specific Freqtrade commit. It's also faster/better than a Docker Container, but Docker is easier to install**   
+**<span style="color:blue">TIP:</span> `source` installation is recommended since MoniGoMani sometimes requires a specific Freqtrade commit. It's also faster/better than a Docker Container, but Docker is easier to install**   
 
 ## Requirements
 Make sure that you have all of the following available on your system before proceeding:
-- Python 3.8+ is required
+- [Python](https://www.python.org/) *(3.8+ is required)*
 - [Pip](https://pypi.org/project/pip/) *(Package manager to install & manage Python packages)*
 - [Git](https://git-scm.com/downloads) *(Software version management)*
-- [Jq](https://stedolan.github.io/jq/) *(Command-line `.json` processor)*
-- [Curl](https://curl.se/) *(Command line data transferring through URLs)*
-- [Docker](https://www.docker.com/get-started) *(If you really can't go for a source installation)*
+- [cURL](https://curl.se/) *(Command line data transferring through URLs, usually already installed)*
+- [Docker](https://www.docker.com/get-started) *(If you really can't go for a `source`installation!)*
 - [VSCodium](https://vscodium.com/) *(Optional - A light weight open-source IDE that comes pre-installed with good color codes to make it easier to read `.json` and `.log` files & many more great features)*
+
+### Additional Ubuntu requirements:
+- [Python-venv](https://pypi.org/project/virtualenv/) *(The installer will prompt you how to install it on your version)*
 
 # Very Quick Start:
 *Need a more detailed guide? Checkout the [**Official Freqtrade Installation Guide**](https://www.freqtrade.io/en/latest/installation/)!*    

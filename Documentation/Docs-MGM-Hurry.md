@@ -22,8 +22,6 @@
 
 
 ## ⚠️ Disclaimer
----
-
  - This Framework & Strategy are still experimental and under heavy development. It is not recommended running it live at this moment.
  - Always make sure to understand & test your MoniGoMani configuration until you trust it, before even thinking about going live!
  - I am in no way responsible for your live results! You are always responsible for your own MoniGoMani configuration!
@@ -43,7 +41,7 @@ Setting it all up requires some knowledge of the entire process, until you found
 ## Table of Contents
 ---
 
-- [## ⚠️ Disclaimer](#-️-disclaimer)
+- [⚠️ Disclaimer](#️-disclaimer)
 - [## Table of Contents](#-table-of-contents)
 - [## Installation instructions](#-installation-instructions)
 - [## `mgm-hurry` Command Usage](#-mgm-hurry-command-usage)
@@ -57,18 +55,21 @@ Setting it all up requires some knowledge of the entire process, until you found
   - [`mgm-hurry setup`](#mgm-hurry-setup)
   - [`mgm-hurry cleanup`](#mgm-hurry-cleanup)
   - [`mgm-hurry download_static_pairlist`](#mgm-hurry-download_static_pairlist)
+    - [Options](#options-2)
   - [`mgm-hurry download_candle_data`](#mgm-hurry-download_candle_data)
     - [Option](#option)
   - [`mgm-hurry hyperopt`](#mgm-hurry-hyperopt)
-    - [Options](#options-2)
-  - [`mgm-hurry backtest`](#mgm-hurry-backtest)
     - [Options](#options-3)
-  - [`mgm-hurry hyperopt_show_epoch`](#mgm-hurry-hyperopt_show_epoch)
+  - [`mgm-hurry backtest`](#mgm-hurry-backtest)
     - [Options](#options-4)
-  - [`mgm-hurry hyperopt_show_results`](#mgm-hurry-hyperopt_show_results)
-    - [Options](#options-5)
-  - [`mgm-hurry start_trader`](#mgm-hurry-start_trader)
+  - [`mgm-hurry importance_report`](#mgm-hurry-importance_report)
     - [Option](#option-1)
+  - [`mgm-hurry hyperopt_show_epoch`](#mgm-hurry-hyperopt_show_epoch)
+    - [Options](#options-5)
+  - [`mgm-hurry hyperopt_show_results`](#mgm-hurry-hyperopt_show_results)
+    - [Options](#options-6)
+  - [`mgm-hurry start_trader`](#mgm-hurry-start_trader)
+    - [Option](#option-2)
 - [## Example timeranges](#-example-timeranges)
 - [Developer Notes](#developer-notes)
 - [### Virtual Environment](#-virtual-environment)
