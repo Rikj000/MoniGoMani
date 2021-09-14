@@ -7,7 +7,7 @@
         <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases/latest">
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/development/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/wiki">
         <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
@@ -25,8 +25,8 @@
  - This Framework & Strategy are still experimental and under heavy development. It is not recommended running it live at this moment.
  - Always make sure to understand & test your MoniGoMani configuration until you trust it, before even thinking about going live!
  - I am in no way responsible for your live results! You are always responsible for your own MoniGoMani configuration!
- - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) after doing manual changes!
- - You need to [optimized](https://github.com/Rikj000/MoniGoMani/blob/main/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
+ - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) after doing manual changes!
+ - You need to [optimized](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
 <hr>
 
 
@@ -43,7 +43,6 @@ Setting it all up requires some knowledge of the entire process, until you found
 
 - [⚠️ Disclaimer](#️-disclaimer)
 - [## Table of Contents](#-table-of-contents)
-- [## Installation instructions](#-installation-instructions)
 - [## `mgm-hurry` Command Usage](#-mgm-hurry-command-usage)
   - [`mgm-hurry --help`](#mgm-hurry---help)
   - [`mgm-hurry version`](#mgm-hurry-version)
@@ -75,26 +74,6 @@ Setting it all up requires some knowledge of the entire process, until you found
 - [### Virtual Environment](#-virtual-environment)
 - [### Continuous Integration](#-continuous-integration)
 - [### Module headers](#-module-headers)
-
-## Installation instructions
----
-- **ToDo:** *Move Installation instructions to `Docs-VeryQuickStart.md`*
-- **Note:** *Assumes Python 3.8+, Pip & Git are already installed on your system!*
-- **Note:** *Ubuntu users first will need to [switch their `sh` to `bash`](https://unix.stackexchange.com/a/442517)*
-
-MoniGoMani provides an all-in-one setup tool. It will guide you through the entire installation procedure. Not only for MoniGoMani, but Freqtrade also. You want the entire package, right? You will be up & HyperOpting (or Dry/Live Running) in no time! 🤙
-
-To run the `installer.sh`, just run the following command:
-```powershell
-/usr/bin/env sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
-```
-
-After installation all you need to do to get started is run:
-
-```powershell
-cd ./freqtrade-mgm
-python3 mgm-hurry up
-```
 
 ## `mgm-hurry` Command Usage
 ---
@@ -156,7 +135,7 @@ Cleans up HyperOpt Result `.json` files so you can easily start a fresh HyperOpt
 
 
 ### `mgm-hurry download_static_pairlist`
-Retrieve and apply a current **Top-Volume-StaticPairList.json** file *(Using [RetrieveTopVolumeStaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/RetrieveTopVolumeStaticPairList.json))*.
+Retrieve and apply a current **Top-Volume-StaticPairList.json** file *(Using [RetrieveTopVolumeStaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm_tools/RetrieveTopVolumeStaticPairList.json))*.
 The retrieved StaticPairList contains the top X pairs with the most trading volume at that point in time.
 #### Options
   - **`--stake_currency`:** The stake currency to find the list of.
@@ -186,7 +165,7 @@ Runs HyperOpt process to find out the most positive settings.
   - ***Defaults to:** The `timerange` defined in your `.hurry` file.*
 - **`--strategy`:** *(Optional)* Specify the Strategy which you want to HyperOpt
   - **Defaults to:** The `strategy` defined in the `hyperopt` section of your `.hurry` file.
-- **`--loss`:** *(Optional)* Specify the [HyperOptLoss](https://github.com/Rikj000/MoniGoMani/blob/main/Documentation/Docs-HyperOptLoss-Functions.md) which you want to use during HyperOpting
+- **`--loss`:** *(Optional)* Specify the [HyperOptLoss](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-HyperOptLoss-Functions.md) which you want to use during HyperOpting
   - **Defaults to:** The `loss` defined in the `hyperopt` section of your `.hurry` file.
 - **`--spaces`:** *(Optional)* Specify the HyperOpt [spaces](https://www.freqtrade.io/en/latest/hyperopt/#running-hyperopt-with-smaller-search-space) which you want to use during HyperOpting
   - **Defaults to:** The `spaces` defined in the `hyperopt` section of your `.hurry` file.

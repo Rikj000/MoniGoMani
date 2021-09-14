@@ -7,10 +7,10 @@
         <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases/latest">
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/development/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md">
-        <img src="https://img.shields.io/badge/Docs-MGM__DOCUMENTATION.md-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/wiki">
+        <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
     </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
     </a> <a href="https://www.iconomi.com/register?ref=JdFzz">
@@ -45,15 +45,16 @@
 
 # MoniGoMani HyperOptLoss Functions
 MoniGoMani Ships with a handful of Custom HyperOptLoss Objective Functions. You can find them under `user_data/hyperopts/`.
-Most of these contain configurable parameters. All of these settings can be tweaked from within your [mgm-config]([mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm-config.json)) under the `monigomani_hyperoptloss_settings` section to make up for a more robust strategy.
+Most of these contain configurable parameters. All of these settings can be tweaked from within your [mgm-config]([mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json)) under the `monigomani_hyperoptloss_settings` section to make up for a more robust strategy.
 
 
 ## MGM_WeightedMultiParameterHyperOptLoss
+⚠️ **This HO Loss is not available in the repo yet because it's not done yet! But it will be published once it's completed! Please use another HO Loss in the meantime**
 MGM_WeightedMultiParameterHyperOptLoss Customizable HyperOpt Objective function. Returns smaller number for better results.
 This HyperOptLoss Function is the main HyperOptLoss Function utilized by MoniGoMani.
 It allows the user to choose possible Parameter Weight Objective Configurations, each of these influence the outcome of the final Objective.
 
-All settings for the `MGM_WeightedMultiParameterHyperOptLoss` function can be found in your [mgm-config]([mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm-config.json)) under the `MGM_WeightedMultiParameterHyperOptLoss` section of the `monigomani_hyperoptloss_settings` section.
+All settings for the `MGM_WeightedMultiParameterHyperOptLoss` function can be found in your [mgm-config]([mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json)) under the `MGM_WeightedMultiParameterHyperOptLoss` section of the `monigomani_hyperoptloss_settings` section.
 Following **parameter sections** can be configured to fine-tune your MoniGoMani Configuration further:
 - `drawdown`
 - `duration`
@@ -110,7 +111,7 @@ If you don't want to use a certain threshold value then you can easily disable t
 MGM_GeniusHyperOptLoss Customizable HyperOpt Objective function. Returns smaller number for better results.
 Considers various metrics to fine-tune for a more robust strategy configuration!
 
-All settings for the `MGM_GeniusHyperOptLoss` function can be found in your [mgm-config]([mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm-config.json)) under the `MGM_GeniusHyperOptLoss` section of the `monigomani_hyperoptloss_settings` section.
+All settings for the `MGM_GeniusHyperOptLoss` function can be found in your [mgm-config]([mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json)) under the `MGM_GeniusHyperOptLoss` section of the `monigomani_hyperoptloss_settings` section.
 Following **parameter sections** can be configured to fine-tune your MoniGoMani Configuration further:
 - `sortino`
 - `weight`
@@ -135,4 +136,4 @@ This function optimizes for both best profit & stability. On stability, the fina
 This might prove to be more reliable for dry and live runs of FreqTrade and prevent over-fitting on best profit only.
 
 Trades with losses between the `unclogger_profit_ratio_loss_tolerance` are ignored, as those are considered to be a by-product of the MoniGoMani Unclogger. *(Examples: 0% - 2%)*
-The setting for the `MGM_UncloggedWinRatioAndProfitRatioHyperOptLoss` function can be found in your [mgm-config]([mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm-config.json)) under the `MGM_WeightedMultiParameterHyperOptLoss` section of the `monigomani_hyperoptloss_settings` section.
+The setting for the `MGM_UncloggedWinRatioAndProfitRatioHyperOptLoss` function can be found in your [mgm-config]([mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json)) under the `MGM_WeightedMultiParameterHyperOptLoss` section of the `monigomani_hyperoptloss_settings` section.

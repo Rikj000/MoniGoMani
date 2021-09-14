@@ -17,7 +17,7 @@
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
     </a>
     <br>
-    <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
+    <a href="https://github.com/Rikj000/MoniGoMani/blob/development/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/wiki">
         <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
@@ -67,8 +67,8 @@ If you like my work, feel free to donate or use [one of my referral links](#supp
  - This Framework & Strategy are still experimental and under heavy development. It is not recommended running it live at this moment.
  - Always make sure to understand & test your MoniGoMani configuration until you trust it, before even thinking about going live!
  - I am in no way responsible for your live results! You are always responsible for your own MoniGoMani configuration!
- - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) after doing manual changes!
- - You need to [optimized](https://github.com/Rikj000/MoniGoMani/blob/main/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
+ - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) after doing manual changes!
+ - You need to [optimized](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
 <hr>
 
 ## Table of Contents
@@ -78,7 +78,6 @@ If you like my work, feel free to donate or use [one of my referral links](#supp
 - [The Idea & Theory](#the-idea--theory)
 - [Feature List](#feature-list)
 - [Getting Started](#getting-started)
-- [Go-To Commands](#go-to-commands)
 - [Got Test Results - Ideas - Config Improvements?](#got-test-results---ideas---config-improvements)
 - [Planned](#planned)
 - [ChangeLog](#changelog)
@@ -89,7 +88,7 @@ If you like my work, feel free to donate or use [one of my referral links](#supp
 
 
 ## The Idea & Theory
-**MoniGoMani** is more than just a conventional strategy, it's a **Framework** that aims to help you **"easily"** find a profitable strategy configuration in any market through our [partially automated optimization process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani)!
+**MoniGoMani** is more than just a conventional strategy, it's a **Framework** that aims to help you **"easily"** find a profitable strategy configuration in any market through our [partially automated optimization process](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani)!
 Without the need to do any more real programming! :rocket:
 
 However, you will need to know about [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/) and some Technical Analysis, to be able to tell if the MGM setup \*[HyperOpt](https://www.freqtrade.io/en/latest/hyperopt/) found over the tested timerange is valid or not, this is not just an easy copy/paste!
@@ -103,13 +102,14 @@ An **interface** has been implemented so the indicators and weighted signals use
 The beauty lies in using MGM in combination with **HyperOpting**. Most of the parameters in MGM have been made HyperOptable thus it can be used to find an "ideal" weight division and setting configuration for you in any kind of market that that represents the data upon which you test.
 It will also teach us what works where & what doesn't since MoniGoMani first **detects Downwards/Sideways/Upwards trends** and then does all the above individually for each kind of trend *(Creating basically 3 individual strategies in 1, for each kind of trend one)*.
 
-Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#open-trade-unclogger) which will do various HyperOptable checks upon the open trades to see if there are "bad" ones to quickly unclog at small losses, so it can continue on the hunt for good trades more rapidly! :rocket:
+Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#open-trade-unclogger) which will do various HyperOptable checks upon the open trades to see if there are "bad" ones to quickly unclog at small losses, so it can continue on the hunt for good trades more rapidly! :rocket:
 
 \****HyperOpting:** A form of machine learning where you [BackTest](https://www.freqtrade.io/en/latest/backtesting/) a lot of times to find the most ideal values)*
 
 ## Feature List
-- Partially [Automated Optimization Process](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#how-to-optimize-monigomani)
-- All HyperOpt Results can easily be applied and removed with the use of some [Go-To Commands](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#go-to-commands)
+- [**`mgm-hurry`**](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md) - A custom CLI tool to make using MoniGoMani & Freqtrade much easier!
+- Partially [Automated Optimization Process](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani)
+- All HyperOpt Results can easily be applied and removed with the use of [**`mgm-hurry`**](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md)
 - Configurable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends, each table **currently** has 10 Buy & 10 Sell signals implemented ***(HyperOptable!)***:
   - [ADX](https://www.investopedia.com/terms/a/adx.asp)
   - [MACD](https://www.investopedia.com/terms/m/macd.asp)
@@ -121,71 +121,38 @@ Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/Mon
   - [EMA](https://www.investopedia.com/terms/e/ema.asp) Long [Death](https://www.investopedia.com/terms/d/deathcross.asp)/[Golden](https://www.investopedia.com/terms/g/goldencross.asp) Cross
   - [Bollinger Band](https://www.investopedia.com/terms/b/bollingerbands.asp) Re-Entrance
   - [VWAP](https://www.investopedia.com/terms/v/vwap.asp) Cross
-- [Weighted Signal Interface](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#weighted-signal-interface) to easily change the weighted signals being used
+- [Weighted Signal Interface](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#weighted-signal-interface) to easily change the weighted signals being used
 - Configurable Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends ***(HyperOptable!)***
 - Configurable LookBack Windows for Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends ***(HyperOptable!)***
 - Configurable Signal Triggers Needed within their respective LookBack Windows for Downwards/Sideways/Upwards trends ***(HyperOptable!)***
-- Configurable [Trading During Trends](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#trading-during-trends) (Downwards/Sideways/Upwards) for Buys/Sells
-- Configurable [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#open-trade-unclogger), if enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades ***(HyperOptable!)*** :rocket:
-- [TimeFrame-Zoom](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#timeframe-zoom) during BackTesting/HyperOpting to prevent profit exploitation! *(Read: [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/))*
-- [Configurable HyperOptable Stoploss](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#stoploss-spaces) to fine-tune where HyperOpt should look
+- Configurable [Trading During Trends](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#trading-during-trends) (Downwards/Sideways/Upwards) for Buys/Sells
+- Configurable [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#open-trade-unclogger), if enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades ***(HyperOptable!)*** :rocket:
+- [TimeFrame-Zoom](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#timeframe-zoom) during BackTesting/HyperOpting to prevent profit exploitation! *(Read: [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/))*
+- [Configurable HyperOptable Stoploss](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#stoploss-spaces) to fine-tune where HyperOpt should look
 - Custom Long Continuously decreasing ROI Table generation with configurable `roi_table_step_size`
-- [Precision Setting](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#precision-setting) to alter the step-size used during HyperOpting
-- 2 [Custom HyperLoss Functions](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#custom-hyperloss-functions):
-  - [WinRatioAndProfitRatioLoss](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/hyperopts/WinRatioAndProfitRatioLoss.py): Attempts to optimise for the best profit **and** stability (Returns smaller number for better results)
-  - [UncloggedWinRatioAndProfitRatioLoss](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/hyperopts/UncloggedWinRatioAndProfitRatioLoss.py): Same as WinRatioAndProfitRatioLoss but has a configurable Percentage of loss to ignore while HyperOpting (Small losses are a by-product of the Unclogger)
-- [Top Volume & All Tradable StaticPairList Downloading](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#download-staticpairlists) to easily fetch and apply a good StaticPairList
-- [Total Overall Signal Importance Calculator](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md#total-overall-signal-importance-calculator) for Total Average Signal Importance Calculation upon the HyperOpt Results (With some really handy subcommands)
+- [Precision Setting](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#precision-setting) to alter the step-size used during HyperOpting
+- 2 [Custom HyperLoss Functions](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#custom-hyperloss-functions):
+  - [WinRatioAndProfitRatioLoss](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/hyperopts/WinRatioAndProfitRatioLoss.py): Attempts to optimise for the best profit **and** stability (Returns smaller number for better results)
+  - [UncloggedWinRatioAndProfitRatioLoss](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/hyperopts/UncloggedWinRatioAndProfitRatioLoss.py): Same as WinRatioAndProfitRatioLoss but has a configurable Percentage of loss to ignore while HyperOpting (Small losses are a by-product of the Unclogger)
+- [Top Volume & All Tradable StaticPairList Downloading](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#download-staticpairlists) to easily fetch and apply a good StaticPairList
+- [Total Overall Signal Importance Calculator](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#total-overall-signal-importance-calculator) for Total Average Signal Importance Calculation upon the HyperOpt Results (With some really handy subcommands)
 - Pre-Configured Main/Sub Plot Configurations for visualization of all indicators used in FreqUI
 - Turn On/Off **All** Individual Weighted Signal DataFrame entries for easy debugging in an IDE or better speed while dry/live running or HyperOpting
 
 ## Getting Started
-Take a good read at the [**MGM_DOCUMENTATION.md**](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md), the current place where you can find all MoniGoMani Documentation!
+Under the [**Wiki**](https://github.com/Rikj000/MoniGoMani/wiki) section of the project you can find links to all MoniGoMani Documentation.
+Please take a good read at these! :pray:+98//
 
-## Go-To Commands
-**Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) & Apply *"best"* HyperOpt Results:
-```powershell
-freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 1000 --timerange 20210501-20210616 --enable-protections && mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json
-```
-**View & Apply HyperOpt Results** from a trusted `<epoch of choice>`:
-```powershell
-freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json && mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json
-```
-**Reset HyperOpt Results**:
-```powershell
-rm ./user_data/mgm-config-hyperopt.json ./user_data/strategies/MoniGoManiHyperStrategy.json
-```
-**Back Testing** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
-```powershell
-freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210501-20210616 --enable-protections
-```
-**Total Average Signal Importance Calculation** *(with the [TotalOverallSignalImportanceCalculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py))*:
-```powershell
-python ./user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py
-```
-Retrieve and apply a current **Top-Volume-StaticPairList.json** file *(using [RetrieveTopVolumeStaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/RetrieveTopVolumeStaticPairList.json))*:
-```powershell
-freqtrade test-pairlist -c ./user_data/mgm_tools/RetrieveTopVolumeStaticPairList.json --quote USDT --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json && jq 'del(.exchange.pair_whitelist )' ./user_data/mgm-config.json > ./tmp.json && jq -s '.[0] * .[1]' ./tmp.json ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json > ./user_data/mgm-config.json && rm ./tmp.json && jq '.' ./user_data/mgm-config.json
-```
-**Download Candle Data**:
-```powershell
-freqtrade download-data --timerange 20210414-20210618 -t 5m 30m -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
-```
-
-**Plot-Profits** from a `<backtest-results-file>`:
-```powershell
-freqtrade plot-profit --export-filename ./user_data/backtest_results/<backtest-results-file> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210501-20210616 --timeframe 1h
-```
 
 ## Got Test Results - Ideas - Config Improvements?
-- Feel free to join our community [**MoniGoMani** on Matrix](https://matrix.to/#/+moni-go-mani:matrix) or [**CryptoStonksShallRise** on Discord](https://discord.gg/xFZ9bB6vEz), there you can follow/participate in the **Official MoniGoMani Channels**:
+- Feel free to join our community [**MoniGoni** on Matrix](https://matrix.to/#/+moni-go-mani:matrix) or [**CryptoStonksShallRise** on Discord](https://discord.gg/xFZ9bB6vEz), there you can follow/participate in the **Official MoniGoMani Channels**:
   - `📢︱moni-go-mani` *(All Official MGM Releases & important messages can be followed here)*
   - `✨︱git-updates` *(All GitHub Commits can be followed here)*
   - `🗞︱github-discussions` *(All conversations tied to GitHub Issues & Pull Requests can be followed here)*
   - `🖥︱development` *(Channel for discussing development on MGM. exclusive for `MoniGoMani Developers`)*
   - `👑︱testing-elite` *(Channel for members that have proven to be true additions to the community. Exclusive for `MoniGoMani Testing MVP` and above)*
   - `🛠︱testing` *(Your go-to channel for partaking in the community. Feel free to drop your test results / config files / ideas here)*
-  - `❔︱help` *(Be sure to take your time to read the [Documentation](https://github.com/Rikj000/MoniGoMani/blob/main/MGM_DOCUMENTATION.md) thoroughly before asking questions though!)*
+  - `❔︱help` *(Be sure to take your time to read the [Documentation](https://github.com/Rikj000/MoniGoMani/wiki) thoroughly before reaching out with questions though!)*
   - `🎉︱setup-releases` *(Release your personal profitable MGM configurations/HyperOpted versions here)*
   - `🍿︱test-results` *(Where HyperOpt & BackTest results are automatically posted by the community, exclusive for `MoniGoMani Testing MVP` and above)*
   - `🗄︱cluster-results` *(Automated Ph3nol Cluster Releases. Exclusive to the MoniGoMani Cluster Maintainer & MoniGoMani Developers, for now!)*

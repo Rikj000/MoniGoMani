@@ -7,7 +7,7 @@
         <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases/latest">
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/development/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/wiki">
         <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
@@ -24,41 +24,42 @@
  - This Framework & Strategy are still experimental and under heavy development. It is not recommended running it live at this moment.
  - Always make sure to understand & test your MoniGoMani configuration until you trust it, before even thinking about going live!
  - I am in no way responsible for your live results! You are always responsible for your own MoniGoMani configuration!
- - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/main/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) after doing manual changes!
- - You need to [optimized](https://github.com/Rikj000/MoniGoMani/blob/main/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
+ - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) after doing manual changes!
+ - You need to [optimized](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
 <hr>
    
 **<span style="color:blue">TIP:</span> `source` installation is recommended since MoniGoMani sometimes requires a specific Freqtrade commit. It's also faster/better than a Docker Container, but Docker is easier to install**   
 
 ## Requirements
 Make sure that you have all of the following available on your system before proceeding:
-- [Python](https://www.python.org/) *(3.8+ is required)*
-- [Pip](https://pypi.org/project/pip/) *(Package manager to install & manage Python packages)*
-- [Git](https://git-scm.com/downloads) *(Software version management)*
-- [cURL](https://curl.se/) *(Command line data transferring through URLs, usually already installed)*
-- [Docker](https://www.docker.com/get-started) *(If you really can't go for a `source`installation!)*
-- [VSCodium](https://vscodium.com/) *(Optional - A light weight open-source IDE that comes pre-installed with good color codes to make it easier to read `.json` and `.log` files & many more great features)*
+- [**Python3**](https://www.python.org/) - Python 3.8+ is required.
+- [**Pip3**](https://pypi.org/project/pip/) - Package manager to install & manage Python packages.
+- [**Git**](https://git-scm.com/downloads) - Software version management
+- [**cURL**](https://curl.se/) - Command line data transferring through URLs, usually already installed
+- [**Expect**](https://core.tcl-lang.org/expect/index) - A tool for automating interactive applications
+- [**TA-Lib**](https://github.com/mrjbq7/ta-lib) - Technical Analysis Library written in C
+- [**VSCodium**](https://vscodium.com/) - *(Optional)* A light weight open-source IDE that comes pre-installed with good color codes to make it easier to read `.json` and `.log` files & many more great features.
+- [**Docker**](https://www.docker.com/get-started) - *(Not recommended! Optional)* Only if you really can't go for a `source` installation!
 
-### Additional Ubuntu requirements:
-- [Python-venv](https://pypi.org/project/virtualenv/) *(The installer will prompt you how to install it on your version)*
-
-# Very Quick Start:
-*Need a more detailed guide? Checkout the [**Official Freqtrade Installation Guide**](https://www.freqtrade.io/en/latest/installation/)!*    
+#### Additional Ubuntu requirements:
+- [**Switch `sh` to `bash`**](https://unix.stackexchange.com/a/442517) - Run `sudo dpkg-reconfigure dash`, this will ask whether you want dash to be the default system shell. Answer `No` (`Tab` then `Enter`) and bash will become the default instead.
+- [**Python-venv**](https://pypi.org/project/virtualenv/) - The installer will prompt you how to install it on your version
 
 
-1) Install the required Python packages
-    *(Command may vary a bit depending on your systems version of `python` & `pip`)*
-    ```powershell
-    pip3 install -r https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/requirements-mgm.txt
-    ```
-2) Download `mgm-hurry` in the folder where you want to install `MoniGoMani` and/or `Freqtrade`
-    ```powershell
-    curl "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/mgm-hurry" --output "mgm-hurry"
-    ```
-3) Install & setup `MoniGoMani` and/or `Freqtrade`
-    ```powershell
-    python3 mgm-hurry up
-    ```
+## Installation instructions
+MoniGoMani provides an all-in-one setup tool. It will guide you through the entire installation procedure. Not only for MoniGoMani, but Freqtrade also. You want the entire package, right? You will be up & HyperOpting (or Dry/Live Running) in no time! 🤙
+
+To run the `installer.sh`, just run the following command:
+```powershell
+/usr/bin/env sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
+```
+
+After installation all you need to do to get started is run:
+
+```powershell
+cd ./freqtrade-mgm
+python3 mgm-hurry up
+```
 
 That's it you successfully installed `MoniGoMani` and/or `Freqtrade`!
 You can now start using `MoniGoMani` for HyperOpting/BackTesting/Dry/Live-running! Congratulations :tada:
@@ -70,3 +71,10 @@ Following is a non-sticking example line, this needs to be added to your shell c
 ```powershell
 alias mgm-hurry="python3 /path/to/MoniGoMani/mgm-hurry"
 ```
+
+### OS Support Priority list
+1) **Linux/Unix** *(MoniGoMani is written on Linux, for Linux!)*
+2) **MacOS** *(Thanks to topscoder and other MacOS users)*
+3) **WSL** *(Because we have to give those Windows users something..)*
+4) **Docker** *(If there is free time left, there hasn't been free time left in months..)*
+5) **Windows** *(Such a SpyWare infested OS will **never** receive support for this project!)*

@@ -7,7 +7,7 @@
         <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases/latest">
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/main/LICENSE">
+    </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/development/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/wiki">
         <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
@@ -30,7 +30,7 @@
 
 
 ## Table of Contents
-- [Freqtrade Installation](#freqtrade-installation)
+- [Installation](#installation)
 - [How to Optimize MoniGoMani](#how-to-optimize-monigomani)
 - [How to Configure MoniGoMani](#how-to-configure-monigomani)
   - [mgm-config.json](#mgm-configjson)
@@ -53,65 +53,80 @@
       - [Defining Indicators Examples](#defining-indicators-examples)
       - [Defining Weighted Buy & Sell Signals Examples](#defining-weighted-buy--sell-signals-examples)
       - [Visualize Weighted Signals in FreqUI](#visualize-weighted-signals-in-frequi)
-- [Total Overall Signal Importance Calculator](#total-overall-signal-importance-calculator)
-  - [Handy Calculator Sub Commands](#handy-calculator-sub-commands)
-- [Custom HyperLoss Functions](#custom-hyperloss-functions)
 - [PairLists](#pairlists)
-  - [Enabled StaticPairList / Disabled VolumePairList Example](#enabled-staticpairlist--disabled-volumepairlist-example)
-  - [Download StaticPairLists](#download-staticpairlists)
-- [Go-To Commands](#go-to-commands)
+    - [Enabled StaticPairList / Disabled VolumePairList Example](#enabled-staticpairlist--disabled-volumepairlist-example)
 - [How to test for improvements](#how-to-test-for-improvements)
-- [How to share your test results properly](#how-to-share-your-test-results-properly)
 - [Common mistakes](#common-mistakes)
-  - [HyperOpting: +300 epochs, no results yet](#hyperopting-300-epochs-no-results-yet)
-  - [TypeError: integer argument expected, got float](#typeerror-integer-argument-expected-got-float)
-  - [-bash: jq: command not found](#-bash-jq-command-not-found)
-  - [ValueError: the lower bound X has to be less than the upper bound Y](#valueerror-the-lower-bound-x-has-to-be-less-than-the-upper-bound-y)
+    - [HyperOpting: +300 epochs, no results yet](#hyperopting-300-epochs-no-results-yet)
+    - [TypeError: integer argument expected, got float](#typeerror-integer-argument-expected-got-float)
+    - [ValueError: the lower bound X has to be less than the upper bound Y](#valueerror-the-lower-bound-x-has-to-be-less-than-the-upper-bound-y)
 
-# Freqtrade Installation
-This guide now assumes you have **Freqtrade** and **jq** already installed, if you haven't yet, then please see [VERYQUICKSTART_FREQTRADE.md](https://github.com/Rikj000/MoniGoMani/blob/main/VERYQUICKSTART_FREQTRADE.md)
+# Installation
+This guide assumes you have **MoniGoMani** & **Freqtrade** already installed, if you haven't yet, then please see the [Docs-VeryQuickStart](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-VeryQuickStart.md).
+Further it also assumes you familiarized yourself with **mgm-hurry**'s commands which are described in [Docs-MGM-Hurry](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md).
 
 # How to Optimize MoniGoMani
 *(These are just my ideas/theories, if you have other ideas, please test them & report your results to [`🛠 MoniGoMani - Testing` on Matrix](https://matrix.to/#/#MoniGoMani-Testing:matrix.org) or [`#🛠︱testing` on Discord](https://discord.gg/xFZ9bB6vEz) so we can learn and improve this flow!)*
 **<span style="color:darkorange">WARNING:</span> It's strongly advised to not do any manual alterations to an already optimized MGM setup! The recommended way to do manual alterations is by [Configuring MoniGoMani](#how-to-configure-monigomani), and then following this optimization process to apply them!**
 
-
-- **0)** Delete the previous `mgm-config-hyperopt.json` and/or `MoniGoManiHyperStrategy.json` files if they exist, by using:
+- **0)** **Clean up** previous HyperOpt results for a fresh run with:
   ```powershell
-  rm ./user_data/mgm-config-hyperopt.json ./user_data/strategies/MoniGoManiHyperStrategy.json
+  mgm-hurry cleanup
   ```
-- **1) Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)**
-- **2)** Download a good Top Volume StaticPairList and update this in your `mgm-config.json`. Instructions for how to do this are under [PairLists](#pairlists).
-- **3)** Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & pick a logical timeframe to do your HyperOpt upon *(The timeframe in the [Go-To Commands](#go-to-commands) for example resembles some bullish, some bearish and some sideways market behavior, with the idea to give MGM all trends to train upon).*
-- **4)** HyperOpt for a **1st HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)
-  The 1st HyperOpt Run *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with the default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of `mgm-config.json`
-- **5) [Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.
+- **1)** Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & **pick a logical TimeFrame** to do your HyperOpt upon, manually configure this in your `.hurry` file or apply one with:
+  ```powershell
+  mgm-hurry setup
+  ```
+  *(The default provided timeframe resembles some bullish, some bearish and some sideways market behavior, with the idea to give MGM all trends to train upon).*
+- **2)** Download and apply a **Top Volume StaticPairList** with:
+  ```powershell
+  mgm-hurry download_static_pairlist
+  ```
+- **3)** **Download candle data** for your StaticPairList & TimeRange with:
+  ```powershell
+  mgm-hurry download_candle_data
+  ```
+- **4) Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)**
+- **5)** HyperOpt for a **1st Initial HyperOpt Run** with:
+  ```powershell
+  mgm-hurry hyperopt
+  ```
+  *(Free to [alter the command](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md#mgm-hurry-hyperopt) if you have a good idea that you want to test)*
+  **The 1st Initial HyperOpt Run** *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with the default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of your`mgm-config.json` file.
+- **6) [Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.
   You can check and automatically apply an `<epoch of choice>` of which you feel confident, in the list of best results using:
   ```powershell
-  freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json && mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json
+  mgm-hurry hyperopt_show_epoch --epoch <epoch of choice>
   ```
-- **6)** Repeat `Steps 4 and 5` at least for a **2nd HyperOpt Run** with the command provided in the [Go-To Commands](#go-to-commands) (Free to alter the command if you have a good idea that you want to test)
-  The 2nd HyperOpt Run *(When a `mgm-config-hyperopt.json` exists)* is automatically ran with:
-  - Refined search spaces ranging between the values found during the 1st Run (Loaded from `mgm-config-hyperopt.json`) plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json` (This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)
-  - Weak weighted signals weeded out by overriding them to their respective `min_` value (Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)
-  - Strong weighted signals are boosted by overriding them to their respective `max_` value (Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)
-- **7)** Load your results into the `TotalOverallSignalImportanceCalculator.py` and run it's [Go-To Command](#go-to-commands) to receive a nice weighted signal report for sharing in the [Matrix Community](https://matrix.to/#/+moni-go-mani:matrix.org) or [Discord server](https://discord.gg/xFZ9bB6vEz) and to pull conclusions from.
+- **7)** Repeat `Steps 5 and 6` at least for a **2nd Refinement HyperOpt Run**
+  **The 2nd Refinement HyperOpt Run** *(When a `mgm-config-hyperopt.json` exists)* is automatically ran with:
+  - Refined search spaces ranging between the values found during the 1st Run *(Loaded from `mgm-config-hyperopt.json`)* plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json` 
+  *(This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)*
+  - Weak weighted signals weeded out by overriding them to their respective `min_` value 
+  *(Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
+  - Strong weighted signals are boosted by overriding them to their respective `max_` value 
+  *(Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
+- **8)** Once you feel confident about the result you found throw them up for a Dry-Run to test how the setup will behave in the current market with:
+  ```powershell
+  mgm-hurry start_trader --dry-run true
+  ```
 
 
 # How to Configure MoniGoMani
-In total 5 files are used in the configuration of MoniGoMani, all can be found in the `user_data` & `user_data/strategies` folders:
+In total 5 files are used in the configuration of MoniGoMani, all can be found in the `user_data`, `user_data/strategies` and root folders:
 - [`mgm-config.json`](#mgm-config.json): This is the **main configuration file**, containing:
     - The main `MoniGoMani` settings
     - The main `Freqtrade` settings (See [The Official Freqtrade Configuration Documentation](https://www.freqtrade.io/en/latest/configuration/) to learn how to configure these)
-- [`mgm-config-private.json`](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm-config-private.json): This split configuration file contains some `Freqtrade` settings containing critical private information, **never** share this file!
+- [`mgm-config-private.json`](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config-private.json): This split configuration file contains some `Freqtrade` settings containing critical private information, **never** share this file!
 - [`mgm-config-hyperopt.json`](#mgm-config-hyperopt.json): This file contains the optimized HyperOptable `MoniGoMani` and `Freqtrade` settings. It will be created when following the [How to Optimize MoniGoMani](#how-to-optimize-monigomani) process
-- [`MoniGoManiHyperStrategy.py`](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py): The **main strategy file**, containing the [Weighted Signal Interface](#weighted-signal-interface) where you can implement new weighted signals & indicators in a nearly plug and play like fashion.
-- [`MasterMoniGoManiHyperStrategy.py`](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MasterMoniGoManiHyperStrategy.py): The **main framework file** also has 2 settings you can configure marked under the `CONFIG NAMES SECTION` section inside the file:
-  - **mgm_config_name**: Provide a custom file name for `mgm-config.json`
-  - **mgm_config_hyperopt_name**: Provide a custom file name for `mgm-config-hyperopt.json`
+- [`MoniGoManiHyperStrategy.py`](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/strategies/MoniGoManiHyperStrategy.py): The **main strategy file**, containing the [Weighted Signal Interface](#weighted-signal-interface) where you can implement new weighted signals & indicators in a nearly plug and play like fashion.
+- [`.hurry`](https://github.com/Rikj000/MoniGoMani/blob/development/.hurry): The mgm-hurry configuration file contains settings to make running freqtrade commands easier and shorter! These settings can be configured manually or with:
+  ```powershell
+  mgm-hurry setup
+  ```
 
 ## mgm-config.json
-**Link to:** [mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm-config.json)
+**Link to:** [mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json)
 The main `MoniGoMani` settings can be found under `monigomani_settings`:
 | Parameter(s) | Description |
 | --- | --- |
@@ -183,7 +198,7 @@ The settings inside `mgm-config.json`'s `weighted_signal_spaces` section are use
 
 | Parameter | Description |
 | --- | --- |
-| **sell_profit_only** | If set to `true`, then weighted sell signals require to be profitable to go through.<br> **Datatype:** Boolean |
+| **sell_profit_only** | If set to `true`, then **weighted sell signals** specifically require to be profitable to go through.<br> **Datatype:** Boolean |
 | **min_weighted_signal_value** | **1st HyperOpt Run:** Minimal value used in the HyperOpt Space for weighted signals. <br> **2nd HyperOpt Run:** Weak weighted signals are weeded out by overriding them to their respective Minimal value. <br> **Datatype:** Integer |
 | **max_weighted_signal_value** | **1st HyperOpt Run:** Maximum value used in the HyperOpt Space for weighted signals. <br> **2nd HyperOpt Run:** Strong weighted signals are boosted by overriding them to their respective Maximum value. <br> **Datatype:** Integer |
 | **min_trend_total_signal_needed_value** | **1st HyperOpt Run:** Minimal value used in the HyperOpt Space for total weighted signals needed. <br> **Datatype:** Integer |
@@ -245,16 +260,17 @@ The settings inside `mgm-config.json`'s `unclogger_spaces` section are used to c
 | **unclogger_open_trades_losing_percentage_needed** | Settings to configure the HyperOpt Space for the minimal percentage of losing open trades before the unclogger is allowed to attempt to unclog the open trade.<br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
 | **unclogger_trend_lookback_candles_window** | Settings to configure the HyperOpt Space for the lookback window use by the `unclogger_trend_lookback_candles_window_percentage_needed` check.<br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
 | **unclogger_trend_lookback_candles_window_percentage_needed** | Settings to configure the HyperOpt Space for the minimal percentage of **bad** trends that needs to be detected inside the lookback window before the unclogger is allowed to attempt to unclog the open trade.<br> **Documentation:** [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries) <br> **Datatype:** Dictionary |
+| **unclogger_trend_lookback_candles_window_recent_past_weight_separator** | Defines how much more weight to add to more recent data and how much less weight to older data used in the `sell___unclogger_trend_lookback_candles_window` for the `sell___unclogger_trend_lookback_candles_window_percentage_needed` check. <br> **Datatype:** Float |
 | **unclogger_trend_lookback_window_uses_downwards_candles** | Enable or completely disable the open trade unclogger from seeing downwards trends as **bad** in it's lookback window.<br> **Datatype:** Boolean (true = bad) |
 | **unclogger_trend_lookback_window_uses_sideways_candles** | Enable or completely disable the open trade unclogger from seeing sideways trends as **bad** in it's lookback window.<br> **Datatype:** Boolean (true = bad) |
-| **unclogger_trend_lookback_window_uses_upwards_candles** | Enable or completely :sparkles: Added hyperoptable unclogger_buy_cooldown_minutes_windowdisable the open trade unclogger from seeing upwards trends as **bad** in it's lookback window.<br> **Datatype:** Boolean (true = bad) |
+| **unclogger_trend_lookback_window_uses_upwards_candles** | Enable or completely disable the open trade unclogger from seeing upwards trends as **bad** in it's lookback window.<br> **Datatype:** Boolean (true = bad) |
 
 #### Unclogger Sub Dictionaries
 | Parameter | Description |
 | --- | --- |
 | **min** | **1st HyperOpt Run:** Minimal value used in the HyperOpt Space for the unclogger setting at hand. <br> **2nd HyperOpt Run:** Value remains unused and refined search spaces are applied based on the value loaded from `mgm-config-hyperopt.json`.<br> **Datatype:** Integer |
 | **max** | **1st HyperOpt Run:** Maximum value used in the HyperOpt Space for the unclogger setting at hand. <br> **2nd HyperOpt Run:** Value remains unused and refined search spaces are applied based on the value loaded from `mgm-config-hyperopt.json`.<br> **Datatype:** Integer |
-| **threshold** | ***(Optional parameter)*** 2nd HyperOpt Run:** If this setting is found, then it's used to refine the search spaces based on the value found in the 1st run ± the threshold. If no custom `threshold` is provided then the `search_threshold_weighted_signal_values` is used instead.<br> **Datatype:** Integer |
+| **threshold** | ***(Optional parameter)* 2nd HyperOpt Run:** If this setting is found, then it's used to refine the search spaces based on the value found in the 1st run ± the threshold. If no custom `threshold` is provided then the `search_threshold_weighted_signal_values` is used instead.<br> **Datatype:** Integer |
 
 ### Default Stub Values
 The settings inside `mgm-config.json`'s `default_stub_values` section are **only used** to control some default startup values that MGM will use when no other values are found and/or used for them.
@@ -270,9 +286,9 @@ The settings inside `mgm-config.json`'s `default_stub_values` section are **only
 
 
 ## mgm-config-hyperopt.json
-This file contains the optimized HyperOptable `MoniGoMani` and `Freqtrade` settings. It will be created when following the [How to Optimize MoniGoMani](#how-to-optimize-monigomani) process and its one of the main files that will define your MGM configuration when moving to dry/live-run mode.
+This file contains the optimized HyperOptable `MoniGoMani` and `Freqtrade` settings. It will be created when following the [How to Optimize MoniGoMani](#how-to-optimize-monigomani) process and its one of the main files that will define your MGM configuration when moving to Dry/Live-run mode.
 
-It's truly **important** that you reflect over these files in between HyperOpt Runs.
+It's truly **important** that you reflect over these files in between HyperOpt Runs!
 
 ### Reflect over HyperOpt Results
 Please read [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/) to learn about the common traps that can occur in your HyperOpt results.
@@ -310,7 +326,7 @@ Sum of all weighted signals:
 ## MoniGoManiHyperStrategy
 This is the main strategy file used by MoniGoMani, containing the [Weighted Signal Interface](#weighted-signal-interface).
 
-**Link to:** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py)
+**Link to:** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/strategies/MoniGoManiHyperStrategy.py)
 
 ### Weighted Signal Interface
 With this you can easily define new indicators and weighted signals that will be used by MGM.
@@ -397,36 +413,6 @@ Once you defined them you can load them in FreqUI as following:
   ![Final Result](https://i.imgur.com/Q5zfnk2.png)
 
 
-# Total Overall Signal Importance Calculator
-Execute: `python ./user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py` from your favorite terminal / CLI to calculate the overall importance of the signals being used.
-The higher the score of a signal the better! It will also export to a `./user_data/Total-Average-Signal-Importance-Report.log` file for easy sharing!
-Share these results in [`🛠 MoniGoMani - Testing` on Matrix](https://matrix.to/#/#MoniGoMani-Testing:matrix.org) or [`#🛠︱testing` on Discord](https://discord.gg/xFZ9bB6vEz) so we can improve the signals!
-
-The calculator file also has 2 settings you can configure marked under the `CONFIG NAMES SECTION` section inside the file:
-    - **mgm_config_name**: Provide a custom file name for `mgm-config.json`
-    - **mgm_config_hyperopt_name**: Provide a custom file name for `mgm-config-hyperopt.json`
-
-### Handy Calculator Sub Commands
-- `-h` or `--help`: Print out information about the usage of all sub commands.
-- `-pu` or `--precision-used` ***Optional (Defaults to `1` when not omitted)***: The precision value used during HyperOpt. Can be decimal (0.2) or fraction 1/5. Mostly useful after a running a HyperOpt with precision different from 1, used to patch the weights of the signals displayed in the report to what we would expect them to be for comparison with other results.
-- `-cf` or `--create-file` ***Optional (Unused by default)***: Save the Total-Average-Signal-Importance-Report as a `.log` file with a custom filename and file output location
-- `-nf` or `--no-file` ***Optional (Defaults to `True` when not omitted)***: Do not output the Total-Average-Signal-Importance-Report as a `.log` file
-
-
-# Custom HyperLoss Functions
-MoniGoMani comes with an extra set of loss functions for HyperOpting, supplementing the ones shipped with FreqTrade.
-You can find these functions in `M̀oniGoMani/user_data/hyperopts/`, and can use them by overriding the freqtrade HyperOpt parameter `--hyperopt-loss`.
-
-Following 2 Custom HyperLoss Functions ship with the MoniGoMani Framework:
-- [**WinRatioAndProfitRatioLoss**](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/hyperopts/WinRatioAndProfitRatioLoss.py): Attempts to optimise for the best profit **and** stability (Returns smaller number for better results)
-- [**UncloggedWinRatioAndProfitRatioLoss**](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/hyperopts/UncloggedWinRatioAndProfitRatioLoss.py): Same as WinRatioAndProfitRatioLoss but has a configurable Percentage of loss (See `unclogger_profit_ratio_loss_tolerance` setting inside the file) to ignore while HyperOpting (Since small losses are a by-product of the Unclogger)
-
-**Example Usage:**
-```powershell
---hyperopt-loss WinRatioAndProfitRatioLoss
-```
-
-
 # PairLists
 By default, MoniGoMani includes 2 pairlists in `mgm-config.json`:
 - A VolumePairList:
@@ -434,7 +420,7 @@ By default, MoniGoMani includes 2 pairlists in `mgm-config.json`:
   - Will automatically update to the current best top volume coin pairs available
 - A StaticPairList:
   - Used for BackTesting / HyperOpting since a VolumePairList cannot be used here.
-  - When [optimizing](#how-to-optimize-monigomani) MoniGoMani for actual Dry/Live-running (instead of testing) it's truly recommended to [download a fresh top volume StaticPairList](#download-staticpairlists) and HyperOpt upon that (Preferably as big as possible, but beware of the warning below)!
+  - When [optimizing](#how-to-optimize-monigomani) MoniGoMani for actual Dry/Live-running (instead of testing) it's truly recommended to [download a fresh top volume StaticPairList](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md#mgm-hurry-download_static_pairlist) and HyperOpt upon that (Preferably as big as possible, but beware of the warning below)!
   This should yield much better & more realistic results during HyperOpting/BackTesting!
   This is due to giving a better reflection of the current market and being closer to the VolumePairList used during Dry/Live-run's.
 
@@ -452,71 +438,18 @@ Switching between the PairList in use can easily be done by moving the `_` in fr
         "method": "VolumePairList",
 ```
 
-### Download StaticPairLists
-Retrieve and apply a current **Binance-USDT-Top-Volume-StaticPairList.json** file *(using [Binance-Retrieve-Top-Volume-StaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json))* (The amount of pairs in these top volume lists can be altered by opening up `Binance-Retrieve-Top-Volume-StaticPairList.json` and changing the `number_assets` value near the bottom of the file to the amount of pairs you'd like in your list. Further you can also change the `min_days_listed` to make sure that all downloaded pairs where available for the duration of your whole HyperOpt timerange):
-```powershell
-freqtrade test-pairlist -c ./user_data/mgm_tools/Binance-Retrieve-Top-Volume-StaticPairList.json --quote USDT --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json && jq 'del(.exchange.pair_whitelist )' ./user_data/mgm-config.json > ./tmp.json && jq -s '.[0] * .[1]' ./tmp.json ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json > ./user_data/mgm-config.json && rm ./tmp.json && jq '.' ./user_data/mgm-config.json
-```
-
-Retrieve and apply a current **Binance-USDT-All-Tradable-StaticPairList.json** file *(using [Binance-Retrieve-All-Tradable-StaticPairList.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/Binance-Retrieve-All-Tradable-StaticPairList.py))* (Beware, can be very high system requirements due to a lot of pairs!):
-```powershell
-python ./user_data/mgm_tools/Binance-Retrieve-All-Tradable-StaticPairList.py -q USDT | jq '.|{exchange: { pair_whitelist: . }}' > ./user_data/mgm_pair_lists/Binance-USDT-All-Tradable-StaticPairList.json && jq 'del(.exchange.pair_whitelist )' ./user_data/mgm-config.json > ./tmp.json && jq -s '.[0] * .[1]' ./tmp.json ./user_data/mgm_pair_lists/Binance-USDT-All-Tradable-StaticPairList.json > ./user_data/mgm-config.json && rm ./tmp.json && jq '.' ./user_data/mgm-config.json
-```
-
-**After Downloading** the StaticPairList automatically applied to `./user_data/mgm-config.json`. There will also be a copy available under `./user_data/mgm_pair_lists/<<NAME_HERE>>-StaticPairList.json`!
-
-Don't forget to **Download Candle Data** before HyperOpting or BackTesting (Example timerange):
-```powershell
-freqtrade download-data --timerange 20201201-20210316 -t 5m 1h -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
-```
-
-# Go-To Commands
-**Hyper Opting** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py) & Apply *"best"* HyperOpt Results:
-```powershell
-freqtrade hyperopt -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --hyperopt-loss WinRatioAndProfitRatioLoss --spaces all -e 1000 --timerange 20210501-20210616 --enable-protections && mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json
-```
-**View & Apply HyperOpt Results** from a trusted `<epoch of choice>`:
-```powershell
-freqtrade hyperopt-show -n <epoch of choice> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json && mv ./user_data/strategies/MoniGoManiHyperStrategy.json ./user_data/mgm-config-hyperopt.json
-```
-**Reset HyperOpt Results**:
-```powershell
-rm ./user_data/mgm-config-hyperopt.json ./user_data/strategies/MoniGoManiHyperStrategy.json
-```
-**Back Testing** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/strategies/MoniGoManiHyperStrategy.py):
-```powershell
-freqtrade backtesting -s MoniGoManiHyperStrategy -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210501-20210616 --enable-protections
-```
-**Total Average Signal Importance Calculation** *(with the [TotalOverallSignalImportanceCalculator.py](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py))*:
-```powershell
-python ./user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py
-```
-Retrieve and apply a current **Top-Volume-StaticPairList.json** file *(using [RetrieveTopVolumeStaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/main/user_data/mgm_tools/RetrieveTopVolumeStaticPairList.json))*:
-```powershell
-freqtrade test-pairlist -c ./user_data/mgm_tools/RetrieveTopVolumeStaticPairList.json --quote USDT --print-json | tail -n 1 | jq '.|{exchange: { pair_whitelist: .}}' > ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json && jq 'del(.exchange.pair_whitelist )' ./user_data/mgm-config.json > ./tmp.json && jq -s '.[0] * .[1]' ./tmp.json ./user_data/mgm_pair_lists/Binance-USDT-Top-Volume-StaticPairList.json > ./user_data/mgm-config.json && rm ./tmp.json && jq '.' ./user_data/mgm-config.json
-```
-**Download Candle Data**:
-```powershell
-freqtrade download-data --timerange 20210414-20210618 -t 5m 30m -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json
-```
-
-**Plot-Profits** from a `<backtest-results-file>`:
-```powershell
-freqtrade plot-profit --export-filename ./user_data/backtest_results/<backtest-results-file> -c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json --timerange 20210501-20210616 --timeframe 1h
-```
-
 # How to test for improvements
 The process is rather simple really on **1st HyperOpt Runs**:
-- Copy/paste the Run 1 command
-- Check/Save the HyperOpt Run 1a Results
-- Reset MoniGoMani
+- Run `mgm-hurry hyperopt --clean_start`
+- Check the saved HyperOpt Run 1a Results `.log` file created.
 - Adjust a single:
   - Setting in `mgm-config.json`
   - Indicator/weighted signal
   - The spaces used
   - The protections enabled/disabled
   - ...
-- Copy/paste the Run 1 command again, use the same `--random-state` as you used in the previous test
+- Run `mgm-hurry hyperopt --clean_start --random_state <random-state-run-1a>` *(Use the same `--random_state` as you used in the previous test)*
+- Check the saved HyperOpt Run 1b Results `.log` file created.
 - Compare if the HyperOpt Run 1b Results are better then on your Run 1a attempt
 
 You can also do this for  **2nd HyperOpt Runs**, but this is a little more difficult, after your 1st Run be sure to:
@@ -533,21 +466,10 @@ You can also do this for  **2nd HyperOpt Runs**, but this is a little more diffi
 - Copy/paste the Run 2 command again, use the same `--random-state` as you used in the previous test
 - Compare if the HyperOpt Run 2b Results are better then on your Run 2a attempt
 
-# How to share your test results properly
-The easiest way to share how your MGM setup has been doing would be by posting a screenshot in the [Matrix Community](https://matrix.to/#/+moni-go-mani:matrix.org) or [Discord server](https://discord.gg/xFZ9bB6vEz) with the output of the `/status table` and `/profit` commands (Using the Telegram connection of the bot) + The complete output of the log being printed while HyperOpting (See [Some Test Results](https://github.com/Rikj000/MoniGoMani/tree/main/Some%20Test%20Results) for examples).
-
-Also, one of the other most welcome things is the results from the `TotalOverallSignalImportanceCalculator`, but you'll have to paste your own fresh HyperOpt results in it first before it can make you a nice report that can help us find better signals for MGM !:rocket:
-
-Of course all FreqUI / Telegram / config / HyperOpt results done on MGM **can be** useful / be learned from!
-Try to **always include** a  `TotalOverallSignalImportanceCalculator` report or just your own MoniGoMani file with your HyperOpt results applied to it!
-Since without knowing which signal weights or which on/off settings are applied we can't really truly learn much from your results!
-
-The epoch table being generated when HyperOpting + the number of the epoch you used is also very helpful, so we can easily rule out if your test results are exploited. (See [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/)!)
-
 # Common mistakes
 
 ### HyperOpting: +300 epochs, no results yet
-Make sure you have [downloaded the candle data](#download-staticpairlists) needed for your HyperOpt.
+Make sure you have [downloaded the candle data](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md#mgm-hurry-download_candle_data) needed for your HyperOpt.
 
 This is also possible because of how MoniGoMani handles the automatic filtering of total signals needed that would be impossible too reach during HyperOpt. If MGM detects impossible too reach signals then it forces the bot to do nothing for that epoch.
 
@@ -559,10 +481,8 @@ You likely are using a `Float` value where you should be using a `Integer` value
 - `Integer` = Whole number. Examples: 1, 3, 23
 - `Float` = Decimal number. Examples: 1.53, 4.2, 17.12
 
-### -bash: jq: command not found
-You still need to install [jq](https://stedolan.github.io/jq/)
-
 ### ValueError: the lower bound X has to be less than the upper bound Y
-You probably ran with precision different from 1. If so then you need to run your 1st HO Run results through the calculator with `-pu` or `--precision-used` and then fix up your `mgm-config-hyperopt.json` with the adjusted results before firing up the 2nd HO Run.
+**ToDo: Make MGM-Hurry automatically fix these result**
+You probably ran with precision different from 1. If so then you need to run your 1st HO Run results through the calculator directly (without mgm-hurry) with `-pu` or `--precision-used` and then fix up your `mgm-config-hyperopt.json` with the adjusted results before firing up the 2nd HO Run.
 
 Check out the documentation for the [Precision Setting](#precision-setting) and the [Total Overall Signal Importance Calculator](#total-overall-signal-importance-calculator)!
