@@ -752,19 +752,19 @@ class MGMHurry:
 
         self.monigomani_cli.run_command(command)
 
-    def hyperopt_show_epoch(self, epoch: int = 0, strategy: str = None, apply: bool = True, fthypt: bool = None):
+    def hyperopt_show_epoch(self, epoch: int = 0, strategy: str = None, apply: bool = True, fthypt_name: str = None, fthypt: bool = None):
         """
         Shows the HyperOpt results for a given epoch.
 
         :param epoch: (int) The epoch number to show the results from
         :param strategy: (str) The strategy used. Defaults to value in '.hurry'
         :param apply: (bool) Apply the results of the epoch. Defaults to true
-        :param fthypt: (bool) If 'true' an interactive prompt will launch to pick an '.fthypt' file of choice.
+        :param fthypt_name: (str) The '.fthypt' file name. Defaults to latest.
+        :param fthypt: (bool) If 'true' an interactive prompt will launch to pick an '.fthypt' file of choice. Will override 'fthypt_name' param.
             Defaults to latest'
         """
         self.logger.info(Color.title(f'👉 Hyperopt show {"" if apply is False else "and apply "}results'))
 
-        fthypt_name = None
         if fthypt is True:
             fthypt_name = self.freqtrade_cli.choose_fthypt_file()
 
@@ -778,8 +778,11 @@ class MGMHurry:
         command = (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} '
                    f'{self.monigomani_config.command_configs()}')
 
-        if fthypt is True:
+        if fthypt_name is not None:
             command += f' --hyperopt-filename {fthypt_name}'
+            self.logger.info(f'👉 Using {fthypt_name} file')
+        else:
+            self.logger.info(f'👉 Using latest fthypt file')
 
         self.monigomani_cli.run_command(command)
 
