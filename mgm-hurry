@@ -752,21 +752,29 @@ class MGMHurry:
 
         self.monigomani_cli.run_command(command)
 
-    def hyperopt_show_epoch(self, epoch: int = 0, strategy: str = None, apply: bool = True, fthypt: bool = None):
+    def hyperopt_show_epoch(self, epoch: int = 0, strategy: str = None, apply: bool = True, fthypt: str = None):
         """
         Shows the HyperOpt results for a given epoch.
 
         :param epoch: (int) The epoch number to show the results from
         :param strategy: (str) The strategy used. Defaults to value in '.hurry'
         :param apply: (bool) Apply the results of the epoch. Defaults to true
-        :param fthypt: (bool) If 'true' an interactive prompt will launch to pick an '.fthypt' file of choice.
+        :param fthypt: (str) '.fthypt' file to show epoch. If 'true' is passed, an interactive prompt will launch to pick an '.fthypt' file of choice.
             Defaults to latest'
         """
         self.logger.info(Color.title(f'👉 Hyperopt show {"" if apply is False else "and apply "}results'))
 
         fthypt_name = None
-        if fthypt is True:
-            fthypt_name = self.freqtrade_cli.choose_fthypt_file()
+        if fthypt is not None:
+            if fthypt is True or fthypt.lower() == 'true':
+                fthypt_name = self.freqtrade_cli.choose_fthypt_file()
+            elif os.path.isfile(f'{self.basedir}/user_data/hyperopt_results/{fthypt}.fthypt'):
+                fthypt_name = f'{fthypt}.fthypt'
+            elif os.path.isfile(f'{self.basedir}/user_data/hyperopt_results/{fthypt}'):
+                fthypt_name = fthypt
+            else:
+                self.logger.error(Color.red('🤷 Provided fthypt file not exist, please select fthypt file:'))
+                fthypt_name = self.freqtrade_cli.choose_fthypt_file()
 
         if epoch == 0:
             self.logger.error(Color.red('🤷 Please pass the epoch number through. '
@@ -778,7 +786,7 @@ class MGMHurry:
         command = (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} '
                    f'{self.monigomani_config.command_configs()}')
 
-        if fthypt is True:
+        if fthypt_name is not None:
             command += f' --hyperopt-filename {fthypt_name}'
 
         self.monigomani_cli.run_command(command)
