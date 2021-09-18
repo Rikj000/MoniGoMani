@@ -200,9 +200,11 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
     # Initialize comparison values to check if total signals utilized by HyperOpt are possible
     total_signals_possible = {}
+    total_triggers_possible = {}
     for trend in mgm_trends:
         for space in ['buy', 'sell']:
             total_signals_possible[f'{space}_{trend}'] = 0
+            total_triggers_possible[f'{space}_{trend}'] = 0
 
     class HyperOpt:
         @staticmethod
@@ -370,7 +372,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 sys.exit(f'MoniGoManiHyperStrategy - ERROR - The MoniGoMani HyperOpt Results configuration file '
                          f'({self.mgm_config_hyperopt_name}) can\'t be found at: {self.mgm_config_hyperopt_path}... '
                          f'Please Optimize your MoniGoMani before Dry/Live running! Once optimized provide the correct '
-                         f'file and/or alter "mgm_config_hyperopt_name" in "MasterMoniGoManiHyperStrategy.py"')
+                         f'file and/or alter "mgm_config_names" in ".hurry"')
 
             self.is_dry_live_run_detected = True
             self.mgm_logger('info', initialization, f'Current run mode detected as: Dry/Live-Run. '
@@ -1055,6 +1057,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
                 # Add found weights to comparison values to check if total signals utilized by HyperOpt are possible
                 self.total_signals_possible[f'{space}_{trend}'] += signal_weight.value
+                # Add a signal trigger if it is possible to compare if total triggers needed by HyperOpt are possible
+                if signal_weight.value > 0:
+                    self.total_triggers_possible[f'{space}_{trend}'] += 1
 
             # Override Signals: When configured sell/buy signals can be completely turned off for each kind of trend
             else:
@@ -1246,13 +1251,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # Generates the conditions responsible for searching and comparing the weights needed to activate a buy or sell
         dataframe.loc[self._generate_weight_condition(dataframe=dataframe, space=space), space] = 1
 
-        # Check if total signals needed are possible, if not force the bot to do nothing
+        # Check if total signals needed & triggers needed are possible, if not force the bot to do nothing
         if self.is_dry_live_run_detected is False:
             for trend in self.mgm_trends:
                 if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                     total_signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
+                    total_triggers_needed = getattr(self, f'{space}__{trend}_trend_signal_triggers_needed')
 
-                    if self.total_signals_possible[f'{space}_{trend}'] < total_signal_needed.value:
+                    if (self.total_signals_possible[f'{space}_{trend}'] < total_signal_needed.value) or \
+                        (self.total_triggers_possible[f'{space}_{trend}'] < total_triggers_needed.value):
                         dataframe['buy'] = dataframe['sell'] = 0
 
         return dataframe
@@ -1265,9 +1272,11 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         of the MGM framework during the first iteration/batch of epochs.
         """
 
-        # Reset the total signals possible
-        for total_signal_possible in self.total_signals_possible:
-            self.total_signals_possible[total_signal_possible] = 0
+        # Reset the total signals and triggers possible
+        for trend in self.mgm_trends:
+            for space in ['buy', 'sell']:
+                self.total_signals_possible[f'{space}_{trend}'] = 0
+                self.total_triggers_possible[f'{space}_{trend}'] = 0
 
         # Reset the custom_info dictionary when a new BackTest starts (during HyperOpting) if needed
         if self.custom_info != self.initial_custom_info:
