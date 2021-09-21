@@ -4,9 +4,6 @@ FROM freqtradeorg/freqtrade:develop
 # Don't forget to switch the user back below!
 USER root
 
-# Install jq, a JSON Parser used by MGM
-RUN apt-get install -y jq
-
 # Create an empty log file if non existing
 RUN mkdir -p ./user_data/logs/
 RUN touch -m ./user_data/logs/freqtrade.log
