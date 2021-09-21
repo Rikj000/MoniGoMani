@@ -1,4 +1,6 @@
-FROM freqtradeorg/freqtrade:develop
+# Install specific Freqtrade commit for the current MoniGoMani 'development' branch
+FROM hoanghnbk/freqtrade_3503fdb4
+# FROM freqtradeorg/freqtrade:develop
 
 # Switch user to root if you must install something from apt
 # Don't forget to switch the user back below!
