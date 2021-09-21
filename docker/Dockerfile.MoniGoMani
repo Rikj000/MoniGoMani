@@ -11,6 +11,9 @@ RUN apt-get install -y jq
 RUN mkdir -p ./user_data/logs/
 RUN touch -m ./user_data/logs/freqtrade.log
 
+#Copy ./.hurry file as required
+COPY ./.hurry .
+
 # Create an empty directory for downloaded StaticPairLists
 RUN mkdir -p ./user_data/mgm_pair_lists/
 
