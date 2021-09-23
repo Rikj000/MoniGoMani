@@ -218,7 +218,7 @@ Prints & applies the HyperOpt Results for an epoch of choice.
   - **Defaults to:** Value in `.hurry`.
 - **`--apply`:** *(Optional)* Apply the printed HyperOpt Results
   - **Defaults to:** `True`. Provide `False` to only print the results
-- **`--fthypt`:** *(Optional)* Launches a prompt to easily choose a certain `.fthypt` file
+- **`--fthypt`:** *(Optional)* Launches a prompt to easily choose a certain `.fthypt` file or a specific `.fthypt` by providing it's name.
   - **Defaults to:** The last known `.fthypt` file. Provide `True` to launch a prompt to easily choose a specific. `.fthypt` file.
 
 
