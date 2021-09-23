@@ -14,6 +14,7 @@ from pandas import DataFrame
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 from freqtrade.constants import ListPairsWithTimeframes
 
+
 # Master Framework file must reside in same folder as Strategy file
 sys.path.append(str(Path(__file__).parent))
 from MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
@@ -21,51 +22,44 @@ from MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
 
 # Define the Weighted Buy Signals to be used by MGM
 buy_signals = {
-    # Weighted Buy Signal: ADX above 25 & +DI above -DI (The trend has strength while moving up)
-    'adx_strong_up': lambda df: (df['adx'] > 25),
-    # Weighted Buy Signal: Re-Entering Lower Bollinger Band after downward breakout
-    'bollinger_bands': lambda df: (qtpylib.crossed_above(df['close'], df['bb_lowerband'])),
-    # Weighted Buy Signal: EMA long term Golden Cross (Medium term EMA crosses above Long term EMA)
-    'ema_long_golden_cross': lambda df: (qtpylib.crossed_above(df['ema50'], df['ema200'])),
-    # Weighted Buy Signal: EMA short term Golden Cross (Short term EMA crosses above Medium term EMA)
-    'ema_short_golden_cross': lambda df: (qtpylib.crossed_above(df['ema9'], df['ema50'])),
     # Weighted Buy Signal: MACD above Signal
     'macd': lambda df: (df['macd'] > df['macdsignal']),
     # Weighted Buy Signal: MFI crosses above 20 (Under-bought / low-price and rising indication)
     'mfi': lambda df: (qtpylib.crossed_above(df['mfi'], 20)),
-    # Weighted Buy Signal: RSI crosses above 30 (Under-bought / low-price and rising indication)
-    'rsi': lambda df: (qtpylib.crossed_above(df['rsi'], 30)),
+    # Weighted Buy Signal: VWAP crosses above current price
+    'vwap_cross': lambda df: (qtpylib.crossed_above(df['vwap'], df['close'])),
+    # Weighted Buy Signal: Price crosses above Parabolic SAR
+    'sar_cross': lambda df: (qtpylib.crossed_above(df['sar'], df['close'])),
+    # Weighted Buy Signal: Stochastic Slow below 20 (Under-bought, indication of starting to move up)
+    'stoch': lambda df: (df['slowk'] < 20),
     # Weighted Buy Signal: SMA long term Golden Cross (Medium term SMA crosses above Long term SMA)
     'sma_long_golden_cross': lambda df: (qtpylib.crossed_above(df['sma50'], df['sma200'])),
     # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
     'sma_short_golden_cross': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
-    # Weighted Sell Signal: VWAP crosses above current price
-    'vwap_cross': lambda df: (qtpylib.crossed_above(df['vwap'], df['close']))
+    # Weighted Buy Signal: TEMA
+    'tema': lambda df: (df['tema'] <= df['bb_middleband']) & (df['tema'] > df['tema'].shift(1))
 }
 
 # Define the Weighted Sell Signals to be used by MGM
 sell_signals = {
-    # Weighted Sell Signal: ADX above 25 & +DI below -DI (The trend has strength while moving down)
-    'adx_strong_down': lambda df: (df['adx'] > 25),
-    # Weighted Sell Signal: Re-Entering Upper Bollinger Band after upward breakout
-    'bollinger_bands': lambda df: (qtpylib.crossed_below(df['close'], df['bb_upperband'])),
-    # Weighted Sell Signal: EMA long term Death Cross (Medium term EMA crosses below Long term EMA)
-    'ema_long_death_cross': lambda df: (qtpylib.crossed_below(df['ema50'], df['ema200'])),
-    # Weighted Sell Signal: EMA short term Death Cross (Short term EMA crosses below Medium term EMA)
-    'ema_short_death_cross': lambda df: (qtpylib.crossed_below(df['ema9'], df['ema50'])),
     # Weighted Sell Signal: MACD below Signal
     'macd': lambda df: (df['macd'] < df['macdsignal']),
     # Weighted Sell Signal: MFI crosses below 80 (Over-bought / high-price and dropping indication)
     'mfi': lambda df: (qtpylib.crossed_below(df['mfi'], 80)),
-    # Weighted Sell Signal: RSI crosses below 70 (Over-bought / high-price and dropping indication)
-    'rsi': lambda df: (qtpylib.crossed_below(df['rsi'], 70)),
+    # Weighted Sell Signal: VWAP crosses below current price
+    'vwap_cross': lambda df: (qtpylib.crossed_below(df['vwap'], df['close'])),
+    # Weighted Sell Signal: Price crosses below Parabolic SAR
+    'sar_cross': lambda df: (qtpylib.crossed_below(df['sar'], df['close'])),
+    # Weighted Sell Signal: Stochastic Slow above 80 (Over-bought, indication of starting to move down)
+    'stoch': lambda df: (df['slowk'] > 80),
     # Weighted Sell Signal: SMA long term Death Cross (Medium term SMA crosses below Long term SMA)
     'sma_long_death_cross': lambda df: (qtpylib.crossed_below(df['sma50'], df['sma200'])),
     # Weighted Sell Signal: SMA short term Death Cross (Short term SMA crosses below Medium term SMA)
     'sma_short_death_cross': lambda df: (qtpylib.crossed_below(df['sma9'], df['sma50'])),
-    # Weighted Sell Signal: VWAP crosses below current price
-    'vwap_cross': lambda df: (qtpylib.crossed_below(df['vwap'], df['close']))
+    # Weighted Buy Signal: TEMA
+    'tema': lambda df: (df['tema'] > df['bb_middleband']) & (df['tema'] < df['tema'].shift(1))
 }
+
 
 # Returns the method responsible for decorating the current class with all the parameters of the MGM
 generate_mgm_attributes = MasterMoniGoManiHyperStrategy.generate_mgm_attributes(buy_signals, sell_signals)
@@ -106,7 +100,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
     # Plot configuration to show all Weighted Signals/Indicators used by MoniGoMani in FreqUI.
     # Also loads in MGM Framework Plots for Buy/Sell Signals/Indicators and Trend Detection.
     plot_config = MasterMoniGoManiHyperStrategy.populate_frequi_plots({
-        # Main Plots Signals/Indicators (SMAs, EMAs, Bollinger Bands, VWAP)
+        # Main Plots Signals/Indicators (SMAs, EMAs, Bollinger Bands, VWAP, TEMA)
         'main_plot': {
             'sma9': {'color': '#2c05f6'},
             'sma50': {'color': '#19038a'},
@@ -114,9 +108,9 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             'ema9': {'color': '#12e5a6'},
             'ema50': {'color': '#0a8963'},
             'ema200': {'color': '#074b36'},
-            'bb_upperband': {'color': '#6f1a7b'},
-            'bb_lowerband': {'color': '#6f1a7b'},
-            'vwap': {'color': '#727272'}
+            'bb_middleband': {'color': '#6f1a7b'},
+            'vwap': {'color': '#727272'},
+            'tema': {'color': '#9345ee'}
         },
         # Sub Plots - Each dict defines one additional plot
         'subplots': {
@@ -133,6 +127,9 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             },
             'RSI (Relative Strength Index)': {
                 'rsi': {'color': '#7fb92a'}
+            },
+            'Stochastic Slow': {
+                'slowk': {'color': '#14efe7'}
             }
         }
     })
@@ -177,8 +174,12 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         # Momentum Indicators (timeperiod is expressed in candles)
         # -------------------
 
-        # ADX - Average Directional Index (The Trend Strength Indicator)
-        dataframe['adx'] = ta.ADX(dataframe, timeperiod=14)  # 14 timeperiods is usually used for ADX
+        # Parabolic SAR
+        dataframe['sar'] = ta.SAR(dataframe)
+
+        # Stochastic Slow
+        stoch = ta.STOCH(dataframe)
+        dataframe['slowk'] = stoch['slowk']
 
         # MACD - Moving Average Convergence Divergence
         macd = ta.MACD(dataframe)
@@ -188,16 +189,12 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         # MFI - Money Flow Index (Under bought / Over sold & Over bought / Under sold / volume Indicator)
         dataframe['mfi'] = ta.MFI(dataframe)
 
-        # RSI - Relative Strength Index (Under bought / Over sold & Over bought / Under sold indicator Indicator)
-        dataframe['rsi'] = ta.RSI(dataframe)
-
         # Overlap Studies
         # ---------------
 
         # Bollinger Bands
         bollinger = qtpylib.bollinger_bands(qtpylib.typical_price(dataframe), window=20, stds=2)
-        dataframe['bb_lowerband'] = bollinger['lower']
-        dataframe['bb_upperband'] = bollinger['upper']
+        dataframe['bb_middleband'] = bollinger['mid']
 
         # SMA's & EMA's are trend following tools (Should not be used when line goes sideways)
         # SMA - Simple Moving Average (Moves slower compared to EMA, price trend over X periods)
@@ -205,11 +202,8 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         dataframe['sma50'] = ta.SMA(dataframe, timeperiod=50)
         dataframe['sma200'] = ta.SMA(dataframe, timeperiod=200)
 
-        # EMA - Exponential Moving Average (Moves quicker compared to SMA, more weight added)
-        # (For traders who trade intra-day and fast-moving markets, the EMA is more applicable)
-        dataframe['ema9'] = ta.EMA(dataframe, timeperiod=9)  # timeperiod is expressed in candles
-        dataframe['ema50'] = ta.EMA(dataframe, timeperiod=50)
-        dataframe['ema200'] = ta.EMA(dataframe, timeperiod=200)
+        # TEMA - Triple Exponential Moving Average
+        dataframe['tema'] = ta.TEMA(dataframe, timeperiod=9)
 
         # Volume Indicators
         # -----------------
