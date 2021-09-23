@@ -285,7 +285,7 @@ class MoniGoManiLogger:
 
         response = {'hyperopt_results': hyperopt_results, 'results_updated': False}
 
-        for hyperopt_results_detector in {'+-----------+', '| * Best |', '|   Best |'}:
+        for hyperopt_results_detector in {'+---------', '| * Best |', '|   Best |'}:
             if hyperopt_results_detector in line:
                 # Remove the Epoch/ETA if it got added
                 if ' [Epoch ' in line:
