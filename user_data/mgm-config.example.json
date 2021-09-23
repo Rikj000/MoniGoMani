@@ -20,15 +20,15 @@
       "min_trend_total_signal_needed_candles_lookback_window_value": 1,
       "max_trend_total_signal_needed_candles_lookback_window_value": 8,
       "min_trend_signal_triggers_needed": 2,
-      "search_threshold_weighted_signal_values": 30,
+      "search_threshold_weighted_signal_values": 22,
       "search_threshold_trend_total_signal_needed_candles_lookback_window_value": 1,
       "search_threshold_trend_signal_triggers_needed": 1
     },
     "stoploss_spaces": {
       "stoploss_min_value": -0.02,
-      "stoploss_max_value": -0.35,
+      "stoploss_max_value": -0.3,
       "trailing_stop_positive_min_value": 0.01,
-      "trailing_stop_positive_max_value": 0.35,
+      "trailing_stop_positive_max_value": 0.08,
       "trailing_stop_positive_offset_min_value": 0.011,
       "trailing_stop_positive_offset_max_value": 0.1
     },
@@ -46,7 +46,7 @@
       "unclogger_enabled": true,
       "unclogger_minimal_losing_trade_duration_minutes": {
         "min": 15,
-        "max": 60
+        "max": 560
       },
       "unclogger_minimal_losing_trades_open": {
         "min": 1,
@@ -63,7 +63,7 @@
       },
       "unclogger_trend_lookback_candles_window_percentage_needed": {
         "min": 10,
-        "max": 50
+        "max": 45
       },
       "unclogger_trend_lookback_candles_window_recent_past_weight_separator": 2,
       "unclogger_trend_lookback_window_uses_downwards_candles": true,
@@ -80,29 +80,29 @@
       "trailing_stop_positive_offset": 0.03,
       "trailing_only_offset_is_reached": false
     },
-    "debuggable_weighted_signal_dataframe": false,
+    "debuggable_weighted_signal_dataframe": true,
     "use_mgm_logging": false,
     "mgm_log_levels_enabled": {
-      "info": false,
-      "warning": false,
-      "error": false,
-      "debug": false,
+      "info": true,
+      "warning": true,
+      "error": true,
+      "debug": true,
       "custom": true
     }
   },
   "monigomani_hyperoptloss_settings": {
     "MGM_GeniusHyperOptLoss": {
       "sortino": {
-        "expected_max_profit": 3.0,
-        "max_accepted_trade_duration": 1800
+        "expected_max_profit": 3,
+        "max_accepted_trade_duration": 360
       },
       "weight": {
         "average_profit_weight": 20,
-        "drawdown_weight": 75,
-        "duration_weight": 1,
+        "drawdown_weight": 80,
+        "duration_weight": 360,
         "sortino_weight": 0.02,
-        "total_profit_weight": 100,
-        "win_loss_weight": 50
+        "total_profit_weight": 60,
+        "win_loss_weight": 60
       },
       "other": {
         "average_profit_threshold": 1,
@@ -117,7 +117,7 @@
       "drawdown": {
         "expected_drawdown": 0.8,
         "drawdown_weight": 1.7,
-        "drawdown_threshold_high": 2.0,
+        "drawdown_threshold_high": 2,
         "drawdown_threshold_low": 0.2
       },
       "duration": {
@@ -127,9 +127,9 @@
         "duration_threshold_low": 0
       },
       "profit": {
-        "expected_profit": 12.0,
+        "expected_profit": 12,
         "profit_weight": 1.6,
-        "profit_threshold_high": 1000.0,
+        "profit_threshold_high": 1000,
         "profit_threshold_low": 0.42
       },
       "sortino": {
@@ -141,7 +141,7 @@
       "trades": {
         "expected_trades": 1500,
         "trades_weight": 0.8,
-        "trades_threshold_high": 2.0,
+        "trades_threshold_high": 2,
         "trades_threshold_low": 0.55
       }
     }
@@ -222,21 +222,21 @@
     "outdated_offset": 5,
     "markets_refresh_interval": 60,
     "pair_whitelist": [
+      "BTC/USDT",
       "ETH/USDT",
-      "AXS/USDT",
-      "SAND/USDT",
-      "CHZ/USDT",
-      "CHR/USDT",
-      "DOT/USDT",
-      "MATIC/USDT",
-      "ENJ/USDT",
       "SOL/USDT",
-      "LINK/USDT",
-      "AAVE/USDT",
-      "MANA/USDT",
-      "THETA/USDT",
-      "COMP/USDT",
-      "FIL/USDT"
+      "LUNA/USDT",
+      "AVAX/USDT",
+      "ADA/USDT",
+      "DOT/USDT",
+      "XRP/USDT",
+      "ATOM/USDT",
+      "FTM/USDT",
+      "FTT/USDT",
+      "SRM/USDT",
+      "XTZ/USDT",
+      "FIL/USDT",
+      "NEAR/USDT"
     ]
   },
   "pairlists": [
@@ -247,47 +247,38 @@
   "_pairlists": [
     {
       "method": "VolumePairList",
-      "number_assets": 120,
+      "number_assets": 60,
       "sort_key": "quoteVolume",
-      "refresh_period": 1440
+      "refresh_period": 1800
     },
     {
       "method": "AgeFilter",
-      "min_days_listed": 10
-    },
-    {
-      "method": "PerformanceFilter"
-    },
-    {
-      "method": "PrecisionFilter"
-    },
-    {
-      "method": "PriceFilter",
-      "low_price_ratio": 0.1
-    },
-    {
-      "method": "ShuffleFilter"
+      "min_days_listed": 7
     },
     {
       "method": "SpreadFilter",
       "max_spread_ratio": 0.005
     },
     {
+      "method": "PriceFilter",
+      "low_price_ratio": 0.001
+    },
+    {
       "method": "RangeStabilityFilter",
-      "lookback_days": 10,
-      "min_rate_of_change": 0.01,
+      "lookback_days": 3,
+      "min_rate_of_change": 0.1,
       "refresh_period": 1440
     },
     {
       "method": "VolatilityFilter",
-      "lookback_days": 5,
-      "min_volatility": 0.05,
-      "max_volatility": 0.5,
-      "refresh_period": 1440
+      "lookback_days": 4,
+      "min_volatility": 0.02,
+      "max_volatility": 0.75,
+      "refresh_period": 86400
     },
     {
       "method": "VolumePairList",
-      "number_assets": 60,
+      "number_assets": 10,
       "sort_key": "quoteVolume"
     }
   ],
