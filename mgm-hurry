@@ -703,7 +703,24 @@ class MGMHurry:
         hyperopt_file_name = f'HyperOptResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/hyperopt_results/{hyperopt_file_name}.log'
 
-        self.monigomani_cli.run_command(command, output_file_path)
+        self.monigomani_cli.run_command(command=command, output_file_name=output_file_path, hyperopt=True)
+        if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
+            self.monigomani_cli.apply_mgm_results(strategy)
+            self.monigomani_config.save_weak_strong_signal_overrides()
+
+        # Read 'mgm-config-hyperopt' or <StrategyName>.json and pretty print it
+        if strategy == 'MoniGoManiHyperStrategy':
+            ho_results_json_path = self.monigomani_config.get_config_filepath('mgm-config-hyperopt')
+        else:
+            ho_results_json_path = f'{self.basedir}/user_data/strategies/{strategy}.json'
+        with open(ho_results_json_path, ) as ho_results_json:
+            ho_results_json_string = f'\n{json.dumps(json.load(ho_results_json), indent=4)}'
+            self.logger.info(ho_results_json_string)
+
+            ho_results_log = open(output_file_path, 'a')
+            ho_results_log.write(ho_results_json_string)
+            ho_results_log.close()
+
         if initial_run is True:
             message = f'🚀 Fresh **{strategy}** Initial HyperOpt Run Results ⬇️'
         elif strategy == 'MoniGoManiHyperStrategy':
@@ -712,15 +729,12 @@ class MGMHurry:
             message = f'🚀 Fresh **{strategy}** HyperOpt Run Results ⬇️'
         MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
                                                     message=message, results_paths=[output_file_path])
-
-        if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
-            self.monigomani_cli.apply_mgm_results(strategy)
-        elif do_backtest is True:
-            self.logger.warning(Color.yellow('🤷 Backtesting without HyperOptResults applied?..'))
         if (importance_report is True) and (strategy == 'MoniGoManiHyperStrategy'):
             self.importance_report(output_file_name=output_file_name)
         if apply_best_results is False:
             self.cleanup(strategy)
+            if do_backtest is True:
+                self.logger.warning(Color.yellow('🤷 Backtesting without HyperOptResults applied?..'))
 
         if do_backtest is True:
             self.backtest(timerange=timerange, strategy=strategy, enable_protections=enable_protections,
