@@ -18,6 +18,7 @@ import json
 import os
 import shutil
 import sys
+from collections import OrderedDict
 from operator import xor
 
 import yaml
@@ -393,6 +394,84 @@ class MoniGoManiConfig(object):
 
         self.logger.info(Color.green(f'🍺 Telegram bot settings written to "{mgm_config_private_name}"'))
 
+        return True
+
+    def save_weak_strong_signal_overrides(self) -> bool:
+        """
+        Overrides weak and strong signals to their actual values used by MoniGoMani in 'mgm-config-hyperopt'
+
+        :return bool: True if json data is overwritten correctly, False otherwise.
+        """
+        # Check if 'mgm-config-hyperopt' exists
+        mgm_config_hyperopt_name = self.config['mgm_config_names']['mgm-config-hyperopt']
+        mgm_config_hyperopt_path = f'{self.basedir}/user_data/{mgm_config_hyperopt_name}'
+
+        if os.path.isfile(mgm_config_hyperopt_path) is False:
+            self.logger.warning(Color.yellow(f'🤷 No "{mgm_config_hyperopt_name}" file found in the "user_data" '
+                                             f'directory. Please run: mgm-hurry hyperopt'))
+            return False
+
+        # Load the needed MoniGoMani Config files
+        mgm_config_files = self.load_config_files()
+        mgm_config_hyperopt = mgm_config_files['mgm-config-hyperopt']
+        mgm_config = mgm_config_files['mgm-config']['monigomani_settings']
+        signal_triggers_needed_min_value = mgm_config['weighted_signal_spaces']['min_trend_signal_triggers_needed']
+        signal_triggers_needed_threshold = mgm_config['weighted_signal_spaces'][
+            'search_threshold_trend_signal_triggers_needed']
+        total_signal_needed_min_value = mgm_config['weighted_signal_spaces']['min_trend_total_signal_needed_value']
+        weighted_signal_max_value = mgm_config['weighted_signal_spaces']['max_weighted_signal_value']
+        weighted_signal_min_value = mgm_config['weighted_signal_spaces']['min_weighted_signal_value']
+        weighted_signal_threshold = mgm_config['weighted_signal_spaces']['search_threshold_weighted_signal_values']
+
+        # Override the strong and weak signals where above and below the threshold
+        for space in ['buy', 'sell']:
+            if space in mgm_config_hyperopt['params']:
+                mgm_config_hyperopt['params'][space] = \
+                    dict(OrderedDict(sorted(mgm_config_hyperopt['params'][space].items())))
+
+                number_of_weighted_signals = 0
+                for signal, signal_weight_value in mgm_config_hyperopt['params'][space].items():
+                    if (signal.startswith(f'{space}_downwards') is True) and (signal.endswith('_weight') is True):
+                        number_of_weighted_signals += 1
+
+                for signal, signal_weight_value in mgm_config_hyperopt['params'][space].items():
+                    # Don't override non overrideable parameters
+                    if (signal.startswith('sell___unclogger_') is False) and (
+                        signal.endswith('_trend_total_signal_needed_candles_lookback_window') is False):
+
+                        if signal.endswith('_weight'):
+                            if signal_weight_value <= (weighted_signal_min_value + weighted_signal_threshold):
+                                mgm_config_hyperopt['params'][space][signal] = weighted_signal_min_value
+                            elif signal_weight_value >= (weighted_signal_max_value - weighted_signal_threshold):
+                                mgm_config_hyperopt['params'][space][signal] = weighted_signal_max_value
+
+                        elif signal.endswith('_trend_total_signal_needed'):
+                            if signal_weight_value <= (total_signal_needed_min_value + weighted_signal_threshold):
+                                mgm_config_hyperopt['params'][space][signal] = total_signal_needed_min_value
+                            elif signal_weight_value >= ((weighted_signal_max_value *
+                                                          number_of_weighted_signals) - weighted_signal_threshold):
+                                mgm_config_hyperopt['params'][space][signal] = (weighted_signal_max_value *
+                                                                                number_of_weighted_signals)
+
+                        elif signal.endswith('_trend_signal_triggers_needed'):
+                            if signal_weight_value <= (signal_triggers_needed_min_value +
+                                                       signal_triggers_needed_threshold):
+                                mgm_config_hyperopt['params'][space][signal] = signal_triggers_needed_min_value
+                            elif signal_weight_value >= (number_of_weighted_signals - signal_triggers_needed_threshold):
+                                mgm_config_hyperopt['params'][space][signal] = number_of_weighted_signals
+
+        # Sort the spaces to Freqtrades default order
+        sorted_spaces = {}
+        for space_name in ['buy', 'sell', 'roi', 'stoploss', 'trailing']:
+            if space_name in mgm_config_hyperopt['params']:
+                sorted_spaces[space_name] = mgm_config_hyperopt['params'][space_name]
+        mgm_config_hyperopt['params'] = sorted_spaces
+
+        # Write the updated data to 'mgm-config-hyperopt'
+        with open(mgm_config_hyperopt_path, 'w+') as outfile:
+            json.dump(mgm_config_hyperopt, outfile, indent=4)
+
+        self.logger.debug(f'Strong and weak signals automatically over-written in "{mgm_config_hyperopt_name}"')
         return True
 
     def command_configs(self) -> str:
