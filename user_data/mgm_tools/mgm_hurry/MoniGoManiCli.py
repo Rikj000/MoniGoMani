@@ -240,12 +240,13 @@ class MoniGoManiCli(object):
 
         return True
 
-    def run_command(self, command: str, output_file_name: str = None) -> int:
+    def run_command(self, command: str, output_file_name: str = None, hyperopt: bool = False) -> int:
         """
         Execute shell command and log output to mgm logfile if a path + filename is provided.
 
         :param command: (str) Shell command to execute, sir!
         :param output_file_name: (str, Optional) Name of the absolute path to the '.log' file.
+        :param hyperopt: (bool, Optional): Must be True if HyperOpt command provided, defaults to false.
         :return returncode: (int) The returncode of the subprocess
         """
 
@@ -264,32 +265,39 @@ class MoniGoManiCli(object):
         monigomani_logger = MoniGoManiLogger(self.basedir)
         elapsed_time = 'Elapsed Time:'
         eta = '| [ETA:'
+        break_output = False
 
         for line in process.stdout:
             final_line = mgm_logger.clean_line(line)
 
-            # Save the output to a '.log' file if enabled
-            if (mgm_logger.filter_line(final_line) is False) and (output_file_name
-                                                                  is not None) and (eta not in final_line):
-                output_file.write(final_line)
+            if (hyperopt is True) and (final_line.count('# Buy hyperspace params:') > 0):
+                break_output = True
 
-            # Check if a new HyperOpt Results line is found, store it in RAM and re-print the whole HyperOpt Table if so
-            response = monigomani_logger.store_hyperopt_results(hyperopt_results, final_line)
-            if (response['results_updated'] is True) or (eta not in final_line) and (elapsed_time in final_line):
-                hyperopt_results = response['hyperopt_results']
-                # Skip the initial header
-                if len(hyperopt_results) > 3:
-                    for hyperopt_results_line in hyperopt_results:
-                        sys.stdout.write(Color.green(hyperopt_results_line))
-                if (eta not in final_line) and (elapsed_time in final_line):
-                    sys.stdout.write(final_line)
-            else:
-                if final_line.count('ERROR') > 0:
-                    sys.stdout.write(Color.red(final_line))
-                elif final_line.count('WARNING') > 0:
-                    sys.stdout.write(Color.yellow(final_line))
+            if break_output is False:
+                # Save the output to a '.log' file if enabled
+                if (mgm_logger.filter_line(final_line) is False) and (output_file_name
+                                                                      is not None) and (eta not in final_line):
+                    output_file.write(final_line)
+
+                # Check if a new HyperOpt Results line is found,
+                # store it in RAM and re-print the whole HyperOpt Table if so
+                response = monigomani_logger.store_hyperopt_results(hyperopt_results, final_line)
+                if (hyperopt is True) and ((response['results_updated'] is True) or
+                                           (eta not in final_line) and (elapsed_time in final_line)):
+                    hyperopt_results = response['hyperopt_results']
+                    # Skip the initial header
+                    if len(hyperopt_results) > 3:
+                        for hyperopt_results_line in hyperopt_results:
+                            sys.stdout.write(Color.green(hyperopt_results_line))
+                    if (eta not in final_line) and (elapsed_time in final_line):
+                        sys.stdout.write(final_line)
                 else:
-                    sys.stdout.write(final_line)
+                    if final_line.count('ERROR') > 0:
+                        sys.stdout.write(Color.red(final_line))
+                    elif final_line.count('WARNING') > 0:
+                        sys.stdout.write(Color.yellow(final_line))
+                    else:
+                        sys.stdout.write(final_line)
 
         process.wait()
 
