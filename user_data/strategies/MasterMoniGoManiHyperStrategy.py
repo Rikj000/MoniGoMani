@@ -35,10 +35,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.13.0 by Rikj000                        ###
+    ###                MoniGoMani Master Framework v0.13.0 by Rikj000                ###
     ##                          -----------------------------                         ##
     #               Isn't that what we all want? Our money to go many?                 #
-    #          Well that's what this Freqtrade strategy hopes to do for you!           #
+    #          Well that's what this Freqtrade framework hopes to do for you!          #
     ##       By giving you/HyperOpt a lot of signals to alter the weight from         ##
     ###           ------------------------------------------------------             ###
     ##        Big thank you to xmatthias and everyone who helped on MoniGoMani,       ##
@@ -992,39 +992,77 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: Lambda conditions
         """
 
+        number_of_weighted_signals = int(getattr(self, f'number_of_weighted_{space}_signals'))
+
         conditions_weight = []
         # If TimeFrame-Zooming => Only use 'informative_timeframe' data
         for trend in self.mgm_trends:
             if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
-                signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
-                signal_triggers_needed = getattr(self, f'{space}__{trend}_trend_signal_triggers_needed')
+                total_signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
+                total_triggers_needed = getattr(self, f'{space}__{trend}_trend_signal_triggers_needed')
+
+                corrected_total_signal_needed = self.apply_weak_strong_overrides(
+                    parameter_value=total_signal_needed.value,
+                    parameter_min_value=self.min_trend_total_signal_needed_value,
+                    parameter_max_value=self.max_weighted_signal_value * number_of_weighted_signals,
+                    parameter_threshold=self.search_threshold_weighted_signal_values
+                ) / self.precision
+
+                corrected_total_triggers_needed = self.apply_weak_strong_overrides(
+                    parameter_value=total_triggers_needed.value,
+                    parameter_min_value=self.min_trend_signal_triggers_needed_value,
+                    parameter_max_value=number_of_weighted_signals,
+                    parameter_threshold=self.search_threshold_trend_signal_triggers_needed
+                ) / self.precision
 
                 conditions_weight.append(
                     (
                         (dataframe['trend'] == trend) &
-                        (dataframe[f'total_{space}_signal_strength'] >= signal_needed.value / self.precision) &
-                        (dataframe[f'{space}_signals_triggered'] >= signal_triggers_needed.value / self.precision)
+                        (dataframe[f'total_{space}_signal_strength'] >= corrected_total_signal_needed) &
+                        (dataframe[f'{space}_signals_triggered'] >= corrected_total_triggers_needed)
                     ))
 
         return reduce(lambda x, y: x | y, conditions_weight)
 
-    def _add_signal(self, signal_name: str, space: str, dataframe: DataFrame, condition: Any):
+    def apply_weak_strong_overrides(self, parameter_value,
+                                    parameter_min_value, parameter_max_value, parameter_threshold):
+        """
+        Applies HyperOptable parameter overrides to weak and strong signals
+        at the outer bounds of the search space or below/above it
+
+        :param parameter_value: Value used for the parameter
+        :param parameter_min_value: Minimum value used in the HyperOpt space of the parameter
+        :param parameter_max_value: Maximum value used in the HyperOpt space of the parameter
+        :param parameter_threshold: Threshold value used for the parameter
+        :return: parameter_value if no override was needed, otherwise overridden weak/strong parameter value
+        """
+
+        # Apply parameter overrides to weak and strong signals where needed
+        if parameter_value <= parameter_min_value + parameter_threshold:
+            return parameter_min_value
+        elif parameter_value >= parameter_max_value - parameter_threshold:
+            return parameter_max_value
+        else:
+            return parameter_value
+
+    def _add_signal(self, signal_name: str, signal_min_value: int, signal_max_value: int, signal_threshold: int,
+                    space: str, dataframe: DataFrame, condition: Any):
         """
         # Weighted Variables
         # ------------------
         Calculates the weight of each signal, also adds the signal to the dataframe if debugging is enabled.
         :param signal_name: Name of the signal to be added
+        :param signal_min_value: Minimal search space value to use during
+            the 1st HyperOpt Run and override value for weak signals
+        :param signal_max_value: Maximum search space value to use during
+            the 1st HyperOpt Run and override value for weak signals
+        :param signal_threshold: Threshold to use for overriding weak/strong signals
+            and setting up refined search spaces
         :param space: buy or sell
         :param dataframe: DataFrame populated with indicators
         :param condition: A valid condition to evaluate the signal
         :return: DataFrame with debug signals
         """
-
-        # Initialize total signal and signals triggered columns (should be 0 = false by default)
-        if 'total_buy_signal_strength' not in dataframe.columns:
-            dataframe['total_buy_signal_strength'] = dataframe['total_sell_signal_strength'] = 0
-        if f'{space}_signals_triggered' not in dataframe.columns:
-            dataframe[f'{space}_signals_triggered'] = 0
 
         # If TimeFrame-Zooming => Only use 'informative_timeframe' data
         has_multiplier = \
@@ -1033,6 +1071,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                 parameter_name = f'{space}_{trend}_trend_{signal_name}_weight'
                 signal_weight = getattr(self, parameter_name)
+
+                # Apply signal overrides to weak and strong signals where needed
+                signal_weight_value = self.apply_weak_strong_overrides(
+                    signal_weight.value, signal_min_value, signal_max_value, signal_threshold)
 
                 rolling_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed_candles_lookback_window')
                 rolling_needed_value = \
@@ -1044,21 +1086,21 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                         dataframe[parameter_name] = 0
 
                     dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
-                                  parameter_name] = signal_weight.value / self.precision
+                                  parameter_name] = signal_weight_value / self.precision
 
                 # If the weighted signal triggered => Add the weight to the totals needed in the dataframe
                 dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
-                              f'total_{space}_signal_strength'] += signal_weight.value / self.precision
+                              f'total_{space}_signal_strength'] += signal_weight_value / self.precision
 
                 # If the weighted signal is bigger then 0 and triggered => Add up the amount of signals that triggered
-                if signal_weight.value > 0:
+                if signal_weight_value > 0:
                     dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
                                   f'{space}_signals_triggered'] += 1
 
                 # Add found weights to comparison values to check if total signals utilized by HyperOpt are possible
-                self.total_signals_possible[f'{space}_{trend}'] += signal_weight.value
+                self.total_signals_possible[f'{space}_{trend}'] += signal_weight_value
                 # Add a signal trigger if it is possible to compare if total triggers needed by HyperOpt are possible
-                if signal_weight.value > 0:
+                if signal_weight_value > 0:
                     self.total_triggers_possible[f'{space}_{trend}'] += 1
 
             # Override Signals: When configured sell/buy signals can be completely turned off for each kind of trend
@@ -1068,7 +1110,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         return dataframe
 
     @classmethod
-    def _register_signal_attr(cls, base_cls, name: str, space: str = 'buy') -> None:
+    def register_signal_attr(cls, base_cls, name: str, space: str = 'buy') -> None:
         """
         Defines the optimizable parameters of each signal
         :param base_cls: The inheritor class of the MGM where the attributes will be added
@@ -1081,12 +1123,11 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         for trend in cls.mgm_trends:
             parameter_name = f'{trend}_trend_{name}_weight'
             if cls.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
-                cls._init_vars(base_cls, space=space,
-                               parameter_name=parameter_name,
+                cls._init_vars(base_cls, space=space, parameter_name=parameter_name,
                                parameter_min_value=cls.min_weighted_signal_value,
                                parameter_max_value=cls.max_weighted_signal_value,
                                parameter_threshold=cls.search_threshold_weighted_signal_values,
-                               precision=cls.precision)
+                               precision=cls.precision, overrideable=True)
 
     @classmethod
     def _init_vars(cls, base_cls, space: str, parameter_name: str, parameter_min_value: int,
@@ -1097,15 +1138,22 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param space: Buy or Sell params dictionary
         :param parameter_name: Name of the signal in the dictionary
         :param parameter_min_value: Minimal search space value to use during
-            the 1st HyperOpt Run and override value for weak signals on the 2nd HyperOpt Run
+            the 1st HyperOpt Run and override value for weak signals
         :param parameter_max_value: Maximum search space value to use during
-            the 1st HyperOpt Run and override value for weak signals on the 2nd HyperOpt Run
+            the 1st HyperOpt Run and override value for weak signals
         :param parameter_threshold: Threshold to use for overriding weak/strong signals
             and setting up refined search spaces after the 1st HyperOpt Run
         :param precision: Precision used while HyperOpting
         :param overrideable: Allow value to be overrideable or not (defaults to 'True')
         :return: None
         """
+
+        # Narrow the search spaces for overrideable parameters by default
+        override_parameter_min_value = parameter_min_value
+        override_parameter_max_value = parameter_max_value
+        if overrideable is True:
+            parameter_min_value = parameter_min_value + parameter_threshold
+            parameter_max_value = parameter_max_value - parameter_threshold
 
         parameter_dictionary = getattr(cls, f'{space}_params')
         parameter_key = f'{space}_{parameter_name}'
@@ -1116,40 +1164,71 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             max_value = parameter_max_value
         # 2nd HyperOpt Run: Use refined search spaces where needed
         else:
-            min_value = parameter_min_value if parameter_value <= (parameter_min_value + parameter_threshold) else \
-                parameter_value - parameter_threshold
-            max_value = parameter_max_value if parameter_value >= (parameter_max_value - parameter_threshold) else \
-                parameter_value + parameter_threshold
+            if overrideable is False:
+                min_value = parameter_min_value if parameter_value <= (parameter_min_value + parameter_threshold) else \
+                    parameter_value - parameter_threshold
+                max_value = parameter_max_value if parameter_value >= (parameter_max_value - parameter_threshold) else \
+                    parameter_value + parameter_threshold
+            # Apply different logic for overridable signals
+            else:
+                # Override search space min_value bounds if value is going to be overridden
+                if parameter_value <= parameter_min_value:
+                    min_value = override_parameter_min_value
+                # Limit search space min_value to not go too low
+                elif (parameter_value - parameter_threshold) < parameter_min_value:
+                    min_value = parameter_min_value
+                # Otherwise just refine the search space
+                else:
+                    min_value = parameter_value - parameter_threshold
+
+                # Override search space max_value bounds if value is going to be overridden
+                if parameter_value >= parameter_max_value:
+                    max_value = override_parameter_max_value
+                # Limit search space max_value to not go too high
+                elif (parameter_value + parameter_threshold) > parameter_max_value:
+                    max_value = parameter_max_value
+                # Otherwise just refine the search space
+                else:
+                    max_value = parameter_value + parameter_threshold
 
         # 1st HyperOpt Run: Use middle of min/max values as default value
         if parameter_value is None:
             default_value = int((parameter_min_value + parameter_max_value) / 2)
         # 2nd HyperOpt Run: Use Overrides where needed for default value
-        elif (max_value == parameter_max_value) and (overrideable is True):
-            default_value = parameter_max_value
-        elif min_value == parameter_min_value and (overrideable is True):
-            default_value = parameter_min_value
+        elif (max_value == parameter_max_value) and (overrideable is True) and (parameter_value >= parameter_max_value):
+            default_value = override_parameter_max_value
+        elif (min_value == parameter_min_value) and (overrideable is True) and (parameter_value <= parameter_min_value):
+            default_value = override_parameter_min_value
         # 2nd HyperOpt Run: Use values found in Run 1 for the remaining default values
         else:
             default_value = parameter_value
+
+        # 2nd HyperOpt Run: Apply Overrides where needed
+        if (parameter_value is not None) and (overrideable is True):
+            if default_value == override_parameter_min_value or default_value == override_parameter_max_value:
+                optimize = False
+            else:
+                optimize = True
+        # 1st HyperOpt Run or not overridable, just optimize without overrides
+        else:
+            optimize = True
 
         parameter_config = {
             'min_value': int(min_value * precision),
             'max_value': int(max_value * precision),
             'default_value': int(default_value * precision),
             # 1st HyperOpt Run: No overrides, 2nd HyperOpt Run: Apply Overrides where needed
-            'optimize': False if (parameter_value is not None) and (overrideable is True) and
-                                 (min_value == parameter_min_value or max_value == parameter_max_value) else True
+            'optimize': optimize
         }
 
         parameter_dictionary[parameter_key] = parameter_config['default_value']
-        param = IntParameter(parameter_config['min_value'], parameter_config['max_value'],
+        param = IntParameter(low=parameter_config['min_value'], high=parameter_config['max_value'],
                              default=parameter_config['default_value'], space=space,
                              optimize=parameter_config['optimize'], load=True)
         setattr(base_cls, parameter_key, param)
 
     @classmethod
-    def _init_util_params(cls, base_cls):
+    def init_util_params(cls, base_cls):
         """
          Generates custom utility parameters used by:
          - trading_during_trends
@@ -1166,8 +1245,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 param_config['threshold'] = param_config['threshold'] if \
                     'threshold' in param_config else cls.search_threshold_weighted_signal_values
 
-                cls._init_vars(base_cls, 'sell', parameter_name, param_config['min'],
-                               param_config['max'], param_config['threshold'], cls.precision, False)
+                cls._init_vars(base_cls=base_cls, space='sell', parameter_name=parameter_name,
+                               parameter_min_value=param_config['min'], parameter_max_value=param_config['max'],
+                               parameter_threshold=param_config['threshold'],
+                               precision=cls.precision, overrideable=False)
 
         # Generate the utility attributes for the logic of the weighted_signal_spaces
         for trend in cls.mgm_trends:
@@ -1175,26 +1256,32 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 if cls.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                     param_total_signal_needed = f'_{trend}_trend_total_signal_needed'
                     number_of_weighted_signals = int(getattr(cls, f'number_of_weighted_{space}_signals'))
-                    cls._init_vars(base_cls, space, param_total_signal_needed, cls.min_trend_total_signal_needed_value,
-                                   int(cls.max_weighted_signal_value * number_of_weighted_signals),
-                                   cls.search_threshold_weighted_signal_values, cls.precision)
+                    cls._init_vars(base_cls=base_cls, space=space, parameter_name=param_total_signal_needed,
+                                   parameter_min_value=cls.min_trend_total_signal_needed_value,
+                                   parameter_max_value=int(cls.max_weighted_signal_value * number_of_weighted_signals),
+                                   parameter_threshold=cls.search_threshold_weighted_signal_values,
+                                   precision=cls.precision, overrideable=True)
 
                     param_needed_candles_lookback_window = f'_{trend}_trend_total_signal_needed_candles_lookback_window'
-                    cls._init_vars(base_cls, space, param_needed_candles_lookback_window,
-                                   cls.min_trend_total_signal_needed_candles_lookback_window_value,
-                                   cls.max_trend_total_signal_needed_candles_lookback_window_value,
+                    cls._init_vars(base_cls=base_cls, space=space, parameter_name=param_needed_candles_lookback_window,
+                                   parameter_min_value=cls.min_trend_total_signal_needed_candles_lookback_window_value,
+                                   parameter_max_value=cls.max_trend_total_signal_needed_candles_lookback_window_value,
+                                   parameter_threshold=
                                    cls.search_threshold_trend_total_signal_needed_candles_lookback_window_value,
-                                   cls.precision, False)
+                                   precision=cls.precision, overrideable=False)
 
                     param_signal_triggers_needed = f'_{trend}_trend_signal_triggers_needed'
-                    cls._init_vars(base_cls, space, param_signal_triggers_needed,
-                                   cls.min_trend_signal_triggers_needed_value, number_of_weighted_signals,
-                                   cls.search_threshold_trend_signal_triggers_needed, cls.precision)
+                    cls._init_vars(base_cls=base_cls, space=space, parameter_name=param_signal_triggers_needed,
+                                   parameter_min_value=cls.min_trend_signal_triggers_needed_value,
+                                   parameter_max_value=number_of_weighted_signals,
+                                   parameter_threshold=cls.search_threshold_trend_signal_triggers_needed,
+                                   precision=cls.precision, overrideable=True)
 
     @staticmethod
     def generate_mgm_attributes(buy_signals, sell_signals):
         """
-        Method used to generate the decorator, responsible for adding attributes at the class level
+        Method used to generate the decorator for the MoniGoMani Framework,
+        responsible for adding attributes at the class level
 
         :param buy_signals: Dictionary consisting of key as signal name and value containing
             the function that will generate the condition in the dataframe.
@@ -1212,18 +1299,18 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             setattr(base_cls, 'sell_signals', sell_signals)
 
             # Set number of weighted buy/sell signals for later use.
-            setattr(MasterMoniGoManiHyperStrategy, 'number_of_weighted_buy_signals', len(buy_signals))
-            setattr(MasterMoniGoManiHyperStrategy, 'number_of_weighted_sell_signals', len(sell_signals))
+            setattr(base_cls, 'number_of_weighted_buy_signals', len(buy_signals))
+            setattr(base_cls, 'number_of_weighted_sell_signals', len(sell_signals))
 
             # Sets the useful parameters of the MGM, such as unclogger and etc
-            MasterMoniGoManiHyperStrategy._init_util_params(base_cls)
+            base_cls.init_util_params(base_cls)
 
             # Registering signals attributes on class
             for name in buy_signals:
-                MasterMoniGoManiHyperStrategy._register_signal_attr(base_cls, name, 'buy')
+                base_cls.register_signal_attr(base_cls, name, 'buy')
 
             for name in sell_signals:
-                MasterMoniGoManiHyperStrategy._register_signal_attr(base_cls, name, 'sell')
+                base_cls.register_signal_attr(base_cls, name, 'sell')
 
             return base_cls
 
@@ -1242,24 +1329,51 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         if (self.is_dry_live_run_detected is False) and (space == 'buy'):
             self.init_hyperopt_epoch()
 
+        # Initialize total signal and signals triggered columns (should be 0 = false by default)
+        if 'total_buy_signal_strength' not in dataframe.columns:
+            dataframe['total_buy_signal_strength'] = dataframe['total_sell_signal_strength'] = 0
+        if f'{space}_signals_triggered' not in dataframe.columns:
+            dataframe[f'{space}_signals_triggered'] = 0
+
+        # Fetch the weighted signals used + their min/max search space values and threshold used
         signals = getattr(self, f'{space}_signals')
+        signal_min_value = self.mgm_config['weighted_signal_spaces']['min_weighted_signal_value']
+        signal_max_value = self.mgm_config['weighted_signal_spaces']['max_weighted_signal_value']
+        signal_threshold = self.mgm_config['weighted_signal_spaces']['search_threshold_weighted_signal_values']
 
         # Calculates the weight and/or generates the debug column for each signal
         for signal_name, condition_func in signals.items():
-            self._add_signal(signal_name, space, dataframe, condition_func(dataframe))
+            self._add_signal(signal_name=signal_name, signal_min_value=signal_min_value,
+                             signal_max_value=signal_max_value, signal_threshold=signal_threshold,
+                             space=space, dataframe=dataframe, condition=condition_func(dataframe))
 
         # Generates the conditions responsible for searching and comparing the weights needed to activate a buy or sell
         dataframe.loc[self._generate_weight_condition(dataframe=dataframe, space=space), space] = 1
 
         # Check if total signals needed & triggers needed are possible, if not force the bot to do nothing
+        number_of_weighted_signals = int(getattr(self, f'number_of_weighted_{space}_signals'))
         if self.is_dry_live_run_detected is False:
             for trend in self.mgm_trends:
                 if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                     total_signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
                     total_triggers_needed = getattr(self, f'{space}__{trend}_trend_signal_triggers_needed')
 
-                    if (self.total_signals_possible[f'{space}_{trend}'] < total_signal_needed.value) or \
-                        (self.total_triggers_possible[f'{space}_{trend}'] < total_triggers_needed.value):
+                    corrected_total_signal_needed = self.apply_weak_strong_overrides(
+                        parameter_value=total_signal_needed.value,
+                        parameter_min_value=self.min_trend_total_signal_needed_value,
+                        parameter_max_value=self.max_weighted_signal_value * number_of_weighted_signals,
+                        parameter_threshold=self.search_threshold_weighted_signal_values
+                    ) / self.precision
+
+                    corrected_total_triggers_needed = self.apply_weak_strong_overrides(
+                        parameter_value=total_triggers_needed.value,
+                        parameter_min_value=self.min_trend_signal_triggers_needed_value,
+                        parameter_max_value=number_of_weighted_signals,
+                        parameter_threshold=self.search_threshold_trend_signal_triggers_needed
+                    ) / self.precision
+
+                    if (self.total_signals_possible[f'{space}_{trend}'] < corrected_total_signal_needed) or \
+                        (self.total_triggers_possible[f'{space}_{trend}'] < corrected_total_triggers_needed):
                         dataframe['buy'] = dataframe['sell'] = 0
 
         return dataframe
