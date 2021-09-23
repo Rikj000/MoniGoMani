@@ -70,7 +70,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
     """
     ####################################################################################
     ####                                                                            ####
-    ###                         MoniGoMani v0.13.0 by Rikj000                        ###
+    ###                  MoniGoMani Base Strategy v0.13.0 by Rikj000                 ###
     ##                          -----------------------------                         ##
     #               Isn't that what we all want? Our money to go many?                 #
     #          Well that's what this Freqtrade strategy hopes to do for you!           #
