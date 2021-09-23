@@ -61,44 +61,39 @@ def initialize_argument_parser():
 #   of 'mgm-config-hyperopt' or the strategy file itself
 def initialize_weighted_buy_signal_names():
     return [
-        'adx_strong_up',
-        'bollinger_bands',
-        'ema_long_golden_cross',
-        'ema_short_golden_cross',
         'macd',
         'mfi',
-        'rsi',
+        'sar_cross',
         'sma_long_golden_cross',
         'sma_short_golden_cross',
+        'stoch',
+        'tema',
         'vwap_cross'
     ]
 
 
 def initialize_weighted_sell_signal_names():
     return [
-        'adx_strong_down',
-        'bollinger_bands',
-        'ema_long_death_cross',
-        'ema_short_death_cross',
         'macd',
         'mfi',
-        'rsi',
+        'sar_cross',
         'sma_long_death_cross',
         'sma_short_death_cross',
+        'stoch',
+        'tema',
         'vwap_cross'
     ]
 
 
 def initialize_combined_weighted_signal_names():
     return {
-        'adx_strong_up_down': ['adx_strong_up', 'adx_strong_down'],
-        'bollinger_bands': ['bollinger_bands'],
-        'ema_long_golden_death_cross': ['ema_long_golden_cross', 'ema_long_death_cross'],
-        'ema_short_golden_death_cross': ['ema_short_golden_cross', 'ema_short_death_cross'],
         'macd': ['macd'],
-        'rsi': ['rsi'],
+        'mfi': ['mfi'],
+        'sar_cross': ['sar_cross'],
         'sma_long_golden_death_cross': ['sma_long_golden_cross', 'sma_long_death_cross'],
         'sma_short_golden_death_cross': ['sma_short_golden_cross', 'sma_short_death_cross'],
+        'stoch': ['stoch'],
+        'tema': ['tema'],
         'vwap_cross': ['vwap_cross']
     }
 
