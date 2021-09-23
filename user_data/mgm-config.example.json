@@ -18,7 +18,7 @@
       "max_weighted_signal_value": 100,
       "min_trend_total_signal_needed_value": 60,
       "min_trend_total_signal_needed_candles_lookback_window_value": 1,
-      "max_trend_total_signal_needed_candles_lookback_window_value": 6,
+      "max_trend_total_signal_needed_candles_lookback_window_value": 8,
       "min_trend_signal_triggers_needed": 2,
       "search_threshold_weighted_signal_values": 30,
       "search_threshold_trend_total_signal_needed_candles_lookback_window_value": 1,
@@ -34,8 +34,8 @@
     },
     "roi_spaces": {
       "roi_table_step_size": 5,
-      "roi_time_interval_scaling": 1.0,
-      "roi_value_step_scaling": 1.0
+      "roi_time_interval_scaling": 1.6,
+      "roi_value_step_scaling": 0.9
     },
     "unclogger_spaces": {
       "unclogger_buy_cooldown_minutes_window": {
