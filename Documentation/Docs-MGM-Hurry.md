@@ -167,7 +167,7 @@ Runs HyperOpt process to find out the most positive settings.
   - **Defaults to:** The `strategy` defined in the `hyperopt` section of your `.hurry` file.
 - **`--loss`:** *(Optional)* Specify the [HyperOptLoss](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-HyperOptLoss-Functions.md) which you want to use during HyperOpting
   - **Defaults to:** The `loss` defined in the `hyperopt` section of your `.hurry` file.
-- **`--spaces`:** *(Optional)* Specify the HyperOpt [spaces](https://www.freqtrade.io/en/latest/hyperopt/#running-hyperopt-with-smaller-search-space) which you want to use during HyperOpting
+- **`--spaces`:** *(Optional)* Specify the HyperOpt [spaces](https://www.freqtrade.io/en/latest/hyperopt/#running-hyperopt-with-smaller-search-space) which you want to use during HyperOpting (Example: `"buy sell stoploss"`)
   - **Defaults to:** The `spaces` defined in the `hyperopt` section of your `.hurry` file.
 - **`--enable_protections`:** *(Optional)* Specify if HyperOpt should use [Protections](https://www.freqtrade.io/en/latest/includes/protections/)
   - **Defaults to:** `True`. Provide `False` to disable protections

@@ -92,7 +92,12 @@ Further it also assumes you familiarized yourself with **mgm-hurry**'s commands 
   mgm-hurry hyperopt
   ```
   *(Free to [alter the command](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md#mgm-hurry-hyperopt) if you have a good idea that you want to test)*
-  **The 1st Initial HyperOpt Run** *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with the default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of your`mgm-config.json` file.
+  **The 1st Initial HyperOpt Run** *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with:
+  - The default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of your`mgm-config.json` file.
+  - Weak weighted signals are weeded out by overriding them to their respective `min_` value 
+  *(Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
+  - Strong weighted signals are boosted by overriding them to their respective `max_` value 
+  *(Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
 - **6) [Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.
   You can check and automatically apply an `<epoch of choice>` of which you feel confident, in the list of best results using:
   ```powershell
@@ -102,7 +107,7 @@ Further it also assumes you familiarized yourself with **mgm-hurry**'s commands 
   **The 2nd Refinement HyperOpt Run** *(When a `mgm-config-hyperopt.json` exists)* is automatically ran with:
   - Refined search spaces ranging between the values found during the 1st Run *(Loaded from `mgm-config-hyperopt.json`)* plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json` 
   *(This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)*
-  - Weak weighted signals weeded out by overriding them to their respective `min_` value 
+  - Weak weighted signals are weeded out by overriding them to their respective `min_` value 
   *(Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
   - Strong weighted signals are boosted by overriding them to their respective `max_` value 
   *(Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*

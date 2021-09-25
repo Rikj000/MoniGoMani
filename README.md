@@ -110,16 +110,14 @@ Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/Mon
 - [**`mgm-hurry`**](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md) - A custom CLI tool to make using MoniGoMani & Freqtrade much easier!
 - Partially [Automated Optimization Process](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani)
 - All HyperOpt Results can easily be applied and removed with the use of [**`mgm-hurry`**](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md)
-- Configurable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends, each table **currently** has 10 Buy & 10 Sell signals implemented ***(HyperOptable!)***:
-  - [ADX](https://www.investopedia.com/terms/a/adx.asp)
+- Configurable Buy/Sell Signal Weight Influence Tables for Downwards/Sideways/Upwards trends, each table **currently** has 8 Buy & 8 Sell signals implemented ***(HyperOptable!)***:
   - [MACD](https://www.investopedia.com/terms/m/macd.asp)
   - [MFI](https://www.investopedia.com/terms/m/mfi.asp)
-  - [RSI](https://www.investopedia.com/terms/r/rsi.asp)
+  - [Parabolic SAR](https://www.investopedia.com/terms/p/parabolicindicator.asp) Cross
   - [SMA](https://www.investopedia.com/terms/s/sma.asp) Short [Death](https://www.investopedia.com/terms/d/deathcross.asp)/[Golden](https://www.investopedia.com/terms/g/goldencross.asp) Cross
-  - [EMA](https://www.investopedia.com/terms/e/ema.asp) Short [Death](https://www.investopedia.com/terms/d/deathcross.asp)/[Golden](https://www.investopedia.com/terms/g/goldencross.asp) Cross
   - [SMA](https://www.investopedia.com/terms/s/sma.asp) Long [Death](https://www.investopedia.com/terms/d/deathcross.asp)/[Golden](https://www.investopedia.com/terms/g/goldencross.asp) Cross
-  - [EMA](https://www.investopedia.com/terms/e/ema.asp) Long [Death](https://www.investopedia.com/terms/d/deathcross.asp)/[Golden](https://www.investopedia.com/terms/g/goldencross.asp) Cross
-  - [Bollinger Band](https://www.investopedia.com/terms/b/bollingerbands.asp) Re-Entrance
+  - [Stochastic](https://www.investopedia.com/terms/s/stochasticoscillator.asp)
+  - [TEMA](https://www.investopedia.com/terms/t/triple-exponential-moving-average.asp)
   - [VWAP](https://www.investopedia.com/terms/v/vwap.asp) Cross
 - [Weighted Signal Interface](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#weighted-signal-interface) to easily change the weighted signals being used
 - Configurable Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends ***(HyperOptable!)***
