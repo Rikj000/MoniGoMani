@@ -307,26 +307,38 @@ class MoniGoManiCli(object):
 
         return return_code
 
-    def calculate_timerange_start_minus_startup_candle_count(self) -> dict:
+    def calculate_timerange_start_minus_startup_candle_count(self, timerange: int = None) -> dict:
         """
-        Subtracts the startup_candle_count from the timerange defined in '.hurry'
+        Subtracts the startup_candle_count from the provided timerange, defaults to timerange defined in '.hurry'
 
+        :param timerange: (str, Optional) Timerange for which to subtract candle data timerange, defaults to
         :return dict: Dictionary object containing the new timerange and the new start date:
             eg: {'new_timerange': str, 'new_start_date': datetime}
         """
 
+        # Calculate the amount of days to add to the timerange based on the startup candle count & candle size
         mgm_config_files = self.monigomani_config.load_config_files()
         timeframe_minutes = self.timeframe_to_minutes(
             mgm_config_files['mgm-config']['monigomani_settings']['timeframe'])
         startup_candle_count = mgm_config_files['mgm-config']['monigomani_settings']['startup_candle_count']
-
         extra_days = ceil((timeframe_minutes * startup_candle_count) / (60 * 24))
-        split_timerange = self.monigomani_config.config['timerange'].split('-')
+
+        # Load the timerange from '.hurry' if none was provided
+        if timerange is not None:
+            split_timerange = timerange.split('-')
+        else:
+            split_timerange = self.monigomani_config.config['timerange'].split('-')
+
+        # Calculate the new start date
         new_start_date = datetime.strptime(split_timerange[0], '%Y%m%d') - timedelta(extra_days)
 
-        timerange = f'{new_start_date.strftime("%Y%m%d")}-{split_timerange[1]}'
-        self.logger.info(f'👉 Added {extra_days} extra days to the timerange for the "startup_candle_count"')
+        # Parse the new timerange & return
+        if len(split_timerange) > 1:
+            timerange = f'{new_start_date.strftime("%Y%m%d")}-{split_timerange[1]}'
+        else:
+            timerange = f'{new_start_date.strftime("%Y%m%d")}-'
 
+        self.logger.info(f'👉 Added {extra_days} extra days to the timerange for the "startup_candle_count"')
         return {'new_timerange': timerange, 'new_start_date': new_start_date}
 
     @staticmethod

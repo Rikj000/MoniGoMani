@@ -555,10 +555,10 @@ class MGMHurry:
         extra_data = answers.get('extra_data')
 
         if extra_data == 1:
-            new_timerange_dict = self.monigomani_cli.calculate_timerange_start_minus_startup_candle_count()
+            new_timerange_dict = self.monigomani_cli.calculate_timerange_start_minus_startup_candle_count(timerange)
             timerange = new_timerange_dict['new_timerange']
 
-        self.logger.info(f'👉 Downloading candle data ({tickers}) for timerange {timerange}')
+        self.logger.info(f'👉 Downloading candle data ({tickers}) for timerange ({timerange})')
 
         command = (f'{self.monigomani_config.config["ft_binary"]} download-data --timerange {timerange} '
                    f'-t {tickers} {self.monigomani_config.command_configs()}')
