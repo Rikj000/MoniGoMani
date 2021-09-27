@@ -10,6 +10,9 @@ from pandas import DataFrame, json_normalize
 
 def ExportCsvResults(config_file, input_file, output_file):
     # Load the 'mgm-config' file as an object and parse it as a dictionary
+
+    basedir = os.getcwd()
+
     mgm_config = {}
     if os.path.isfile(config_file) is True:
         file_object = open(config_file, )
@@ -18,12 +21,12 @@ def ExportCsvResults(config_file, input_file, output_file):
 
     # Fetch the latest '.fthypt' filename from last_result
     if input_file is None or input_file == '':
-        last_result_file = Path('../hyperopt_results/.last_result.json')
+        last_result_file = Path(f'{basedir}/user_data/hyperopt_results/.last_result.json')
         with last_result_file.open('r') as f:
             data = [rapidjson.loads(line) for line in f]
         last_rf = json_normalize(data, max_level=1)
 
-        results_file = Path(f'../hyperopt_results/{last_rf["latest_hyperopt"].loc[0]}')
+        results_file = Path(f'{basedir}/user_data/hyperopt_results/{last_rf["latest_hyperopt"].loc[0]}')
     else:
         results_file = Path(input_file)
 
@@ -64,13 +67,13 @@ def ExportCsvResults(config_file, input_file, output_file):
     results_df['trades_per_day'] = epochs['results_metrics.trades_per_day']
     results_df['rejected_signals'] = epochs['results_metrics.rejected_signals']
     results_df['avgduration_h'] = epochs['results_metrics.holding_avg_s'].apply(lambda x: round(x / 3600, 2))
-    results_df['avgduration_winner_h'] = \
-        epochs['results_metrics.winner_holding_avg_s'].apply(lambda x: round(x / 3600, 2))
-    results_df['avgduration_loser_h'] = \
-        epochs['results_metrics.loser_holding_avg_s'].apply(lambda x: round(x / 3600, 2))
+    results_df['avgduration_winner_h'] = epochs['results_metrics.winner_holding_avg_s'].apply(
+        lambda x: round(x / 3600, 2))
+    results_df['avgduration_loser_h'] = epochs['results_metrics.loser_holding_avg_s'].apply(
+        lambda x: round(x / 3600, 2))
     results_df['max_drawdown'] = epochs['results_metrics.max_drawdown_abs'].apply(lambda x: round(x, 2))
-    epochs['results_metrics.drawdown_ratio'] = \
-        epochs['results_metrics.max_drawdown_abs'] / epochs['results_metrics.max_drawdown_high']
+    epochs['results_metrics.drawdown_ratio'] = (epochs['results_metrics.max_drawdown_abs'] /
+                                                epochs['results_metrics.max_drawdown_high'])
     results_df['drawdown_ratio'] = epochs['results_metrics.drawdown_ratio'].apply(lambda x: round(x * 100, 2))
     results_df['drawdown_start'] = epochs['results_metrics.drawdown_start']
     results_df['drawdown_end'] = epochs['results_metrics.drawdown_end']
@@ -106,7 +109,7 @@ def ExportCsvResults(config_file, input_file, output_file):
 
     # Export result as '.csv' file for readable result
     if output_file is None or output_file == '':
-        output_file = f'../hyperopt_results/{run_id}.csv'
+        output_file = f'{basedir}/user_data/csv_results/{run_id}.csv'
 
     results_df.to_csv(output_file, index=False, header=True, mode='w', encoding='UTF-8')
 
@@ -114,7 +117,7 @@ def ExportCsvResults(config_file, input_file, output_file):
 def main(argv):
     input_file = ''
     output_file = ''
-    config_file = '../mgm-config.json'
+    config_file = f'{os.getcwd()}/user_data/mgm-config.json'
     try:
         opts, args = getopt.getopt(argv, 'hc:i:o:', ['cfile=', 'ifile=', 'ofile='])
     except getopt.GetoptError:
@@ -124,11 +127,11 @@ def main(argv):
         if opt == '-h':
             print('ExportCsvResults.py -c <mgm_config_file> -i <input_file> -o <output_file>')
             sys.exit()
-        elif opt in ('-c', '--cfile'):
+        elif opt in ('-c', '--cfile', '--config_file'):
             config_file = arg
-        elif opt in ('-i', '--ifile'):
+        elif opt in ('-i', '--ifile', '--input_file'):
             input_file = arg
-        elif opt in ('-o', '--ofile'):
+        elif opt in ('-o', '--ofile', '--output_file'):
             output_file = arg
 
     ExportCsvResults(config_file, input_file, output_file)

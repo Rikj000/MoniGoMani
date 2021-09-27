@@ -63,12 +63,14 @@ Setting it all up requires some knowledge of the entire process, until you found
     - [Options](#options-4)
   - [`mgm-hurry importance_report`](#mgm-hurry-importance_report)
     - [Option](#option-1)
+  - [`mgm-hurry export_csv`](#mgm-hurry-export_csv)
+    - [Option](#option-2)
   - [`mgm-hurry hyperopt_show_epoch`](#mgm-hurry-hyperopt_show_epoch)
     - [Options](#options-5)
   - [`mgm-hurry hyperopt_show_results`](#mgm-hurry-hyperopt_show_results)
     - [Options](#options-6)
   - [`mgm-hurry start_trader`](#mgm-hurry-start_trader)
-    - [Option](#option-2)
+    - [Option](#option-3)
 - [## Example timeranges](#-example-timeranges)
 - [Developer Notes](#developer-notes)
 - [### Virtual Environment](#-virtual-environment)
@@ -182,8 +184,10 @@ Runs HyperOpt process to find out the most positive settings.
   - **Defaults to:** True.
 - **`--importance_report`:** *(bool, Optional)* Calculate a Signal Importance Report for MoniGoMani after the HyperOpt?
   - **Defaults to:** True.
+- **`--export_csv`:** *(bool, Optional)* Export the HyperOpt Results into a `.csv` SpreadSheet after the HyperOpt?
+  - **Defaults to:** True.
 - **`--output_file_name`:** *(Optional)* Custom filename for the `.log` file being created.
-  - **Defaults to:** `HyperOptResults-<Current-DateTime>.log`
+  - **Defaults to:** `HyperOptResults-<Strategy-Name>-<Current-DateTime>`
 - **`--jobs`:** *(Optional)* Amount of parallel workers (CPU cores) to use
   - **Defaults to:** Automatic detection *(Amount used will depend on the amount of cores available on your system)*
 - **`--min_trades`: Minimal amount of trades wished to be reached.
@@ -200,14 +204,23 @@ Runs BackTest process to find out more about the results found by HyperOpt.
 - **`--enable_protections`:** *(Optional)* Whether or not to enable protections.
   - **Defaults to:** True.
 - **`--output_file_name`:** *(Optional)* Custom name for the '.log' file being created.
-  - **Defaults to:** Defaults to 'BackTestResults-<Current-DateTime>'
+  - **Defaults to:** Defaults to `BackTestResults-<Strategy-Name>-<Current-DateTime>`
 
 
 ### `mgm-hurry importance_report`
 Runs the TotalOverallSignalImportanceCalculator process to find out which signals reached more importance in your MoniGoMani results found by HyperOpt.
 #### Option
 - **`--output_file_name`:** *(Optional)* Custom name for the `.log` file being created.
-  - **Defaults to:** Defaults to 'SignalImportanceResults-<Current-DateTime>'
+  - **Defaults to:** Defaults to `SignalImportanceResults-MoniGoManiHyperStrategy-<Current-DateTime>`
+
+
+### `mgm-hurry export_csv`
+Export the `.fthypt` results to an easy to interpret/sort/filter `.csv` SpreadSheet.
+#### Option
+- **`--output_file_name`:** *(Optional)* Custom name for the `.csv` file being created.
+  - **Defaults to:** Defaults to `CsvResults-<Strategy-Name>-<Current-DateTime>`
+- **`--fthypt`:** *(Optional)* Launches a prompt to easily choose a certain `.fthypt` file or a specific `.fthypt` by providing it's name.
+  - **Defaults to:** The last known `.fthypt` file. Provide `True` to launch a prompt to easily choose a specific. `.fthypt` file.
 
 
 ### `mgm-hurry hyperopt_show_epoch`

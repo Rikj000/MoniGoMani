@@ -344,12 +344,29 @@ class FreqtradeCli:
         questions = [{
             'type': 'list',
             'name': 'fthypt_file',
-            'message': 'Please select the HyperOpt results you want to show: ',
+            'message': 'Please select the HyperOpt results you want to use: ',
             'choices': fthypt_options
         }]
 
         answers = prompt(questions=questions)
         return answers.get('fthypt_file')
+
+    def parse_fthypt_name(self, fthypt_name: str) -> str:
+        """
+        Helper method to parse the '.fthypt' filename provided/asked by the user
+
+        :param fthypt_name: '.fthypt' filename provided by the user
+        :return: fthypt_name usable for the code
+        """
+        if fthypt_name is True or fthypt_name.lower() == 'true':
+            return self.choose_fthypt_file()
+        elif os.path.isfile(f'{self.basedir}/user_data/hyperopt_results/{fthypt_name}.fthypt'):
+            return f'{fthypt_name}.fthypt'
+        elif os.path.isfile(f'{self.basedir}/user_data/hyperopt_results/{fthypt_name}'):
+            return fthypt_name
+        else:
+            self.cli_logger.warning(Color.yellow('🤷 Provided fthypt file not exist, please select fthypt file:'))
+            return self.choose_fthypt_file()
 
     def choose_backtest_results_file(self, choose_results: bool = True) -> str:
         """
