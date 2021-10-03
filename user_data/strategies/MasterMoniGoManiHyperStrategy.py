@@ -206,6 +206,67 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             total_signals_possible[f'{space}_{trend}'] = 0
             total_triggers_possible[f'{space}_{trend}'] = 0
 
+    # Define the parameter spaces for hyperoptable protections
+    cooldown_lookback = IntParameter(2, 200, default=5, space="protection", optimize=True)
+
+    drawdown_lookback = IntParameter(2, 200, default=48, space="protection", optimize=True)
+    drawdown_trade_limit = IntParameter(2, 100, default=20, space="protection", optimize=True)
+    drawdown_stop_duration = IntParameter(2, 100, default=4, space="protection", optimize=True)
+    drawdown_max = DecimalParameter(0, 1, default=0.2, space='protection', optimize=True)       
+
+    stoploss_lookback = IntParameter(2, 200, default=24, space="protection", optimize=True)
+    stoploss_trade_limit = IntParameter(2, 100, default=4, space="protection", optimize=True)
+    stoploss_stop_duration = IntParameter(2, 100, default=2, space="protection", optimize=True)
+
+    lowprofit1_lookback = IntParameter(2, 200, default=6, space="protection", optimize=True)
+    lowprofit1_trade_limit = IntParameter(2, 100, default=2, space="protection", optimize=True)
+    lowprofit1_stop_duration = IntParameter(2, 100, default=60, space="protection", optimize=True)
+    lowprofit1_profit = DecimalParameter(0, 1, default=0.02, space='protection', optimize=True)     
+
+    lowprofit2_lookback = IntParameter(2, 200, default=24, space="protection", optimize=True)
+    lowprofit2_trade_limit = IntParameter(2, 100, default=4, space="protection", optimize=True)
+    lowprofit2_stop_duration = IntParameter(2, 100, default=2, space="protection", optimize=True)
+    lowprofit2_profit = DecimalParameter(0, 1, default=0.01, space='protection', optimize=True)        
+
+    @property
+    def protections(self):
+        prot = []
+
+        prot.append({
+            "method": "CooldownPeriod",
+            "stop_duration_candles": self.cooldown_lookback.value
+        })
+        prot.append({
+            "method": "MaxDrawdown",
+            "lookback_period_candles": self.drawdown_lookback.value,
+            "trade_limit": self.drawdown_trade_limit.value,
+            "stop_duration_candles": self.drawdown_stop_duration.value,
+            "max_allowed_drawdown": self.drawdown_max.value
+        })
+        prot.append({
+            "method": "StoplossGuard",
+            "lookback_period_candles": self.stoploss_lookback.value,
+            "trade_limit": self.stoploss_trade_limit.value,
+            "stop_duration_candles": self.stoploss_stop_duration.value,
+            "only_per_pair": False
+        })
+        prot.append({
+            "method": "LowProfitPairs",
+            "lookback_period_candles": self.lowprofit1_lookback.value,
+            "trade_limit": self.lowprofit1_trade_limit.value,
+            "stop_duration_candles": self.lowprofit1_stop_duration.value,
+            "required_profit": self.lowprofit1_profit.value
+        })
+        prot.append({
+            "method": "LowProfitPairs",
+            "lookback_period_candles": self.lowprofit2_lookback.value,
+            "trade_limit": self.lowprofit2_trade_limit.value,
+            "stop_duration_candles": self.lowprofit2_stop_duration.value,
+            "required_profit": self.lowprofit2_profit.value
+        })
+
+        return prot
+
     class HyperOpt:
         @staticmethod
         def generate_roi_table(params: Dict) -> Dict[int, float]:
