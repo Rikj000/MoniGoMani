@@ -701,13 +701,19 @@ class MGMHurry:
             min_trades=min_trades)
 
         self.logger.debug(command)
-
         if output_file_name is None:
             output_file_name = f'{strategy}-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
         hyperopt_file_name = f'HyperOptResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/hyperopt_results/{hyperopt_file_name}.log'
 
-        self.monigomani_cli.run_command(command=command, output_file_name=output_file_path, hyperopt=True)
+        self.monigomani_cli.run_command(command=command, output_file_name=output_file_path,hyperopt=True)
+
+        last_ho_results_path = f'{self.basedir}/user_data/hyperopt_results/.last_ho_results_table.log'
+        if os.stat(last_ho_results_path).st_size == 0:
+            self.logger.error(Color.red('🤷 No "best" results found during the HyperOpt, aborting further tests '
+                                        'since there are no HyperOpt results to test upon.'))
+            sys.exit(1)
+
         if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
             self.monigomani_cli.apply_mgm_results(strategy)
             self.monigomani_config.save_weak_strong_signal_overrides()
@@ -726,13 +732,14 @@ class MGMHurry:
             ho_results_log.close()
 
         if initial_run is True:
-            message = f'🚀 Fresh **{strategy}** Initial HyperOpt Run Results ⬇️'
+            message = f'🚀 Fresh **{strategy}** Initial HyperOpt Run Results ⬇️\n'
         elif strategy == 'MoniGoManiHyperStrategy':
-            message = f'🚀 Fresh **{strategy}** Refinement HyperOpt Run Results ⬇️'
+            message = f'🚀 Fresh **{strategy}** Refinement HyperOpt Run Results ⬇️\n'
         else:
-            message = f'🚀 Fresh **{strategy}** HyperOpt Run Results ⬇️'
-        MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
-                                                    message=message, results_paths=[output_file_path])
+            message = f'🚀 Fresh **{strategy}** HyperOpt Run Results ⬇️\n'
+
+        MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'], message=message,
+                                                    results_paths=[last_ho_results_path, output_file_path])
         if (importance_report is True) and (strategy == 'MoniGoManiHyperStrategy'):
             self.importance_report(output_file_name=output_file_name)
         if apply_best_results is False:
@@ -854,10 +861,13 @@ class MGMHurry:
         backtest_file_name = f'BackTestResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/backtest_results/{backtest_file_name}.log'
 
-        self.monigomani_cli.run_command(command, output_file_path)
-        MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
-                                                    message=f'🚀 Fresh **{strategy}** BackTest Results ⬇️',
-                                                    results_paths=[output_file_path])
+        self.monigomani_cli.run_command(command, output_file_path, backtest=True)
+        message = f'🚀 Fresh **{strategy}** BackTest Results ⬇\n'
+
+        last_sell_reasons_path = f'{self.basedir}/user_data/backtest_results/.last_backtest_sell_reasons.log'
+
+        MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'], message=message,
+                                                    results_paths=[last_sell_reasons_path, output_file_path])
 
         if plot_profits is True:
             self.plot_profit(choose_results=False, timerange=timerange,

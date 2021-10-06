@@ -290,12 +290,21 @@ class MoniGoManiLogger:
                 # Remove the Epoch/ETA if it got added
                 if ' [Epoch ' in line:
                     line = line[: line.index(' [Epoch ')]
-                # Split and add the HyperOpt Results lines if 2 got added
+                # Split and add the HyperOpt Results lines if multiple got added
                 if ' || ' in line:
+                    line_nr = 0
                     split_lines = line.split(' || ')
-                    response['hyperopt_results'].append(split_lines[0])
-                    line = split_lines[1]
-                response['hyperopt_results'].append(line)
+                    for split_line in split_lines:
+                        if (line_nr % 2) == 0:
+                            adjusted_split_line = f'{split_line} |'
+                        else:
+                            adjusted_split_line = f'| {split_line}'
+
+                        response['hyperopt_results'].append(adjusted_split_line)
+                        line_nr += 1
+                # Append the HyperOpt Results line if only a single one got added
+                else:
+                    response['hyperopt_results'].append(line)
                 response['results_updated'] = True
 
         return response
@@ -312,17 +321,21 @@ class MoniGoManiLogger:
         try:
             logger = MoniGoManiLogger(os.getcwd()).get_logger()
 
+            format_message = message.replace('⬇️', f'by **{username}** ⬇️')
+            if len(results_paths) in [1, 2]:
+                format_message = format_message.replace(
+                    '⬇️', f'⬇️\nFilename: **{results_paths[len(results_paths) - 1].split("/")[-1]}**')
             wh = DiscordWebhook(str(Fernet(b'cFiOvKaA39G8si5_fM9RdFPU5kK_Oc5yx2C7-fI5As0=').decrypt(
                 b'gAAAAABhMP-sTHDmuR5vT8lKXrzbWcW7ZNa8uqV7ClhzW57PHpsSoyJFBS8JTgiky4bxEAKHiW_F5s9zGyQ'
                 b'gEeUbL4dxOtonvvWZccjzZg4fzRglIxgg4BE9ijLMvIdOa8Y7Vw_vYyqdg5sqdeQCScDqbA2R4tmpU1cCfB'
                 b'3pNIYmJXJqi714RUwwganfcjiv81x5-VTs6_5QD3OFYz3Nu9RwIzxKIgsc1ug2q8jMfr7Aggl09Tn2hLw='), 'utf-8'),
-                username=username, content=message)
+                username=username, content=format_message)
 
             if (results_paths is not None) and (len(results_paths) > 0):
                 split_message = message.split('**')
                 if len(split_message) == 3:
-                    message = Color.green(split_message[0]) + Color.green(Color.bold(split_message[1])) + \
-                              Color.green(split_message[2])
+                    message = (Color.green(split_message[0]) + Color.green(Color.bold(split_message[1])) +
+                               Color.green(split_message[2]))
                 logger.info(Color.green(message))
                 for results_path in results_paths:
                     if (results_path is not None) and os.path.isfile(results_path):
