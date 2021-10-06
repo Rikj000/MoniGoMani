@@ -410,7 +410,7 @@ class MGMHurry:
             'type': 'list',
             'name': 'exchange',
             'message': 'Which exchange do you want to use?',
-            'choices': ['binance', 'ftx', 'bittrex'],
+            'choices': ['binance', 'bittrex', 'bitvavo', 'ftx', 'gateio', 'kraken', 'kucoin'],
             'when': lambda result: result['proceed_exchange']
         }, {
             'type': 'password',
