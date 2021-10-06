@@ -10,7 +10,7 @@
     <a href="https://matrix.to/#/+moni-go-mani:matrix.org">
         <img src="https://img.shields.io/matrix/MoniGoMani-Testing:matrix.org?label=Matrix%20Community&logo=matrix" alt="Join MoniGoMani on Matrix">
     </a> <a href="https://discord.gg/xFZ9bB6vEz">
-        <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join CryptoStonksShallRise on Discord">
+        <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join MoniGoMani on Discord">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases">
         <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases/latest">
@@ -143,7 +143,7 @@ Please take a good read at these! :pray:+98//
 
 
 ## Got Test Results - Ideas - Config Improvements?
-- Feel free to join our community [**MoniGoni** on Matrix](https://matrix.to/#/+moni-go-mani:matrix) or [**CryptoStonksShallRise** on Discord](https://discord.gg/xFZ9bB6vEz), there you can follow/participate in the **Official MoniGoMani Channels**:
+- Feel free to join our community [**MoniGoni** on Matrix](https://matrix.to/#/+moni-go-mani:matrix) or [**MoniGoMani** on Discord](https://discord.gg/xFZ9bB6vEz), there you can follow/participate in the **Official MoniGoMani Channels**:
   - `📢︱moni-go-mani` *(All Official MGM Releases & important messages can be followed here)*
   - `✨︱git-updates` *(All GitHub Commits can be followed here)*
   - `🗞︱github-discussions` *(All conversations tied to GitHub Issues & Pull Requests can be followed here)*
@@ -151,11 +151,14 @@ Please take a good read at these! :pray:+98//
   - `👑︱testing-elite` *(Channel for members that have proven to be true additions to the community. Exclusive for `MoniGoMani Testing MVP` and above)*
   - `🛠︱testing` *(Your go-to channel for partaking in the community. Feel free to drop your test results / config files / ideas here)*
   - `❔︱help` *(Be sure to take your time to read the [Documentation](https://github.com/Rikj000/MoniGoMani/wiki) thoroughly before reaching out with questions though!)*
-  - `🎉︱setup-releases` *(Release your personal profitable MGM configurations/HyperOpted versions here)*
+  - `🎉︱setup-releases` *(Release your personal profitable MGM configurations/HyperOpted versions here. Exclusive for `MoniGoMani Testing MVP` and above)*
   - `🍿︱test-results` *(Where HyperOpt & BackTest results are automatically posted by the community, exclusive for `MoniGoMani Testing MVP` and above)*
   - `🗄︱cluster-results` *(Automated Ph3nol Cluster Releases. Exclusive to the MoniGoMani Cluster Maintainer & MoniGoMani Developers, for now!)*
 
-More general chats for `📈︱technical-analysis`, `🤖︱freqtrade`, `📊︱iconomi` and `🍉︱random` discussion are also available there :slightly_smiling_face:
+More general chats for `📈︱technical-analysis`, `🤖︱freqtrade`, `📊︱iconomi` and `🍉︱random` discussion are also available there 🙂
+
+The [Matrix](https://matrix.to/#/+moni-go-mani:matrix) & [Discord](https://discord.gg/xFZ9bB6vEz) communities are fully bridged between one another,
+so you won't miss a thing in either of them! *(Matrix is better data-privacy wise!)*
 
 ## Planned
 MoniGoMani's planned section lives under the [**Issues**](https://github.com/Rikj000/MoniGoMani/issues) section!
@@ -185,9 +188,10 @@ Big thank you to **xmatthias** and everyone who helped on it!
 
 Please read Freqtrade's [exchange specific notes](https://www.freqtrade.io/en/latest/exchanges/) to learn about eventual, special configurations needed for each exchange.
 | Exchange | Join | Freqtrade Support | CCXT Certified | Discount |
-|:--------:|:----:|:-----------------:|:--------------:|:--------:|
+| :------: | :--: | :---------------: | :------------: | :------: |
 | [![binance](https://user-images.githubusercontent.com/1294454/29604020-d5483cdc-87ee-11e7-94c7-d1a8d9169293.jpg)](https://www.binance.com/en/register?ref=97611461) | [Binance](https://www.binance.com/en/register?ref=97611461) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) | [![Sign up with Binance using my referral link for a 5% discount!](https://img.shields.io/static/v1?label=Fee&message=%2d5%25&color=orange)](https://www.binance.com/en/register?ref=97611461) |
 | [![ftx](https://user-images.githubusercontent.com/1294454/67149189-df896480-f2b0-11e9-8816-41593e17f9ec.jpg)](https://ftx.com/#a=33116566) | [FTX](https://ftx.com/#a=33116566) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) | [![Sign up with FTX using my referral link for a 5% discount!](https://img.shields.io/static/v1?label=Fee&message=%2d5%25&color=orange)](https://ftx.com/#a=33116566) |
+| [![gateio](https://user-images.githubusercontent.com/1294454/31784029-0313c702-b509-11e7-9ccc-bc0da6a0e435.jpg)](https://www.gate.io/signup/6658233) | [Gate.io](https://www.gate.io/signup/6658233) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) | [![Sign up with Gate.io using my referral link for a 10% discount!](https://img.shields.io/static/v1?label=Fee&message=%2d10%25&color=orange)](https://www.gate.io/signup/6658233) |
 | [![kraken](https://user-images.githubusercontent.com/51840849/76173629-fc67fb00-61b1-11ea-84fe-f2de582f58a3.jpg)](https://www.kraken.com) | [Kraken](https://www.kraken.com) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) |
 | [![bittrex](https://user-images.githubusercontent.com/51840849/87153921-edf53180-c2c0-11ea-96b9-f2a9a95a455b.jpg)](https://bittrex.com/Account/Register?referralCode=JCC-AWM-VU1) | [Bittrex](https://bittrex.com/Account/Register?referralCode=JCC-AWM-VU1) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-market$places) |
 | [![bitvavo](https://user-images.githubusercontent.com/1294454/83165440-2f1cf200-a116-11ea-9046-a255d09fb2ed.jpg)](https://bitvavo.com/?a=2D64A068E5) | [Bitvavo](https://bitvavo.com/?a=2D64A068E5) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Community_Tested-blue.svg)](https://www.freqtrade.io/en/latest/#community-tested) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) | |

@@ -2,7 +2,7 @@
     <a href="https://matrix.to/#/+moni-go-mani:matrix.org">
         <img src="https://img.shields.io/matrix/MoniGoMani-Testing:matrix.org?label=Matrix%20Community&logo=matrix" alt="Join MoniGoMani on Matrix">
     </a>  <a href="https://discord.gg/xFZ9bB6vEz">
-        <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join CryptoStonksShallRise on Discord">
+        <img src="https://img.shields.io/discord/819237123009150977?label=Discord%20Server&logo=discord" alt="Join MoniGoMani on Discord">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases">
         <img src="https://img.shields.io/github/downloads/Rikj000/MoniGoMani/total?label=Total%20Downloads&logo=github" alt="Total Releases Downloaded from GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/releases/latest">
@@ -188,6 +188,8 @@ Runs HyperOpt process to find out the most positive settings.
   - **Defaults to:** True.
 - **`--output_file_name`:** *(Optional)* Custom filename for the `.log` file being created.
   - **Defaults to:** `HyperOptResults-<Strategy-Name>-<Current-DateTime>`
+- **`--epochs`:** *(Optional)* Amount of epochs to HyperOpt over.
+  - **Defaults to:** Value defined in `.hurry`
 - **`--jobs`:** *(Optional)* Amount of parallel workers (CPU cores) to use
   - **Defaults to:** Automatic detection *(Amount used will depend on the amount of cores available on your system)*
 - **`--min_trades`: Minimal amount of trades wished to be reached.
