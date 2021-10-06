@@ -702,7 +702,7 @@ class MGMHurry:
 
         self.logger.debug(command)
         if output_file_name is None:
-            output_file_name = f'{strategy}-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+            output_file_name = f'{strategy}-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
         hyperopt_file_name = f'HyperOptResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/hyperopt_results/{hyperopt_file_name}.log'
 
@@ -857,7 +857,7 @@ class MGMHurry:
             timerange=timerange)
 
         if output_file_name is None:
-            output_file_name = f'{strategy}-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+            output_file_name = f'{strategy}-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
         backtest_file_name = f'BackTestResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/backtest_results/{backtest_file_name}.log'
 
@@ -918,7 +918,7 @@ class MGMHurry:
             return None
 
         if output_file_name is None:
-            output_file_name = f'{strategy}-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+            output_file_name = f'{strategy}-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
         plot_profit_file_name = f'PlotProfitResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/plot/{plot_profit_file_name}.html'
 
@@ -953,7 +953,7 @@ class MGMHurry:
             return None
 
         if output_file_name is None:
-            output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+            output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
         importance_report_file_name = f'SignalImportanceResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/importance_results/{importance_report_file_name}.log'
 
@@ -994,7 +994,7 @@ class MGMHurry:
             fthypt_file_path = f'{self.basedir}/user_data/hyperopt_results/{fthypt_name}'
 
         if output_file_name is None:
-            output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+            output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
         csv_results_file_name = f'CsvResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/csv_results/{csv_results_file_name}.csv'
 
