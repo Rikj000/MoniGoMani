@@ -630,7 +630,7 @@ class MGMHurry:
                  enable_protections: bool = True, random_state: int = None, apply_best_results: bool = True,
                  clean_start: bool = False, do_backtest: bool = True, plot_profits: bool = True,
                  importance_report: bool = True, export_csv: bool = True, output_file_name: str = None,
-                 jobs: int = None, min_trades: int = None):
+                 epochs: int = None, jobs: int = None, min_trades: int = None):
         """
         HyperOpt Magic. Runs HyperOpt process to find out the most positive settings, automatically saves results.
 
@@ -650,12 +650,15 @@ class MGMHurry:
         :param export_csv: (bool, Optional): Export the HO results into a '.csv' SpreadSheet? Defaults to True.
         :param output_file_name: (str, Optional) Custom filename for the HyperOptResults '.log' file that will be
             stored in the format: 'HyperOptResults-<output_file_name>.log'. Defaults to 'Strategy + Current DateTime'
+        :param epochs: (int) Amount of epochs to HyperOpt over. Defaults to value defined in '.hurry'
         :param jobs: (int) Amount of parallel workers (CPU cores) to use, gets set automatically by default
         :param min_trades: (int) Minimal amount of trades wished to be reached. Unused by default
         """
 
         if strategy is None:
             strategy = self.monigomani_config.config['hyperopt']['strategy']
+        if epochs is None:
+            epochs = self.monigomani_config.config['hyperopt']['epochs']
 
         initial_run = True
         if clean_start is True:
@@ -691,7 +694,7 @@ class MGMHurry:
             ho_strategy=strategy,
             ho_loss=loss,
             ho_spaces=spaces,
-            ho_epochs=self.monigomani_config.config['hyperopt']['epochs'],
+            ho_epochs=epochs,
             timerange=timerange,
             random_state=random_state,
             jobs=jobs,
