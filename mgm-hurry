@@ -348,15 +348,15 @@ class MGMHurry:
 
         self.monigomani_config.reload()
 
+        """
+        'type': 'list',
+        'name': 'install_type',
+        'message': 'Which way you want to use Freqtrade?',
+        'choices': ['docker', 'source'],
+        'default': self.monigomani_config.get('install_type') or 'source'
+        }, {
+        """
         answers = prompt(questions=[{
-            """
-            'type': 'list',
-            'name': 'install_type',
-            'message': 'Which way you want to use Freqtrade?',
-            'choices': ['docker', 'source'],
-            'default': self.monigomani_config.get('install_type') or 'source'
-            }, {
-            """
             'type': 'input',
             'name': 'timerange',
             'message': 'Please enter the default timerange you want to use:',
