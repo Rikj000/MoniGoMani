@@ -27,8 +27,6 @@
  - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) after doing manual changes!
  - You need to [optimized](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
 <hr>
-   
-**<span style="color:blue">TIP:</span> `source` installation is recommended since MoniGoMani sometimes requires a specific Freqtrade commit. It's also faster/better than a Docker Container, but Docker is easier to install**   
 
 ## Requirements
 Make sure that you have all of the following available on your system before proceeding:
@@ -39,7 +37,6 @@ Make sure that you have all of the following available on your system before pro
 - [**Expect**](https://core.tcl-lang.org/expect/index) - A tool for automating interactive applications
 - [**TA-Lib**](https://github.com/mrjbq7/ta-lib) - Technical Analysis Library written in C
 - [**VSCodium**](https://vscodium.com/) - *(Optional)* A light weight open-source IDE that comes pre-installed with good color codes to make it easier to read `.json` and `.log` files & many more great features.
-- [**Docker**](https://www.docker.com/get-started) - *(Not recommended! Optional)* Only if you really can't go for a `source` installation!
 
 #### Additional Ubuntu requirements:
 - [**Switch `sh` to `bash`**](https://unix.stackexchange.com/a/442517) - Run `sudo dpkg-reconfigure dash`, this will ask whether you want dash to be the default system shell. Answer `No` (`Tab` then `Enter`) and bash will become the default instead.
@@ -78,5 +75,5 @@ alias mgm-hurry="python3 /path/to/installation/freqtrade-mgm/mgm-hurry"
 1) **Linux/Unix** *(MoniGoMani is written on Linux, for Linux!)*
 2) **MacOS** *(Thanks to topscoder and other MacOS users)*
 3) **WSL** *(Because we have to give those Windows users something..)*
-4) **Docker** *(If there is free time left, there hasn't been free time left in months..)*
+4) **Docker** *(Perhaps someday, but not at this point in time..)*
 5) **Windows** *(Such a SpyWare infested OS will **never** receive support for this project!)*

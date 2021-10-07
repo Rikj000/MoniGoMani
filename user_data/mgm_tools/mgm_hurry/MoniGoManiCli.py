@@ -180,12 +180,12 @@ class MoniGoManiCli(object):
             symlink_objects = {
                 'Documentation',
                 'Some Test Results',
-                'docker/Dockerfile.MoniGoMani',
+                # 'docker/Dockerfile.MoniGoMani',
                 'user_data/logs/freqtrade.log',
                 'user_data/mgm_pair_lists',
                 'user_data/mgm_tools',
                 'user_data/__init__.py',
-                'docker-compose.yml',
+                # 'docker-compose.yml',
                 'mgm-hurry',
                 'requirements-mgm.txt'
             }

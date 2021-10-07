@@ -349,12 +349,14 @@ class MGMHurry:
         self.monigomani_config.reload()
 
         answers = prompt(questions=[{
+            """
             'type': 'list',
             'name': 'install_type',
             'message': 'Which way you want to use Freqtrade?',
             'choices': ['docker', 'source'],
             'default': self.monigomani_config.get('install_type') or 'source'
-        }, {
+            }, {
+            """
             'type': 'input',
             'name': 'timerange',
             'message': 'Please enter the default timerange you want to use:',
@@ -432,16 +434,17 @@ class MGMHurry:
         if answers == {}:
             sys.exit(1)
 
+        """
         if answers.get('install_type') == 'source':
             ft_binary = f'source {self.basedir}/.env/bin/activate; freqtrade'
         else:
             ft_binary = 'docker-compose run --rm freqtrade'
-
+        """
         new_config = {
             'config': {
                 'username': answers.get('username'),
-                'install_type': answers.get('install_type'),
-                'ft_binary': ft_binary,
+                'install_type': 'source',  # answers.get('install_type'),
+                'ft_binary': f'source {self.basedir}/.env/bin/activate; freqtrade',  # ft_binary,
                 'timerange': answers.get('timerange'),
                 'exchange': answers.get('exchange') or 'none',
                 'hyperopt': {
