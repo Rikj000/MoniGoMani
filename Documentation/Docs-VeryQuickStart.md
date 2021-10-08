@@ -42,8 +42,12 @@ Make sure that you have all of the following available on your system before pro
 - [**Switch `sh` to `bash`**](https://unix.stackexchange.com/a/442517) - Run `sudo dpkg-reconfigure dash`, this will ask whether you want dash to be the default system shell. Answer `No` (`Tab` then `Enter`) and bash will become the default instead.
 - [**Python-venv**](https://pypi.org/project/virtualenv/) - The installer will prompt you how to install it on your version
 
-#### Additional MacOS requirements:
-- BigSur - Make sure to install xcode util 12.3
+#### Additional MacOS (BigSur) requirements:
+- Install [brew](https://brew.sh/)
+- Install `xcode util 12.3`
+- Install `hdf5` *(`brew install hdf5`)*
+- Install `c-blosc` *(`brew install c-blosc`)*
+- Install `tables` *(`pip3 install tables`)*
 
 ## Installation instructions
 MoniGoMani provides an all-in-one setup tool. It will guide you through the entire installation procedure. Not only for MoniGoMani, but Freqtrade also. You want the entire package, right? You will be up & HyperOpting (or Dry/Live Running) in no time! 🤙
