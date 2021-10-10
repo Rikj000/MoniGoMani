@@ -96,6 +96,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     # Apply the loaded MoniGoMani Settings
     try:
         timeframe = mgm_config['timeframe']
+        trend_timeframe = mgm_config['trend_timeframe'] or mgm_config['timeframe']
         backtest_timeframe = mgm_config['backtest_timeframe']
         startup_candle_count = mgm_config['startup_candle_count']
         precision = mgm_config['precision']
@@ -193,6 +194,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     # Initialize some parameters which will be automatically configured/used by MoniGoMani
     use_custom_stoploss = True  # Leave this enabled (Needed for open_trade custom_information_storage)
     is_dry_live_run_detected = True  # Class level runmode detection, Gets set automatically
+    core_trend_timeframe = trend_timeframe  # Gets set automatically
     informative_timeframe = timeframe  # Gets set automatically
     timeframe_multiplier = None  # Gets set automatically
     separator = 1.5  # Gets set automatically
@@ -476,6 +478,14 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return DataFrame: DataFrame for MoniGoMani with all mandatory indicator data populated
         """
 
+        # Populate core trend indicators
+        core_trend = load_pair_history(pair=metadata['pair'],
+                                        datadir=self.config['datadir'],
+                                        timeframe=self.core_trend_timeframe,
+                                        startup_candles=200, # TODO: calculate correct startup_candles needed for HT_TRENDMODE and SAR
+                                        data_format=self.config.get('dataformat_ohlcv', 'json'))
+        core_trend = self._populate_core_trend(core_trend, metadata)
+
         timeframe_zoom = 'TimeFrame-Zoom'
         # Compute indicator data during Backtesting / Hyperopting when TimeFrame-Zooming
         if (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe):
@@ -495,8 +505,16 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             first_informative = dataframe['date'].min().floor('H')
             informative = informative[informative['date'] >= first_informative]
 
-            # Populate core trend indicators
-            informative = self._populate_core_trend(informative, metadata)
+            # Merge core trend to informative data frame
+            informative = \
+                merge_informative_pair(informative, core_trend[['date', 'ht_trendmode', 'sar', 'trend']].copy(), self.informative_timeframe, self.core_trend_timeframe, ffill=True)
+            informative['ht_trendmode'] = informative['ht_trendmode_' + self.core_trend_timeframe]
+            informative['sar'] = informative['sar_' + self.core_trend_timeframe]
+            informative['trend'] = informative['trend_' + self.core_trend_timeframe]
+            del informative['date_' + self.core_trend_timeframe]
+            del informative['ht_trendmode_' + self.core_trend_timeframe]
+            del informative['sar_' + self.core_trend_timeframe]
+            del informative['trend_' + self.core_trend_timeframe]
 
             # Populate indicators at a larger timeframe
             informative = self.do_populate_indicators(informative.copy(), metadata)
@@ -516,8 +534,19 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         else:
             self.mgm_logger('info', timeframe_zoom,
                             f'Dry/Live-running MoniGoMani with normal timeframe ({self.timeframe} candles)')
-            # Populate core trend indicators
-            dataframe = self._populate_core_trend(dataframe, metadata)
+
+            # Merge core trend to main data frame
+            dataframe = \
+                merge_informative_pair(dataframe, core_trend[['date', 'ht_trendmode', 'sar', 'trend', 'mgm_trend']].copy(), self.timeframe, self.core_trend_timeframe, ffill=True)
+            dataframe['ht_trendmode'] = dataframe['ht_trendmode_' + self.core_trend_timeframe]
+            dataframe['sar'] = dataframe['sar_' + self.core_trend_timeframe]
+            dataframe['trend'] = dataframe['trend_' + self.core_trend_timeframe]
+            dataframe['mgm_trend'] = dataframe['mgm_trend_' + self.core_trend_timeframe]
+            del dataframe['date_' + self.core_trend_timeframe]
+            del dataframe['ht_trendmode_' + self.core_trend_timeframe]
+            del dataframe['sar_' + self.core_trend_timeframe]
+            del dataframe['trend_' + self.core_trend_timeframe]
+            del dataframe['mgm_trend_' + self.core_trend_timeframe]
 
             # Just populate indicators.
             dataframe = self.do_populate_indicators(dataframe, metadata)
