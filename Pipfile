@@ -22,7 +22,7 @@ wcwidth = "==0.2.5"
 yaspin = "==2.1.0"
 
 [dev-packages]
-flake8 = "==3.9.2"
+flake8 = "==4.0.0"
 isort = "*"
 pre-commit = "==2.15.0"
 pylint = "==2.11.1"
