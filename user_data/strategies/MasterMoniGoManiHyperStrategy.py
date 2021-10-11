@@ -463,7 +463,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         core_trend = load_pair_history(pair=metadata['pair'],
                                         datadir=self.config['datadir'],
                                         timeframe=self.core_trend_timeframe,
-                                        startup_candles=200, # ToDo: calculate correct startup_candles needed for HT_TRENDMODE and SAR
+                                        # ToDo: calculate correct startup_candles needed for HT_TRENDMODE and SAR
+                                        startup_candles=self.startup_candle_count,
                                         data_format=self.config.get('dataformat_ohlcv', 'json'))
         core_trend = self._populate_core_trend(core_trend, metadata)
 
