@@ -488,13 +488,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             informative = merge_informative_pair(
                 informative, core_trend[['date', 'ht_trendmode', 'sar', 'trend']].copy(),
                 self.informative_timeframe, self.core_trend_timeframe, ffill=True)
-            informative['ht_trendmode'] = informative['ht_trendmode_' + self.core_trend_timeframe]
-            informative['sar'] = informative['sar_' + self.core_trend_timeframe]
-            informative['trend'] = informative['trend_' + self.core_trend_timeframe]
-            del informative['date_' + self.core_trend_timeframe]
-            del informative['ht_trendmode_' + self.core_trend_timeframe]
-            del informative['sar_' + self.core_trend_timeframe]
-            del informative['trend_' + self.core_trend_timeframe]
+            informative['ht_trendmode'] = informative[f'ht_trendmode_{self.core_trend_timeframe}']
+            informative['sar'] = informative[f'sar_{self.core_trend_timeframe}']
+            informative['trend'] = informative[f'trend_{self.core_trend_timeframe}']
+            del informative[f'date_{self.core_trend_timeframe}']
+            del informative[f'ht_trendmode_{self.core_trend_timeframe}']
+            del informative[f'sar_{self.core_trend_timeframe}']
+            del informative[f'trend_{self.core_trend_timeframe}']
 
             # Populate indicators at a larger timeframe
             informative = self.do_populate_indicators(informative.copy(), metadata)
@@ -517,15 +517,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             dataframe = merge_informative_pair(
                 dataframe, core_trend[['date', 'ht_trendmode', 'sar', 'trend', 'mgm_trend']].copy(), 
                 self.timeframe, self.core_trend_timeframe, ffill=True)
-            dataframe['ht_trendmode'] = dataframe['ht_trendmode_' + self.core_trend_timeframe]
-            dataframe['sar'] = dataframe['sar_' + self.core_trend_timeframe]
-            dataframe['trend'] = dataframe['trend_' + self.core_trend_timeframe]
-            dataframe['mgm_trend'] = dataframe['mgm_trend_' + self.core_trend_timeframe]
-            del dataframe['date_' + self.core_trend_timeframe]
-            del dataframe['ht_trendmode_' + self.core_trend_timeframe]
-            del dataframe['sar_' + self.core_trend_timeframe]
-            del dataframe['trend_' + self.core_trend_timeframe]
-            del dataframe['mgm_trend_' + self.core_trend_timeframe]
+            dataframe['ht_trendmode'] = dataframe[f'ht_trendmode_{self.core_trend_timeframe}']
+            dataframe['sar'] = dataframe[f'sar_{self.core_trend_timeframe}']
+            dataframe['trend'] = dataframe[f'trend_{self.core_trend_timeframe}']
+            dataframe['mgm_trend'] = dataframe[f'mgm_trend_{self.core_trend_timeframe}']
+            del dataframe[f'date_{self.core_trend_timeframe}']
+            del dataframe[f'ht_trendmode_{self.core_trend_timeframe}']
+            del dataframe[f'sar_{self.core_trend_timeframe}']
+            del dataframe[f'trend_{self.core_trend_timeframe}']
+            del dataframe[f'mgm_trend_{self.core_trend_timeframe}']
 
             # Just populate indicators.
             dataframe = self.do_populate_indicators(dataframe, metadata)
