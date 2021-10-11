@@ -28,6 +28,8 @@ from freqtrade.persistence import Trade
 from freqtrade.strategy import IntParameter, IStrategy, merge_informative_pair, timeframe_to_minutes
 
 logger = logging.getLogger(__name__)
+
+
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
 
@@ -78,8 +80,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             mgm_config_hyperopt_name = hurry_config['mgm_config_names']['mgm-config-hyperopt']
 
     if (mgm_config_name is None) or (mgm_config_hyperopt_name is None):
-        sys.exit(f'MoniGoManiHyperStrategy - ERROR - The MoniGoMani Configuration filenames could not be loaded from'
-                 f'".hurry"... Please run "python3 ./mgm-hurry setup" to create your ".hurry" file')
+        sys.exit('MoniGoManiHyperStrategy - ERROR - The MoniGoMani Configuration filenames could not be loaded from'
+                 '".hurry"... Please run "python3 ./mgm-hurry setup" to create your ".hurry" file')
 
     # Load the MoniGoMani settings
     mgm_config_path = f'{os.getcwd()}/user_data/{mgm_config_name}'
@@ -102,21 +104,20 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         precision = mgm_config['precision']
         min_weighted_signal_value = mgm_config['weighted_signal_spaces']['min_weighted_signal_value']
         max_weighted_signal_value = mgm_config['weighted_signal_spaces']['max_weighted_signal_value']
-        min_trend_total_signal_needed_value = \
-            mgm_config['weighted_signal_spaces']['min_trend_total_signal_needed_value']
-        min_trend_total_signal_needed_candles_lookback_window_value = \
-            mgm_config['weighted_signal_spaces']['min_trend_total_signal_needed_candles_lookback_window_value']
-        max_trend_total_signal_needed_candles_lookback_window_value = \
-            mgm_config['weighted_signal_spaces']['max_trend_total_signal_needed_candles_lookback_window_value']
-        min_trend_signal_triggers_needed_value = \
-            mgm_config['weighted_signal_spaces']['min_trend_signal_triggers_needed']
-        search_threshold_weighted_signal_values = \
-            mgm_config['weighted_signal_spaces']['search_threshold_weighted_signal_values']
-        search_threshold_trend_total_signal_needed_candles_lookback_window_value = \
-            mgm_config['weighted_signal_spaces'][
-                'search_threshold_trend_total_signal_needed_candles_lookback_window_value']
-        search_threshold_trend_signal_triggers_needed = \
-            mgm_config['weighted_signal_spaces']['search_threshold_trend_signal_triggers_needed']
+        min_trend_total_signal_needed_value = mgm_config[
+            'weighted_signal_spaces']['min_trend_total_signal_needed_value']
+        min_trend_total_signal_needed_candles_lookback_window_value = mgm_config[
+            'weighted_signal_spaces']['min_trend_total_signal_needed_candles_lookback_window_value']
+        max_trend_total_signal_needed_candles_lookback_window_value = mgm_config[
+            'weighted_signal_spaces']['max_trend_total_signal_needed_candles_lookback_window_value']
+        min_trend_signal_triggers_needed_value = mgm_config[
+            'weighted_signal_spaces']['min_trend_signal_triggers_needed']
+        search_threshold_weighted_signal_values = mgm_config[
+            'weighted_signal_spaces']['search_threshold_weighted_signal_values']
+        search_threshold_trend_total_signal_needed_candles_lookback_window_value = mgm_config[
+            'weighted_signal_spaces']['search_threshold_trend_total_signal_needed_candles_lookback_window_value']
+        search_threshold_trend_signal_triggers_needed = mgm_config[
+            'weighted_signal_spaces']['search_threshold_trend_signal_triggers_needed']
         roi_table_step_size = mgm_config['roi_spaces']['roi_table_step_size']
         roi_time_interval_scaling = mgm_config['roi_spaces']['roi_time_interval_scaling']
         roi_value_step_scaling = mgm_config['roi_spaces']['roi_value_step_scaling']
@@ -124,10 +125,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         stoploss_max_value = mgm_config['stoploss_spaces']['stoploss_max_value']
         trailing_stop_positive_min_value = mgm_config['stoploss_spaces']['trailing_stop_positive_min_value']
         trailing_stop_positive_max_value = mgm_config['stoploss_spaces']['trailing_stop_positive_max_value']
-        trailing_stop_positive_offset_min_value = \
-            mgm_config['stoploss_spaces']['trailing_stop_positive_offset_min_value']
-        trailing_stop_positive_offset_max_value = \
-            mgm_config['stoploss_spaces']['trailing_stop_positive_offset_max_value']
+        trailing_stop_positive_offset_min_value = mgm_config[
+            'stoploss_spaces']['trailing_stop_positive_offset_min_value']
+        trailing_stop_positive_offset_max_value = mgm_config[
+            'stoploss_spaces']['trailing_stop_positive_offset_max_value']
         mgm_unclogger_add_params = mgm_config['unclogger_spaces']
         minimal_roi = mgm_config['default_stub_values']['minimal_roi']
         stoploss = mgm_config['default_stub_values']['stoploss']
@@ -177,18 +178,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 if space == 'trailing':
                     trailing_stop = mgm_config_hyperopt['params'][space]['trailing_stop']
                     trailing_stop_positive = mgm_config_hyperopt['params'][space]['trailing_stop_positive']
-                    trailing_stop_positive_offset = \
-                        mgm_config_hyperopt['params'][space]['trailing_stop_positive_offset']
-                    trailing_only_offset_is_reached = \
-                        mgm_config_hyperopt['params'][space]['trailing_only_offset_is_reached']
+                    trailing_stop_positive_offset = mgm_config_hyperopt[
+                        'params'][space]['trailing_stop_positive_offset']
+                    trailing_only_offset_is_reached = mgm_config_hyperopt[
+                        'params'][space]['trailing_only_offset_is_reached']
     else:
         mgm_config_hyperopt = {}
 
     # Create dictionary to store custom information MoniGoMani will be using in RAM
-    initial_custom_info: dict = {
-        'open_trades': {},
-        'unclogger_cooldown_pairs': {}
-    }
+    initial_custom_info: dict = {'open_trades': {}, 'unclogger_cooldown_pairs': {}}
     custom_info: dict = copy.deepcopy(initial_custom_info)
 
     # Initialize some parameters which will be automatically configured/used by MoniGoMani
@@ -258,50 +256,36 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             # method for the 5m timeframe.
             roi_t_scale = timeframe_min / 5
             roi_p_scale = math.log1p(timeframe_min) / math.log1p(5)
-            roi_limits = {
-                'roi_t1_min': int(10 * roi_t_scale * roi_t_alpha),
-                'roi_t1_max': int(120 * roi_t_scale * roi_t_alpha),
-                'roi_t2_min': int(10 * roi_t_scale * roi_t_alpha),
-                'roi_t2_max': int(60 * roi_t_scale * roi_t_alpha),
-                'roi_t3_min': int(10 * roi_t_scale * roi_t_alpha),
-                'roi_t3_max': int(40 * roi_t_scale * roi_t_alpha),
-                'roi_p1_min': 0.01 * roi_p_scale * roi_p_alpha,
-                'roi_p1_max': 0.04 * roi_p_scale * roi_p_alpha,
-                'roi_p2_min': 0.01 * roi_p_scale * roi_p_alpha,
-                'roi_p2_max': 0.07 * roi_p_scale * roi_p_alpha,
-                'roi_p3_min': 0.01 * roi_p_scale * roi_p_alpha,
-                'roi_p3_max': 0.20 * roi_p_scale * roi_p_alpha
-            }
+            roi_limits = {'roi_t1_min': int(10 * roi_t_scale * roi_t_alpha),
+                          'roi_t1_max': int(120 * roi_t_scale * roi_t_alpha),
+                          'roi_t2_min': int(10 * roi_t_scale * roi_t_alpha),
+                          'roi_t2_max': int(60 * roi_t_scale * roi_t_alpha),
+                          'roi_t3_min': int(10 * roi_t_scale * roi_t_alpha),
+                          'roi_t3_max': int(40 * roi_t_scale * roi_t_alpha),
+                          'roi_p1_min': 0.01 * roi_p_scale * roi_p_alpha,
+                          'roi_p1_max': 0.04 * roi_p_scale * roi_p_alpha,
+                          'roi_p2_min': 0.01 * roi_p_scale * roi_p_alpha,
+                          'roi_p2_max': 0.07 * roi_p_scale * roi_p_alpha,
+                          'roi_p3_min': 0.01 * roi_p_scale * roi_p_alpha,
+                          'roi_p3_max': 0.20 * roi_p_scale * roi_p_alpha}
 
             # Generate MGM's custom long continuous ROI table
             logger.debug(f'Using ROI space limits: {roi_limits}')
-            p = {
-                'roi_t1': roi_limits['roi_t1_min'],
-                'roi_t2': roi_limits['roi_t2_min'],
-                'roi_t3': roi_limits['roi_t3_min'],
-                'roi_p1': roi_limits['roi_p1_min'],
-                'roi_p2': roi_limits['roi_p2_min'],
-                'roi_p3': roi_limits['roi_p3_min']
-            }
+            p = {'roi_t1': roi_limits['roi_t1_min'], 'roi_t2': roi_limits['roi_t2_min'],
+                 'roi_t3': roi_limits['roi_t3_min'], 'roi_p1': roi_limits['roi_p1_min'],
+                 'roi_p2': roi_limits['roi_p2_min'], 'roi_p3': roi_limits['roi_p3_min']}
             logger.info(f'Min ROI table: {round_dict(MasterMoniGoManiHyperStrategy.HyperOpt.generate_roi_table(p), 3)}')
-            p = {
-                'roi_t1': roi_limits['roi_t1_max'],
-                'roi_t2': roi_limits['roi_t2_max'],
-                'roi_t3': roi_limits['roi_t3_max'],
-                'roi_p1': roi_limits['roi_p1_max'],
-                'roi_p2': roi_limits['roi_p2_max'],
-                'roi_p3': roi_limits['roi_p3_max']
-            }
+            p = {'roi_t1': roi_limits['roi_t1_max'], 'roi_t2': roi_limits['roi_t2_max'],
+                 'roi_t3': roi_limits['roi_t3_max'], 'roi_p1': roi_limits['roi_p1_max'],
+                 'roi_p2': roi_limits['roi_p2_max'], 'roi_p3': roi_limits['roi_p3_max']}
             logger.info(f'Max ROI table: {round_dict(MasterMoniGoManiHyperStrategy.HyperOpt.generate_roi_table(p), 3)}')
 
-            return [
-                Integer(roi_limits['roi_t1_min'], roi_limits['roi_t1_max'], name='roi_t1'),
-                Integer(roi_limits['roi_t2_min'], roi_limits['roi_t2_max'], name='roi_t2'),
-                Integer(roi_limits['roi_t3_min'], roi_limits['roi_t3_max'], name='roi_t3'),
-                SKDecimal(roi_limits['roi_p1_min'], roi_limits['roi_p1_max'], decimals=3, name='roi_p1'),
-                SKDecimal(roi_limits['roi_p2_min'], roi_limits['roi_p2_max'], decimals=3, name='roi_p2'),
-                SKDecimal(roi_limits['roi_p3_min'], roi_limits['roi_p3_max'], decimals=3, name='roi_p3')
-            ]
+            return [Integer(roi_limits['roi_t1_min'], roi_limits['roi_t1_max'], name='roi_t1'),
+                    Integer(roi_limits['roi_t2_min'], roi_limits['roi_t2_max'], name='roi_t2'),
+                    Integer(roi_limits['roi_t3_min'], roi_limits['roi_t3_max'], name='roi_t3'),
+                    SKDecimal(roi_limits['roi_p1_min'], roi_limits['roi_p1_max'], decimals=3, name='roi_p1'),
+                    SKDecimal(roi_limits['roi_p2_min'], roi_limits['roi_p2_max'], decimals=3, name='roi_p2'),
+                    SKDecimal(roi_limits['roi_p3_min'], roi_limits['roi_p3_max'], decimals=3, name='roi_p3')]
 
         @staticmethod
         def stoploss_space() -> List[Dimension]:
@@ -311,11 +295,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
             :return List: Generated Stoploss Space
             """
-            return [
-                SKDecimal(MasterMoniGoManiHyperStrategy.stoploss_max_value,
-                          MasterMoniGoManiHyperStrategy.stoploss_min_value,
-                          decimals=3, name='stoploss')
-            ]
+            return [SKDecimal(MasterMoniGoManiHyperStrategy.stoploss_max_value,
+                              MasterMoniGoManiHyperStrategy.stoploss_min_value, decimals=3, name='stoploss')]
 
         @staticmethod
         def trailing_space() -> List[Dimension]:
@@ -343,8 +324,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 SKDecimal(MasterMoniGoManiHyperStrategy.trailing_stop_positive_offset_min_value,
                           MasterMoniGoManiHyperStrategy.trailing_stop_positive_offset_max_value,
                           decimals=3, name='trailing_stop_positive_offset_p1'),
-                Categorical([True, False], name='trailing_only_offset_is_reached')
-            ]
+                Categorical([True, False], name='trailing_only_offset_is_reached')]
 
     def __init__(self, config: dict):
         """
@@ -353,21 +333,21 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param config: (dict)
         """
 
-        initialization = 'Initialization'
+        i = 'Initialization'
         if RunMode(config.get('runmode', RunMode.OTHER)) in (RunMode.BACKTEST, RunMode.HYPEROPT):
             self.timeframe = self.backtest_timeframe
             self.mgm_logger('info', 'TimeFrame-Zoom', f'Auto updating to zoomed "backtest_timeframe": {self.timeframe}')
 
             self.is_dry_live_run_detected = False
-            self.mgm_logger('info', initialization, f'Current run mode detected as: HyperOpting/BackTesting. '
-                                                    f'Auto updated is_dry_live_run_detected to: False')
+            self.mgm_logger('info', i, 'Current run mode detected as: HyperOpting/BackTesting. '
+                                       'Auto updated is_dry_live_run_detected to: False')
 
-            self.mgm_logger('info', initialization, f'Calculating and storing "timeframe_multiplier"')
-            self.timeframe_multiplier = \
-                int(timeframe_to_minutes(self.informative_timeframe) / timeframe_to_minutes(self.timeframe))
+            self.mgm_logger('info', i, 'Calculating and storing "timeframe_multiplier"')
+            self.timeframe_multiplier = int(timeframe_to_minutes(self.informative_timeframe)
+                                            / timeframe_to_minutes(self.timeframe))
             if self.timeframe_multiplier < 1:
-                raise SystemExit(f'MoniGoManiHyperStrategy - ERROR - TimeFrame-Zoom - "timeframe" must be bigger than '
-                                 f'"backtest_timeframe"')
+                raise SystemExit('MoniGoManiHyperStrategy - ERROR - TimeFrame-Zoom - '
+                                 '"timeframe" must be bigger than "backtest_timeframe"')
 
         else:
             if os.path.isfile(self.mgm_config_hyperopt_path) is False:
@@ -377,15 +357,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                          f'file and/or alter "mgm_config_names" in ".hurry"')
 
             self.is_dry_live_run_detected = True
-            self.mgm_logger('info', initialization, f'Current run mode detected as: Dry/Live-Run. '
-                                                    f'Auto updated is_dry_live_run_detected to: True')
+            self.mgm_logger('info', i, 'Current run mode detected as: Dry/Live-Run. '
+                                       'Auto updated is_dry_live_run_detected to: True')
 
         if self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True:
             self.separator = self.mgm_config['unclogger_spaces'][
                 'unclogger_trend_lookback_candles_window_recent_past_weight_separator']
             separator_window = (self.separator / 1) - (1 / self.separator)
-            self.separator_candle_weight_reducer = \
-                separator_window / (self.sell___unclogger_trend_lookback_candles_window.value / self.precision)
+            trend_lookback_candles_window = self.get_param_value('sell___unclogger_trend_lookback_candles_window')
+            self.separator_candle_weight_reducer = (separator_window / trend_lookback_candles_window)
 
         super().__init__(config)
 
@@ -478,20 +458,20 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return DataFrame: DataFrame for MoniGoMani with all mandatory indicator data populated
         """
 
+        tfz = 'TimeFrame-Zoom'
         # Populate core trend indicators
         core_trend = load_pair_history(pair=metadata['pair'],
                                         datadir=self.config['datadir'],
                                         timeframe=self.core_trend_timeframe,
-                                        startup_candles=200, # TODO: calculate correct startup_candles needed for HT_TRENDMODE and SAR
+                                        startup_candles=200, # ToDo: calculate correct startup_candles needed for HT_TRENDMODE and SAR
                                         data_format=self.config.get('dataformat_ohlcv', 'json'))
         core_trend = self._populate_core_trend(core_trend, metadata)
 
-        timeframe_zoom = 'TimeFrame-Zoom'
         # Compute indicator data during Backtesting / Hyperopting when TimeFrame-Zooming
         if (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe):
-            self.mgm_logger('info', timeframe_zoom, f'Backtesting/Hyperopting this strategy with a '
-                                                    f'informative_timeframe ({self.informative_timeframe} candles) and '
-                                                    f'a zoomed backtest_timeframe ({self.backtest_timeframe} candles)')
+            self.mgm_logger('info', tfz, f'Backtesting/Hyperopting this strategy with a informative_timeframe '
+                                         f'({self.informative_timeframe} candles) and a zoomed backtest_timeframe '
+                                         f'({self.backtest_timeframe} candles)')
 
             # Warning! This method gets ALL downloaded data for the given timeframe (when in BackTesting mode).
             # If you have many months or years downloaded for this pair, this will take a long time!
@@ -500,14 +480,14 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                             timeframe=self.informative_timeframe,
                                             startup_candles=self.startup_candle_count,
                                             data_format=self.config.get('dataformat_ohlcv', 'json'))
-
             # Throw away older data that isn't needed.
             first_informative = dataframe['date'].min().floor('H')
             informative = informative[informative['date'] >= first_informative]
 
             # Merge core trend to informative data frame
-            informative = \
-                merge_informative_pair(informative, core_trend[['date', 'ht_trendmode', 'sar', 'trend']].copy(), self.informative_timeframe, self.core_trend_timeframe, ffill=True)
+            informative = merge_informative_pair(
+                informative, core_trend[['date', 'ht_trendmode', 'sar', 'trend']].copy(),
+                self.informative_timeframe, self.core_trend_timeframe, ffill=True)
             informative['ht_trendmode'] = informative['ht_trendmode_' + self.core_trend_timeframe]
             informative['sar'] = informative['sar_' + self.core_trend_timeframe]
             informative['trend'] = informative['trend_' + self.core_trend_timeframe]
@@ -518,11 +498,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
             # Populate indicators at a larger timeframe
             informative = self.do_populate_indicators(informative.copy(), metadata)
-
             # Merge indicators back in with, filling in missing values.
-            dataframe = \
-                merge_informative_pair(dataframe, informative, self.timeframe, self.informative_timeframe, ffill=True)
-
+            dataframe = merge_informative_pair(dataframe, informative, self.timeframe,
+                                               self.informative_timeframe, ffill=True)
             # Rename columns, since merge_informative_pair adds `_<timeframe>` to the end of each name.
             # Skip over date etc..
             skip_columns = [f'{s}_{self.informative_timeframe}' for s in
@@ -532,12 +510,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Compute indicator data normally during Dry & Live Running or when not using TimeFrame-Zoom
         else:
-            self.mgm_logger('info', timeframe_zoom,
+            self.mgm_logger('info', tfz,
                             f'Dry/Live-running MoniGoMani with normal timeframe ({self.timeframe} candles)')
 
             # Merge core trend to main data frame
-            dataframe = \
-                merge_informative_pair(dataframe, core_trend[['date', 'ht_trendmode', 'sar', 'trend', 'mgm_trend']].copy(), self.timeframe, self.core_trend_timeframe, ffill=True)
+            dataframe = merge_informative_pair(
+                dataframe, core_trend[['date', 'ht_trendmode', 'sar', 'trend', 'mgm_trend']].copy(), 
+                self.timeframe, self.core_trend_timeframe, ffill=True)
             dataframe['ht_trendmode'] = dataframe['ht_trendmode_' + self.core_trend_timeframe]
             dataframe['sar'] = dataframe['sar_' + self.core_trend_timeframe]
             dataframe['trend'] = dataframe['trend_' + self.core_trend_timeframe]
@@ -553,6 +532,16 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return dataframe
 
+    def get_param_value(self, parameter_name: str):
+        """
+        Fetches a parameter value from the initialized MoniGoMani class by name
+
+        :param parameter_name: (str) Name of the parameter
+        :return: (double) Parameter value divided by precision and rounded
+        """
+        parameter = getattr(self, parameter_name)
+        return round(parameter.value / self.precision)
+
     def get_all_current_open_trades(self, trade: 'Trade') -> List:
         """
         Fetches all the trades currently open depending on the current RunMode of Freqtrade
@@ -560,23 +549,62 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param trade: (trade) Current open trade object.
         :return List: List containing all current open trades
         """
-        custom_information_storage = 'custom_stoploss - Custom Information Storage'
+        cis = 'custom_stoploss - Custom Information Storage'
         if self.is_dry_live_run_detected is True:
-            self.mgm_logger('debug', custom_information_storage,
-                            f'Fetching all currently open trades during Dry/Live Run')
+            self.mgm_logger('debug', cis, 'Fetching all currently open trades during Dry/Live Run')
 
             all_open_trades = Trade.get_trades([Trade.is_open.is_(True)]).order_by(Trade.open_date).all()
         # Fetch all open trade data during Back Testing & Hyper Opting
         else:
-            self.mgm_logger('debug', custom_information_storage,
-                            f'Fetching all currently open trades during BackTesting/HyperOpting')
+            self.mgm_logger('debug', cis, 'Fetching all currently open trades during BackTesting/HyperOpting')
             all_open_trades = trade.trades_open
 
-        self.mgm_logger('debug', custom_information_storage,
-                        f'Up-to-date open trades ({str(len(all_open_trades))}) fetched!')
-        self.mgm_logger('debug', custom_information_storage, f'all_open_trades contents: {repr(all_open_trades)}')
+        self.mgm_logger('debug', cis, f'Up-to-date open trades ({str(len(all_open_trades))}) fetched!')
+        self.mgm_logger('debug', cis, f'all_open_trades contents: {repr(all_open_trades)}')
 
         return all_open_trades
+
+    def get_unclogger_trade_trend_data(self, pair: str, current_time: datetime) -> dict:
+        """
+        Fetches the trade trend data for a pair over a length of the sell___unclogger_trend_lookback_candles_window
+
+        :param pair: (str) Pair of which the trend data needs to be fetched
+        :param current_time: (datetime) Current time, represents the start of unclogger_trend_lookback_candles_window
+        :return: (dict) Dictionary containing the trend data for the pairs unclogger_trend_lookback_candles_window
+        """
+
+        # Fetch all needed 'trend' trade data
+        stored_trend_dataframe = {}
+        dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+
+        self.mgm_logger('debug', 'Open Trade Unclogger', 'Fetching all needed "trend" trade data')
+        trend_lookback_candles_window = self.get_param_value('sell___unclogger_trend_lookback_candles_window')
+        for candle in range(1, trend_lookback_candles_window + 1):
+            # Convert the candle time to the one being used by the 'informative_timeframe'
+            candle_multiplier = int(self.informative_timeframe.rstrip('mhdwM'))
+            candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                           timedelta(minutes=int(candle * candle_multiplier)))
+            if self.informative_timeframe.find('h') != -1:
+                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                               timedelta(hours=int(candle * candle_multiplier)))
+            elif self.informative_timeframe.find('d') != -1:
+                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                               timedelta(days=int(candle * candle_multiplier)))
+            elif self.informative_timeframe.find('w') != -1:
+                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                               timedelta(weeks=int(candle * candle_multiplier)))
+            elif self.informative_timeframe.find('M') != -1:
+                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                               timedelta64(int(candle * candle_multiplier), 'M'))
+
+            candle_trend = dataframe.loc[dataframe['date'] == candle_time].squeeze()['trend']
+
+            if isinstance(candle_trend, str):
+                stored_trend_dataframe[candle] = candle_trend
+            else:
+                break
+
+        return stored_trend_dataframe
 
     def custom_stoploss(self, pair: str, trade: Trade, current_time: datetime,
                         current_rate: float, current_profit: float, **kwargs) -> float:
@@ -599,8 +627,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return float: New stoploss value, relative to the current-rate
         """
 
-        custom_information_storage = 'custom_stoploss - Custom Information Storage'
-        garbage_collector = custom_information_storage + ' Garbage Collector'
+        cis = 'custom_stoploss - Custom Information Storage'
+        gc = cis + ' Garbage Collector'
 
         # Open Trade Custom Information Storage
         # -------------------------------------
@@ -609,13 +637,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Store current pair's open_trade + it's current profit in custom_info
         for open_trade in all_open_trades:
-            if str(open_trade.pair) == str(pair):
+            if str(open_trade.pair) == pair:
                 if str(open_trade.pair) not in self.custom_info['open_trades']:
                     self.custom_info['open_trades'][str(open_trade.pair)] = {}
                 self.custom_info['open_trades'][str(open_trade.pair)]['trade'] = str(open_trade)
                 self.custom_info['open_trades'][str(open_trade.pair)]['current_profit'] = current_profit
-                self.mgm_logger('info', custom_information_storage,
-                                f'Storing trade + current profit/loss for pair ({str(pair)}) in custom_info')
+                self.mgm_logger('info', cis, f'Storing trade + current profit/loss for pair ({pair}) in custom_info')
                 break
 
         # Custom Information Storage Garbage Collector
@@ -623,34 +650,32 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # Check if any old open_trade garbage needs to be removed
         if len(all_open_trades) < len(self.custom_info['open_trades']):
             garbage_trade_amount = len(self.custom_info['open_trades']) - len(all_open_trades)
-            self.mgm_logger('info', garbage_collector, f'Old open trade garbage detected for '
-                                                       f'{str(garbage_trade_amount)} trades, starting cleanup')
+            self.mgm_logger('info', gc,
+                            f'Old open trade garbage detected for {str(garbage_trade_amount)} trades, starting cleanup')
 
             for garbage_trade in range(garbage_trade_amount):
                 for stored_trade in self.custom_info['open_trades']:
                     pair_still_open = False
                     for open_trade in all_open_trades:
                         if str(stored_trade) == str(open_trade.pair):
-                            self.mgm_logger('debug', garbage_collector, f'Open trade found, no action needed for pair '
-                                                                        f'({stored_trade}) in custom_info')
+                            self.mgm_logger('debug', gc, f'Open trade found, '
+                                                         f'no action needed for pair ({stored_trade}) in custom_info')
                             pair_still_open = True
                             break
 
                     # Remove old open_trade garbage
                     if not pair_still_open:
-                        self.mgm_logger('info', garbage_collector,
+                        self.mgm_logger('info', gc,
                                         f'No open trade found for pair ({stored_trade}), removing from custom_info')
                         self.custom_info['open_trades'].pop(stored_trade)
-                        self.mgm_logger('debug', garbage_collector,
+                        self.mgm_logger('debug', gc,
                                         f'Successfully removed garbage_trade {str(garbage_trade)} from custom_info!')
                         break
 
         # Print all stored open trade info in custom_storage
-        self.mgm_logger('debug', custom_information_storage,
-                        f'Open trades ({str(len(self.custom_info["open_trades"]))}) in custom_info updated '
-                        f'successfully!')
-        self.mgm_logger('debug', custom_information_storage,
-                        f'custom_info["open_trades"] contents: {repr(self.custom_info["open_trades"])}')
+        self.mgm_logger('debug', cis, f'Open trades ({str(len(self.custom_info["open_trades"]))}) '
+                                      f'in custom_info updated successfully!')
+        self.mgm_logger('debug', cis, f'custom_info["open_trades"] contents: {repr(self.custom_info["open_trades"])}')
 
         # Always return a value bigger than the initial stoploss to keep using the initial stoploss.
         # Since we (currently) only want to use this function for custom information storage!
@@ -684,227 +709,151 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: True or string if a custom sell should occur, otherwise None
         """
 
-        open_trade_unclogger = 'Open Trade Unclogger'
-        custom_information_storage = 'custom_sell - Custom Information Storage'
+        if ((self.mgm_config['unclogger_spaces']['unclogger_enabled'] is
+             True) and (pair in self.custom_info['open_trades']) and (self.custom_info['open_trades'][pair] != {})):
+            # Initialize some re-occurring logging strings
+            abort = 'No unclogging needed! '
+            proceed = ' Proceeding to the next check!'
+            otu = 'Open Trade Unclogger'
+            cis = 'custom_sell - Custom Information Storage'
+            su = 'sell___unclogger_'
 
-        if (self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True) and \
-            (pair in self.custom_info['open_trades']) and (self.custom_info['open_trades'][pair] != {}):
             try:
                 # Open Trade Custom Information Storage
                 # -------------------------------------
                 # Fetch all open trade data depending on RunMode
                 all_open_trades = self.get_all_current_open_trades(trade)
-
-                self.mgm_logger('debug', custom_information_storage,
-                                f'Up-to-date open trades ({str(len(all_open_trades))}) fetched!')
-                self.mgm_logger('debug', custom_information_storage,
-                                f'all_open_trades contents: {repr(all_open_trades)}')
-
                 # Check if everything in custom_storage is up to date with all_open_trades
                 if len(all_open_trades) > len(self.custom_info['open_trades']):
-                    self.mgm_logger('warning', custom_information_storage,
-                                    f'Open trades ({str(len(self.custom_info["open_trades"]))}) in custom_storage do '
-                                    f'not match yet with trades in live open trades ({str(len(all_open_trades))}) '
-                                    f'aborting unclogger for now!')
-                else:
-                    # Open Trade Unclogger
-                    # --------------------
-                    self.mgm_logger('debug', open_trade_unclogger,
-                                    f'Running trough all checks to see if unclogging is needed')
+                    self.mgm_logger('warning', cis, f'Open trades ({str(len(self.custom_info["open_trades"]))}) in '
+                                                    f'custom_storage do not match yet with trades in live open trades '
+                                                    f'({str(len(all_open_trades))}) aborting unclogger for now!')
+                    return None  # By default we don't want a force sell to occurs
 
-                    # Check if there are enough losing trades open for unclogging to occur
-                    self.mgm_logger('debug', open_trade_unclogger,
-                                    f'Fetching all currently losing_open_trades from custom information storage')
-                    losing_open_trades = {}
-                    for stored_trade in self.custom_info['open_trades']:
-                        stored_current_profit = self.custom_info['open_trades'][stored_trade]['current_profit']
-                        if stored_current_profit < 0:
-                            if not str(pair) in losing_open_trades:
-                                losing_open_trades[str(stored_trade)] = {}
-                            losing_open_trades[str(stored_trade)] = stored_current_profit
-                    self.mgm_logger('debug', open_trade_unclogger,
-                                    f'Fetched losing_open_trades ({str(len(losing_open_trades))}) from custom '
-                                    f'information storage!')
-
-                    if len(losing_open_trades) < (
-                        self.sell___unclogger_minimal_losing_trades_open.value / self.precision):
-                        self.mgm_logger('debug', open_trade_unclogger,
-                                        f'No unclogging needed! Not enough losing trades currently open!')
-                    else:
-                        self.mgm_logger('debug', open_trade_unclogger,
-                                        f'Enough losing trades detected! Proceeding to the next check!')
-
-                        # Check if there is a losing trade open for the pair currently being ran through the MoniGoMani
+                # Open Trade Unclogger
+                # --------------------
+                self.mgm_logger('debug', otu, 'Running trough all checks to see if unclogging is needed')
+                # Check if there are enough losing trades open for unclogging to occur
+                self.mgm_logger('debug', otu,
+                                'Fetching all currently losing_open_trades from custom information storage')
+                losing_open_trades = {}
+                for stored_trade in self.custom_info['open_trades']:
+                    stored_current_profit = self.custom_info['open_trades'][stored_trade]['current_profit']
+                    if stored_current_profit < 0:
                         if pair not in losing_open_trades:
-                            self.mgm_logger('debug', open_trade_unclogger,
-                                            f'No unclogging needed! Currently checked pair ({pair}) is not making a '
-                                            f'loss at this point in time!')
-                        else:
-                            self.mgm_logger('debug', open_trade_unclogger,
-                                            f'Currently checked pair ({pair}) is losing! Proceeding to the next check!')
+                            losing_open_trades[str(stored_trade)] = {}
+                        losing_open_trades[str(stored_trade)] = stored_current_profit
+                self.mgm_logger('debug', otu, f'Fetched losing_open_trades ({str(len(losing_open_trades))}) '
+                                              f'from custom information storage!')
 
-                            trade_open_time = trade.open_date_utc.replace(tzinfo=None)
-                            self.mgm_logger('debug', open_trade_unclogger, f'Trade open time: {str(trade_open_time)}')
+                minimal_losing_trades_open = self.get_param_value(f'{su}minimal_losing_trades_open')
+                if len(losing_open_trades) < minimal_losing_trades_open:
+                    self.mgm_logger('debug', otu, f'{abort}Not enough losing trades currently open!')
+                    return None  # By default we don't want a force sell to occur
+                self.mgm_logger('debug', otu, f'Enough losing trades detected!{proceed}')
 
-                            minimal_open_time = current_time.replace(tzinfo=None) - timedelta(minutes=round(
-                                self.sell___unclogger_minimal_losing_trade_duration_minutes.value / self.precision))
+                # Check if there is a losing trade open for the pair currently being ran through the MoniGoMani
+                if pair not in losing_open_trades:
+                    self.mgm_logger('debug', otu, f'{abort}Currently checked pair ({pair}) is not '
+                                                  f'making a loss at this point in time!')
+                    return None  # By default we don't want a force sell to occur
+                self.mgm_logger('debug', otu, f'Currently checked pair ({pair}) is losing!{proceed}')
 
-                            self.mgm_logger('debug', open_trade_unclogger,
-                                            f'Minimal open time: {str(minimal_open_time)}')
+                trade_open_time = trade.open_date_utc.replace(tzinfo=None)
+                self.mgm_logger('debug', otu, f'Trade open time: {str(trade_open_time)}')
 
-                            if trade_open_time > minimal_open_time:
-                                self.mgm_logger('debug', open_trade_unclogger,
-                                                f'No unclogging needed! Currently checked pair ({pair}) has not been '
-                                                f'open been open for long enough!')
-                            else:
-                                self.mgm_logger('debug', open_trade_unclogger,
-                                                f'Trade has been open for long enough! Proceeding to the next check!')
+                min_losing_trade_duration = self.get_param_value(f'{su}minimal_losing_trade_duration_minutes')
+                minimal_open_time = (current_time.replace(tzinfo=None) - timedelta(minutes=min_losing_trade_duration))
 
-                                # Check if total open trades losing % is met
-                                percentage_open_trades_losing = int(
-                                    (len(losing_open_trades) / len(all_open_trades)) * 100)
-                                self.mgm_logger('debug', open_trade_unclogger,
-                                                f'percentage_open_trades_losing: {str(percentage_open_trades_losing)}%')
-                                temp = self.sell___unclogger_open_trades_losing_percentage_needed.value
-                                if percentage_open_trades_losing < round(temp / self.precision):
-                                    self.mgm_logger('debug', open_trade_unclogger,
-                                                    f'No unclogging needed! Percentage of open trades losing needed '
-                                                    f'has not been satisfied!')
-                                else:
-                                    self.mgm_logger('debug', open_trade_unclogger,
-                                                    f'Percentage of open trades losing needed has been satisfied! '
-                                                    f'Proceeding to the next check!')
+                self.mgm_logger('debug', otu, f'Minimal open time: {str(minimal_open_time)}')
 
-                                    # Fetch current dataframe for the pair currently being ran through MoniGoMani
-                                    temp = self.sell___unclogger_trend_lookback_candles_window.value
-                                    self.mgm_logger('debug', open_trade_unclogger,
-                                                    f'Fetching currently needed "trend" dataframe data to check how '
-                                                    f'pair ({pair}) has been doing in during the last '
-                                                    f'{str(temp / self.precision)} candles')
+                if trade_open_time > minimal_open_time:
+                    self.mgm_logger('debug', otu, f'{abort}Currently checked pair ({pair}) has not '
+                                                  f'been open been open for long enough!')
+                    return None  # By default we don't want a force sell to occur
+                self.mgm_logger('debug', otu, f'Trade has been open for long enough!{proceed}')
 
-                                    # Fetch all needed 'trend' trade data
-                                    stored_trend_dataframe = {}
-                                    dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+                # Check if total open trades losing % is met
+                percentage_open_trades_losing = int((len(losing_open_trades) / len(all_open_trades)) * 100)
+                self.mgm_logger('debug', otu, f'percentage_open_trades_losing: {str(percentage_open_trades_losing)}%')
+                trades_losing_percentage_needed = self.get_param_value(f'{su}open_trades_losing_percentage_needed')
+                if percentage_open_trades_losing < trades_losing_percentage_needed:
+                    self.mgm_logger('debug', otu,
+                                    f'{abort}Percentage of open trades losing needed has not been satisfied!')
+                    return None  # By default we don't want a force sell to occur
+                self.mgm_logger('debug', otu, f'Percentage of open trades losing needed has been satisfied!{proceed}')
 
-                                    self.mgm_logger('debug', open_trade_unclogger,
-                                                    f'Fetching all needed "trend" trade data')
+                # Fetch current dataframe for the pair currently being ran through MoniGoMani
+                trend_lookback_candles_window = self.get_param_value(f'{su}trend_lookback_candles_window')
+                self.mgm_logger('debug', otu, f'Fetching currently needed "trend" dataframe data to check how pair '
+                                              f'({pair}) has been doing in during the last '
+                                              f'{str(trend_lookback_candles_window)} candles')
 
-                                    temp = self.sell___unclogger_trend_lookback_candles_window.value
-                                    for candle in range(1, round(temp / self.precision) + 1):
-                                        # Convert the candle time to the one being used by the
-                                        # 'informative_timeframe'
-                                        candle_multiplier = int(self.informative_timeframe.rstrip('mhdwM'))
-                                        candle_time = \
-                                            timeframe_to_prev_date(self.informative_timeframe, current_time) - \
-                                            timedelta(minutes=int(candle * candle_multiplier))
-                                        if self.informative_timeframe.find('h') != -1:
-                                            candle_time = \
-                                                timeframe_to_prev_date(self.informative_timeframe, current_time) - \
-                                                timedelta(hours=int(candle * candle_multiplier))
-                                        elif self.informative_timeframe.find('d') != -1:
-                                            candle_time = \
-                                                timeframe_to_prev_date(self.informative_timeframe, current_time) - \
-                                                timedelta(days=int(candle * candle_multiplier))
-                                        elif self.informative_timeframe.find('w') != -1:
-                                            candle_time = \
-                                                timeframe_to_prev_date(self.informative_timeframe, current_time) - \
-                                                timedelta(weeks=int(candle * candle_multiplier))
-                                        elif self.informative_timeframe.find('M') != -1:
-                                            candle_time = \
-                                                timeframe_to_prev_date(self.informative_timeframe, current_time) - \
-                                                timedelta64(int(1 * candle_multiplier), 'M')
+                # Fetch all needed 'trend' trade data
+                stored_trend_dataframe = self.get_unclogger_trade_trend_data(pair=pair, current_time=current_time)
 
-                                        candle_trend = \
-                                            dataframe.loc[dataframe['date'] == candle_time].squeeze()['trend']
+                # Check if enough trend data has been stored to do the next check
+                if len(stored_trend_dataframe) < trend_lookback_candles_window:
+                    self.mgm_logger('debug', otu, f'{abort}Not enough trend data stored yet!')
+                    return None  # By default we don't want a force sell to occur
 
-                                        if isinstance(candle_trend, str):
-                                            stored_trend_dataframe[candle] = candle_trend
-                                        else:
-                                            break
+                # Print all fetched 'trend' trade data
+                self.mgm_logger('debug', otu, f'All needed "trend" trade data '
+                                              f'({str(len(stored_trend_dataframe))}) fetched!')
+                self.mgm_logger('debug', otu, f'stored_trend_dataframe contents: {repr(stored_trend_dataframe)}')
 
-                                    # Check if enough trend data has been stored to do the next check
-                                    lookback_window = \
-                                        self.sell___unclogger_trend_lookback_candles_window.value / self.precision
-                                    if len(stored_trend_dataframe) < round(lookback_window):
-                                        self.mgm_logger('debug', open_trade_unclogger,
-                                                        f'No unclogging needed! Not enough trend data stored yet!')
-                                    else:
+                # Check if the currently detected trend is positive
+                negative_trend = True
+                for trend in self.mgm_trends:
+                    if ((self.mgm_config['unclogger_spaces'][f'unclogger_trend_lookback_window_uses_{trend}_candles']
+                         is False) & (stored_trend_dataframe[1] == trend)):
+                        negative_trend = False
+                        break
 
-                                        # Print all fetched 'trend' trade data
-                                        self.mgm_logger('debug', open_trade_unclogger,
-                                                        f'All needed "trend" trade data '
-                                                        f'({str(len(stored_trend_dataframe))}) fetched!')
-                                        self.mgm_logger('debug', open_trade_unclogger,
-                                                        f'stored_trend_dataframe contents: '
-                                                        f'{repr(stored_trend_dataframe)}')
+                if negative_trend is False:
+                    self.mgm_logger('debug', otu, f'{abort}Positive trend currently detected!')
+                    return None  # By default we don't want a force sell to occur
 
-                                        # Check if the currently detected trend is positive
-                                        negative_trend = True
-                                        for trend in self.mgm_trends:
-                                            if (self.mgm_config['unclogger_spaces'][
-                                                    f'unclogger_trend_lookback_window_uses_{trend}_candles'] is False) \
-                                                & (stored_trend_dataframe[1] == trend):
-                                                negative_trend = False
-                                                break
+                # Check if open_trade's trend changed negatively during past X candles
+                self.mgm_logger('debug', otu, f'Calculating amount of unclogger_trend_lookback_candles_window '
+                                              f'"satisfied" for pair: {pair}')
 
-                                        if negative_trend is False:
-                                            self.mgm_logger('debug', open_trade_unclogger,
-                                                            f'No unclogging needed! Positive trend currently detected!')
-                                        else:
+                unclogger_weighted_candles_satisfied = 0
+                for lookback_candle in range(1, trend_lookback_candles_window + 1):
+                    for trend in self.mgm_trends:
+                        if (self.mgm_config['unclogger_spaces'][f'unclogger_trend_lookback_window_uses_{trend}_candles'
+                        ] & (stored_trend_dataframe[lookback_candle] == trend)):
+                            unclogger_weighted_candles_satisfied += (
+                                self.separator - (lookback_candle * self.separator_candle_weight_reducer))
+                self.mgm_logger('debug', otu, f'Amount of unclogger_trend_lookback_candles_window "satisfied": '
+                                              f'{str(unclogger_weighted_candles_satisfied)} for pair: {pair}')
 
-                                            # Check if open_trade's trend changed negatively during past X candles
-                                            self.mgm_logger('debug', open_trade_unclogger,
-                                                            f'Calculating amount of '
-                                                            f'unclogger_trend_lookback_candles_window'
-                                                            f' "satisfied" for pair: {pair}')
+                # Calculate the percentage of the lookback window currently satisfied
+                unclogger_candles_percentage_satisfied = (unclogger_weighted_candles_satisfied /
+                                                          trend_lookback_candles_window) * 100
 
-                                            unclogger_weighted_candles_satisfied = 0
-                                            temp = self.sell___unclogger_trend_lookback_candles_window.value
-                                            for lookback_candle in range(1, round(temp / self.precision) + 1):
-                                                for trend in self.mgm_trends:
-                                                    if self.mgm_config['unclogger_spaces'][
-                                                        f'unclogger_trend_lookback_window_uses_{trend}_candles'] \
-                                                        & (stored_trend_dataframe[lookback_candle] == trend):
-                                                        unclogger_weighted_candles_satisfied += \
-                                                            self.separator \
-                                                            - (lookback_candle * self.separator_candle_weight_reducer)
-                                            self.mgm_logger('debug', open_trade_unclogger,
-                                                            f'Amount of unclogger_trend_lookback_candles_window '
-                                                            f'"satisfied": {str(unclogger_weighted_candles_satisfied)} '
-                                                            f'for pair: {pair}')
+                # Override Sell Signal: Unclog trade by forcing a sell & attempt to continue
+                # the profit climb with the "freed up trading slot"
+                trend_lookback_candles_window_percentage_needed = self.get_param_value(
+                    f'{su}trend_lookback_candles_window_percentage_needed')
+                if unclogger_candles_percentage_satisfied >= trend_lookback_candles_window_percentage_needed:
+                    # Buy Cooldown Window Custom Information Storage
+                    if pair not in self.custom_info['unclogger_cooldown_pairs']:
+                        self.custom_info['unclogger_cooldown_pairs'][pair] = []
 
-                                            # Calculate the percentage of the lookback window currently satisfied
-                                            temp = self.sell___unclogger_trend_lookback_candles_window.value
-                                            unclogger_candles_percentage_satisfied = \
-                                                (unclogger_weighted_candles_satisfied /
-                                                 round(temp / self.precision)) * 100
+                    buy_cooldown_minutes_window = self.get_param_value(f'{su}buy_cooldown_minutes_window')
+                    self.custom_info['unclogger_cooldown_pairs'][pair].append({
+                        'start_time': current_time,
+                        'end_time': current_time + timedelta(minutes=buy_cooldown_minutes_window)
+                    })
 
-                                            # Override Sell Signal: Unclog trade by forcing a sell & attempt to continue
-                                            # the profit climb with the "freed up trading slot"
-                                            temp = self.sell___unclogger_trend_lookback_candles_window_percentage_needed.value
-                                            if unclogger_candles_percentage_satisfied >= round(temp / self.precision):
-                                                # Buy Cooldown Window Custom Information Storage
-                                                if pair not in self.custom_info['unclogger_cooldown_pairs']:
-                                                    self.custom_info['unclogger_cooldown_pairs'][pair] = []
-
-                                                self.custom_info['unclogger_cooldown_pairs'][pair].append({
-                                                    'start_time': current_time,
-                                                    'end_time': current_time + timedelta(minutes=round(
-                                                        self.sell___unclogger_buy_cooldown_minutes_window.value /
-                                                        self.precision))
-                                                })
-
-                                                self.mgm_logger('info', open_trade_unclogger,
-                                                                f'Unclogging losing trade...')
-                                                return 'MGM_unclogging_losing_trade'
-                                            else:
-                                                self.mgm_logger('info', open_trade_unclogger,
-                                                                f'No need to unclog open trade...')
+                    self.mgm_logger('info', otu, 'Unclogging losing trade...')
+                    return 'MGM_unclogging_losing_trade'
+                else:
+                    self.mgm_logger('info', otu, 'No need to unclog open trade...')
 
             except Exception as e:
-                self.mgm_logger('error', open_trade_unclogger,
-                                f'Following error has occurred in the Open Trade Unclogger:')
-                self.mgm_logger('error', open_trade_unclogger, str(e))
+                self.mgm_logger('error', otu, f'Following error has occurred: {str(e)}')
 
         return None  # By default we don't want a force sell to occur
 
@@ -929,25 +878,23 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return bool: When True is returned, then the buy-order is placed on the exchange. False aborts the process
         """
 
-        unclogger_cooldown = 'Unclogger Cooldown'
+        uc = 'Unclogger Cooldown'
+        n = '\n    '
 
-        if (self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True) and \
-            (pair in self.custom_info['unclogger_cooldown_pairs']):
+        if ((self.mgm_config['unclogger_spaces']['unclogger_enabled'] is
+             True) and (pair in self.custom_info['unclogger_cooldown_pairs'])):
             for cooldown_period in self.custom_info['unclogger_cooldown_pairs'][pair][:]:
-                self.mgm_logger('debug', unclogger_cooldown,
-                                f'{pair} CoolDown Period:\n'
-                                f'    Cooldown Start Time: {cooldown_period["start_time"]}\n'
-                                f'    Cooldown End Time: {cooldown_period["end_time"]}\n'
-                                f'    Current Time: {current_time}')
+                self.mgm_logger('debug', uc, f'{pair} CoolDown Period:'
+                                             f'{n}Cooldown Start Time: {cooldown_period["start_time"]}'
+                                             f'{n}Cooldown End Time: {cooldown_period["end_time"]}'
+                                             f'{n}Current Time: {current_time}')
 
                 if cooldown_period['end_time'] < current_time:
-                    self.mgm_logger('debug', unclogger_cooldown,
-                                    f'Cooldown period for unclogged pair ({pair}) has expired, '
-                                    f'removing from custom_info! (CurrentTime: {current_time})')
+                    self.mgm_logger('debug', uc, f'Cooldown period for unclogged pair ({pair}) has expired, '
+                                                 f'removing from custom_info! (CurrentTime: {current_time})')
                     self.custom_info['unclogger_cooldown_pairs'][pair].remove(cooldown_period)
                 elif cooldown_period['start_time'] < current_time < cooldown_period['end_time']:
-                    self.mgm_logger('debug', unclogger_cooldown,
-                                    f'Blocking buy signal since pair is cooling down...')
+                    self.mgm_logger('debug', uc, 'Blocking buy signal since pair is cooling down...')
                     return False  # Block the buy signal from going through when the pair is still under cooldown
 
         return True  # Allow the buy signal to go through if the pair is not under cooldown
@@ -976,8 +923,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return bool: When True is returned, then the sell-order is placed on the exchange. False aborts the process
         """
 
-        if (self.mgm_config['weighted_signal_spaces']['sell_profit_only'] is True) and \
-            (sell_reason == 'sell_signal') and (trade.calc_profit_ratio(rate) < 0):
+        if ((self.mgm_config['weighted_signal_spaces']['sell_profit_only'] is
+             True) and (sell_reason == 'sell_signal') and (trade.calc_profit_ratio(rate) < 0)):
             return False
 
         return True  # By default we want the sell signal to go through
@@ -1027,31 +974,46 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # If TimeFrame-Zooming => Only use 'informative_timeframe' data
         for trend in self.mgm_trends:
             if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
-                total_signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
-                total_triggers_needed = getattr(self, f'{space}__{trend}_trend_signal_triggers_needed')
-
-                corrected_total_signal_needed = self.apply_weak_strong_overrides(
-                    parameter_value=total_signal_needed.value,
-                    parameter_min_value=self.min_trend_total_signal_needed_value,
-                    parameter_max_value=self.max_weighted_signal_value * number_of_weighted_signals,
-                    parameter_threshold=self.search_threshold_weighted_signal_values
-                ) / self.precision
-
-                corrected_total_triggers_needed = self.apply_weak_strong_overrides(
-                    parameter_value=total_triggers_needed.value,
-                    parameter_min_value=self.min_trend_signal_triggers_needed_value,
-                    parameter_max_value=number_of_weighted_signals,
-                    parameter_threshold=self.search_threshold_trend_signal_triggers_needed
-                ) / self.precision
+                corrected_totals = self.get_corrected_totals_needed(
+                    space=space, trend=trend, number_of_weighted_signals=number_of_weighted_signals)
 
                 conditions_weight.append(
-                    (
-                        (dataframe['trend'] == trend) &
-                        (dataframe[f'total_{space}_signal_strength'] >= corrected_total_signal_needed) &
-                        (dataframe[f'{space}_signals_triggered'] >= corrected_total_triggers_needed)
-                    ))
+                    (dataframe['trend'] == trend) &
+                    (dataframe[f'total_{space}_signal_strength'] >= corrected_totals['signal_needed']) &
+                    (dataframe[f'{space}_signals_triggered'] >= corrected_totals['triggers_needed']))
 
         return reduce(lambda x, y: x | y, conditions_weight)
+
+    def get_corrected_totals_needed(self, space: str, trend: str, number_of_weighted_signals: int) -> dict:
+        """
+        Fetches a dictionary containing
+        - Total Signal Weight Needed
+        - Total Signal Triggers Needed
+        for a given space and trend, these are the results of weak/strong overrides & dividing by precision
+
+        :param space: (str) The 'buy' or 'sell' space
+        :param trend: (str) 'upwards', 'sideways', 'downwards'
+        :param number_of_weighted_signals: Number of signals for the given space
+        :return: (dict) {'signal_needed', 'triggers_needed'}
+        """
+        total_signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
+        total_triggers_needed = getattr(self, f'{space}__{trend}_trend_signal_triggers_needed')
+
+        corrected_total_signal_needed = self.apply_weak_strong_overrides(
+            parameter_value=total_signal_needed.value,
+            parameter_min_value=self.min_trend_total_signal_needed_value,
+            parameter_max_value=self.max_weighted_signal_value * number_of_weighted_signals,
+            parameter_threshold=self.search_threshold_weighted_signal_values
+        ) / self.precision
+
+        corrected_total_triggers_needed = self.apply_weak_strong_overrides(
+            parameter_value=total_triggers_needed.value,
+            parameter_min_value=self.min_trend_signal_triggers_needed_value,
+            parameter_max_value=number_of_weighted_signals,
+            parameter_threshold=self.search_threshold_trend_signal_triggers_needed
+        ) / self.precision
+
+        return {'signal_needed': corrected_total_signal_needed, 'triggers_needed': corrected_total_triggers_needed}
 
     def apply_weak_strong_overrides(self, parameter_value,
                                     parameter_min_value, parameter_max_value, parameter_threshold):
@@ -1094,8 +1056,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         """
 
         # If TimeFrame-Zooming => Only use 'informative_timeframe' data
-        has_multiplier = \
-            (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe)
+        has_multiplier = ((self.is_dry_live_run_detected is False) and
+                          (self.informative_timeframe != self.backtest_timeframe))
         for trend in self.mgm_trends:
             if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                 parameter_name = f'{space}_{trend}_trend_{signal_name}_weight'
@@ -1106,8 +1068,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                     signal_weight.value, signal_min_value, signal_max_value, signal_threshold)
 
                 rolling_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed_candles_lookback_window')
-                rolling_needed_value = \
-                    rolling_needed.value * self.timeframe_multiplier if has_multiplier else rolling_needed.value
+                rolling_needed_value = (rolling_needed.value * self.timeframe_multiplier if has_multiplier
+                                        else rolling_needed.value)
 
                 # If debuggable weighted signal dataframe => Add individual per signal rows in the dataframe
                 if self.debuggable_weighted_signal_dataframe:
@@ -1194,10 +1156,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # 2nd HyperOpt Run: Use refined search spaces where needed
         else:
             if overrideable is False:
-                min_value = parameter_min_value if parameter_value <= (parameter_min_value + parameter_threshold) else \
-                    parameter_value - parameter_threshold
-                max_value = parameter_max_value if parameter_value >= (parameter_max_value - parameter_threshold) else \
-                    parameter_value + parameter_threshold
+                min_value = (parameter_min_value if parameter_value <= (parameter_min_value + parameter_threshold)
+                             else parameter_value - parameter_threshold)
+                max_value = (parameter_max_value if parameter_value >= (parameter_max_value - parameter_threshold)
+                             else parameter_value + parameter_threshold)
             # Apply different logic for overridable signals
             else:
                 # Override search space min_value bounds if value is going to be overridden
@@ -1271,8 +1233,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             parameter_name = '__' + param_key
             param_config = cls.mgm_unclogger_add_params[param_key]
             if isinstance(param_config, dict) is True:
-                param_config['threshold'] = param_config['threshold'] if \
-                    'threshold' in param_config else cls.search_threshold_weighted_signal_values
+                param_config['threshold'] = (param_config['threshold'] if 'threshold' in param_config
+                                             else cls.search_threshold_weighted_signal_values)
 
                 cls._init_vars(base_cls=base_cls, space='sell', parameter_name=parameter_name,
                                parameter_min_value=param_config['min'], parameter_max_value=param_config['max'],
@@ -1384,25 +1346,11 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         if self.is_dry_live_run_detected is False:
             for trend in self.mgm_trends:
                 if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
-                    total_signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
-                    total_triggers_needed = getattr(self, f'{space}__{trend}_trend_signal_triggers_needed')
+                    corrected_totals = self.get_corrected_totals_needed(
+                        space=space, trend=trend, number_of_weighted_signals=number_of_weighted_signals)
 
-                    corrected_total_signal_needed = self.apply_weak_strong_overrides(
-                        parameter_value=total_signal_needed.value,
-                        parameter_min_value=self.min_trend_total_signal_needed_value,
-                        parameter_max_value=self.max_weighted_signal_value * number_of_weighted_signals,
-                        parameter_threshold=self.search_threshold_weighted_signal_values
-                    ) / self.precision
-
-                    corrected_total_triggers_needed = self.apply_weak_strong_overrides(
-                        parameter_value=total_triggers_needed.value,
-                        parameter_min_value=self.min_trend_signal_triggers_needed_value,
-                        parameter_max_value=number_of_weighted_signals,
-                        parameter_threshold=self.search_threshold_trend_signal_triggers_needed
-                    ) / self.precision
-
-                    if (self.total_signals_possible[f'{space}_{trend}'] < corrected_total_signal_needed) or \
-                        (self.total_triggers_possible[f'{space}_{trend}'] < corrected_total_triggers_needed):
+                    if ((self.total_signals_possible[f'{space}_{trend}'] < corrected_totals['signal_needed']) or
+                        (self.total_triggers_possible[f'{space}_{trend}'] < corrected_totals['triggers_needed'])):
                         dataframe['buy'] = dataframe['sell'] = 0
 
         return dataframe
@@ -1430,5 +1378,5 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             self.separator = self.mgm_config['unclogger_spaces'][
                 'unclogger_trend_lookback_candles_window_recent_past_weight_separator']
             separator_window = (self.separator / 1) - (1 / self.separator)
-            self.separator_candle_weight_reducer = \
-                separator_window / (self.sell___unclogger_trend_lookback_candles_window.value / self.precision)
+            self.separator_candle_weight_reducer = separator_window / self.get_param_value(
+                'sell___unclogger_trend_lookback_candles_window')
