@@ -44,10 +44,10 @@ Make sure that you have all of the following available on your system before pro
 
 #### Additional MacOS (BigSur) requirements:
 - Install [brew](https://brew.sh/)
-- Install `xcode util 12.3`
-- Install `hdf5` *(`brew install hdf5`)*
-- Install `c-blosc` *(`brew install c-blosc`)*
-- Install `tables` *(`pip3 install tables`)*
+- Install xcode util 12.3
+- Install `hdf5` - *`brew install hdf5`*
+- Install `c-blosc` - *`brew install c-blosc`*
+- Install `tables` - *`pip3 install tables`*
 
 ## Installation instructions
 MoniGoMani provides an all-in-one setup tool. It will guide you through the entire installation procedure. Not only for MoniGoMani, but Freqtrade also. You want the entire package, right? You will be up & HyperOpting (or Dry/Live Running) in no time! 🤙
