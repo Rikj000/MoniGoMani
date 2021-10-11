@@ -461,11 +461,11 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         tfz = 'TimeFrame-Zoom'
         # Populate core trend indicators
         core_trend = load_pair_history(pair=metadata['pair'],
-                                        datadir=self.config['datadir'],
-                                        timeframe=self.core_trend_timeframe,
-                                        # ToDo: calculate correct startup_candles needed for HT_TRENDMODE and SAR
-                                        startup_candles=self.startup_candle_count,
-                                        data_format=self.config.get('dataformat_ohlcv', 'json'))
+                                       datadir=self.config['datadir'],
+                                       timeframe=self.core_trend_timeframe,
+                                       # ToDo: calculate correct startup_candles needed for HT_TRENDMODE and SAR
+                                       startup_candles=self.startup_candle_count,
+                                       data_format=self.config.get('dataformat_ohlcv', 'json'))
         core_trend = self._populate_core_trend(core_trend, metadata)
 
         # Compute indicator data during Backtesting / Hyperopting when TimeFrame-Zooming
