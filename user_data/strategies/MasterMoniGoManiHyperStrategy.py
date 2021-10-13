@@ -496,6 +496,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
             # Populate indicators at a larger timeframe
             informative = self.do_populate_indicators(informative.copy(), metadata)
+            # Drop unused columns to keep the dataframe lightweight
+            drop_columns = ['open', 'high', 'low', 'close', 'volume', f'date_{self.core_trend_timeframe}']
+            informative.drop(drop_columns, inplace=True, axis=1)
             # Merge indicators back in with, filling in missing values.
             dataframe = merge_informative_pair(dataframe, informative, self.timeframe,
                                                self.informative_timeframe, ffill=True)
@@ -505,6 +508,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                             ['date', 'open', 'high', 'low', 'close', 'volume']]
             dataframe.rename(columns=lambda s: s.replace('_{}'.format(self.informative_timeframe),
                                                          '') if (s not in skip_columns) else s, inplace=True)
+            dataframe.drop([f'date_{self.informative_timeframe}'], inplace=True, axis=1)
 
         # Compute indicator data normally during Dry & Live Running or when not using TimeFrame-Zoom
         else:
@@ -519,6 +523,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                             ['date', 'open', 'high', 'low', 'close', 'volume']]
             dataframe.rename(columns=lambda s: s.replace('_{}'.format(self.core_trend_timeframe),
                                                          '') if (s not in skip_columns) else s, inplace=True)
+            dataframe.drop([f'date_{self.core_trend_timeframe}'], inplace=True, axis=1)
 
             # Just populate indicators.
             dataframe = self.do_populate_indicators(dataframe, metadata)
