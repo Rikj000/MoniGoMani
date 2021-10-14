@@ -11,7 +11,7 @@ theme:
 #    primary: deep purple
 #    accent: deep purple
 nav:
-  - Home: README.md
+  # - Home: README.md
   - Installation: Documentation/Docs-VeryQuickStart.md
   - MGM-Hurry: Documentation/Docs-MGM-Hurry.md
   - MoniGoMani: Documentation/Docs-MoniGoMani.md
