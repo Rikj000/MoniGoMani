@@ -89,7 +89,7 @@ If you like my work, feel free to donate or use [one of my referral links](#supp
 
 ## The Idea & Theory
 **MoniGoMani** is more than just a conventional strategy, it's a **Framework** that aims to help you **"easily"** find a profitable strategy configuration in any market through our [partially automated optimization process](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani)!
-Without the need to do any more real programming! :rocket:
+Without the need to do any more real programming! 🚀
 
 However, you will need to know about [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/) and some Technical Analysis, to be able to tell if the MGM setup \*[HyperOpt](https://www.freqtrade.io/en/latest/hyperopt/) found over the tested timerange is valid or not, this is not just an easy copy/paste!
 
@@ -97,7 +97,7 @@ MGM (MoniGoMani) derives itself from other strategies by its use of something I 
 Each signal has its own weight allocated to it & a total buy/sell signal needed is defined too.
 MGM will loop through all signals, if they trigger it will add up the weight and eventually it will check if it's bigger than what's needed in total over a candle lookback window (to take previous signals into consideration). If the grand total of the sum of weighted signals is bigger then what is required it will buy/sell.
 
-An **interface** has been implemented so the indicators and weighted signals used by MGM can easily be tweaked in just a few lines of code! :tada:
+An **interface** has been implemented so the indicators and weighted signals used by MGM can easily be tweaked in just a few lines of code! 🎉
 
 The beauty lies in using MGM in combination with **HyperOpting**. Most of the parameters in MGM have been made HyperOptable thus it can be used to find an "ideal" weight division and setting configuration for you in any kind of market that that represents the data upon which you test.
 It will also teach us what works where & what doesn't since MoniGoMani first **detects Downwards/Sideways/Upwards trends** and then does all the above individually for each kind of trend *(Creating basically 3 individual strategies in 1, for each kind of trend one)*.
@@ -180,6 +180,7 @@ MoniGoMani's ChangeLog can be read under the [**Releases**](https://github.com/R
 **Freqtrade** is the well known `open source crypto day-trading bot` that makes this strategy possible!
 It's completely free to use and alter and has many amazing features.
 Big thank you to **xmatthias** and everyone who helped on it!
+
 - **[Official Freqtrade Website](https://www.freqtrade.io/en/latest/)**
 - **[Official Freqtrade GitHub Repository](https://github.com/freqtrade/freqtrade)**
 - **[Official Freqtrade Discord Server](https://discord.gg/j84KnP57kW)**
@@ -187,6 +188,7 @@ Big thank you to **xmatthias** and everyone who helped on it!
 ### Supported Exchanges
 
 Please read Freqtrade's [exchange specific notes](https://www.freqtrade.io/en/latest/exchanges/) to learn about eventual, special configurations needed for each exchange.
+
 | Exchange | Join | Freqtrade Support | CCXT Certified | Discount |
 | :------: | :--: | :---------------: | :------------: | :------: |
 | [![binance](https://user-images.githubusercontent.com/1294454/29604020-d5483cdc-87ee-11e7-94c7-d1a8d9169293.jpg)](https://www.binance.com/en/register?ref=97611461) | [Binance](https://www.binance.com/en/register?ref=97611461) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) | [![Sign up with Binance using my referral link for a 5% discount!](https://img.shields.io/static/v1?label=Fee&message=%2d5%25&color=orange)](https://www.binance.com/en/register?ref=97611461) |
