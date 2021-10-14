@@ -12,10 +12,10 @@ theme:
 #    accent: deep purple
 nav:
   - Home: README.md
-  - Installation: Docs-VeryQuickStart.md
-  - MGM-Hurry: Docs-MGM-Hurry.md
-  - MoniGoMani: Docs-MoniGoMani.md
-  - MGM-HyperOptLoss-Functions: Docs-MGM-HyperOptLoss-Functions.md
+  - Installation: Documentation/Docs-VeryQuickStart.md
+  - MGM-Hurry: Documentation/Docs-MGM-Hurry.md
+  - MoniGoMani: Documentation/Docs-MoniGoMani.md
+  - MGM-HyperOptLoss-Functions: Documentation/Docs-MGM-HyperOptLoss-Functions.md
 extra:
   social:
     - icon: fontawesome/brands/github
