@@ -12,7 +12,7 @@ theme:
 #    accent: deep purple
 docs_dir: Documentation
 nav:
-  # - Home: ../README.md
+  - Home: ../README.md
   - Installation: Docs-VeryQuickStart.md
   - MGM-Hurry: Docs-MGM-Hurry.md
   - MoniGoMani: Docs-MoniGoMani.md
