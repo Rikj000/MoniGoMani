@@ -10,12 +10,13 @@ theme:
 #    scheme: dracula
 #    primary: deep purple
 #    accent: deep purple
+docs_dir: Documentation
 nav:
-  # - Home: README.md
-  - Installation: Documentation/Docs-VeryQuickStart.md
-  - MGM-Hurry: Documentation/Docs-MGM-Hurry.md
-  - MoniGoMani: Documentation/Docs-MoniGoMani.md
-  - MGM-HyperOptLoss-Functions: Documentation/Docs-MGM-HyperOptLoss-Functions.md
+  # - Home: ../README.md
+  - Installation: Docs-VeryQuickStart.md
+  - MGM-Hurry: Docs-MGM-Hurry.md
+  - MoniGoMani: Docs-MoniGoMani.md
+  - MGM-HyperOptLoss-Functions: Docs-MGM-HyperOptLoss-Functions.md
 extra:
   social:
     - icon: fontawesome/brands/github
