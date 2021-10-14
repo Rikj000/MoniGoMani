@@ -1,0 +1,31 @@
+site_name: MoniGoMani
+site_url: https://monigomani.readthedocs.io
+repo_url: https://github.com/Rikj000/MoniGoMani
+use_directory_urls: True
+theme:
+  name: material
+#  icon:
+#    logo: material/book-open-page-variant
+#  palette:
+#    scheme: dracula
+#    primary: deep purple
+#    accent: deep purple
+nav:
+  - Home: README.md
+  - Installation: Docs-VeryQuickStart.md
+  - MGM-Hurry: Docs-MGM-Hurry.md
+  - MoniGoMani: Docs-MoniGoMani.md
+  - MGM-HyperOptLoss-Functions: Docs-MGM-HyperOptLoss-Functions.md
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Rikj000/MoniGoMani
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/xFZ9bB6vEz
+markdown_extensions:
+  - markdown.extensions.toc: # Adds anchors to URL's
+      slugify: !!python/name:pymdownx.slugs.uslugify # causes linting issues, but it has to be written this way...
+      permalink: ""
+  - markdown.extensions.admonition # Nice note/warning/info blocks
+  - pymdownx.superfences:
+      preserve_tabs: true
