@@ -45,6 +45,7 @@
 
 # MoniGoMani HyperOptLoss Functions
 MoniGoMani Ships with 3 Custom HyperOptLoss Objective Functions which can be found under `user_data/hyperopts/`:
+
 | HyperOptLoss Name | Application |
 | ----------------- | ----------- |
 | [MGM_WinRatioAndProfitRatioHyperOptLoss](#mgm_winratioandprofitratiohyperoptloss) | Initial & refinement HyperOpt runs |
@@ -62,7 +63,7 @@ This function optimizes for both best `profit` & stability. On stability, the fi
 It will also punish the HyperOpt if the trades found in an epoch are below the configured `total_trades_threshold_low` as a way to prevent over-fitting on too low trades with too high average duration.
  *(Setting can be found under the `total_trades` section in the `monigomani_hyperoptloss_settings` section inside [mgm-config](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json))*
 
- ## MGM_SortinoHyperOptLoss
+## MGM_SortinoHyperOptLoss
 MGM_SortinoHyperOptLoss HyperOpt Objective function. Returns smaller number for better results. *(More negative = better)*
 
 This function calculates the Sortino ratio, a variation of the Sharpe ratio that differentiates harmful volatility from total overall volatility by using standard deviation of negative results downside deviation, instead of the total standard deviation of results. 
@@ -83,6 +84,7 @@ Each of these influence the outcome of the final Objective.
 All settings for the `MGM_WeightedMultiParameterHyperOptLoss` function can be found in your [mgm-config]([mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json)) under the `MGM_WeightedMultiParameterHyperOptLoss` section of the `monigomani_hyperoptloss_settings` section.
 
 Following **parameter sections** can be configured to fine-tune your MoniGoMani Configuration further for more desired results:
+
 | Parameter section    | Optimize direction |
 | :------------------- | -----------------: |
 | **total_trades**     | lower              |
@@ -93,6 +95,7 @@ Following **parameter sections** can be configured to fine-tune your MoniGoMani 
 | **max_drawdown**     | lower              |
 
 Each parameter section contains following **parameter settings** to control the punish/reward system for them:
+
 | Parameter name               | Description |
 | :--------------------------- | :---------- |
 | **parameter_weight**         | Defines the amount of influence weight that this parameter section has on the HyperOpt Results in percentages. With 100% being the base influence weight *(aka x1)*, adjusting to 200% would make this section x2 as important as the other parameter sections with the default weight. |

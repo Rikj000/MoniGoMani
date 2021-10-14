@@ -67,6 +67,7 @@ Further it also assumes you familiarized yourself with **mgm-hurry**'s commands 
 
 # How to Optimize MoniGoMani
 *(These are just my ideas/theories, if you have other ideas, please test them & report your results to [`🛠 MoniGoMani - Testing` on Matrix](https://matrix.to/#/#MoniGoMani-Testing:matrix.org) or [`#🛠︱testing` on Discord](https://discord.gg/xFZ9bB6vEz) so we can learn and improve this flow!)*
+
 **<span style="color:darkorange">WARNING:</span> It's strongly advised to not do any manual alterations to an already optimized MGM setup! The recommended way to do manual alterations is by [Configuring MoniGoMani](#how-to-configure-monigomani), and then following this optimization process to apply them!**
 
 - **0)** **Clean up** previous HyperOpt results for a fresh run with:
@@ -119,6 +120,7 @@ Further it also assumes you familiarized yourself with **mgm-hurry**'s commands 
 
 # How to Configure MoniGoMani
 In total 5 files are used in the configuration of MoniGoMani, all can be found in the `user_data`, `user_data/strategies` and root folders:
+
 - [`mgm-config.json`](#mgm-config.json): This is the **main configuration file**, containing:
     - The main `MoniGoMani` settings
     - The main `Freqtrade` settings (See [The Official Freqtrade Configuration Documentation](https://www.freqtrade.io/en/latest/configuration/) to learn how to configure these)
@@ -133,6 +135,7 @@ In total 5 files are used in the configuration of MoniGoMani, all can be found i
 ## mgm-config.json
 **Link to:** [mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json)
 The main `MoniGoMani` settings can be found under `monigomani_settings`:
+
 | Parameter(s) | Description |
 | --- | --- |
 | **timeframe** <br> **backtest_timeframe** | These values configure the `timeframe`s used in MoniGoMani. <br> **Documentation:** [TimeFrame-Zoom](#timeframe-zoom) <br> **Datatypes:** Integer |
@@ -162,7 +165,9 @@ If you haven't yet please read: [BackTesting-Traps](https://brookmiles.github.io
 
 
 **<span style="color:darkorange">WARNING:</span> To disable TimeFrame-Zoom just use the same candles for `timeframe` & `backtest_timeframe`**
+
 **<span style="color:darkorange">WARNING:</span> Candle data for both `timeframe` as `backtest_timeframe` will have to be downloaded before you will be able to BackTest/HyperOpt! (Since both will be used)**
+
 **<span style="color:darkorange">WARNING:</span> This will be slower than BackTesting at 1h and 1m is a CPU killer. If you plan on using trailing stoploss or ROI, you probably want to know that your BackTest results are not complete lies.**
 
 #### TimeFrame-Zoom Examples
@@ -178,6 +183,7 @@ While a value **larger than 1** increases the search space, but will increase th
 To disable `precision` / for normal work mode **just** use **1**.
 
 **<span style="color:darkorange">WARNING:</span> Only use a precision different from 1 during HyperOpting & restore to 1 afterwards!**
+
 **<span style="color:darkorange">WARNING:</span> HyperOpt Results don't take precision into consideration, after HyperOpting with precision use the Total Overall Signal Importance Calculator's `--precision-used` subcommand to fix the results**
 
 #### Precision Examples
@@ -240,6 +246,7 @@ When the Open Trade Unclogger is enabled it attempts to unclog the bot when it's
 This `custom_sell()` function should be able to work in tandem with `Trailing stoploss`.
 
 It will only unclog a losing trade when all following checks have been full-filled (If a check is set to `0` it will be taken out of the equation, thus the unclogger will continue checking further without it):
+
 - Check if there is no `buy` or `sell` signal already occurring on the current candle.
 - Check if `sell___unclogger_enabled` is `True`, otherwise abort further unclogger logic.
 - Check if there are any open trades
@@ -256,6 +263,7 @@ The trends used for the calculations in this check can be configured with `sell_
 Each candle fulfilling a trend set to `True` will be added in the sum used to calculate the value for `sell___unclogger_trend_lookback_candles_window_percentage_needed` if it is found in the lookback window.
 
 The settings inside `mgm-config.json`'s `unclogger_spaces` section are used to configure the Open Trade Unclogger:
+
 | Parameter | Description |
 | --- | --- |
 | **unclogger_enabled** | Enable or completely disable the open trade unclogger.<br> **Datatype:** Boolean |
@@ -280,6 +288,7 @@ The settings inside `mgm-config.json`'s `unclogger_spaces` section are used to c
 ### Default Stub Values
 The settings inside `mgm-config.json`'s `default_stub_values` section are **only used** to control some default startup values that MGM will use when no other values are found and/or used for them.
 *(These would be used when not HyperOpting `--spaces all` in one go and/or during the initialization of MGM's variables in the 1st HyperOpt Run)*
+
 | Parameter | Description |
 | --- | --- |
 | **minimal_roi** | **Official Freqtrade Documentation:** [Understand minimal_roi](https://www.freqtrade.io/en/latest/configuration/#understand-minimal_roi) <br> **Datatype:** Dictionary |
@@ -334,14 +343,15 @@ This is the main strategy file used by MoniGoMani, containing the [Weighted Sign
 **Link to:** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/strategies/MoniGoManiHyperStrategy.py)
 
 ### Weighted Signal Interface
-With this you can easily define new indicators and weighted signals that will be used by MGM.
-A different amount of buy and sell signals is possible, and the initial search spaces will automatically be adjusted towards the detected amount.
+With this you can easily define new indicators and weighted signals that will be used by MGM.   
+A different amount of buy and sell signals is possible, and the initial search spaces will automatically be adjusted towards the detected amount.   
 *(We'll only use RSI and MACD in below examples to keep things simple)*
 
 #### Defining Indicators Examples
 First add the technical analysis indicators you wish to use to MGM's `do_populate_indicators()` function.
 
 Check out these **+200 Easy to implement Indicators** for toying with the Weighted Signal Interface:
+
 - [Freqtrade Technical](https://github.com/freqtrade/technical)
 - [TA-Lib](https://mrjbq7.github.io/ta-lib/funcs.html)
 - [Pandas-TA](https://twopirllc.github.io/pandas-ta)
@@ -408,6 +418,7 @@ For more documentation about defining these see the **Official Freqtrade Documen
 
 
 Once you defined them you can load them in FreqUI as following:
+
 - 1) Click the cog-wheel at the right top
   ![Click the cog-wheel at the right top](https://i.imgur.com/VDeCFDT.png)
 - 2) Click `Load from strategy`
@@ -420,6 +431,7 @@ Once you defined them you can load them in FreqUI as following:
 
 # PairLists
 By default, MoniGoMani includes 2 pairlists in `mgm-config.json`:
+
 - A VolumePairList:
   - Best to use for Dry and Live Running
   - Will automatically update to the current best top volume coin pairs available
@@ -445,6 +457,7 @@ Switching between the PairList in use can easily be done by moving the `_` in fr
 
 # How to test for improvements
 The process is rather simple really on **1st HyperOpt Runs**:
+
 - Run `mgm-hurry hyperopt --clean_start`
 - Check the saved HyperOpt Run 1a Results `.log` file created.
 - Adjust a single:
@@ -458,6 +471,7 @@ The process is rather simple really on **1st HyperOpt Runs**:
 - Compare if the HyperOpt Run 1b Results are better then on your Run 1a attempt
 
 You can also do this for  **2nd HyperOpt Runs**, but this is a little more difficult, after your 1st Run be sure to:
+
 - Check/Save the HyperOpt Run 1 Results, Copy/paste the Run 2 command upon an epoch of choice and with a new random state
 - Check/Save the HyperOpt Run 2a Results
 - Reset MoniGoMani
@@ -487,7 +501,7 @@ You likely are using a `Float` value where you should be using a `Integer` value
 - `Float` = Decimal number. Examples: 1.53, 4.2, 17.12
 
 ### ValueError: the lower bound X has to be less than the upper bound Y
-**ToDo: Make MGM-Hurry automatically fix these result**
+**ToDo: Make MGM-Hurry automatically fix these result**   
 You probably ran with precision different from 1. If so then you need to run your 1st HO Run results through the calculator directly (without mgm-hurry) with `-pu` or `--precision-used` and then fix up your `mgm-config-hyperopt.json` with the adjusted results before firing up the 2nd HO Run.
 
 Check out the documentation for the [Precision Setting](#precision-setting) and the [Total Overall Signal Importance Calculator](#total-overall-signal-importance-calculator)!

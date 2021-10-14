@@ -30,6 +30,7 @@
 
 ## Requirements
 Make sure that you have all of the following available on your system before proceeding:
+
 - [**Python3**](https://www.python.org/) - Python 3.8+ is required.
 - [**Pip3**](https://pypi.org/project/pip/) - Package manager to install & manage Python packages.
 - [**Git**](https://git-scm.com/downloads) - Software version management
@@ -76,6 +77,7 @@ alias mgm-hurry="python3 /path/to/installation/freqtrade-mgm/mgm-hurry"
 ```
 
 ### OS Support Priority list
+
 1) **Linux/Unix** *(MoniGoMani is written on Linux, for Linux!)*
 2) **MacOS** *(Thanks to topscoder and other MacOS users)*
 3) **WSL** *(Because we have to give those Windows users something..)*
