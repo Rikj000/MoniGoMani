@@ -120,7 +120,7 @@
       "total_trades_weight": 100,
       "expected_total_trades": 500,
       "total_trades_threshold_high": 1000,
-      "total_trades_threshold_low": 200
+      "total_trades_threshold_low": 100
     },
     "win_ratio": {
       "win_ratio_weight": 100,
