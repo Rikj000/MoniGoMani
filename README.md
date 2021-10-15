@@ -102,7 +102,7 @@ An **interface** has been implemented so the indicators and weighted signals use
 The beauty lies in using MGM in combination with **HyperOpting**. Most of the parameters in MGM have been made HyperOptable thus it can be used to find an "ideal" weight division and setting configuration for you in any kind of market that that represents the data upon which you test.
 It will also teach us what works where & what doesn't since MoniGoMani first **detects Downwards/Sideways/Upwards trends** and then does all the above individually for each kind of trend *(Creating basically 3 individual strategies in 1, for each kind of trend one)*.
 
-Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#open-trade-unclogger) which will do various HyperOptable checks upon the open trades to see if there are "bad" ones to quickly unclog at small losses, so it can continue on the hunt for good trades more rapidly! :rocket:
+Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#open-trade-unclogger) which will do various HyperOptable checks upon the open trades to see if there are "bad" ones to quickly unclog at small losses, so it can continue on the hunt for good trades more rapidly! 🚀
 
 \****HyperOpting:** A form of machine learning where you [BackTest](https://www.freqtrade.io/en/latest/backtesting/) a lot of times to find the most ideal values)*
 
@@ -124,7 +124,7 @@ Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/Mon
 - Configurable LookBack Windows for Total Buy/Sell Signal Percentages for Downwards/Sideways/Upwards trends ***(HyperOptable!)***
 - Configurable Signal Triggers Needed within their respective LookBack Windows for Downwards/Sideways/Upwards trends ***(HyperOptable!)***
 - Configurable [Trading During Trends](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#trading-during-trends) (Downwards/Sideways/Upwards) for Buys/Sells
-- Configurable [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#open-trade-unclogger), if enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades ***(HyperOptable!)*** :rocket:
+- Configurable [Open Trade Unclogger](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#open-trade-unclogger), if enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades ***(HyperOptable!)*** 🚀
 - [TimeFrame-Zoom](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#timeframe-zoom) during BackTesting/HyperOpting to prevent profit exploitation! *(Read: [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/))*
 - [Configurable HyperOptable Stoploss](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#stoploss-spaces) to fine-tune where HyperOpt should look
 - Custom Long Continuously decreasing ROI Table generation with configurable `roi_table_step_size`
@@ -139,7 +139,7 @@ Further it has an embedded [Open Trade Unclogger](https://github.com/Rikj000/Mon
 
 ## Getting Started
 Under the [**Wiki**](https://github.com/Rikj000/MoniGoMani/wiki) section of the project you can find links to all MoniGoMani Documentation.
-Please take a good read at these! :pray:+98//
+Please take a good read at these! 🙏
 
 
 ## Got Test Results - Ideas - Config Improvements?
@@ -163,7 +163,7 @@ so you won't miss a thing in either of them! *(Matrix is better data-privacy wis
 ## Planned
 MoniGoMani's planned section lives under the [**Issues**](https://github.com/Rikj000/MoniGoMani/issues) section!
 *(Don't be scared GitHub likes to pick bad names for things, but also don't abuse this for common questions though!)*
-This is where we'll keep track of all **New Feature, Feature Enhancements and BugFixes** and it should be the ideal place to follow the status of the project more in depth or to contribute more directly towards it! :handshake:
+This is where we'll keep track of all **New Feature, Feature Enhancements and BugFixes** and it should be the ideal place to follow the status of the project more in depth or to contribute more directly towards it! 🤝
 
 - [**All Open Issues**](https://github.com/Rikj000/MoniGoMani/issues)
 - [**All Things Planned**](https://github.com/Rikj000/MoniGoMani/issues?q=is%3Aissue+is%3Aopen+label%3APlanned)
@@ -213,11 +213,11 @@ More [info on fees in general can be found here](https://www.iconomi.com/fees-di
 In general this is a good platform to invest into when you still need to start learning Technical Analysis, when you don't have time to monitor the status of the market or when you don't feel confident trading your own funds.
 Since here you have strategy owners "doing the day-trading for you" by re-balancing the strategies & the percentages of coins in them.
 
-**If you join please use my referral link! => (https://www.iconomi.com/register?ref=JdFzz)** :pray:
+**If you join please use my referral link! => (https://www.iconomi.com/register?ref=JdFzz)** 🙏
 *(Then a percentage of your fees that you have to pay anyways to the strategy owners and ICONOMI will go to me instead, which is a neat win-win way for us both to support me for my work on MGM!)*
 
 #### Recommended ICONOMI Strategies
 - [**Crypto Knowledge Pool**](https://www.iconomi.com/asset/BTCETHTEST?ref=JdFzz) (CKP): A community influenced strategy
 - [**CKP's Telegram Chat**](https://telegram.me/CKP_Robot?start=1684098549): If you want to vote if the coins will go up or down and hear about interesting news or ask questions. When I wrote this they we're right about 65% of the time. The manager will take the results into consideration when altering the strategy.
 - [**Knepala**](https://www.iconomi.com/asset/KNEPALA?ref=JdFzz): The personal strategy of the owner of CKP, most of the time it does even better than CKP itself.
-- Look on [ICONOMI](https://www.iconomi.com/register?ref=JdFzz) for more strategies you deem interesting :slightly_smiling_face:
+- Look on [ICONOMI](https://www.iconomi.com/register?ref=JdFzz) for more strategies you deem interesting 🙂
