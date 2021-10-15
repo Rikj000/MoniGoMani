@@ -1,6 +1,7 @@
 {
   "monigomani_settings": {
     "timeframe": "30m",
+    "trend_timeframe": "4h",
     "backtest_timeframe": "5m",
     "startup_candle_count": 400,
     "precision": 1,
