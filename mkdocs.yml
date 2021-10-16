@@ -8,13 +8,13 @@ theme:
   favicon: images/MoniGoManiLogo.png
   palette:
     - scheme: default
-      primary: 'green grey'
+      primary: green
       accent: tear
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to dark mode
     - scheme: slate
-      primary: 'green grey'
+      primary: green
       accent: tear
       toggle:
         icon: material/toggle-switch
