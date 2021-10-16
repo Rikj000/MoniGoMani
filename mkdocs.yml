@@ -14,11 +14,11 @@ theme:
         icon: material/toggle-switch-off-outline
         name: Switch to dark mode
     - scheme: slate
-        primary: green grey
-        accent: 'tear'
-        toggle:
-          icon: material/toggle-switch-on-outline
-          name: Switch to light mode
+      primary: green grey
+      accent: tear
+      toggle:
+        icon: material/toggle-switch-on-outline
+        name: Switch to light mode
 #  icon:
 #    logo: material/book-open-page-variant
 #  palette:
