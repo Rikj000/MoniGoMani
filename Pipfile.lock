@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8093de32a51073c20d38937bfca9c20ef9c0422ccc80bcec8ecc1734b84255b6"
+            "sha256": "c6b5e5dbacc2e4af51228854df7642ce422298f57c1b9cdf420fedea18bf68de"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -167,16 +167,24 @@
         },
         "inquirerpy": {
             "hashes": [
-                "sha256:051ec6a5f9f7f93f6db6a1bb87a07a5d876cc6cb818b8816f9ba2ae52d43c56b",
-                "sha256:22d50a9d7361377b8eb334964b1d52922a7fc8680864139e35fd64a73e71bb65"
+                "sha256:3f45515dfb58c590759df91ae9534f9391f241480cc535e7e134fb3c3bd3d269",
+                "sha256:8849da1e2dfa4b1d576a9cd9b158ad0755d7fc6883eb0cf839b6a2fc6b1a10fb"
             ],
-            "version": "==0.2.4"
+            "version": "==0.3.0"
         },
         "logger": {
             "hashes": [
                 "sha256:4ecac57133c6376fa215f0fe6b4dc4d60e4d1ad8be005cab4e8a702df682f8b3"
             ],
             "version": "==1.4"
+        },
+        "pfzy": {
+            "hashes": [
+                "sha256:33682ed1929c5ff85c0c57e3b3cfa5c355063138be3560a1797378cf08fb05a2",
+                "sha256:3efd83e49d854830369173b44e64a2cd9adcb9d5382698a792474c7d18e2fe32"
+            ],
+            "markers": "python_version >= '3.7' and python_version < '4'",
+            "version": "==0.3.3"
         },
         "plotly": {
             "hashes": [
@@ -342,7 +350,7 @@
                 "sha256:4987c65554f7a2dbf30c18fd48778ef124af6fab771a377103da0585e2336ece",
                 "sha256:c4fdf4019605b6e5423637e01bc9fe4daef873709a7973e195ceba0a62bbc844"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_full_version < '4.0.0'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
             "version": "==1.26.7"
         },
         "wcwidth": {
