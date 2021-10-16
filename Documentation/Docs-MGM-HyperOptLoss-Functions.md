@@ -52,7 +52,7 @@ MoniGoMani Ships with 3 Custom HyperOptLoss Objective Functions which can be fou
 | [MGM_SortinoHyperOptLoss](#mgm_sortinohyperoptloss) | Initial & refinement HyperOpt runs |
 | [MGM_WeightedMultiParameterHyperOptLoss](#mgm_weightedmultiparameterhyperoptloss) | Only refinement HyperOpt Runs |
 
-These contain configurable parameters. All of their settings can be tweaked from within your [mgm-config](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json) under the `monigomani_hyperoptloss_settings` section to make up for a more robust strategy.
+These contain configurable parameters. All of their settings can be tweaked from within your [mgm-config](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.example.json) under the `monigomani_hyperoptloss_settings` section to make up for a more robust strategy.
 
 ## MGM_WinRatioAndProfitRatioHyperOptLoss
 MGM_WinRatioAndProfitRatioHyperOptLoss HyperOpt Objective function. Returns smaller number for better results. *(More negative = better)*
@@ -61,7 +61,7 @@ This function optimizes for both best `profit` & stability. On stability, the fi
 
 #### `total_trades_threshold_low`
 It will also punish the HyperOpt if the trades found in an epoch are below the configured `total_trades_threshold_low` as a way to prevent over-fitting on too low trades with too high average duration.
- *(Setting can be found under the `total_trades` section in the `monigomani_hyperoptloss_settings` section inside [mgm-config](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json))*
+ *(Setting can be found under the `total_trades` section in the `monigomani_hyperoptloss_settings` section inside [mgm-config](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.example.json))*
 
 ## MGM_SortinoHyperOptLoss
 MGM_SortinoHyperOptLoss HyperOpt Objective function. Returns smaller number for better results. *(More negative = better)*
@@ -71,7 +71,7 @@ The Sortino ratio takes a result and subtracts the risk-free rate, and then divi
 
 #### `total_trades_threshold_low`
 It has been customized to also punish the HyperOpt if the trades found in an epoch are below the configured `total_trades_threshold_low` as a way to prevent over-fitting on too low trades with too high average duration.
- *(Setting can be found under the `total_trades` section in the `monigomani_hyperoptloss_settings` section inside [mgm-config](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json))*
+ *(Setting can be found under the `total_trades` section in the `monigomani_hyperoptloss_settings` section inside [mgm-config](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.example.json))*
 
 
 ## MGM_WeightedMultiParameterHyperOptLoss
@@ -81,7 +81,7 @@ This HyperOptLoss Function is a **final refinement** HyperOptLoss Function utili
 It allows the user to choose possible Parameter Weight Objective Configurations, which represent the columns from the HyperOpt output table,
 Each of these influence the outcome of the final Objective.
 
-All settings for the `MGM_WeightedMultiParameterHyperOptLoss` function can be found in your [mgm-config]([mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json)) under the `MGM_WeightedMultiParameterHyperOptLoss` section of the `monigomani_hyperoptloss_settings` section.
+All settings for the `MGM_WeightedMultiParameterHyperOptLoss` function can be found in your [mgm-config]([mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.example.json)) under the `MGM_WeightedMultiParameterHyperOptLoss` section of the `monigomani_hyperoptloss_settings` section.
 
 Following **parameter sections** can be configured to fine-tune your MoniGoMani Configuration further for more desired results:
 

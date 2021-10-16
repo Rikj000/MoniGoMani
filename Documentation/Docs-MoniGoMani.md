@@ -133,7 +133,7 @@ In total 5 files are used in the configuration of MoniGoMani, all can be found i
   ```
 
 ## mgm-config.json
-**Link to:** [mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.json)
+**Link to:** [mgm-config.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.example.json)
 The main `MoniGoMani` settings can be found under `monigomani_settings`:
 
 | Parameter(s) | Description |
