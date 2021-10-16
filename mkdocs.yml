@@ -17,14 +17,8 @@ theme:
       primary: green grey
       accent: tear
       toggle:
-        icon: material/toggle-switch-on-outline
+        icon: material/toggle-switch
         name: Switch to light mode
-#  icon:
-#    logo: material/book-open-page-variant
-#  palette:
-#    scheme: dracula
-#    primary: deep purple
-#    accent: deep purple
 docs_dir: Documentation
 nav:
   - Home: README.md
