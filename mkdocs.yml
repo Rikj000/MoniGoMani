@@ -4,6 +4,21 @@ repo_url: https://github.com/Rikj000/MoniGoMani
 use_directory_urls: True
 theme:
   name: material
+  logo: Documentation/MoniGoManiLogo.png
+  favicon: Documentation/MoniGoManiLogo.png
+  palette:
+    - scheme: default
+      primary: green grey
+      accent: tear
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+        primary: green grey
+        accent: 'tear'
+        toggle:
+          icon: material/toggle-switch-on-outline
+          name: Switch to light mode
 #  icon:
 #    logo: material/book-open-page-variant
 #  palette:
