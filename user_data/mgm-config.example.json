@@ -1,8 +1,10 @@
 {
   "monigomani_settings": {
-    "timeframe": "30m",
-    "trend_timeframe": "4h",
-    "backtest_timeframe": "5m",
+    "timeframes": {
+      "backtest_timeframe": "5m",
+      "core_trend_timeframe_multiplier": 8,
+      "timeframe": "30m"
+    },
     "startup_candle_count": 400,
     "precision": 1,
     "trading_during_trends": {

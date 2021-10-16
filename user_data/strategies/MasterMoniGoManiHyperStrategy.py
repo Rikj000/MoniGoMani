@@ -97,9 +97,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
     # Apply the loaded MoniGoMani Settings
     try:
-        timeframe = mgm_config['timeframe']
-        trend_timeframe = mgm_config['trend_timeframe'] or mgm_config['timeframe']
-        backtest_timeframe = mgm_config['backtest_timeframe']
+        backtest_timeframe = mgm_config["timeframes"]['backtest_timeframe']
+        core_trend_timeframe_multiplier = mgm_config["timeframes"]['core_trend_timeframe_multiplier']
+        timeframe = mgm_config["timeframes"]['timeframe']
         startup_candle_count = mgm_config['startup_candle_count']
         precision = mgm_config['precision']
         min_weighted_signal_value = mgm_config['weighted_signal_spaces']['min_weighted_signal_value']
@@ -192,7 +192,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     # Initialize some parameters which will be automatically configured/used by MoniGoMani
     use_custom_stoploss = True  # Leave this enabled (Needed for open_trade custom_information_storage)
     is_dry_live_run_detected = True  # Class level runmode detection, Gets set automatically
-    core_trend_timeframe = trend_timeframe  # Gets set automatically
     informative_timeframe = timeframe  # Gets set automatically
     timeframe_multiplier = None  # Gets set automatically
     separator = 1.5  # Gets set automatically
@@ -443,6 +442,40 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return dataframe
 
+    def minutes_to_timeframe(self, minutes: int) -> str:
+        """
+        Calculates the corresponding timeframe for the amount of minutes provided
+
+        :param minutes: (int) Amount of minutes to parse to the closest candle size
+        :return: (str) The parsed timeframe / candle size
+        """
+
+        if minutes < 1:
+            timeframe_number = 60 * minutes
+            timeframe_size = 's'  # Return seconds
+        elif minutes < 60:
+            timeframe_number = minutes
+            timeframe_size = 'm'  # Return minutes
+        elif minutes < 1440:
+            timeframe_number = minutes / 60
+            timeframe_size = 'h'  # Return hours
+        elif minutes < 10080:
+            timeframe_number = minutes / 1440
+            timeframe_size = 'd'  # Return days
+        elif minutes < 40320:
+            timeframe_number = minutes / 10080
+            timeframe_size = 'w'  # Return weeks
+        else:
+            timeframe_number = minutes / 40320
+            timeframe_size = 'M'  # Return months
+
+        if (timeframe_number - int(timeframe_number) == 0) is False:
+            sys.exit(f'MoniGoManiHyperStrategy - ERROR - MoniGoMani could not correctly parse the provided minutes '
+                     f'({minutes}m) to a usable timeframe format ({str(timeframe_number)}{timeframe_size})! '
+                     f'Please adjust the "timeframes" section of your "mgm-config"!')
+
+        return f'{str(int(timeframe_number))}{timeframe_size}'
+
     def _populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Adds indicators based on Run-Mode & TimeFrame-Zoom:
@@ -460,9 +493,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         tfz = 'TimeFrame-Zoom'
         # Populate core trend indicators
+        core_trend_timeframe = self.minutes_to_timeframe(
+            minutes=(timeframe_to_minutes(self.informative_timeframe) * self.core_trend_timeframe_multiplier))
+
         core_trend = load_pair_history(pair=metadata['pair'],
                                        datadir=self.config['datadir'],
-                                       timeframe=self.core_trend_timeframe,
+                                       timeframe=core_trend_timeframe,
                                        # ToDo: calculate correct startup_candles needed for HT_TRENDMODE and SAR
                                        startup_candles=self.startup_candle_count,
                                        data_format=self.config.get('dataformat_ohlcv', 'json'))
@@ -488,16 +524,16 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             # Merge core trend to informative data frame
             informative = merge_informative_pair(
                 informative, core_trend[['date', 'ht_trendmode', 'sar', 'trend']].copy(),
-                self.informative_timeframe, self.core_trend_timeframe, ffill=True)
-            skip_columns = [f'{s}_{self.core_trend_timeframe}' for s in
+                self.informative_timeframe, core_trend_timeframe, ffill=True)
+            skip_columns = [f'{s}_{core_trend_timeframe}' for s in
                             ['date', 'open', 'high', 'low', 'close', 'volume']]
-            informative.rename(columns=lambda s: s.replace('_{}'.format(self.core_trend_timeframe),
+            informative.rename(columns=lambda s: s.replace('_{}'.format(core_trend_timeframe),
                                                            '') if (s not in skip_columns) else s, inplace=True)
 
             # Populate indicators at a larger timeframe
             informative = self.do_populate_indicators(informative.copy(), metadata)
             # Drop unused columns to keep the dataframe lightweight
-            drop_columns = ['open', 'high', 'low', 'close', 'volume', f'date_{self.core_trend_timeframe}']
+            drop_columns = ['open', 'high', 'low', 'close', 'volume', f'date_{core_trend_timeframe}']
             informative.drop(drop_columns, inplace=True, axis=1)
             # Merge indicators back in with, filling in missing values.
             dataframe = merge_informative_pair(dataframe, informative, self.timeframe,
@@ -518,12 +554,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             # Merge core trend to main data frame
             dataframe = merge_informative_pair(
                 dataframe, core_trend[['date', 'ht_trendmode', 'sar', 'trend', 'mgm_trend']].copy(),
-                self.timeframe, self.core_trend_timeframe, ffill=True)
-            skip_columns = [f'{s}_{self.core_trend_timeframe}' for s in
+                self.timeframe, core_trend_timeframe, ffill=True)
+            skip_columns = [f'{s}_{core_trend_timeframe}' for s in
                             ['date', 'open', 'high', 'low', 'close', 'volume']]
-            dataframe.rename(columns=lambda s: s.replace('_{}'.format(self.core_trend_timeframe),
+            dataframe.rename(columns=lambda s: s.replace('_{}'.format(core_trend_timeframe),
                                                          '') if (s not in skip_columns) else s, inplace=True)
-            dataframe.drop([f'date_{self.core_trend_timeframe}'], inplace=True, axis=1)
+            dataframe.drop([f'date_{core_trend_timeframe}'], inplace=True, axis=1)
 
             # Just populate indicators.
             dataframe = self.do_populate_indicators(dataframe, metadata)
