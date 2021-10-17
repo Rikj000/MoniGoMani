@@ -945,7 +945,7 @@ class MGMHurry:
             message=f'🚀 Fresh **{strategy}** Plot Profit Results ⬇️', results_paths=[output_file_path])
 
     def plot_stats(self, choose_results: bool = True,
-                  strategy: str = None, output_file_name: str = None) -> None:
+                   strategy: str = None, output_file_name: str = None) -> None:
         """
         Plot the stats report from a BackTest into detail html file.
 
