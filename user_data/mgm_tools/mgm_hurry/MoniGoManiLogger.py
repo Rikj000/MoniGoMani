@@ -52,7 +52,7 @@ class MGMLogger(logging.Logger):
                                                        func=None, extra=None, sinfo=None)
 
         # The magic filtering happens right here!
-        log_record.__dict__['message'] = self.clean_line(log_record.__dict__['message'])
+        log_record.__dict__['msg'] = self.clean_line(log_record.__dict__['msg'])
 
         return log_record
 
