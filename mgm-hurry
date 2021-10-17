@@ -25,6 +25,8 @@ from datetime import datetime
 from string import Template
 
 import fire
+import pandas as pd  # noqa
+import quantstats as qs
 from art import tprint
 from InquirerPy import prompt
 from InquirerPy.validator import NumberValidator
@@ -649,7 +651,7 @@ class MGMHurry:
         :param clean_start: (bool, Optional): Cleanup MoniGoMani before starting the HO? Defaults to False.
         :param do_backtest: (bool, Optional): Do a BackTest after the HO? Defaults to True.
         :param plot_profits: (bool, Optional): Plot a Profits graph after the BackTest? Defaults to True.
-        :param plot_stats: (bool, Optional): Plot a stats report after the BackTest using QuantStats? Defaults to True.
+        :param plot_stats: (bool, Optional): Plot a QuantStats report after the BackTest? Defaults to True.
         :param importance_report: (bool, Optional): Calculate a signal importance report after the HO? Defaults to True.
         :param export_csv: (bool, Optional): Export the HO results into a '.csv' SpreadSheet? Defaults to True.
         :param output_file_name: (str, Optional) Custom filename for the HyperOptResults '.log' file that will be
@@ -879,7 +881,7 @@ class MGMHurry:
                              strategy=strategy, output_file_name=output_file_name)
         if plot_stats is True:
             try:
-                self.plot_stat(choose_results=False, strategy=strategy, output_file_name=output_file_name)
+                self.plot_stats(choose_results=False, strategy=strategy, output_file_name=output_file_name)
             except:
                 self.logger.error(Color.red(f'Create stats html report failed'))
 
@@ -941,32 +943,22 @@ class MGMHurry:
             username=self.monigomani_config.config['username'],
             message=f'🚀 Fresh **{strategy}** Plot Profit Results ⬇️', results_paths=[output_file_path])
 
-    def plot_stat(self, choose_results: bool = True,
+    def plot_stats(self, choose_results: bool = True,
                   strategy: str = None, output_file_name: str = None) -> None:
         """
         Plot the stats report from a BackTest into detail html file.
 
         :param choose_results: (bool) If 'False' then the last BackTest result will be used.
             Defaults to an interactive prompt to choose a 'backtest-result-<timestamp>.json' file.
-        :param timerange: (str) Timerange that corresponds to the timerange used for the backtest-result
         :param strategy: (str, Optional): Strategy to use during BackTesting. Defaults to value in '.hurry'
         :param output_file_name: (str, Optional) Custom filename for the profit plot '.html' file that will be stored
             in the format: 'PlotProfitResults-<output_file_name>.html'. Defaults to 'Strategy + Current DateTime'.
         """
 
         self.logger.info(Color.title(f'👉 Plotting profit graph for BackTest results'))
-        try:
-            import quantstats as qs
-            # extend pandas functionality with metrics, etc.
-            qs.extend_pandas()
-        except ImportError:
-            self.logger.error(Color.red(f'🤷 QuantStats python module not found.\nPlease make sure that '
-                                        f'the you already installed mgm pip requirements or run `pip install quantstats` to install it manually!'))
-        try:
-            import pandas as pd
-        except ImportError:
-            self.logger.error(Color.red(f'🤷 Panda python module not found.\nPlease make sure that '
-                                        f'the you already installed mgm pip requirements or run `pip install pandas` to install it manually!'))
+
+        # extend pandas functionality with metrics, etc.
+        qs.extend_pandas()
 
         if strategy is None:
             strategy = self.monigomani_config.config['hyperopt']['strategy']
