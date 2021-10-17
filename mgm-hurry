@@ -25,6 +25,7 @@ from datetime import datetime
 from string import Template
 
 import fire
+import numpy as np  # noqa
 import pandas as pd  # noqa
 import quantstats as qs
 from art import tprint
@@ -991,11 +992,11 @@ class MGMHurry:
 
         backtest_trades['open_date'] = pd.to_datetime(backtest_trades['open_date'], utc=True, infer_datetime_format=True)
         daily_returns = backtest_trades[['open_date', 'profit_abs']].groupby(pd.Grouper(key="open_date", freq='D')).sum('profit_abs')
-        daily_returns['balance'] = daily_returns['profit_abs'].cumsum() + starting_balance
+        daily_returns['balance'] = np.cumsum(daily_returns['profit_abs']) + starting_balance
 
         dates = pd.date_range(daily_returns.index[0], daily_returns.index[-1], freq='D').tz_localize(None)
 
-        daily_returns =  pd.Series(daily_returns.balance).pct_change(1).values
+        daily_returns = pd.Series(daily_returns.balance).pct_change(1).values
         returns_time_series = pd.Series(daily_returns, index=pd.to_datetime(list(dates)))
 
         qs.reports.html(returns=returns_time_series, title=f'{strategy} {backtest_results_file}', output=output_file_path)
