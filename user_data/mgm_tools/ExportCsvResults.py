@@ -81,8 +81,8 @@ def ExportCsvResults(config_file, input_file, output_file):
     # results_df['balance_max'] = epochs['results_metrics.csum_max'].apply(lambda x: round(x,2))
     results_df['pairlist'] = epochs['results_metrics.pairlist']
     results_df['max_open_trades_setting'] = epochs['results_metrics.max_open_trades_setting']
-    results_df['timeframe'] = mgm_config['timeframe']
-    results_df['backtest_timeframe'] = mgm_config['backtest_timeframe']
+    results_df['timeframe'] = mgm_config['timeframes']['timeframe']
+    results_df['backtest_timeframe'] = mgm_config['timeframes']['backtest_timeframe']
     results_df['timerange'] = epochs['results_metrics.timerange']
     results_df['backtest_start'] = epochs['results_metrics.backtest_start']
     results_df['backtest_end'] = epochs['results_metrics.backtest_end']

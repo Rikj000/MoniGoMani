@@ -97,9 +97,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
     # Apply the loaded MoniGoMani Settings
     try:
-        backtest_timeframe = mgm_config["timeframes"]['backtest_timeframe']
-        core_trend_timeframe_multiplier = mgm_config["timeframes"]['core_trend_timeframe_multiplier']
-        timeframe = mgm_config["timeframes"]['timeframe']
+        backtest_timeframe = mgm_config['timeframes']['backtest_timeframe']
+        core_trend_timeframe_multiplier = mgm_config['timeframes']['core_trend_timeframe_multiplier']
+        timeframe = mgm_config['timeframes']['timeframe']
         startup_candle_count = mgm_config['startup_candle_count']
         precision = mgm_config['precision']
         min_weighted_signal_value = mgm_config['weighted_signal_spaces']['min_weighted_signal_value']
