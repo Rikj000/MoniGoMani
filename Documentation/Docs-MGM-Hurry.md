@@ -61,16 +61,18 @@ Setting it all up requires some knowledge of the entire process, until you found
     - [Options](#options-3)
   - [`mgm-hurry backtest`](#mgm-hurry-backtest)
     - [Options](#options-4)
-  - [`mgm-hurry importance_report`](#mgm-hurry-importance_report)
+  - [`mgm-hurry plot_stats`](#mgm-hurry-plot_stats)
     - [Option](#option-1)
-  - [`mgm-hurry export_csv`](#mgm-hurry-export_csv)
+  - [`mgm-hurry importance_report`](#mgm-hurry-importance_report)
     - [Option](#option-2)
+  - [`mgm-hurry export_csv`](#mgm-hurry-export_csv)
+    - [Option](#option-3)
   - [`mgm-hurry hyperopt_show_epoch`](#mgm-hurry-hyperopt_show_epoch)
     - [Options](#options-5)
   - [`mgm-hurry hyperopt_show_results`](#mgm-hurry-hyperopt_show_results)
     - [Options](#options-6)
   - [`mgm-hurry start_trader`](#mgm-hurry-start_trader)
-    - [Option](#option-3)
+    - [Option](#option-4)
 - [## Example timeranges](#-example-timeranges)
 - [Developer Notes](#developer-notes)
 - [### Virtual Environment](#-virtual-environment)
@@ -182,6 +184,8 @@ Runs HyperOpt process to find out the most positive settings.
 - **`--clean_start`:** *(Optional)* Perform [`mgm-hurry cleanup`](#mgm-hurry-cleanup) before starting HyperOpt.
 - **`--do_backtest`:** *(bool, Optional)* Do a BackTest after the HyperOpt?
   - **Defaults to:** True.
+- **`--plot_stats`:** *(bool, Optional)* Plot a QuantStats report after the BackTest?
+  - **Defaults to:** True.
 - **`--importance_report`:** *(bool, Optional)* Calculate a Signal Importance Report for MoniGoMani after the HyperOpt?
   - **Defaults to:** True.
 - **`--export_csv`:** *(bool, Optional)* Export the HyperOpt Results into a `.csv` SpreadSheet after the HyperOpt?
@@ -207,6 +211,16 @@ Runs BackTest process to find out more about the results found by HyperOpt.
   - **Defaults to:** True.
 - **`--output_file_name`:** *(Optional)* Custom name for the '.log' file being created.
   - **Defaults to:** Defaults to `BackTestResults-<Strategy-Name>-<Current-DateTime>`
+
+### `mgm-hurry plot_stats`
+Plot the stats report from a BackTest into detail html file.
+#### Option
+- **`--choose_results`:** *(Optional)* Launches a prompt to easily choose a certain backtest result file. If 'False' then the last BackTest result will be used.
+  - **Defaults to:** 'True' mean an interactive prompt to choose a 'backtest-result-<timestamp>.json' file.
+- **`--strategy`:** *(Optional)* Specify the Strategy of backTest result
+  - **Defaults to:** The `strategy` defined in the `hyperopt` section of your `.hurry` file.
+- **`--output_file_name`:** *(Optional)* Custom name for the `.html` file being created.
+  - **Defaults to:** Defaults to `PlotProfitResults-<Strategy-Name>-<Current-DateTime>`
 
 
 ### `mgm-hurry importance_report`
