@@ -354,7 +354,7 @@ class MoniGoManiCli(object):
         # Calculate the amount of days to add to the timerange based on the startup candle count & candle size
         mgm_config_files = self.monigomani_config.load_config_files()
         timeframe_minutes = self.timeframe_to_minutes(
-            mgm_config_files['mgm-config']['monigomani_settings']['timeframe'])
+            mgm_config_files['mgm-config']['monigomani_settings']['timeframes']['timeframe'])
         startup_candle_count = mgm_config_files['mgm-config']['monigomani_settings']['startup_candle_count']
         extra_days = ceil((timeframe_minutes * startup_candle_count) / (60 * 24))
 
