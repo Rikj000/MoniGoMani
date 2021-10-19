@@ -606,6 +606,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: (dict) Dictionary containing the trend data for the pairs unclogger_trend_lookback_candles_window
         """
 
+        # ToDo: ReWrite Unclogger for Multi Candle Usage
         # Fetch all needed 'trend' trade data
         stored_trend_dataframe = {}
         dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
@@ -613,21 +614,21 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         self.mgm_logger('debug', 'Open Trade Unclogger', 'Fetching all needed "trend" trade data')
         trend_lookback_candles_window = self.get_param_value('sell___unclogger_trend_lookback_candles_window')
         for candle in range(1, trend_lookback_candles_window + 1):
-            # Convert the candle time to the one being used by the 'informative_timeframe'
-            candle_multiplier = int(self.informative_timeframe.rstrip('mhdwM'))
-            candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+            # Convert the candle time to the one being used by the 'base_weighted_signal_timeframe'
+            candle_multiplier = int(self.base_weighted_signal_timeframe.rstrip('mhdwM'))
+            candle_time = (timeframe_to_prev_date(self.base_weighted_signal_timeframe, current_time) -
                            timedelta(minutes=int(candle * candle_multiplier)))
-            if self.informative_timeframe.find('h') != -1:
-                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+            if self.base_weighted_signal_timeframe.find('h') != -1:
+                candle_time = (timeframe_to_prev_date(self.base_weighted_signal_timeframe, current_time) -
                                timedelta(hours=int(candle * candle_multiplier)))
-            elif self.informative_timeframe.find('d') != -1:
-                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+            elif self.base_weighted_signal_timeframe.find('d') != -1:
+                candle_time = (timeframe_to_prev_date(self.base_weighted_signal_timeframe, current_time) -
                                timedelta(days=int(candle * candle_multiplier)))
-            elif self.informative_timeframe.find('w') != -1:
-                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+            elif self.base_weighted_signal_timeframe.find('w') != -1:
+                candle_time = (timeframe_to_prev_date(self.base_weighted_signal_timeframe, current_time) -
                                timedelta(weeks=int(candle * candle_multiplier)))
-            elif self.informative_timeframe.find('M') != -1:
-                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+            elif self.base_weighted_signal_timeframe.find('M') != -1:
+                candle_time = (timeframe_to_prev_date(self.base_weighted_signal_timeframe, current_time) -
                                timedelta64(int(candle * candle_multiplier), 'M'))
 
             candle_trend = dataframe.loc[dataframe['date'] == candle_time].squeeze()['trend']
@@ -1004,7 +1005,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         number_of_weighted_signals = int(getattr(self, f'number_of_weighted_{space}_signals'))
 
         conditions_weight = []
-        # If TimeFrame-Zooming => Only use 'informative_timeframe' data
         for trend in self.mgm_trends:
             if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                 corrected_totals = self.get_corrected_totals_needed(
