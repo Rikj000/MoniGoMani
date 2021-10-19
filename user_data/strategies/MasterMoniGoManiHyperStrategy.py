@@ -500,7 +500,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         'timeframe' (1h candles) to compute indicators.
 
         If BackTesting/HyperOpting with TimeFrame-Zoom it pulls 'informative_pairs' (1h candles)
-        to compute indicators, but then tests upon 'backtest_timeframe' (5m or 1m candles)
+        to compute indicators, but then tests upon 'timeframe' (5m or 1m candles)
         to simulate price movement during that 'timeframe' (1h candle).
 
         :param dataframe: (DataFrame) DataFrame with data from the exchange
@@ -508,78 +508,43 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return DataFrame: DataFrame for MoniGoMani with all mandatory indicator data populated
         """
 
-        tfz = 'TimeFrame-Zoom'
-        # Populate core trend indicators
-        core_trend_timeframe = self.minutes_to_timeframe(
-            minutes=(timeframe_to_minutes(self.informative_timeframe) * self.core_trend_timeframe_multiplier))
+        mtf = 'Multi-TimeFrame'
+        for weighted_signal_timeframe in self.weighted_signal_timeframes:
+            # Load the pair history at a weighted_signal_timeframe candle size & Populate the weighted signal indicators
+            self.mgm_logger('debug', mtf, f'Populating weighted signal ({weighted_signal_timeframe}) indicators')
+            weighted_signal_dataframe = load_pair_history(pair=metadata['pair'],
+                                                          datadir=self.config['datadir'],
+                                                          timeframe=weighted_signal_timeframe,
+                                                          startup_candles=self.startup_candle_count,
+                                                          data_format=self.config.get('dataformat_ohlcv', 'json'))
+            weighted_signal_dataframe = self.do_populate_indicators(weighted_signal_dataframe.copy(), metadata)
 
-        core_trend = load_pair_history(pair=metadata['pair'],
-                                       datadir=self.config['datadir'],
-                                       timeframe=core_trend_timeframe,
-                                       # ToDo: calculate correct startup_candles needed for HT_TRENDMODE and SAR
-                                       startup_candles=self.startup_candle_count,
-                                       data_format=self.config.get('dataformat_ohlcv', 'json'))
-        core_trend = self._populate_core_trend(core_trend, metadata)
+            # Load the pair history at a core_trend_timeframe candle size & Populate the core trend indicators
+            core_trend_timeframe = self.core_trend_timeframes[weighted_signal_timeframe]
+            self.mgm_logger('debug', mtf, f'Populating core trend ({core_trend_timeframe}) indicators')
+            core_trend_dataframe = load_pair_history(pair=metadata['pair'],
+                                                     datadir=self.config['datadir'],
+                                                     timeframe=core_trend_timeframe,
+                                                     startup_candles=self.startup_candle_count,
+                                                     data_format=self.config.get('dataformat_ohlcv', 'json'))
+            core_trend_dataframe = self._populate_core_trend(core_trend_dataframe, metadata)
 
-        # Compute indicator data during Backtesting / Hyperopting when TimeFrame-Zooming
-        if (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe):
-            self.mgm_logger('info', tfz, f'Backtesting/Hyperopting this strategy with a informative_timeframe '
-                                         f'({self.informative_timeframe} candles) and a zoomed backtest_timeframe '
-                                         f'({self.backtest_timeframe} candles)')
+            # Merge the core_trend_dataframe with the weighted_signal_dataframe
+            self.mgm_logger('debug', mtf, f'Merging core trend ({core_trend_timeframe}) & '
+                                          f'weighted signal ({weighted_signal_timeframe}) indicators '
+                                          f'into main dataframe ({self.timeframe})')
+            weighted_signal_dataframe = merge_informative_pair(
+                weighted_signal_dataframe, core_trend_dataframe[['date', 'ht_trendmode', 'sar', 'trend']].copy(),
+                weighted_signal_timeframe, core_trend_timeframe, ffill=True)
 
-            # Warning! This method gets ALL downloaded data for the given timeframe (when in BackTesting mode).
-            # If you have many months or years downloaded for this pair, this will take a long time!
-            informative = load_pair_history(pair=metadata['pair'],
-                                            datadir=self.config['datadir'],
-                                            timeframe=self.informative_timeframe,
-                                            startup_candles=self.startup_candle_count,
-                                            data_format=self.config.get('dataformat_ohlcv', 'json'))
-            # Throw away older data that isn't needed.
-            first_informative = dataframe['date'].min().floor('H')
-            informative = informative[informative['date'] >= first_informative]
-
-            # Merge core trend to informative data frame
-            informative = merge_informative_pair(
-                informative, core_trend[['date', 'ht_trendmode', 'sar', 'trend']].copy(),
-                self.informative_timeframe, core_trend_timeframe, ffill=True)
-            skip_columns = [f'{s}_{core_trend_timeframe}' for s in
-                            ['date', 'open', 'high', 'low', 'close', 'volume']]
-            informative.rename(columns=lambda s: s.replace('_{}'.format(core_trend_timeframe),
-                                                           '') if (s not in skip_columns) else s, inplace=True)
-
-            # Populate indicators at a larger timeframe
-            informative = self.do_populate_indicators(informative.copy(), metadata)
-            # Drop unused columns to keep the dataframe lightweight
-            drop_columns = ['open', 'high', 'low', 'close', 'volume', f'date_{core_trend_timeframe}']
-            informative.drop(drop_columns, inplace=True, axis=1)
-            # Merge indicators back in with, filling in missing values.
-            dataframe = merge_informative_pair(dataframe, informative, self.timeframe,
-                                               self.informative_timeframe, ffill=True)
-            # Rename columns, since merge_informative_pair adds `_<timeframe>` to the end of each name.
-            # Skip over date etc..
-            skip_columns = [f'{s}_{self.informative_timeframe}' for s in
-                            ['date', 'open', 'high', 'low', 'close', 'volume']]
-            dataframe.rename(columns=lambda s: s.replace('_{}'.format(self.informative_timeframe),
-                                                         '') if (s not in skip_columns) else s, inplace=True)
-            dataframe.drop([f'date_{self.informative_timeframe}'], inplace=True, axis=1)
-
-        # Compute indicator data normally during Dry & Live Running or when not using TimeFrame-Zoom
-        else:
-            self.mgm_logger('info', tfz,
-                            f'Dry/Live-running MoniGoMani with normal timeframe ({self.timeframe} candles)')
-
-            # Merge core trend to main data frame
+            # Merge the weighted_signal_dataframe with the main dataframe
             dataframe = merge_informative_pair(
-                dataframe, core_trend[['date', 'ht_trendmode', 'sar', 'trend', 'mgm_trend']].copy(),
-                self.timeframe, core_trend_timeframe, ffill=True)
-            skip_columns = [f'{s}_{core_trend_timeframe}' for s in
-                            ['date', 'open', 'high', 'low', 'close', 'volume']]
-            dataframe.rename(columns=lambda s: s.replace('_{}'.format(core_trend_timeframe),
-                                                         '') if (s not in skip_columns) else s, inplace=True)
-            dataframe.drop([f'date_{core_trend_timeframe}'], inplace=True, axis=1)
+                dataframe, weighted_signal_dataframe, self.timeframe, weighted_signal_timeframe, ffill=True)
 
-            # Just populate indicators.
-            dataframe = self.do_populate_indicators(dataframe, metadata)
+            # Drop unused columns to keep the dataframe as light as possible
+            drop_columns = ['open', 'high', 'low', 'close', 'volume', 'date', f'date_{core_trend_timeframe}']
+            drop_columns = [f'{drop_column}_{weighted_signal_timeframe}' for drop_column in drop_columns]
+            dataframe.drop(drop_columns, inplace=True, axis=1)
 
         return dataframe
 
