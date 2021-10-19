@@ -97,9 +97,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
     # Apply the loaded MoniGoMani Settings
     try:
-        backtest_timeframe = mgm_config['timeframes']['backtest_timeframe']
+        timeframe = mgm_config['timeframes']['base_timeframe']
         core_trend_timeframe_multiplier = mgm_config['timeframes']['core_trend_timeframe_multiplier']
-        timeframe = mgm_config['timeframes']['timeframe']
+        weighted_signal_timeframes = mgm_config['timeframes']['weighted_signal_timeframes']
+        roi_timeframe = mgm_config['timeframes']['roi_timeframe']
         startup_candle_count = mgm_config['startup_candle_count']
         precision = mgm_config['precision']
         min_weighted_signal_value = mgm_config['weighted_signal_spaces']['min_weighted_signal_value']
@@ -234,9 +235,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         @staticmethod
         def roi_space() -> List[Dimension]:
             """
-            Create a ROI space. Defines values to search for each ROI steps.
-            This method implements adaptive roi HyperSpace with varied ranges for parameters which automatically adapts
-            to the un-zoomed informative_timeframe used by the MGM Framework during BackTesting & HyperOpting.
+            Create a ROI (Return of Interest) space. Defines values to search for each ROI steps.
+            This method implements adaptive ROI HyperSpace with varied ranges for parameters which automatically adapts
+            to the un-zoomed base_weighted_signal_timeframe used by the MGM Framework during BackTesting & HyperOpting.
 
             :return List: Generated ROI Space
             """
@@ -248,8 +249,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             # roi_p_alpha: Limits for the ROI value steps. Components are scaled logarithmically.
             roi_p_alpha = MasterMoniGoManiHyperStrategy.roi_value_step_scaling
 
-            # Load in the un-zoomed timeframe size from the Master MGM Framework
-            timeframe_min = timeframe_to_minutes(MasterMoniGoManiHyperStrategy.informative_timeframe)
+            # Load in the ROI timeframe size from the Master MGM Framework
+            timeframe_min = timeframe_to_minutes(MasterMoniGoManiHyperStrategy.roi_timeframe)
 
             # The scaling is designed so that it maps exactly to the legacy Freqtrade roi_space()
             # method for the 5m timeframe.
