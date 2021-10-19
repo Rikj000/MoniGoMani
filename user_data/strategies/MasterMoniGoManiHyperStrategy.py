@@ -1328,8 +1328,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             setattr(base_cls, 'sell_signals', sell_signals)
 
             # Set number of weighted buy/sell signals for later use.
-            setattr(base_cls, 'number_of_weighted_buy_signals', len(buy_signals))
-            setattr(base_cls, 'number_of_weighted_sell_signals', len(sell_signals))
+            amount_of_timeframes = len(base_cls.weighted_signal_timeframes)
+            setattr(base_cls, 'number_of_weighted_buy_signals', len(buy_signals) * amount_of_timeframes)
+            setattr(base_cls, 'number_of_weighted_sell_signals', len(sell_signals) * amount_of_timeframes)
 
             # Sets the useful parameters of the MGM, such as unclogger and etc
             base_cls.init_util_params(base_cls)
