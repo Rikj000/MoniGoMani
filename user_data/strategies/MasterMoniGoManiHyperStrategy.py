@@ -411,6 +411,11 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return deep_merge_dicts(framework_plots, weighted_signal_plots)
 
+    @property
+    def core_trend_timeframe(self):
+        return self.minutes_to_timeframe(
+            minutes=(timeframe_to_minutes(self.informative_timeframe) * self.core_trend_timeframe_multiplier))
+
     def _populate_core_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Adds the core indicators used to define trends to the strategy engine.
@@ -492,23 +497,21 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         """
 
         tfz = 'TimeFrame-Zoom'
-        # Populate core trend indicators
-        core_trend_timeframe = self.minutes_to_timeframe(
-            minutes=(timeframe_to_minutes(self.informative_timeframe) * self.core_trend_timeframe_multiplier))
-
-        core_trend = load_pair_history(pair=metadata['pair'],
-                                       datadir=self.config['datadir'],
-                                       timeframe=core_trend_timeframe,
-                                       # ToDo: calculate correct startup_candles needed for HT_TRENDMODE and SAR
-                                       startup_candles=self.startup_candle_count,
-                                       data_format=self.config.get('dataformat_ohlcv', 'json'))
-        core_trend = self._populate_core_trend(core_trend, metadata)
 
         # Compute indicator data during Backtesting / Hyperopting when TimeFrame-Zooming
         if (self.is_dry_live_run_detected is False) and (self.informative_timeframe != self.backtest_timeframe):
             self.mgm_logger('info', tfz, f'Backtesting/Hyperopting this strategy with a informative_timeframe '
                                          f'({self.informative_timeframe} candles) and a zoomed backtest_timeframe '
                                          f'({self.backtest_timeframe} candles)')
+
+            # Populate core trend indicators
+            core_trend = load_pair_history(pair=metadata['pair'],
+                                           datadir=self.config['datadir'],
+                                           timeframe=self.core_trend_timeframe,
+                                           # ToDo: calculate correct startup_candles needed for HT_TRENDMODE and SAR
+                                           startup_candles=self.startup_candle_count,
+                                           data_format=self.config.get('dataformat_ohlcv', 'json'))
+            core_trend = self._populate_core_trend(core_trend, metadata)
 
             # Warning! This method gets ALL downloaded data for the given timeframe (when in BackTesting mode).
             # If you have many months or years downloaded for this pair, this will take a long time!
@@ -524,16 +527,16 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             # Merge core trend to informative data frame
             informative = merge_informative_pair(
                 informative, core_trend[['date', 'ht_trendmode', 'sar', 'trend']].copy(),
-                self.informative_timeframe, core_trend_timeframe, ffill=True)
-            skip_columns = [f'{s}_{core_trend_timeframe}' for s in
+                self.informative_timeframe, self.core_trend_timeframe, ffill=True)
+            skip_columns = [f'{s}_{self.core_trend_timeframe}' for s in
                             ['date', 'open', 'high', 'low', 'close', 'volume']]
-            informative.rename(columns=lambda s: s.replace('_{}'.format(core_trend_timeframe),
+            informative.rename(columns=lambda s: s.replace('_{}'.format(self.core_trend_timeframe),
                                                            '') if (s not in skip_columns) else s, inplace=True)
 
             # Populate indicators at a larger timeframe
             informative = self.do_populate_indicators(informative.copy(), metadata)
             # Drop unused columns to keep the dataframe lightweight
-            drop_columns = ['open', 'high', 'low', 'close', 'volume', f'date_{core_trend_timeframe}']
+            drop_columns = ['open', 'high', 'low', 'close', 'volume', f'date_{self.core_trend_timeframe}']
             informative.drop(drop_columns, inplace=True, axis=1)
             # Merge indicators back in with, filling in missing values.
             dataframe = merge_informative_pair(dataframe, informative, self.timeframe,
@@ -551,15 +554,19 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             self.mgm_logger('info', tfz,
                             f'Dry/Live-running MoniGoMani with normal timeframe ({self.timeframe} candles)')
 
+            # Populate core trend indicators
+            core_trend = self.dp.get_pair_dataframe(pair=metadata['pair'], timeframe=self.core_trend_timeframe)
+            core_trend = self._populate_core_trend(core_trend, metadata)
+
             # Merge core trend to main data frame
             dataframe = merge_informative_pair(
                 dataframe, core_trend[['date', 'ht_trendmode', 'sar', 'trend', 'mgm_trend']].copy(),
-                self.timeframe, core_trend_timeframe, ffill=True)
-            skip_columns = [f'{s}_{core_trend_timeframe}' for s in
+                self.timeframe, self.core_trend_timeframe, ffill=True)
+            skip_columns = [f'{s}_{self.core_trend_timeframe}' for s in
                             ['date', 'open', 'high', 'low', 'close', 'volume']]
-            dataframe.rename(columns=lambda s: s.replace('_{}'.format(core_trend_timeframe),
+            dataframe.rename(columns=lambda s: s.replace('_{}'.format(self.core_trend_timeframe),
                                                          '') if (s not in skip_columns) else s, inplace=True)
-            dataframe.drop([f'date_{core_trend_timeframe}'], inplace=True, axis=1)
+            dataframe.drop([f'date_{self.core_trend_timeframe}'], inplace=True, axis=1)
 
             # Just populate indicators.
             dataframe = self.do_populate_indicators(dataframe, metadata)
