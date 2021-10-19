@@ -397,3 +397,106 @@ class MoniGoManiCli(object):
         else:
             raise TypeError(f'timeframe unit {unit} is not supported')
         return (amount * scale) // 60
+
+    @staticmethod
+    def minutes_to_timeframe(minutes: int) -> str:
+        """
+        Calculates the corresponding timeframe for the amount of minutes provided
+
+        :param minutes: (int) Amount of minutes to parse to the closest candle size
+        :return: (str) The parsed timeframe / candle size
+        """
+
+        if minutes < 1:
+            timeframe_number = 60 * minutes
+            timeframe_size = 's'  # Return seconds
+        elif minutes < 60:
+            timeframe_number = minutes
+            timeframe_size = 'm'  # Return minutes
+        elif minutes < 1440:
+            timeframe_number = minutes / 60
+            timeframe_size = 'h'  # Return hours
+        elif minutes < 10080:
+            timeframe_number = minutes / 1440
+            timeframe_size = 'd'  # Return days
+        elif minutes < 40320:
+            timeframe_number = minutes / 10080
+            timeframe_size = 'w'  # Return weeks
+        else:
+            timeframe_number = minutes / 40320
+            timeframe_size = 'M'  # Return months
+
+        if (timeframe_number - int(timeframe_number) == 0) is False:
+            sys.exit(f'MoniGoManiCli - ERROR - MoniGoMani could not correctly parse the provided minutes '
+                     f'({minutes}m) to a usable timeframe format ({str(round(timeframe_number, 2))}{timeframe_size})!'
+                     f'\nPlease adjust the "timeframes" section of your "mgm-config"!')
+
+        return f'{str(int(timeframe_number))}{timeframe_size}'
+
+    def get_timeframe_list(self) -> list[str]:
+        """
+        Fetches a list of all the timeframes used by MoniGoMani as it's configured in 'mgm-config'
+        :return: (list) List of string containing all the timeframes used by MoniGoMani
+        """
+
+        # Load the MoniGoMani timeframes settings section
+        mgm_config_files = self.monigomani_config.load_config_files()
+        timeframes_section = mgm_config_files['mgm-config']['monigomani_settings']['timeframes']
+
+        # Build the list of all timeframes used
+        timeframe_list = [timeframes_section['base_timeframe'], timeframes_section['roi_timeframe']]
+        for weighted_signal_timeframe in timeframes_section['weighted_signal_timeframes']:
+            timeframe_list.append(weighted_signal_timeframe)
+
+            # Calculate the core_trend_timeframes used
+            core_trend_timeframe = self.minutes_to_timeframe(
+                minutes=(self.timeframe_to_minutes(weighted_signal_timeframe)
+                         * timeframes_section['core_trend_timeframe_multiplier']))
+            timeframe_list.append(core_trend_timeframe)
+
+        return timeframe_list
+
+    def get_default_timeframe_options(self) -> list[dict]:
+        """
+        Returns a list of dictionaries with selectable timeframe data.
+        It will automatically toggle on the timeframes used by MoniGoMani.
+
+        :return: (list[dict]) Returns a list with timeframe prompt options
+        """
+        timeframe_list = self.get_timeframe_list()
+        timeframe_options = [
+            {'name': '1m', 'value': '1m', 'enabled': False},
+            {'name': '3m', 'value': '3m', 'enabled': False},
+            {'name': '5m', 'value': '5m', 'enabled': False},
+            {'name': '15m', 'value': '15m', 'enabled': False},
+            {'name': '30m', 'value': '30m', 'enabled': False},
+            {'name': '1h', 'value': '1h', 'enabled': False},
+            {'name': '2h', 'value': '2h', 'enabled': False},
+            {'name': '4h', 'value': '4h', 'enabled': False},
+            {'name': '6h', 'value': '6h', 'enabled': False},
+            {'name': '8h', 'value': '8h', 'enabled': False},
+            {'name': '12h', 'value': '12h', 'enabled': False},
+            {'name': '1d', 'value': '1d', 'enabled': False},
+            {'name': '3d', 'value': '3d', 'enabled': False},
+            {'name': '1w', 'value': '1w', 'enabled': False},
+            {'name': '2w', 'value': '2w', 'enabled': False},
+            {'name': '1M', 'value': '1M', 'enabled': False},
+            {'name': '1y', 'value': '1y', 'enabled': False}
+        ]
+
+        for timeframe in timeframe_list:
+            timeframe_usable = False
+            timeframe_option_index = 0
+
+            for timeframe_option in timeframe_options[:]:
+                if timeframe == timeframe_option['value']:
+                    timeframe_options[timeframe_option_index]['enabled'] = True
+                    timeframe_usable = True
+                    break
+                timeframe_option_index += 1
+
+            if timeframe_usable is False:
+                self.logger.warning(Color.yellow(f'🤷 The configured timeframe ({timeframe}) is not usable by Freqtrade!'
+                                                 f'\nPlease adjust the "timeframes" section of your "mgm-config"!'))
+
+        return timeframe_options
