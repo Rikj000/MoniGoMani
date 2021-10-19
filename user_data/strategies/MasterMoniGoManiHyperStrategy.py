@@ -193,8 +193,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     # Initialize some parameters which will be automatically configured/used by MoniGoMani
     use_custom_stoploss = True  # Leave this enabled (Needed for open_trade custom_information_storage)
     is_dry_live_run_detected = True  # Class level runmode detection, Gets set automatically
-    informative_timeframe = timeframe  # Gets set automatically
-    timeframe_multiplier = None  # Gets set automatically
+    # base_weighted_signal_timeframe = weighted_signal_timeframes[0]  # ToDo: Remove
+    base_timeframe_multipliers = {}  # Gets set automatically
+    core_trend_timeframes = {}  # Gets set automatically
     separator = 1.5  # Gets set automatically
     separator_candle_weight_reducer = 0.03  # Gets set automatically
 
@@ -391,6 +392,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param weighted_signal_plots: FreqUI plotting data used for weighted signals (and their indicators)
         :return dict: Complete FreqUI plotting data containing weighted signal + other MGM Framework plotting
         """
+
+        # ToDo: Generate the FreqUI pLots correctly for the different candle sizes being used
 
         # Plot configuration to show all signals used in MoniGoMani in FreqUI (Use load from Strategy in FreqUI)
         framework_plots = {
