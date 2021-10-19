@@ -515,27 +515,9 @@ class MGMHurry:
             'default': timerange
         }, {
             'type': 'checkbox',
-            'name': 'tickers',
-            'message': 'Specify which tickers to download: ',
-            'choices': [
-                {'name': '1m', 'value': '1m', 'enabled': False},
-                {'name': '3m', 'value': '3m', 'enabled': False},
-                {'name': '5m', 'value': '5m', 'enabled': True},
-                {'name': '15m', 'value': '15m', 'enabled': False},
-                {'name': '30m', 'value': '30m', 'enabled': True},
-                {'name': '1h', 'value': '1h', 'enabled': False},
-                {'name': '2h', 'value': '2h', 'enabled': False},
-                {'name': '4h', 'value': '4h', 'enabled': False},
-                {'name': '6h', 'value': '6h', 'enabled': False},
-                {'name': '8h', 'value': '8h', 'enabled': False},
-                {'name': '12h', 'value': '12h', 'enabled': False},
-                {'name': '1d', 'value': '1d', 'enabled': False},
-                {'name': '3d', 'value': '3d', 'enabled': False},
-                {'name': '1w', 'value': '1w', 'enabled': False},
-                {'name': '2w', 'value': '2w', 'enabled': False},
-                {'name': '1M', 'value': '1M', 'enabled': False},
-                {'name': '1y', 'value': '1y', 'enabled': False}
-            ],
+            'name': 'timeframes',
+            'message': 'Specify which timeframes (candle sizes) to download: ',
+            'choices': self.monigomani_cli.get_default_timeframe_options(),
             'validate': lambda result: len(result) >= 1,
             'invalid_message': 'should be at least 1 selection',
             'instruction': '(select at least 1)',
@@ -554,17 +536,17 @@ class MGMHurry:
             sys.exit()
 
         timerange = answers.get('timerange')
-        tickers = answers.get('tickers')
+        timeframes = answers.get('timeframes')
         extra_data = answers.get('extra_data')
 
         if extra_data == 1:
             new_timerange_dict = self.monigomani_cli.calculate_timerange_start_minus_startup_candle_count(timerange)
             timerange = new_timerange_dict['new_timerange']
 
-        self.logger.info(f'👉 Downloading candle data ({tickers}) for timerange ({timerange})')
+        self.logger.info(f'👉 Downloading candle data ({timeframes}) for timerange ({timerange})')
 
         command = (f'{self.monigomani_config.config["ft_binary"]} download-data --timerange {timerange} '
-                   f'-t {tickers} {self.monigomani_config.command_configs()}')
+                   f'-t {timeframes} {self.monigomani_config.command_configs()}')
 
         self.logger.debug(command)
         self.monigomani_cli.run_command(command)
