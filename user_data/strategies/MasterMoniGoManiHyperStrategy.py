@@ -1071,48 +1071,53 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: DataFrame with debug signals
         """
 
-        # If TimeFrame-Zooming => Only use 'informative_timeframe' data
-        has_multiplier = ((self.is_dry_live_run_detected is False) and
-                          (self.informative_timeframe != self.backtest_timeframe))
-        for trend in self.mgm_trends:
-            if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
-                parameter_name = f'{space}_{trend}_trend_{signal_name}_weight'
-                signal_weight = getattr(self, parameter_name)
+        for weighted_signal_timeframe in self.weighted_signal_timeframes:
+            core_trend_timeframe = self.core_trend_timeframes[weighted_signal_timeframe]
+            base_timeframe_multiplier = self.base_timeframe_multipliers[weighted_signal_timeframe]
+            trend_column_name = f'trend_{core_trend_timeframe}_{weighted_signal_timeframe}'
 
-                # Apply signal overrides to weak and strong signals where needed
-                signal_weight_value = self.apply_weak_strong_overrides(
-                    signal_weight.value, signal_min_value, signal_max_value, signal_threshold)
+            for trend in self.mgm_trends:
+                if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
+                    parameter_name = f'{space}_{trend}_trend_{signal_name}_weight'
+                    parameter_column_name = f'{parameter_name}_{weighted_signal_timeframe}'
+                    signal_weight = getattr(self, parameter_name)
 
-                rolling_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed_candles_lookback_window')
-                rolling_needed_value = (rolling_needed.value * self.timeframe_multiplier if has_multiplier
-                                        else rolling_needed.value)
+                    # Apply signal overrides to weak and strong signals where needed
+                    signal_weight_value = self.apply_weak_strong_overrides(
+                        signal_weight.value, signal_min_value, signal_max_value, signal_threshold)
 
-                # If debuggable weighted signal dataframe => Add individual per signal rows in the dataframe
-                if self.debuggable_weighted_signal_dataframe:
-                    if parameter_name not in dataframe.columns:
-                        dataframe[parameter_name] = 0
+                    rolling_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed_candles_lookback_window')
+                    rolling_needed_value = rolling_needed.value * base_timeframe_multiplier
 
-                    dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
-                                  parameter_name] = signal_weight_value / self.precision
+                    # If debuggable weighted signal dataframe => Add individual per signal rows in the dataframe
+                    if self.debuggable_weighted_signal_dataframe:
+                        if parameter_name not in dataframe.columns:
+                            dataframe[parameter_column_name] = 0
 
-                # If the weighted signal triggered => Add the weight to the totals needed in the dataframe
-                dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
-                              f'total_{space}_signal_strength'] += signal_weight_value / self.precision
+                        dataframe.loc[((dataframe[trend_column_name] == trend) &
+                                       (condition.rolling(rolling_needed_value).sum() > 0)),
+                                      parameter_column_name] = signal_weight_value / self.precision
 
-                # If the weighted signal is bigger then 0 and triggered => Add up the amount of signals that triggered
-                if signal_weight_value > 0:
-                    dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
-                                  f'{space}_signals_triggered'] += 1
+                    # If the weighted signal triggered, add the weight to the totals needed in the dataframe
+                    dataframe.loc[((dataframe[trend_column_name] == trend) &
+                                   (condition.rolling(rolling_needed_value).sum() > 0)),
+                                  f'total_{space}_signal_strength'] += signal_weight_value / self.precision
 
-                # Add found weights to comparison values to check if total signals utilized by HyperOpt are possible
-                self.total_signals_possible[f'{space}_{trend}'] += signal_weight_value
-                # Add a signal trigger if it is possible to compare if total triggers needed by HyperOpt are possible
-                if signal_weight_value > 0:
-                    self.total_triggers_possible[f'{space}_{trend}'] += 1
+                    # If the weighted signal is bigger then 0 and triggered, add up the amount of signals that triggered
+                    if signal_weight_value > 0:
+                        dataframe.loc[((dataframe[trend_column_name] == trend) &
+                                       (condition.rolling(rolling_needed_value).sum() > 0)),
+                                      f'{space}_signals_triggered'] += 1
 
-            # Override Signals: When configured sell/buy signals can be completely turned off for each kind of trend
-            else:
-                dataframe.loc[dataframe['trend'] == trend, space] = 0
+                    # Add found weights to comparison values to check if total signals utilized by HyperOpt are possible
+                    self.total_signals_possible[f'{space}_{trend}'] += signal_weight_value
+                    # Add a signal trigger if it is possible to compare if total triggers needed by HyperOpt are possible
+                    if signal_weight_value > 0:
+                        self.total_triggers_possible[f'{space}_{trend}'] += 1
+
+                # Override Signals: When configured sell/buy signals can be completely turned off for each kind of trend
+                else:
+                    dataframe.loc[dataframe[trend_column_name] == trend, space] = 0
 
         return dataframe
 
