@@ -332,34 +332,47 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         :param config: (dict)
         """
-
         i = 'Initialization'
-        if RunMode(config.get('runmode', RunMode.OTHER)) in (RunMode.BACKTEST, RunMode.HYPEROPT):
-            self.timeframe = self.backtest_timeframe
-            self.mgm_logger('info', 'TimeFrame-Zoom', f'Auto updating to zoomed "backtest_timeframe": {self.timeframe}')
+        mtf = f'{i} - Multi-TimeFrame'
 
+        self.mgm_logger('info', mtf, f'Using "base_timeframe": {self.timeframe}')
+        self.mgm_logger('info', mtf, 'Calculating and storing "base_timeframe_multiplier" & "core_trend_timeframes"')
+        for weighted_signal_timeframe in self.weighted_signal_timeframes:
+            weighted_signal_timeframe_minutes = timeframe_to_minutes(weighted_signal_timeframe)
+
+            # Calculate the multipliers for the weighted signal timeframes
+            base_timeframe_multiplier = int(weighted_signal_timeframe_minutes / timeframe_to_minutes(self.timeframe))
+            self.base_timeframe_multipliers[weighted_signal_timeframe] = base_timeframe_multiplier
+
+            # Calculate the timeframes for the core trend indicators
+            core_trend_timeframe = self.minutes_to_timeframe(minutes=(weighted_signal_timeframe_minutes *
+                                                                      self.core_trend_timeframe_multiplier))
+            self.core_trend_timeframes[weighted_signal_timeframe] = core_trend_timeframe
+
+            if self.base_timeframe_multipliers[weighted_signal_timeframe] >= 1:
+                self.mgm_logger('info', mtf, f'Stored:\n"base_timeframe_multiplier" ({base_timeframe_multiplier}) & '
+                                             f'"core_trend_timeframe" ({core_trend_timeframe}) for '
+                                             f'"weighted_signal_timeframe" ({weighted_signal_timeframe})')
+            else:
+                raise SystemExit(f'MoniGoManiHyperStrategy - ERROR - {mtf} - "weighted_signal_timeframe": '
+                                 f'{weighted_signal_timeframe}, must be bigger than "base_timeframe": {self.timeframe}')
+
+        # Detect dry/live run or backtest/hyperopt mode
+        if RunMode(config.get('runmode', RunMode.OTHER)) in (RunMode.BACKTEST, RunMode.HYPEROPT):
             self.is_dry_live_run_detected = False
             self.mgm_logger('info', i, 'Current run mode detected as: HyperOpting/BackTesting. '
                                        'Auto updated is_dry_live_run_detected to: False')
-
-            self.mgm_logger('info', i, 'Calculating and storing "timeframe_multiplier"')
-            self.timeframe_multiplier = int(timeframe_to_minutes(self.informative_timeframe)
-                                            / timeframe_to_minutes(self.timeframe))
-            if self.timeframe_multiplier < 1:
-                raise SystemExit('MoniGoManiHyperStrategy - ERROR - TimeFrame-Zoom - '
-                                 '"timeframe" must be bigger than "backtest_timeframe"')
-
         else:
+            self.is_dry_live_run_detected = True
+            self.mgm_logger('info', i, 'Current run mode detected as: Dry/Live-Run. '
+                                       'Auto updated is_dry_live_run_detected to: True')
             if os.path.isfile(self.mgm_config_hyperopt_path) is False:
                 sys.exit(f'MoniGoManiHyperStrategy - ERROR - The MoniGoMani HyperOpt Results configuration file '
                          f'({self.mgm_config_hyperopt_name}) can\'t be found at: {self.mgm_config_hyperopt_path}... '
                          f'Please Optimize your MoniGoMani before Dry/Live running! Once optimized provide the correct '
                          f'file and/or alter "mgm_config_names" in ".hurry"')
 
-            self.is_dry_live_run_detected = True
-            self.mgm_logger('info', i, 'Current run mode detected as: Dry/Live-Run. '
-                                       'Auto updated is_dry_live_run_detected to: True')
-
+        # Calculate the unclogger separator_candle_weight_reducer
         if self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True:
             self.separator = self.mgm_config['unclogger_spaces'][
                 'unclogger_trend_lookback_candles_window_recent_past_weight_separator']
