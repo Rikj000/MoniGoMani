@@ -485,8 +485,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         if (timeframe_number - int(timeframe_number) == 0) is False:
             sys.exit(f'MoniGoManiHyperStrategy - ERROR - MoniGoMani could not correctly parse the provided minutes '
-                     f'({minutes}m) to a usable timeframe format ({str(timeframe_number)}{timeframe_size})! '
-                     f'Please adjust the "timeframes" section of your "mgm-config"!')
+                     f'({minutes}m) to a usable timeframe format ({str(round(timeframe_number, 2))}{timeframe_size})!'
+                     f'\nPlease adjust the "timeframes" section of your "mgm-config"!')
 
         return f'{str(int(timeframe_number))}{timeframe_size}'
 
