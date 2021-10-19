@@ -19,6 +19,7 @@ from pandas import DataFrame
 from scipy.interpolate import interp1d
 from yaml import full_load
 
+from freqtrade.constants import ListPairsWithTimeframes
 from freqtrade.data.history import load_pair_history
 from freqtrade.enums import RunMode
 from freqtrade.exchange import timeframe_to_prev_date
@@ -427,6 +428,22 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         }
 
         return deep_merge_dicts(framework_plots, weighted_signal_plots)
+
+    def _informative_pairs(self, pairs: list[str]) -> ListPairsWithTimeframes:
+        """
+        Returns a list of pairs with informative timeframes used by MoniGoMani
+
+        :param pairs: (list[str]) List containing all the pairs being used
+        :return: List of pairs with informative timeframes used by MoniGoMani
+        """
+        informative_pairs = [(pair, self.roi_timeframe) for pair in pairs]
+
+        for weighted_signal_timeframe in self.weighted_signal_timeframes:
+            informative_pairs += [(pair, weighted_signal_timeframe) for pair in pairs]
+        for core_trend_timeframe in self.core_trend_timeframes:
+            informative_pairs += [(pair, core_trend_timeframe) for pair in pairs]
+
+        return informative_pairs
 
     def _populate_core_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """

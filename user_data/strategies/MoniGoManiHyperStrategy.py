@@ -141,9 +141,9 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
 
         :return informative_pairs: (list) List populated with additional informative pairs
         """
+        # Keep this call to populate the informative pairs used by MoniGoMani
+        informative_pairs = self._informative_pairs(pairs=self.dp.current_whitelist())
 
-        pairs = self.dp.current_whitelist()
-        informative_pairs = [(pair, self.informative_timeframe) for pair in pairs]
         return informative_pairs
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
@@ -154,8 +154,10 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         :param metadata: (dict) Additional information, like the currently traded pair
         :return DataFrame: DataFrame for MoniGoMani with all mandatory indicator data populated
         """
+        # Keep this call to populate the indicators responsible for the weights of your sell signals
+        dataframe = self._populate_indicators(dataframe=dataframe, metadata=metadata)
 
-        return self._populate_indicators(dataframe=dataframe, metadata=metadata)
+        return dataframe
 
     def do_populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
