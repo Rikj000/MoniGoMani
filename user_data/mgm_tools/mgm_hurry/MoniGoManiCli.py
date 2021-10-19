@@ -344,6 +344,9 @@ class MoniGoManiCli(object):
 
     def calculate_timerange_start_minus_startup_candle_count(self, timerange: int = None) -> dict:
         """
+        Calculate the amount of days to add to the timerange based on the startup candle count
+        & timeframes (candle sizes) used
+
         Subtracts the startup_candle_count from the provided timerange, defaults to timerange defined in '.hurry'
 
         :param timerange: (str, Optional) Timerange for which to subtract candle data timerange, defaults to
@@ -351,12 +354,20 @@ class MoniGoManiCli(object):
             eg: {'new_timerange': str, 'new_start_date': datetime}
         """
 
-        # Calculate the amount of days to add to the timerange based on the startup candle count & candle size
+        # Load the config files & timeframes used
         mgm_config_files = self.monigomani_config.load_config_files()
-        timeframe_minutes = self.timeframe_to_minutes(
-            mgm_config_files['mgm-config']['monigomani_settings']['timeframes']['timeframe'])
+        timeframe_list = self.get_timeframe_list()
+
+        # Calculate the largest timeframe size in minutes_to_timeframe
+        largest_timeframe_minutes = 0
+        for timeframe in timeframe_list:
+            timeframe_minutes = self.timeframe_to_minutes(timeframe)
+            if timeframe_minutes > largest_timeframe_minutes:
+                largest_timeframe_minutes = timeframe_minutes
+
+        # Calculate the amount of extra_days of candle data to download
         startup_candle_count = mgm_config_files['mgm-config']['monigomani_settings']['startup_candle_count']
-        extra_days = ceil((timeframe_minutes * startup_candle_count) / (60 * 24))
+        extra_days = ceil((largest_timeframe_minutes * startup_candle_count) / (60 * 24))
 
         # Load the timerange from '.hurry' if none was provided
         if timerange is not None:
@@ -395,7 +406,7 @@ class MoniGoManiCli(object):
         elif 's' == unit:
             scale = 1
         else:
-            raise TypeError(f'timeframe unit {unit} is not supported')
+            raise TypeError(f'MoniGoManiCli - ERROR - timeframe unit {unit} is not supported')
         return (amount * scale) // 60
 
     @staticmethod
