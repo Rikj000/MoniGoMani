@@ -527,23 +527,36 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         mtf = 'Multi-TimeFrame'
         for weighted_signal_timeframe in self.weighted_signal_timeframes:
-            # Load the pair history at a weighted_signal_timeframe candle size & Populate the weighted signal indicators
+            core_trend_timeframe = self.core_trend_timeframes[weighted_signal_timeframe]
+
+            # Load the pair history at a core_trend_timeframe candle size & at a weighted_signal_timeframe candle size
+            self.mgm_logger('debug', mtf, f'Loading pair data for core_trend_timeframe ({core_trend_timeframe}) & '
+                                          f'weighted_signal_timeframe ({weighted_signal_timeframe})')
+            if self.is_dry_live_run_detected is False:
+                weighted_signal_dataframe = load_pair_history(pair=metadata['pair'],
+                                                              datadir=self.config['datadir'],
+                                                              timeframe=weighted_signal_timeframe,
+                                                              startup_candles=self.startup_candle_count,
+                                                              data_format=self.config.get('dataformat_ohlcv', 'json'))
+                core_trend_dataframe = load_pair_history(pair=metadata['pair'],
+                                                         datadir=self.config['datadir'],
+                                                         timeframe=core_trend_timeframe,
+                                                         startup_candles=self.startup_candle_count,
+                                                         data_format=self.config.get('dataformat_ohlcv', 'json'))
+                core_trend_columns = ['date', 'ht_trendmode', 'sar', 'trend']
+            else:
+                weighted_signal_dataframe = self.dp.get_pair_dataframe(
+                    pair=metadata['pair'], timeframe=weighted_signal_timeframe)
+                core_trend_dataframe = self.dp.get_pair_dataframe(
+                    pair=metadata['pair'], timeframe=core_trend_timeframe)
+                core_trend_columns = ['date', 'ht_trendmode', 'sar', 'trend', 'mgm_trend']
+
+            # Populate the weighted signal indicators
             self.mgm_logger('debug', mtf, f'Populating weighted signal ({weighted_signal_timeframe}) indicators')
-            weighted_signal_dataframe = load_pair_history(pair=metadata['pair'],
-                                                          datadir=self.config['datadir'],
-                                                          timeframe=weighted_signal_timeframe,
-                                                          startup_candles=self.startup_candle_count,
-                                                          data_format=self.config.get('dataformat_ohlcv', 'json'))
             weighted_signal_dataframe = self.do_populate_indicators(weighted_signal_dataframe.copy(), metadata)
 
-            # Load the pair history at a core_trend_timeframe candle size & Populate the core trend indicators
-            core_trend_timeframe = self.core_trend_timeframes[weighted_signal_timeframe]
+            # Populate the core trend indicators
             self.mgm_logger('debug', mtf, f'Populating core trend ({core_trend_timeframe}) indicators')
-            core_trend_dataframe = load_pair_history(pair=metadata['pair'],
-                                                     datadir=self.config['datadir'],
-                                                     timeframe=core_trend_timeframe,
-                                                     startup_candles=self.startup_candle_count,
-                                                     data_format=self.config.get('dataformat_ohlcv', 'json'))
             core_trend_dataframe = self._populate_core_trend(core_trend_dataframe, metadata)
 
             # Merge the core_trend_dataframe with the weighted_signal_dataframe
@@ -551,7 +564,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                           f'weighted signal ({weighted_signal_timeframe}) indicators '
                                           f'into main dataframe ({self.timeframe})')
             weighted_signal_dataframe = merge_informative_pair(
-                weighted_signal_dataframe, core_trend_dataframe[['date', 'ht_trendmode', 'sar', 'trend']].copy(),
+                weighted_signal_dataframe, core_trend_dataframe[core_trend_columns].copy(),
                 weighted_signal_timeframe, core_trend_timeframe, ffill=True)
 
             # Merge the weighted_signal_dataframe with the main dataframe
