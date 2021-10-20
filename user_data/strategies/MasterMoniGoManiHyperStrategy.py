@@ -676,39 +676,42 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: (dict) Dictionary containing the trend data for the pairs unclogger_trend_lookback_candles_window
         """
 
-        # ToDo: ReWrite Unclogger for Multi Candle Usage
-        # Fetch all needed 'trend' trade data
-        stored_trend_dataframe = {}
+        # Fetch the populated dataframe at a 'base_timeframe' candle size
         dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
 
-        self.mgm_logger('debug', 'Open Trade Unclogger', 'Fetching all needed "trend" trade data')
+        # Fetch all needed 'unclogger_trend' trade data
+        self.mgm_logger('debug', 'Open Trade Unclogger', 'Fetching all needed "unclogger_trend" trade data')
         trend_lookback_candles_window = self.get_param_value('sell___unclogger_trend_lookback_candles_window')
+        stored_unclogger_trend_dataframe = {}
+
+        # Loop through the lookback candles window
         for candle in range(1, trend_lookback_candles_window + 1):
-            # Convert the candle time to the one being used by the 'base_weighted_signal_timeframe'
-            candle_multiplier = int(self.base_weighted_signal_timeframe.rstrip('mhdwM'))
-            candle_time = (timeframe_to_prev_date(self.base_weighted_signal_timeframe, current_time) -
+            # Convert the candle time to the one being used by the 'unclogger_timeframe'
+            candle_multiplier = int(self.unclogger_timeframe.rstrip('mhdwM'))
+            candle_time = (timeframe_to_prev_date(self.unclogger_timeframe, current_time) -
                            timedelta(minutes=int(candle * candle_multiplier)))
-            if self.base_weighted_signal_timeframe.find('h') != -1:
-                candle_time = (timeframe_to_prev_date(self.base_weighted_signal_timeframe, current_time) -
+            if self.unclogger_timeframe.find('h') != -1:
+                candle_time = (timeframe_to_prev_date(self.unclogger_timeframe, current_time) -
                                timedelta(hours=int(candle * candle_multiplier)))
-            elif self.base_weighted_signal_timeframe.find('d') != -1:
-                candle_time = (timeframe_to_prev_date(self.base_weighted_signal_timeframe, current_time) -
+            elif self.unclogger_timeframe.find('d') != -1:
+                candle_time = (timeframe_to_prev_date(self.unclogger_timeframe, current_time) -
                                timedelta(days=int(candle * candle_multiplier)))
-            elif self.base_weighted_signal_timeframe.find('w') != -1:
-                candle_time = (timeframe_to_prev_date(self.base_weighted_signal_timeframe, current_time) -
+            elif self.unclogger_timeframe.find('w') != -1:
+                candle_time = (timeframe_to_prev_date(self.unclogger_timeframe, current_time) -
                                timedelta(weeks=int(candle * candle_multiplier)))
-            elif self.base_weighted_signal_timeframe.find('M') != -1:
-                candle_time = (timeframe_to_prev_date(self.base_weighted_signal_timeframe, current_time) -
+            elif self.unclogger_timeframe.find('M') != -1:
+                candle_time = (timeframe_to_prev_date(self.unclogger_timeframe, current_time) -
                                timedelta64(int(candle * candle_multiplier), 'M'))
 
-            candle_trend = dataframe.loc[dataframe['date'] == candle_time].squeeze()['trend']
-
+            # Add the 'unclogger_trend' detected in the converted candle time to the stored_unclogger_trend_dataframe
+            candle_trend = dataframe.loc[
+                dataframe['date'] == candle_time].squeeze()[f'unclogger_trend_{self.unclogger_timeframe}']
             if isinstance(candle_trend, str):
-                stored_trend_dataframe[candle] = candle_trend
+                stored_unclogger_trend_dataframe[candle] = candle_trend
             else:
                 break
 
-        return stored_trend_dataframe
+        return stored_unclogger_trend_dataframe
 
     def custom_stoploss(self, pair: str, trade: Trade, current_time: datetime,
                         current_rate: float, current_profit: float, **kwargs) -> float:
@@ -921,14 +924,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 # Check if open_trade's trend changed negatively during past X candles
                 self.mgm_logger('debug', otu, f'Calculating amount of unclogger_trend_lookback_candles_window '
                                               f'"satisfied" for pair: {pair}')
-
                 unclogger_weighted_candles_satisfied = 0
                 for lookback_candle in range(1, trend_lookback_candles_window + 1):
                     for trend in self.mgm_trends:
                         if (self.mgm_config['unclogger_spaces'][f'unclogger_trend_lookback_window_uses_{trend}_candles'
                         ] & (stored_trend_dataframe[lookback_candle] == trend)):
+                            # Apply separator candle weight reducer logic
                             unclogger_weighted_candles_satisfied += (
                                 self.separator - (lookback_candle * self.separator_candle_weight_reducer))
+
                 self.mgm_logger('debug', otu, f'Amount of unclogger_trend_lookback_candles_window "satisfied": '
                                               f'{str(unclogger_weighted_candles_satisfied)} for pair: {pair}')
 
