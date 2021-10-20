@@ -102,6 +102,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         core_trend_timeframe_multiplier = mgm_config['timeframes']['core_trend_timeframe_multiplier']
         weighted_signal_timeframes = mgm_config['timeframes']['weighted_signal_timeframes']
         roi_timeframe = mgm_config['timeframes']['roi_timeframe']
+        unclogger_timeframe = mgm_config['timeframes']['roi_timeframe']
         startup_candle_count = mgm_config['startup_candle_count']
         precision = mgm_config['precision']
         min_weighted_signal_value = mgm_config['weighted_signal_spaces']['min_weighted_signal_value']
@@ -239,7 +240,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             """
             Create a ROI (Return of Interest) space. Defines values to search for each ROI steps.
             This method implements adaptive ROI HyperSpace with varied ranges for parameters which automatically adapts
-            to the un-zoomed base_weighted_signal_timeframe used by the MGM Framework during BackTesting & HyperOpting.
+            to the roi_timeframe used by the MGM Framework during BackTesting & HyperOpting.
 
             :return List: Generated ROI Space
             """
@@ -437,6 +438,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: List of pairs with informative timeframes used by MoniGoMani
         """
         informative_pairs = [(pair, self.roi_timeframe) for pair in pairs]
+        informative_pairs += [(pair, self.unclogger_timeframe) for pair in pairs]
 
         for weighted_signal_timeframe in self.weighted_signal_timeframes:
             informative_pairs += [(pair, weighted_signal_timeframe) for pair in pairs]
@@ -512,69 +514,124 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
     def _populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Adds indicators based on Run-Mode & TimeFrame-Zoom:
-        If Dry/Live-running or BackTesting/HyperOpting without TimeFrame-Zoom it just pulls
-        'timeframe' (1h candles) to compute indicators.
-
-        If BackTesting/HyperOpting with TimeFrame-Zoom it pulls 'informative_pairs' (1h candles)
-        to compute indicators, but then tests upon 'timeframe' (5m or 1m candles)
-        to simulate price movement during that 'timeframe' (1h candle).
+        Adds various indicators (columns) to the 'base_timeframe' MoniGoMani dataframe, based on Run-Mode.
+        It will add:
+        - Weighted signal indicator data for all weighted signal timeframes used
+        - Core trend indicator data for all core trend timeframes used
+        - Core trend indicator data for the unclogger timeframe used
 
         :param dataframe: (DataFrame) DataFrame with data from the exchange
         :param metadata: (dict) Additional information, like the currently traded pair
         :return DataFrame: DataFrame for MoniGoMani with all mandatory indicator data populated
         """
 
-        mtf = 'Multi-TimeFrame'
         for weighted_signal_timeframe in self.weighted_signal_timeframes:
-            core_trend_timeframe = self.core_trend_timeframes[weighted_signal_timeframe]
+            dataframe = self.populate_weighted_signal_indicators(dataframe=dataframe, metadata=metadata,
+                                                                 weighted_signal_timeframe=weighted_signal_timeframe)
 
-            # Load the pair history at a core_trend_timeframe candle size & at a weighted_signal_timeframe candle size
-            self.mgm_logger('debug', mtf, f'Loading pair data for core_trend_timeframe ({core_trend_timeframe}) & '
-                                          f'weighted_signal_timeframe ({weighted_signal_timeframe})')
-            if self.is_dry_live_run_detected is False:
-                weighted_signal_dataframe = load_pair_history(pair=metadata['pair'],
-                                                              datadir=self.config['datadir'],
-                                                              timeframe=weighted_signal_timeframe,
-                                                              startup_candles=self.startup_candle_count,
-                                                              data_format=self.config.get('dataformat_ohlcv', 'json'))
-                core_trend_dataframe = load_pair_history(pair=metadata['pair'],
-                                                         datadir=self.config['datadir'],
-                                                         timeframe=core_trend_timeframe,
-                                                         startup_candles=self.startup_candle_count,
-                                                         data_format=self.config.get('dataformat_ohlcv', 'json'))
-                core_trend_columns = ['date', 'ht_trendmode', 'sar', 'trend']
-            else:
-                weighted_signal_dataframe = self.dp.get_pair_dataframe(
-                    pair=metadata['pair'], timeframe=weighted_signal_timeframe)
-                core_trend_dataframe = self.dp.get_pair_dataframe(
-                    pair=metadata['pair'], timeframe=core_trend_timeframe)
-                core_trend_columns = ['date', 'ht_trendmode', 'sar', 'trend', 'mgm_trend']
+        dataframe = self.populate_unclogger_trend_indicator(dataframe=dataframe, metadata=metadata)
 
-            # Populate the weighted signal indicators
-            self.mgm_logger('debug', mtf, f'Populating weighted signal ({weighted_signal_timeframe}) indicators')
-            weighted_signal_dataframe = self.do_populate_indicators(weighted_signal_dataframe.copy(), metadata)
+        return dataframe
 
-            # Populate the core trend indicators
-            self.mgm_logger('debug', mtf, f'Populating core trend ({core_trend_timeframe}) indicators')
-            core_trend_dataframe = self._populate_core_trend(core_trend_dataframe, metadata)
+    def populate_weighted_signal_indicators(self, dataframe: DataFrame, metadata: dict,
+                                            weighted_signal_timeframe: str) -> DataFrame:
+        """
+        Populates the weighted signal indicators in the dataframe,
+        calculated on a 'weighted_signal_timeframe' candle size.
 
-            # Merge the core_trend_dataframe with the weighted_signal_dataframe
-            self.mgm_logger('debug', mtf, f'Merging core trend ({core_trend_timeframe}) & '
-                                          f'weighted signal ({weighted_signal_timeframe}) indicators '
-                                          f'into main dataframe ({self.timeframe})')
-            weighted_signal_dataframe = merge_informative_pair(
-                weighted_signal_dataframe, core_trend_dataframe[core_trend_columns].copy(),
-                weighted_signal_timeframe, core_trend_timeframe, ffill=True)
+        Additionally it also calculates the corresponding core trend indicators,
+        calculated on a 'core_trend_timeframe' candle size.
 
-            # Merge the weighted_signal_dataframe with the main dataframe
-            dataframe = merge_informative_pair(
-                dataframe, weighted_signal_dataframe, self.timeframe, weighted_signal_timeframe, ffill=True)
+        :param dataframe: (DataFrame) DataFrame with data from the exchange
+        :param metadata: (dict) Additional information, like the currently traded pair
+        :param weighted_signal_timeframe: (str) The timeframe in which the weighted signal indicator will be populated
+        :return DataFrame: DataFrame for MoniGoMani with all mandatory unclogger trend indicator data populated
+        """
+        mtf = 'Multi-TimeFrame'
 
-            # Drop unused columns to keep the dataframe as light as possible
-            drop_columns = ['open', 'high', 'low', 'close', 'volume', 'date', f'date_{core_trend_timeframe}']
-            drop_columns = [f'{drop_column}_{weighted_signal_timeframe}' for drop_column in drop_columns]
-            dataframe.drop(drop_columns, inplace=True, axis=1)
+        core_trend_timeframe = self.core_trend_timeframes[weighted_signal_timeframe]
+
+        # Load the pair history at a core_trend_timeframe candle size & at a weighted_signal_timeframe candle size
+        self.mgm_logger('debug', mtf, f'Loading pair data for core_trend_timeframe ({core_trend_timeframe}) & '
+                                      f'weighted_signal_timeframe ({weighted_signal_timeframe})')
+        if self.is_dry_live_run_detected is False:
+            weighted_signal_dataframe = load_pair_history(pair=metadata['pair'],
+                                                          datadir=self.config['datadir'],
+                                                          timeframe=weighted_signal_timeframe,
+                                                          startup_candles=self.startup_candle_count,
+                                                          data_format=self.config.get('dataformat_ohlcv', 'json'))
+            core_trend_dataframe = load_pair_history(pair=metadata['pair'],
+                                                     datadir=self.config['datadir'],
+                                                     timeframe=core_trend_timeframe,
+                                                     startup_candles=self.startup_candle_count,
+                                                     data_format=self.config.get('dataformat_ohlcv', 'json'))
+            core_trend_columns = ['date', 'ht_trendmode', 'sar', 'trend']
+        else:
+            weighted_signal_dataframe = self.dp.get_pair_dataframe(pair=metadata['pair'],
+                                                                   timeframe=weighted_signal_timeframe)
+            core_trend_dataframe = self.dp.get_pair_dataframe(pair=metadata['pair'], timeframe=core_trend_timeframe)
+            core_trend_columns = ['date', 'ht_trendmode', 'sar', 'trend', 'mgm_trend']
+
+        # Populate the weighted signal indicators
+        self.mgm_logger('debug', mtf, f'Populating weighted signal ({weighted_signal_timeframe}) indicators')
+        weighted_signal_dataframe = self.populate_monigomani_indicators(weighted_signal_dataframe.copy(), metadata)
+
+        # Populate the core trend indicators
+        self.mgm_logger('debug', mtf, f'Populating core trend ({core_trend_timeframe}) indicators')
+        core_trend_dataframe = self._populate_core_trend(core_trend_dataframe, metadata)
+
+        # Merge the core_trend_dataframe with the weighted_signal_dataframe
+        self.mgm_logger('debug', mtf, f'Merging core trend ({core_trend_timeframe}) & '
+                                      f'weighted signal ({weighted_signal_timeframe}) indicators '
+                                      f'into main dataframe ({self.timeframe})')
+        weighted_signal_dataframe = merge_informative_pair(weighted_signal_dataframe,
+                                                           core_trend_dataframe[core_trend_columns].copy(),
+                                                           weighted_signal_timeframe, core_trend_timeframe, ffill=True)
+
+        # Merge the weighted_signal_dataframe with the main dataframe
+        dataframe = merge_informative_pair(dataframe, weighted_signal_dataframe,
+                                           self.timeframe, weighted_signal_timeframe, ffill=True)
+
+        # Drop unused columns to keep the dataframe as light as possible
+        drop_columns = ['open', 'high', 'low', 'close', 'volume', 'date', f'date_{core_trend_timeframe}']
+        drop_columns = [f'{drop_column}_{weighted_signal_timeframe}' for drop_column in drop_columns]
+        dataframe.drop(drop_columns, inplace=True, axis=1)
+
+        return dataframe
+
+    def populate_unclogger_trend_indicator(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        """
+        Populates a 'unclogger_trend' column in the dataframe, calculated on an 'unclogger_timeframe' candle size.
+
+        :param dataframe: (DataFrame) DataFrame with data from the exchange
+        :param metadata: (dict) Additional information, like the currently traded pair
+        :return DataFrame: DataFrame for MoniGoMani with all mandatory unclogger trend indicator data populated
+        """
+        mtf = 'Multi-TimeFrame'
+        # Load the pair history at a unclogger_timeframe candle size
+        self.mgm_logger('debug', mtf, f'Loading pair data for unclogger_timeframe ({self.unclogger_timeframe})')
+        if self.is_dry_live_run_detected is False:
+            unclogger_dataframe = load_pair_history(pair=metadata['pair'],
+                                                    datadir=self.config['datadir'],
+                                                    timeframe=self.unclogger_timeframe,
+                                                    startup_candles=self.startup_candle_count,
+                                                    data_format=self.config.get('dataformat_ohlcv', 'json'))
+        else:
+            unclogger_dataframe = self.dp.get_pair_dataframe(pair=metadata['pair'], timeframe=self.unclogger_timeframe)
+
+        # Populate the unclogger core trend indicators
+        self.mgm_logger('debug', mtf, f'Populating unclogger core trend ({self.unclogger_timeframe}) indicators')
+        unclogger_dataframe = self._populate_core_trend(unclogger_dataframe, metadata)
+        unclogger_dataframe = unclogger_dataframe.rename(columns={'trend': 'unclogger_trend'})
+
+        # Merge the unclogger_dataframe with the main dataframe
+        self.mgm_logger('debug', mtf, f'Merging unclogger core trend ({self.unclogger_timeframe}) '
+                                      f'into main dataframe ({self.timeframe})')
+        dataframe = merge_informative_pair(dataframe, unclogger_dataframe[['date', 'unclogger_trend']],
+                                           self.timeframe, self.unclogger_timeframe, ffill=True)
+
+        # Drop unused columns to keep the dataframe as light as possible
+        dataframe.drop(f'date_{self.unclogger_timeframe}', inplace=True, axis=1)
 
         return dataframe
 

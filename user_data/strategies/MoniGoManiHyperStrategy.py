@@ -159,7 +159,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
 
         return dataframe
 
-    def do_populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_monigomani_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Adds several different TA indicators to MoniGoMani's DataFrame per pair.
         Should be called with 'informative_pair' (1h candles) during backtesting/hyperopting with TimeFrame-Zoom!
