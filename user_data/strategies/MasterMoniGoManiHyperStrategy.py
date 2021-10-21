@@ -1114,7 +1114,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             parameter_min_value=self.min_trend_total_signal_needed_value,
             parameter_max_value=self.max_weighted_signal_value * number_of_weighted_signals,
             parameter_threshold=self.search_threshold_weighted_signal_values
-        ) / self.precision
+        ) / self.precision  # ToDo: Perhaps increase search_threshold_weighted_signal_values
 
         corrected_total_triggers_needed = self.apply_weak_strong_overrides(
             parameter_value=total_triggers_needed.value,
@@ -1450,6 +1450,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         signal_threshold = self.mgm_config['weighted_signal_spaces']['search_threshold_weighted_signal_values']
 
         # Calculates the weight and/or generates the debug column for each signal
+        # ToDo: Somehow re-write lambda condition functions to include timeframes in dataframe column names
         for signal_name, condition_func in signals.items():
             self._add_signal(signal_name=signal_name, signal_min_value=signal_min_value,
                              signal_max_value=signal_max_value, signal_threshold=signal_threshold,

@@ -450,6 +450,8 @@ class MoniGoManiCli(object):
         :return: (list) List of string containing all the timeframes used by MoniGoMani
         """
 
+        # ToDo: Remove doubles from list, perhaps also from framework?
+
         # Load the MoniGoMani timeframes settings section
         mgm_config_files = self.monigomani_config.load_config_files()
         timeframes_section = mgm_config_files['mgm-config']['monigomani_settings']['timeframes']
