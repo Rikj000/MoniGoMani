@@ -92,19 +92,19 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         json_data = json.load(file_object)
         mgm_config = json_data['monigomani_settings']
     else:
-        sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file "mgm-config" can\'t '
-                 f'be found at: {mgm_config_path}... Please provide the correct file and/or alter "mgm_config_name" in '
-                 f'".hurry"')
+        sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file '
+                 f'"mgm-config" can\'t be found at: {mgm_config_path}... '
+                 f'Please provide the correct file and/or alter "mgm_config_names" in ".hurry"')
 
     # Apply the loaded MoniGoMani Settings
     try:
+        # Load the timeframes settings section
         timeframe = mgm_config['timeframes']['base_timeframe']
-        core_trend_timeframe_multiplier = mgm_config['timeframes']['core_trend_timeframe_multiplier']
-        weighted_signal_timeframes = mgm_config['timeframes']['weighted_signal_timeframes']
         roi_timeframe = mgm_config['timeframes']['roi_timeframe']
         unclogger_timeframe = mgm_config['timeframes']['roi_timeframe']
-        startup_candle_count = mgm_config['startup_candle_count']
-        precision = mgm_config['precision']
+        weighted_signal_timeframes = mgm_config['timeframes']['weighted_signal_timeframes']
+        core_trend_timeframe_multiplier = mgm_config['timeframes']['core_trend_timeframe_multiplier']
+        # Load the weighted signal spaces settings section
         min_weighted_signal_value = mgm_config['weighted_signal_spaces']['min_weighted_signal_value']
         max_weighted_signal_value = mgm_config['weighted_signal_spaces']['max_weighted_signal_value']
         min_trend_total_signal_needed_value = mgm_config[
@@ -121,9 +121,11 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             'weighted_signal_spaces']['search_threshold_trend_total_signal_needed_candles_lookback_window_value']
         search_threshold_trend_signal_triggers_needed = mgm_config[
             'weighted_signal_spaces']['search_threshold_trend_signal_triggers_needed']
+        # Load the ROI spaces settings section
         roi_table_step_size = mgm_config['roi_spaces']['roi_table_step_size']
         roi_time_interval_scaling = mgm_config['roi_spaces']['roi_time_interval_scaling']
         roi_value_step_scaling = mgm_config['roi_spaces']['roi_value_step_scaling']
+        # Load the stoploss spaces settings section
         stoploss_min_value = mgm_config['stoploss_spaces']['stoploss_min_value']
         stoploss_max_value = mgm_config['stoploss_spaces']['stoploss_max_value']
         trailing_stop_positive_min_value = mgm_config['stoploss_spaces']['trailing_stop_positive_min_value']
@@ -132,16 +134,21 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             'stoploss_spaces']['trailing_stop_positive_offset_min_value']
         trailing_stop_positive_offset_max_value = mgm_config[
             'stoploss_spaces']['trailing_stop_positive_offset_max_value']
+        # Load the unclogger spaces settings section
         mgm_unclogger_add_params = mgm_config['unclogger_spaces']
+        # Load the default stub values settings section
         minimal_roi = mgm_config['default_stub_values']['minimal_roi']
         stoploss = mgm_config['default_stub_values']['stoploss']
         trailing_stop = mgm_config['default_stub_values']['trailing_stop']
         trailing_stop_positive = mgm_config['default_stub_values']['trailing_stop_positive']
         trailing_stop_positive_offset = mgm_config['default_stub_values']['trailing_stop_positive_offset']
         trailing_only_offset_is_reached = mgm_config['default_stub_values']['trailing_only_offset_is_reached']
-        debuggable_weighted_signal_dataframe = mgm_config['debuggable_weighted_signal_dataframe']
+        # Load other general settings
+        startup_candle_count = mgm_config['startup_candle_count']
+        precision = mgm_config['precision']
         use_mgm_logging = mgm_config['use_mgm_logging']
         mgm_log_levels_enabled = mgm_config['mgm_log_levels_enabled']
+        debuggable_weighted_signal_dataframe = mgm_config['debuggable_weighted_signal_dataframe']
     except KeyError as missing_setting:
         sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file "mgm-config" is '
                  f'missing some settings. Please make sure that all MoniGoMani related settings are existing inside '
@@ -195,7 +202,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     # Initialize some parameters which will be automatically configured/used by MoniGoMani
     use_custom_stoploss = True  # Leave this enabled (Needed for open_trade custom_information_storage)
     is_dry_live_run_detected = True  # Class level runmode detection, Gets set automatically
-    # base_weighted_signal_timeframe = weighted_signal_timeframes[0]  # ToDo: Remove
     base_timeframe_multipliers = {}  # Gets set automatically
     core_trend_timeframes = {}  # Gets set automatically
     separator = 1.5  # Gets set automatically
@@ -447,7 +453,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return informative_pairs
 
-    def _populate_core_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_core_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Adds the core indicators used to define trends to the strategy engine.
 
@@ -578,7 +584,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Populate the core trend indicators
         self.mgm_logger('debug', mtf, f'Populating core trend ({core_trend_timeframe}) indicators')
-        core_trend_dataframe = self._populate_core_trend(core_trend_dataframe, metadata)
+        core_trend_dataframe = self.populate_core_trend(core_trend_dataframe, metadata)
 
         # Merge the core_trend_dataframe with the weighted_signal_dataframe
         self.mgm_logger('debug', mtf, f'Merging core trend ({core_trend_timeframe}) & '
@@ -621,16 +627,14 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Populate the unclogger core trend indicators
         self.mgm_logger('debug', mtf, f'Populating unclogger core trend ({self.unclogger_timeframe}) indicators')
-        unclogger_dataframe = self._populate_core_trend(unclogger_dataframe, metadata)
+        unclogger_dataframe = self.populate_core_trend(unclogger_dataframe, metadata)
         unclogger_dataframe = unclogger_dataframe.rename(columns={'trend': 'unclogger_trend'})
 
-        # Merge the unclogger_dataframe with the main dataframe
+        # Merge the unclogger_trend indicator with the main dataframe
         self.mgm_logger('debug', mtf, f'Merging unclogger core trend ({self.unclogger_timeframe}) '
                                       f'into main dataframe ({self.timeframe})')
         dataframe = merge_informative_pair(dataframe, unclogger_dataframe[['date', 'unclogger_trend']],
                                            self.timeframe, self.unclogger_timeframe, ffill=True)
-
-        # Drop unused columns to keep the dataframe as light as possible
         dataframe.drop(f'date_{self.unclogger_timeframe}', inplace=True, axis=1)
 
         return dataframe
@@ -684,7 +688,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         trend_lookback_candles_window = self.get_param_value('sell___unclogger_trend_lookback_candles_window')
         stored_unclogger_trend_dataframe = {}
 
-        # Loop through the lookback candles window
+        # Loop through the unclogger trend lookback candles window
         for candle in range(1, trend_lookback_candles_window + 1):
             # Convert the candle time to the one being used by the 'unclogger_timeframe'
             candle_multiplier = int(self.unclogger_timeframe.rstrip('mhdwM'))
@@ -871,7 +875,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
                 min_losing_trade_duration = self.get_param_value(f'{su}minimal_losing_trade_duration_minutes')
                 minimal_open_time = (current_time.replace(tzinfo=None) - timedelta(minutes=min_losing_trade_duration))
-
                 self.mgm_logger('debug', otu, f'Minimal open time: {str(minimal_open_time)}')
 
                 if trade_open_time > minimal_open_time:
@@ -1122,8 +1125,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return {'signal_needed': corrected_total_signal_needed, 'triggers_needed': corrected_total_triggers_needed}
 
-    def apply_weak_strong_overrides(self, parameter_value,
-                                    parameter_min_value, parameter_max_value, parameter_threshold):
+    def apply_weak_strong_overrides(self, parameter_value, parameter_min_value, parameter_max_value,
+                                    parameter_threshold):
         """
         Applies HyperOptable parameter overrides to weak and strong signals
         at the outer bounds of the search space or below/above it
@@ -1237,6 +1240,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                    parameter_max_value: int, parameter_threshold: int, precision: float, overrideable: bool = True):
         """
         Function to automatically initialize MoniGoMani's HyperOptable parameter values for both HyperOpt Runs.
+
         :param base_cls: The inheritor class of the MGM where the attributes will be added
         :param space: Buy or Sell params dictionary
         :param parameter_name: Name of the signal in the dictionary
@@ -1402,9 +1406,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             setattr(base_cls, 'sell_signals', sell_signals)
 
             # Set number of weighted buy/sell signals for later use.
-            amount_of_timeframes = len(base_cls.weighted_signal_timeframes)
-            setattr(base_cls, 'number_of_weighted_buy_signals', len(buy_signals) * amount_of_timeframes)
-            setattr(base_cls, 'number_of_weighted_sell_signals', len(sell_signals) * amount_of_timeframes)
+            amount_of_weighted_timeframes = len(base_cls.weighted_signal_timeframes)
+            setattr(base_cls, 'number_of_weighted_buy_signals', len(buy_signals) * amount_of_weighted_timeframes)
+            setattr(base_cls, 'number_of_weighted_sell_signals', len(sell_signals) * amount_of_weighted_timeframes)
 
             # Sets the useful parameters of the MGM, such as unclogger and etc
             base_cls.init_util_params(base_cls)
