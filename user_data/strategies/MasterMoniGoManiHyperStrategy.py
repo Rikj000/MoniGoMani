@@ -1493,6 +1493,17 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         if self.custom_info != self.initial_custom_info:
             self.custom_info = copy.deepcopy(self.initial_custom_info)
 
+        # Re-calculate the base_timeframe_multipliers & core_trend_timeframes
+        for weighted_signal_timeframe in self.weighted_signal_timeframes:
+            weighted_signal_timeframe_minutes = timeframe_to_minutes(weighted_signal_timeframe)
+            # Calculate the multipliers for the weighted signal timeframes
+            base_timeframe_multiplier = int(weighted_signal_timeframe_minutes / timeframe_to_minutes(self.timeframe))
+            self.base_timeframe_multipliers[weighted_signal_timeframe] = base_timeframe_multiplier
+            # Calculate the timeframes for the core trend indicators
+            core_trend_timeframe = self.minutes_to_timeframe(minutes=(weighted_signal_timeframe_minutes *
+                                                                      self.core_trend_timeframe_multiplier))
+            self.core_trend_timeframes[weighted_signal_timeframe] = core_trend_timeframe
+
         # Re-calculate the 'separator_candle_weight_reducer' if the unclogger is enabled
         if self.mgm_config['unclogger_spaces']['unclogger_enabled'] is True:
             self.separator = self.mgm_config['unclogger_spaces'][
