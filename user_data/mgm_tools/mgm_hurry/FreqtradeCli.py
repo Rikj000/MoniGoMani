@@ -214,6 +214,7 @@ class FreqtradeCli:
         if not os.path.exists(target_dir):
             os.makedirs(target_dir, exist_ok=True)
 
+        self.monigomani_cli.fix_git_object_permissions(temp_dir_filepath=temp_dirname)
         copytree(temp_dirname, target_dir, dirs_exist_ok=True)
 
         if not os.path.isfile(f'{target_dir}/monigomani/setup.exp'):

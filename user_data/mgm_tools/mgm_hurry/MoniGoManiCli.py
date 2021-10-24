@@ -168,8 +168,9 @@ class MoniGoManiCli(object):
 
             if os.path.isfile(f'{target_dir + mgm_folder}/setup.exp'):
                 os.remove(f'{target_dir + mgm_folder}/setup.exp')
-
             os.chmod(f'{temp_dirname}/setup.exp', 0o444)
+
+            self.fix_git_object_permissions(temp_dir_filepath=temp_dirname)
             copytree(temp_dirname, target_dir + mgm_folder, dirs_exist_ok=True)
 
             for delete_file in ['docker-compose.yml', 'user_data/logs/freqtrade.log']:
@@ -213,6 +214,17 @@ class MoniGoManiCli(object):
         except Exception as e:
             self.logger.critical(str(e))
             return False
+
+    def fix_git_object_permissions(self, temp_dir_filepath: str) -> None:
+        """
+        Fixes permissions of '.idx' and '.pack' files existing in
+        a temporary directory directory during the installation.
+
+        :param temp_dir_filepath: (str) The path to the temporary directory for MoniGoMani or Freqtrade
+        """
+        for file_type in ['.idx', '.pack']:
+            for git_file in glob.glob(f'{temp_dir_filepath}/.git/objects/pack/*{file_type}'):
+                os.chmod(git_file, 0o777)
 
     def apply_mgm_results(self, strategy: str = 'MoniGoManiHyperStrategy') -> bool:
         """
