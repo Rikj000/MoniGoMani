@@ -23,41 +23,41 @@ from MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
 # Define the Weighted Buy Signals to be used by MGM
 buy_signals = {
     # Weighted Buy Signal: MACD above Signal
-    'macd': lambda df: (df['macd'] > df['macdsignal']),
+    'macd': lambda df, t: (df[f'macd_{t}'] > df[f'macdsignal_{t}']),
     # Weighted Buy Signal: MFI crosses above 20 (Under-bought / low-price and rising indication)
-    'mfi': lambda df: (qtpylib.crossed_above(df['mfi'], 20)),
+    'mfi': lambda df, t: (qtpylib.crossed_above(df[f'mfi_{t}'], 20)),
     # Weighted Buy Signal: VWAP crosses above current price
-    'vwap_cross': lambda df: (qtpylib.crossed_above(df['vwap'], df['close'])),
+    'vwap_cross': lambda df, t: (qtpylib.crossed_above(df[f'vwap_{t}'], df['close'])),
     # Weighted Buy Signal: Price crosses above Parabolic SAR
-    'sar_cross': lambda df: (qtpylib.crossed_above(df['sar'], df['close'])),
+    'sar_cross': lambda df, t: (qtpylib.crossed_above(df[f'sar_{t}'], df['close'])),
     # Weighted Buy Signal: Stochastic Slow below 20 (Under-bought, indication of starting to move up)
-    'stoch': lambda df: (df['slowk'] < 20),
+    'stoch': lambda df, t: (df[f'slowk_{t}'] < 20),
     # Weighted Buy Signal: SMA long term Golden Cross (Medium term SMA crosses above Long term SMA)
-    'sma_long_golden_cross': lambda df: (qtpylib.crossed_above(df['sma50'], df['sma200'])),
+    'sma_long_golden_cross': lambda df, t: (qtpylib.crossed_above(df[f'sma50_{t}'], df[f'sma200_{t}'])),
     # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
-    'sma_short_golden_cross': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
+    'sma_short_golden_cross': lambda df, t: (qtpylib.crossed_above(df[f'sma9_{t}'], df[f'sma50_{t}'])),
     # Weighted Buy Signal: TEMA
-    'tema': lambda df: (df['tema'] <= df['bb_middleband']) & (df['tema'] > df['tema'].shift(1))
+    'tema': lambda df, t: (df[f'tema_{t}'] <= df[f'bb_middleband_{t}']) & (df[f'tema_{t}'] > df[f'tema_{t}'].shift(1))
 }
 
 # Define the Weighted Sell Signals to be used by MGM
 sell_signals = {
     # Weighted Sell Signal: MACD below Signal
-    'macd': lambda df: (df['macd'] < df['macdsignal']),
+    'macd': lambda df, t: (df[f'macd_{t}'] < df[f'macdsignal_{t}']),
     # Weighted Sell Signal: MFI crosses below 80 (Over-bought / high-price and dropping indication)
-    'mfi': lambda df: (qtpylib.crossed_below(df['mfi'], 80)),
+    'mfi': lambda df, t: (qtpylib.crossed_below(df[f'mfi_{t}'], 80)),
     # Weighted Sell Signal: VWAP crosses below current price
-    'vwap_cross': lambda df: (qtpylib.crossed_below(df['vwap'], df['close'])),
+    'vwap_cross': lambda df, t: (qtpylib.crossed_below(df[f'vwap_{t}'], df['close'])),
     # Weighted Sell Signal: Price crosses below Parabolic SAR
-    'sar_cross': lambda df: (qtpylib.crossed_below(df['sar'], df['close'])),
+    'sar_cross': lambda df, t: (qtpylib.crossed_below(df[f'sar_{t}'], df['close'])),
     # Weighted Sell Signal: Stochastic Slow above 80 (Over-bought, indication of starting to move down)
-    'stoch': lambda df: (df['slowk'] > 80),
+    'stoch': lambda df, t: (df[f'slowk_{t}'] > 80),
     # Weighted Sell Signal: SMA long term Death Cross (Medium term SMA crosses below Long term SMA)
-    'sma_long_death_cross': lambda df: (qtpylib.crossed_below(df['sma50'], df['sma200'])),
+    'sma_long_death_cross': lambda df, t: (qtpylib.crossed_below(df[f'sma50_{t}'], df[f'sma200_{t}'])),
     # Weighted Sell Signal: SMA short term Death Cross (Short term SMA crosses below Medium term SMA)
-    'sma_short_death_cross': lambda df: (qtpylib.crossed_below(df['sma9'], df['sma50'])),
+    'sma_short_death_cross': lambda df, t: (qtpylib.crossed_below(df[f'sma9_{t}'], df[f'sma50_{t}'])),
     # Weighted Buy Signal: TEMA
-    'tema': lambda df: (df['tema'] > df['bb_middleband']) & (df['tema'] < df['tema'].shift(1))
+    'tema': lambda df, t: (df[f'tema_{t}'] > df[f'bb_middleband_{t}']) & (df[f'tema_{t}'] < df[f'tema_{t}'].shift(1))
 }
 
 
