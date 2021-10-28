@@ -9,7 +9,7 @@
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/development/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/wiki">
+    </a> <a href="https://monigomani.readthedocs.io/">
         <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
     </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
@@ -25,8 +25,8 @@
  - This Framework & Strategy are still experimental and under heavy development. It is not recommended running it live at this moment.
  - Always make sure to understand & test your MoniGoMani configuration until you trust it, before even thinking about going live!
  - I am in no way responsible for your live results! You are always responsible for your own MoniGoMani configuration!
- - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) after doing manual changes!
- - You need to [optimized](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
+ - MoniGoMani should always be [re-optimized](https://monigomani.readthedocs.io/Docs-MoniGoMani/#how-to-optimize-monigomani) after doing manual changes!
+ - You need to [optimized](https://monigomani.readthedocs.io/Docs-MoniGoMani/#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
 <hr>
 
 
@@ -82,7 +82,7 @@ Setting it all up requires some knowledge of the entire process, until you found
 ## `mgm-hurry` Command Usage
 ---
 
-⚠️ A [shell alias](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-VeryQuickStart.md#pro-tip) has been configured for these shorter example commands.
+⚠️ A [shell alias](https://monigomani.readthedocs.io/Docs-VeryQuickStart/#pro-tip) has been configured for these shorter example commands.
 If you haven't done that optional step then you will need to prefix all your commands with `python3`!
 
 
@@ -169,7 +169,7 @@ Runs HyperOpt process to find out the most positive settings.
     - ***Defaults to:** The `timerange` defined in your `.hurry` file.*
 - **`--strategy`:** *(Optional)* Specify the Strategy which you want to HyperOpt
     - **Defaults to:** The `strategy` defined in the `hyperopt` section of your `.hurry` file.
-- **`--loss`:** *(Optional)* Specify the [HyperOptLoss](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-HyperOptLoss-Functions.md) which you want to use during HyperOpting
+- **`--loss`:** *(Optional)* Specify the [HyperOptLoss](https://monigomani.readthedocs.io/Docs-HyperOptLoss-Functions) which you want to use during HyperOpting
     - **Defaults to:** The `loss` defined in the `hyperopt` section of your `.hurry` file.
 - **`--spaces`:** *(Optional)* Specify the HyperOpt [spaces](https://www.freqtrade.io/en/latest/hyperopt/#running-hyperopt-with-smaller-search-space) which you want to use during HyperOpting (Example: `"buy sell stoploss"`)
     - **Defaults to:** The `spaces` defined in the `hyperopt` section of your `.hurry` file.
