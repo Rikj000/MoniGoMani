@@ -9,7 +9,7 @@
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/development/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/wiki">
+    </a> <a href="https://monigomani.readthedocs.io/">
         <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
     </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
@@ -62,8 +62,8 @@
     - [ValueError: the lower bound X has to be less than the upper bound Y](#valueerror-the-lower-bound-x-has-to-be-less-than-the-upper-bound-y)
 
 # Installation
-This guide assumes you have **MoniGoMani** & **Freqtrade** already installed, if you haven't yet, then please see the [Docs-VeryQuickStart](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-VeryQuickStart.md).
-Further it also assumes you familiarized yourself with **mgm-hurry**'s commands which are described in [Docs-MGM-Hurry](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md).
+This guide assumes you have **MoniGoMani** & **Freqtrade** already installed, if you haven't yet, then please see the [Docs-VeryQuickStart](https://monigomani.readthedocs.io/Docs-VeryQuickStart).
+Further it also assumes you familiarized yourself with **mgm-hurry**'s commands which are described in [Docs-MGM-Hurry](https://monigomani.readthedocs.io/Docs-MGM-Hurry).
 
 # How to Optimize MoniGoMani
 *(These are just my ideas/theories, if you have other ideas, please test them & report your results to [`🛠 MoniGoMani - Testing` on Matrix](https://matrix.to/#/#MoniGoMani-Testing:matrix.org) or [`#🛠︱testing` on Discord](https://discord.gg/xFZ9bB6vEz) so we can learn and improve this flow!)*
@@ -92,7 +92,7 @@ Further it also assumes you familiarized yourself with **mgm-hurry**'s commands 
   ```powershell
   mgm-hurry hyperopt
   ```
-  *(Free to [alter the command](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md#mgm-hurry-hyperopt) if you have a good idea that you want to test)*
+  *(Free to [alter the command](https://monigomani.readthedocs.io/Docs-MGM-Hurry/#mgm-hurry-hyperopt) if you have a good idea that you want to test)*
   **The 1st Initial HyperOpt Run** *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with:
   - The default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of your`mgm-config.json` file.
   - Weak weighted signals are weeded out by overriding them to their respective `min_` value 
@@ -437,7 +437,7 @@ By default, MoniGoMani includes 2 pairlists in `mgm-config.json`:
   - Will automatically update to the current best top volume coin pairs available
 - A StaticPairList:
   - Used for BackTesting / HyperOpting since a VolumePairList cannot be used here.
-  - When [optimizing](#how-to-optimize-monigomani) MoniGoMani for actual Dry/Live-running (instead of testing) it's truly recommended to [download a fresh top volume StaticPairList](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md#mgm-hurry-download_static_pairlist) and HyperOpt upon that (Preferably as big as possible, but beware of the warning below)!
+  - When [optimizing](#how-to-optimize-monigomani) MoniGoMani for actual Dry/Live-running (instead of testing) it's truly recommended to [download a fresh top volume StaticPairList](https://monigomani.readthedocs.io/Docs-MGM-Hurry/#mgm-hurry-download_static_pairlist) and HyperOpt upon that (Preferably as big as possible, but beware of the warning below)!
   This should yield much better & more realistic results during HyperOpting/BackTesting!
   This is due to giving a better reflection of the current market and being closer to the VolumePairList used during Dry/Live-run's.
 
@@ -488,7 +488,7 @@ You can also do this for  **2nd HyperOpt Runs**, but this is a little more diffi
 # Common mistakes
 
 ### HyperOpting: +300 epochs, no results yet
-Make sure you have [downloaded the candle data](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md#mgm-hurry-download_candle_data) needed for your HyperOpt.
+Make sure you have [downloaded the candle data](https://monigomani.readthedocs.io/Docs-MGM-Hurry/#mgm-hurry-download_candle_data) needed for your HyperOpt.
 
 This is also possible because of how MoniGoMani handles the automatic filtering of total signals needed that would be impossible too reach during HyperOpt. If MGM detects impossible too reach signals then it forces the bot to do nothing for that epoch.
 

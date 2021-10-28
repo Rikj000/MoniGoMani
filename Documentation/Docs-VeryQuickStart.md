@@ -9,7 +9,7 @@
         <img src="https://img.shields.io/github/v/release/Rikj000/MoniGoMani?include_prereleases&label=Latest%20Release&logo=github" alt="Latest Official Release on GitHub">
     </a> <a href="https://github.com/Rikj000/MoniGoMani/blob/development/LICENSE">
         <img src="https://img.shields.io/github/license/Rikj000/MoniGoMani?label=License&logo=gnu" alt="GNU General Public License">
-    </a> <a href="https://github.com/Rikj000/MoniGoMani/wiki">
+    </a> <a href="https://monigomani.readthedocs.io/">
         <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
     </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
@@ -24,8 +24,8 @@
  - This Framework & Strategy are still experimental and under heavy development. It is not recommended running it live at this moment.
  - Always make sure to understand & test your MoniGoMani configuration until you trust it, before even thinking about going live!
  - I am in no way responsible for your live results! You are always responsible for your own MoniGoMani configuration!
- - MoniGoMani should always be [re-optimized](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) after doing manual changes!
- - You need to [optimized](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
+ - MoniGoMani should always be [re-optimized](https://monigomani.readthedocs.io/Docs-MoniGoMani/#how-to-optimize-monigomani) after doing manual changes!
+ - You need to [optimized](https://monigomani.readthedocs.io/Docs-MoniGoMani/#how-to-optimize-monigomani) your own copy of MoniGoMani while thinking logically, don't follow your computer blindly!
 <hr>
 
 ## Requirements
@@ -67,7 +67,7 @@ python3 mgm-hurry up
 
 That's it you successfully installed `MoniGoMani` and/or `Freqtrade`!
 You can now start using `MoniGoMani` for HyperOpting/BackTesting/Dry/Live-running! Congratulations :tada:
-This is only the beginning though, now please read the [Docs-MoniGoMani.md](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MoniGoMani.md) & [Docs-MGM-Hurry.md](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-MGM-Hurry.md) to learn how to use it properly!
+This is only the beginning though, now please read the [Docs-MoniGoMani.md](https://monigomani.readthedocs.io/Docs-MoniGoMani) & [Docs-MGM-Hurry.md](https://monigomani.readthedocs.io/Docs-MGM-Hurry) to learn how to use it properly!
 
 ### Pro tip
 Add an alias in the config file of your shell *(eg. ~/.zshrc)* so you can use MGM-Hurry as `mgm-hurry` without the need of pre-fixing Python in your commands anymore! :smile:
