@@ -112,22 +112,22 @@ Quick start command, launches an interactive wizard which guides you through the
 Individual command to install & update Freqtrade.
 #### Options
 - **`--target_dir`:** *(Optional)* Specify where you wish to install Freqtrade
-  - ***Defaults to:** The current directory*
+    - ***Defaults to:** The current directory*
 - **`--branch`:** *(Optional)* Specify the Freqtrade branch you wish to install
-  - ***Defaults to:** The `develop` branch, can also be `stable` branch for less bleeding edge but generally more stable version*
+    - ***Defaults to:** The `develop` branch, can also be `stable` branch for less bleeding edge but generally more stable version*
 - **`--commit`:** *(Optional)* Specify a specific Freqtrade commit you wish to utilize *(Can be a specific commit or `latest`)*
-  - ***Defaults to:** The latest supported / recommended commit for MoniGoMani*
+    - ***Defaults to:** The latest supported / recommended commit for MoniGoMani*
 
 
 ### `mgm-hurry install_mgm`
 Individual command to install & update MoniGoMani.
 #### Options
 - **`--target_dir`:** *(Optional)* Specify where you wish to install MoniGoMani
-  - ***Defaults to:** The current directory*
+    - ***Defaults to:** The current directory*
 - **`--branch`:** *(Optional)* Specify the MoniGoMani branch you wish to install
-  - ***Defaults to:** The `development` branch, can also be `main` branch for less bleeding edge but generally more stable version*
+    - ***Defaults to:** The `development` branch, can also be `main` branch for less bleeding edge but generally more stable version*
 - **`--commit`:** *(Optional)* Specify a specific MoniGoMani commit you wish to utilize *(Can be a specific commit or `latest`)*
-  - ***Defaults to:** The latest MoniGoMani commit*
+    - ***Defaults to:** The latest MoniGoMani commit*
 
 
 ### `mgm-hurry setup`
@@ -142,13 +142,13 @@ Cleans up HyperOpt Result `.json` files so you can easily start a fresh HyperOpt
 Retrieve and apply a current **Top-Volume-StaticPairList.json** file *(Using [RetrieveTopVolumeStaticPairList.json](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm_tools/RetrieveTopVolumeStaticPairList.json))*.
 The retrieved StaticPairList contains the top X pairs with the most trading volume at that point in time.
 #### Options
-  - **`--stake_currency`:** The stake currency to find the list of.
+- **`--stake_currency`:** The stake currency to find the list of.
     - ***Defaults to:** Value in `.hurry` or `USDT`*
-  - **`--exchange`:** The exchange to read the data from.
+- **`--exchange`:** The exchange to read the data from.
     - ***Defaults to:** Value in `.hurry` or `binance`*
-  - **`--pairlist_length`:** Amount of pairs wish to use in your pairlist.
+- **`--pairlist_length`:** Amount of pairs wish to use in your pairlist.
     - ***Defaults to:** Prompts you for the amount*
-  - **`--min_days_listed`:** The minimal days that coin pairs need to be listed on the exchange.
+- **`--min_days_listed`:** The minimal days that coin pairs need to be listed on the exchange.
     - ***Defaults to:** Defaults to the amount of days in between now and the start of the timerange in `.hurry` minus the `startup_candle_count`.*
 
 
@@ -156,8 +156,8 @@ The retrieved StaticPairList contains the top X pairs with the most trading volu
 Downloads candle data for a given timerange with the aid of an interactive prompt.
 #### Option
 - **`--timerange`:** *(Optional)* Specify the timerange for which you want to download candle data
-  - Needs to be of the format `--timerange=yyyymmdd-yyyymmdd` or `--timerange=down/side/up`
-  - ***Defaults to:** The `timerange` defined in your `.hurry` file.*
+    - Needs to be of the format `--timerange=yyyymmdd-yyyymmdd` or `--timerange=down/side/up`
+    - ***Defaults to:** The `timerange` defined in your `.hurry` file.*
 
 
 ### `mgm-hurry hyperopt`
@@ -165,78 +165,78 @@ Downloads candle data for a given timerange with the aid of an interactive promp
 Runs HyperOpt process to find out the most positive settings.
 #### Options
 - **`--timerange`:** *(Optional)* Specify the timerange upon which you want to HyperOpt
-  - Needs to be of the format `--timerange=yyyymmdd-yyyymmdd` or `--timerange=down/side/up`
-  - ***Defaults to:** The `timerange` defined in your `.hurry` file.*
+    - Needs to be of the format `--timerange=yyyymmdd-yyyymmdd` or `--timerange=down/side/up`
+    - ***Defaults to:** The `timerange` defined in your `.hurry` file.*
 - **`--strategy`:** *(Optional)* Specify the Strategy which you want to HyperOpt
-  - **Defaults to:** The `strategy` defined in the `hyperopt` section of your `.hurry` file.
+    - **Defaults to:** The `strategy` defined in the `hyperopt` section of your `.hurry` file.
 - **`--loss`:** *(Optional)* Specify the [HyperOptLoss](https://github.com/Rikj000/MoniGoMani/blob/development/Documentation/Docs-HyperOptLoss-Functions.md) which you want to use during HyperOpting
-  - **Defaults to:** The `loss` defined in the `hyperopt` section of your `.hurry` file.
+    - **Defaults to:** The `loss` defined in the `hyperopt` section of your `.hurry` file.
 - **`--spaces`:** *(Optional)* Specify the HyperOpt [spaces](https://www.freqtrade.io/en/latest/hyperopt/#running-hyperopt-with-smaller-search-space) which you want to use during HyperOpting (Example: `"buy sell stoploss"`)
-  - **Defaults to:** The `spaces` defined in the `hyperopt` section of your `.hurry` file.
+    - **Defaults to:** The `spaces` defined in the `hyperopt` section of your `.hurry` file.
 - **`--enable_protections`:** *(Optional)* Specify if HyperOpt should use [Protections](https://www.freqtrade.io/en/latest/includes/protections/)
-  - **Defaults to:** `True`. Provide `False` to disable protections
+    - **Defaults to:** `True`. Provide `False` to disable protections
 - **`--random_state`:** *(Optional)* Specify the random state that HyperOpt will use.
-  - This is needed to be able to get [reproducible results](https://www.freqtrade.io/en/latest/hyperopt/#reproducible-results) when doing comparison tests
+    - This is needed to be able to get [reproducible results](https://www.freqtrade.io/en/latest/hyperopt/#reproducible-results) when doing comparison tests
 - **`--apply_best_results`:** *(Optional)* Automatically apply the latest epoch found in the "best" HyperOpt Results table after a HyperOpt in the form of a `.json` file that the strategy will automatically load & use if found.
-  - For MoniGoMani this will be the `mgm-hyperopt-results.json` file found in the `user_data` folder.
-  - For other strategies this will be a `<strategy-name>.json` file found in the `user_data/strategies` folder
-  - **Defaults to:** `True`. Provide `False` to disable automatic creation of a HyperOpt Results `.json` file.
+    - For MoniGoMani this will be the `mgm-hyperopt-results.json` file found in the `user_data` folder.
+    - For other strategies this will be a `<strategy-name>.json` file found in the `user_data/strategies` folder
+    - **Defaults to:** `True`. Provide `False` to disable automatic creation of a HyperOpt Results `.json` file.
 - **`--clean_start`:** *(Optional)* Perform [`mgm-hurry cleanup`](#mgm-hurry-cleanup) before starting HyperOpt.
 - **`--do_backtest`:** *(bool, Optional)* Do a BackTest after the HyperOpt?
-  - **Defaults to:** True.
+    - **Defaults to:** True.
 - **`--plot_stats`:** *(bool, Optional)* Plot a QuantStats report after the BackTest?
-  - **Defaults to:** True.
+    - **Defaults to:** True.
 - **`--importance_report`:** *(bool, Optional)* Calculate a Signal Importance Report for MoniGoMani after the HyperOpt?
-  - **Defaults to:** True.
+    - **Defaults to:** True.
 - **`--export_csv`:** *(bool, Optional)* Export the HyperOpt Results into a `.csv` SpreadSheet after the HyperOpt?
-  - **Defaults to:** True.
+    - **Defaults to:** True.
 - **`--output_file_name`:** *(Optional)* Custom filename for the `.log` file being created.
-  - **Defaults to:** `HyperOptResults-<Strategy-Name>-<Current-DateTime>`
+    - **Defaults to:** `HyperOptResults-<Strategy-Name>-<Current-DateTime>`
 - **`--epochs`:** *(Optional)* Amount of epochs to HyperOpt over.
-  - **Defaults to:** Value defined in `.hurry`
+    - **Defaults to:** Value defined in `.hurry`
 - **`--jobs`:** *(Optional)* Amount of parallel workers (CPU cores) to use
-  - **Defaults to:** Automatic detection *(Amount used will depend on the amount of cores available on your system)*
+    - **Defaults to:** Automatic detection *(Amount used will depend on the amount of cores available on your system)*
 - **`--min_trades`: Minimal amount of trades wished to be reached.
-  - **Defaults to:** Not used.
+    - **Defaults to:** Not used.
 
 
 ### `mgm-hurry backtest`
 Runs BackTest process to find out more about the results found by HyperOpt.
 #### Options
 - **`--timerange`:** *(Optional)* The target timerange for backtesting.
-  - **Defaults to:** timerange in `.hurry`.
+    - **Defaults to:** timerange in `.hurry`.
 - **`--strategy`:** *(Optional)* Specify the Strategy which you want to BackTest
-  - **Defaults to:** The `strategy` defined in the `hyperopt` section of your `.hurry` file.
+    - **Defaults to:** The `strategy` defined in the `hyperopt` section of your `.hurry` file.
 - **`--enable_protections`:** *(Optional)* Whether or not to enable protections.
-  - **Defaults to:** True.
+    - **Defaults to:** True.
 - **`--output_file_name`:** *(Optional)* Custom name for the '.log' file being created.
-  - **Defaults to:** Defaults to `BackTestResults-<Strategy-Name>-<Current-DateTime>`
+    - **Defaults to:** Defaults to `BackTestResults-<Strategy-Name>-<Current-DateTime>`
 
 ### `mgm-hurry plot_stats`
 Plot the stats report from a BackTest into detail html file.
 #### Option
 - **`--choose_results`:** *(Optional)* Launches a prompt to easily choose a certain backtest result file. If 'False' then the last BackTest result will be used.
-  - **Defaults to:** 'True' mean an interactive prompt to choose a 'backtest-result-<timestamp>.json' file.
+    - **Defaults to:** 'True' mean an interactive prompt to choose a 'backtest-result-<timestamp>.json' file.
 - **`--strategy`:** *(Optional)* Specify the Strategy of backTest result
-  - **Defaults to:** The `strategy` defined in the `hyperopt` section of your `.hurry` file.
+    - **Defaults to:** The `strategy` defined in the `hyperopt` section of your `.hurry` file.
 - **`--output_file_name`:** *(Optional)* Custom name for the `.html` file being created.
-  - **Defaults to:** Defaults to `PlotProfitResults-<Strategy-Name>-<Current-DateTime>`
+    - **Defaults to:** Defaults to `PlotProfitResults-<Strategy-Name>-<Current-DateTime>`
 
 
 ### `mgm-hurry importance_report`
 Runs the TotalOverallSignalImportanceCalculator process to find out which signals reached more importance in your MoniGoMani results found by HyperOpt.
 #### Option
 - **`--output_file_name`:** *(Optional)* Custom name for the `.log` file being created.
-  - **Defaults to:** Defaults to `SignalImportanceResults-MoniGoManiHyperStrategy-<Current-DateTime>`
+    - **Defaults to:** Defaults to `SignalImportanceResults-MoniGoManiHyperStrategy-<Current-DateTime>`
 
 
 ### `mgm-hurry export_csv`
 Export the `.fthypt` results to an easy to interpret/sort/filter `.csv` SpreadSheet.
 #### Option
 - **`--output_file_name`:** *(Optional)* Custom name for the `.csv` file being created.
-  - **Defaults to:** Defaults to `CsvResults-<Strategy-Name>-<Current-DateTime>`
+    - **Defaults to:** Defaults to `CsvResults-<Strategy-Name>-<Current-DateTime>`
 - **`--fthypt`:** *(Optional)* Launches a prompt to easily choose a certain `.fthypt` file or a specific `.fthypt` by providing it's name.
-  - **Defaults to:** The last known `.fthypt` file. Provide `True` to launch a prompt to easily choose a specific. `.fthypt` file.
+    - **Defaults to:** The last known `.fthypt` file. Provide `True` to launch a prompt to easily choose a specific. `.fthypt` file.
 
 
 ### `mgm-hurry hyperopt_show_epoch`
@@ -244,27 +244,27 @@ Prints & applies the HyperOpt Results for an epoch of choice.
 #### Options
 - **`--epoch`:** ***(Mandatory)*** Provide the epoch from which you wish to print the results.
 - **`--strategy`:** *(Optional)* Strategy used
-  - **Defaults to:** Value in `.hurry`.
+    - **Defaults to:** Value in `.hurry`.
 - **`--apply`:** *(Optional)* Apply the printed HyperOpt Results
-  - **Defaults to:** `True`. Provide `False` to only print the results
+    - **Defaults to:** `True`. Provide `False` to only print the results
 - **`--fthypt`:** *(Optional)* Launches a prompt to easily choose a certain `.fthypt` file or a specific `.fthypt` by providing it's name.
-  - **Defaults to:** The last known `.fthypt` file. Provide `True` to launch a prompt to easily choose a specific. `.fthypt` file.
+    - **Defaults to:** The last known `.fthypt` file. Provide `True` to launch a prompt to easily choose a specific. `.fthypt` file.
 
 
 ### `mgm-hurry hyperopt_show_results`
 Launches a prompt to easily choose a certain `.fthypt` file to print epochs from.
 #### Options
 - **`--only_best`:** *(Optional)* Show only best epochs.
-  - **Defaults to:** `True`. Provide `False` to disable filter.
+    - **Defaults to:** `True`. Provide `False` to disable filter.
 - **`--only_profitable`:** *(Optional)* Show only profitable epochs.
-  - **Defaults to:** `False`. Provide `True` to enable filter.
+    - **Defaults to:** `False`. Provide `True` to enable filter.
 
 
 ### `mgm-hurry start_trader`
 Start the trader. Your ultimate goal!
 #### Option
 - **`--dry_run`:** *(Optional)* Run the trader in Dry-Run mode.
-  - **Defaults to:** `True`. Provide `False` to run in Live-Run mode.
+    - **Defaults to:** `True`. Provide `False` to run in Live-Run mode.
 
 
 ## Example timeranges
