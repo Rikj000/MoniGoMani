@@ -82,3 +82,5 @@ pyproject.yml
 setup.cfg
 setup.py
 setup.sh
+user_data/strategies/MasterMoniGoManiHyperStrategy_SSL.py
+user_data/strategies/MoniGoManiHyperStrategy_SSL.py
