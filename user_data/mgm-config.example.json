@@ -1,7 +1,10 @@
 {
   "monigomani_settings": {
-    "timeframe": "30m",
-    "backtest_timeframe": "5m",
+    "timeframes": {
+      "backtest_timeframe": "5m",
+      "core_trend_timeframe_multiplier": 8,
+      "timeframe": "30m"
+    },
     "startup_candle_count": 400,
     "precision": 1,
     "trading_during_trends": {
@@ -91,59 +94,41 @@
     }
   },
   "monigomani_hyperoptloss_settings": {
-    "MGM_GeniusHyperOptLoss": {
-      "sortino": {
-        "expected_max_profit": 3,
-        "max_accepted_trade_duration": 360
-      },
-      "weight": {
-        "average_profit_weight": 20,
-        "drawdown_weight": 80,
-        "duration_weight": 360,
-        "sortino_weight": 0.02,
-        "total_profit_weight": 60,
-        "win_loss_weight": 60
-      },
-      "other": {
-        "average_profit_threshold": 1,
-        "ignore_small_profits": false,
-        "small_profits_threshold": 0.001
-      }
+    "average_duration": {
+      "average_duration_weight": 75,
+      "expected_average_duration_minutes": 300,
+      "average_duration_threshold_high": 600,
+      "average_duration_threshold_low": 120
     },
-    "MGM_UncloggedWinRatioAndProfitRatioHyperOptLoss": {
-      "unclogger_profit_ratio_loss_tolerance": -0.02
+    "average_profit": {
+      "average_profit_weight": 100,
+      "expected_average_profit": 1.5,
+      "average_profit_threshold_high": 3,
+      "average_profit_threshold_low": 0.5
     },
-    "MGM_WeightedMultiParameterHyperOptLoss": {
-      "drawdown": {
-        "expected_drawdown": 0.8,
-        "drawdown_weight": 1.7,
-        "drawdown_threshold_high": 2,
-        "drawdown_threshold_low": 0.2
-      },
-      "duration": {
-        "expected_duration_minutes": 60,
-        "duration_weight": 1.2,
-        "duration_threshold_high": 9000000000,
-        "duration_threshold_low": 0
-      },
-      "profit": {
-        "expected_profit": 12,
-        "profit_weight": 1.6,
-        "profit_threshold_high": 1000,
-        "profit_threshold_low": 0.42
-      },
-      "sortino": {
-        "expected_sortino": 42,
-        "sortino_weight": 0.8,
-        "sortino_threshold_high": 2.5,
-        "sortino_threshold_low": 0.2
-      },
-      "trades": {
-        "expected_trades": 1500,
-        "trades_weight": 0.8,
-        "trades_threshold_high": 2,
-        "trades_threshold_low": 0.55
-      }
+    "max_drawdown": {
+      "max_drawdown_weight": 75,
+      "expected_max_drawdown": 90,
+      "max_drawdown_threshold_high": 150,
+      "max_drawdown_threshold_low": 30
+    },
+    "total_profit": {
+      "total_profit_weight": 200,
+      "expected_total_profit": 70,
+      "total_profit_threshold_high": 100,
+      "total_profit_threshold_low": 30
+    },
+    "total_trades": {
+      "total_trades_weight": 100,
+      "expected_total_trades": 500,
+      "total_trades_threshold_high": 1000,
+      "total_trades_threshold_low": 100
+    },
+    "win_ratio": {
+      "win_ratio_weight": 100,
+      "expected_win_ratio": 70,
+      "win_ratio_threshold_high": 90,
+      "win_ratio_threshold_low": 50
     }
   },
   "dry_run": true,

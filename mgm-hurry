@@ -25,6 +25,9 @@ from datetime import datetime
 from string import Template
 
 import fire
+import numpy as np  # noqa
+import pandas as pd  # noqa
+import quantstats as qs
 from art import tprint
 from InquirerPy import prompt
 from InquirerPy.validator import NumberValidator
@@ -348,13 +351,15 @@ class MGMHurry:
 
         self.monigomani_config.reload()
 
-        answers = prompt(questions=[{
-            'type': 'list',
-            'name': 'install_type',
-            'message': 'Which way you want to use Freqtrade?',
-            'choices': ['docker', 'source'],
-            'default': self.monigomani_config.get('install_type') or 'source'
+        """
+        'type': 'list',
+        'name': 'install_type',
+        'message': 'Which way you want to use Freqtrade?',
+        'choices': ['docker', 'source'],
+        'default': self.monigomani_config.get('install_type') or 'source'
         }, {
+        """
+        answers = prompt(questions=[{
             'type': 'input',
             'name': 'timerange',
             'message': 'Please enter the default timerange you want to use:',
@@ -410,7 +415,7 @@ class MGMHurry:
             'type': 'list',
             'name': 'exchange',
             'message': 'Which exchange do you want to use?',
-            'choices': ['binance', 'ftx', 'bittrex'],
+            'choices': ['binance', 'bittrex', 'bitvavo', 'ftx', 'gateio', 'kraken', 'kucoin'],
             'when': lambda result: result['proceed_exchange']
         }, {
             'type': 'password',
@@ -432,16 +437,17 @@ class MGMHurry:
         if answers == {}:
             sys.exit(1)
 
+        """
         if answers.get('install_type') == 'source':
             ft_binary = f'source {self.basedir}/.env/bin/activate; freqtrade'
         else:
             ft_binary = 'docker-compose run --rm freqtrade'
-
+        """
         new_config = {
             'config': {
                 'username': answers.get('username'),
-                'install_type': answers.get('install_type'),
-                'ft_binary': ft_binary,
+                'install_type': 'source',  # answers.get('install_type'),
+                'ft_binary': f'source {self.basedir}/.env/bin/activate; freqtrade',  # ft_binary,
                 'timerange': answers.get('timerange'),
                 'exchange': answers.get('exchange') or 'none',
                 'hyperopt': {
@@ -628,9 +634,9 @@ class MGMHurry:
 
     def hyperopt(self, timerange: str = None, strategy: str = None, loss: str = None, spaces: str = None,
                  enable_protections: bool = True, random_state: int = None, apply_best_results: bool = True,
-                 clean_start: bool = False, do_backtest: bool = True, plot_profits: bool = True,
+                 clean_start: bool = False, do_backtest: bool = True, plot_profits: bool = True, plot_stats: bool = True,
                  importance_report: bool = True, export_csv: bool = True, output_file_name: str = None,
-                 jobs: int = None, min_trades: int = None):
+                 epochs: int = None, jobs: int = None, min_trades: int = None):
         """
         HyperOpt Magic. Runs HyperOpt process to find out the most positive settings, automatically saves results.
 
@@ -646,16 +652,20 @@ class MGMHurry:
         :param clean_start: (bool, Optional): Cleanup MoniGoMani before starting the HO? Defaults to False.
         :param do_backtest: (bool, Optional): Do a BackTest after the HO? Defaults to True.
         :param plot_profits: (bool, Optional): Plot a Profits graph after the BackTest? Defaults to True.
+        :param plot_stats: (bool, Optional): Plot a QuantStats report after the BackTest? Defaults to True.
         :param importance_report: (bool, Optional): Calculate a signal importance report after the HO? Defaults to True.
         :param export_csv: (bool, Optional): Export the HO results into a '.csv' SpreadSheet? Defaults to True.
         :param output_file_name: (str, Optional) Custom filename for the HyperOptResults '.log' file that will be
             stored in the format: 'HyperOptResults-<output_file_name>.log'. Defaults to 'Strategy + Current DateTime'
+        :param epochs: (int) Amount of epochs to HyperOpt over. Defaults to value defined in '.hurry'
         :param jobs: (int) Amount of parallel workers (CPU cores) to use, gets set automatically by default
         :param min_trades: (int) Minimal amount of trades wished to be reached. Unused by default
         """
 
         if strategy is None:
             strategy = self.monigomani_config.config['hyperopt']['strategy']
+        if epochs is None:
+            epochs = self.monigomani_config.config['hyperopt']['epochs']
 
         initial_run = True
         if clean_start is True:
@@ -691,20 +701,26 @@ class MGMHurry:
             ho_strategy=strategy,
             ho_loss=loss,
             ho_spaces=spaces,
-            ho_epochs=self.monigomani_config.config['hyperopt']['epochs'],
+            ho_epochs=epochs,
             timerange=timerange,
             random_state=random_state,
             jobs=jobs,
             min_trades=min_trades)
 
         self.logger.debug(command)
-
         if output_file_name is None:
-            output_file_name = f'{strategy}-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+            output_file_name = f'{strategy}-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
         hyperopt_file_name = f'HyperOptResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/hyperopt_results/{hyperopt_file_name}.log'
 
-        self.monigomani_cli.run_command(command=command, output_file_name=output_file_path, hyperopt=True)
+        self.monigomani_cli.run_command(command=command, output_file_name=output_file_path,hyperopt=True)
+
+        last_ho_results_path = f'{self.basedir}/user_data/hyperopt_results/.last_ho_results_table.log'
+        if os.stat(last_ho_results_path).st_size == 0:
+            self.logger.error(Color.red('🤷 No "best" results found during the HyperOpt, aborting further tests '
+                                        'since there are no HyperOpt results to test upon.'))
+            sys.exit(1)
+
         if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
             self.monigomani_cli.apply_mgm_results(strategy)
             self.monigomani_config.save_weak_strong_signal_overrides()
@@ -723,13 +739,14 @@ class MGMHurry:
             ho_results_log.close()
 
         if initial_run is True:
-            message = f'🚀 Fresh **{strategy}** Initial HyperOpt Run Results ⬇️'
+            message = f'🚀 Fresh **{strategy}** Initial HyperOpt Run Results ⬇️\n'
         elif strategy == 'MoniGoManiHyperStrategy':
-            message = f'🚀 Fresh **{strategy}** Refinement HyperOpt Run Results ⬇️'
+            message = f'🚀 Fresh **{strategy}** Refinement HyperOpt Run Results ⬇️\n'
         else:
-            message = f'🚀 Fresh **{strategy}** HyperOpt Run Results ⬇️'
-        MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
-                                                    message=message, results_paths=[output_file_path])
+            message = f'🚀 Fresh **{strategy}** HyperOpt Run Results ⬇️\n'
+
+        MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'], message=message,
+                                                    results_paths=[last_ho_results_path, output_file_path])
         if (importance_report is True) and (strategy == 'MoniGoManiHyperStrategy'):
             self.importance_report(output_file_name=output_file_name)
         if apply_best_results is False:
@@ -741,7 +758,7 @@ class MGMHurry:
             self.export_csv(strategy=strategy, output_file_name=output_file_name)
         if do_backtest is True:
             self.backtest(timerange=timerange, strategy=strategy, enable_protections=enable_protections,
-                          plot_profits=plot_profits, output_file_name=output_file_name)
+                          plot_profits=plot_profits, plot_stats=plot_stats, output_file_name=output_file_name)
         else:
             MoniGoManiLogger(self.basedir).post_setup(config=self.monigomani_config.config,
                                                       strategy=strategy, basedir=self.basedir)
@@ -811,7 +828,7 @@ class MGMHurry:
             self.cleanup(strategy)
 
     def backtest(self, timerange: str = None, strategy: str = None, enable_protections: bool = True,
-                 plot_profits: bool = True, output_file_name: str = None):
+                 plot_profits: bool = True, plot_stats: bool = True, output_file_name: str = None):
         """
         Run a backtest session and automatically save the results.
 
@@ -819,6 +836,7 @@ class MGMHurry:
         :param strategy: (str, Optional): Strategy to use during BackTesting. Defaults to value in '.hurry'
         :param enable_protections: (bool, Optional): Whether or not to enable protections. Defaults to True.
         :param plot_profits: (bool, Optional): Automatically plot visual profit graphs in '.html'. Defaults to True.
+        :param plot_stats: (bool, Optional): Automatically plot visual stats report in '.html'. Defaults to True.
         :param output_file_name: (str, Optional) Custom filename for the BackTestResults '.log' file that will be stored
             in the format: 'BackTestResults-<output_file_name>.log'. Defaults to 'Strategy + Current DateTime'.
         """
@@ -847,18 +865,26 @@ class MGMHurry:
             timerange=timerange)
 
         if output_file_name is None:
-            output_file_name = f'{strategy}-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+            output_file_name = f'{strategy}-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
         backtest_file_name = f'BackTestResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/backtest_results/{backtest_file_name}.log'
 
-        self.monigomani_cli.run_command(command, output_file_path)
-        MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
-                                                    message=f'🚀 Fresh **{strategy}** BackTest Results ⬇️',
-                                                    results_paths=[output_file_path])
+        self.monigomani_cli.run_command(command, output_file_path, backtest=True)
+        message = f'🚀 Fresh **{strategy}** BackTest Results ⬇\n'
+
+        last_sell_reasons_path = f'{self.basedir}/user_data/backtest_results/.last_backtest_sell_reasons.log'
+
+        MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'], message=message,
+                                                    results_paths=[last_sell_reasons_path, output_file_path])
 
         if plot_profits is True:
             self.plot_profit(choose_results=False, timerange=timerange,
                              strategy=strategy, output_file_name=output_file_name)
+        if plot_stats is True:
+            try:
+                self.plot_stats(choose_results=False, strategy=strategy, output_file_name=output_file_name)
+            except:
+                self.logger.error(Color.red(f'Create stats html report failed'))
 
         MoniGoManiLogger(self.basedir).post_setup(config=self.monigomani_config.config,
                                                   strategy=strategy, basedir=self.basedir)
@@ -905,7 +931,7 @@ class MGMHurry:
             return None
 
         if output_file_name is None:
-            output_file_name = f'{strategy}-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+            output_file_name = f'{strategy}-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
         plot_profit_file_name = f'PlotProfitResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/plot/{plot_profit_file_name}.html'
 
@@ -917,6 +943,67 @@ class MGMHurry:
         MoniGoManiLogger(self.basedir).post_message(
             username=self.monigomani_config.config['username'],
             message=f'🚀 Fresh **{strategy}** Plot Profit Results ⬇️', results_paths=[output_file_path])
+
+    def plot_stats(self, choose_results: bool = True,
+                   strategy: str = None, output_file_name: str = None) -> None:
+        """
+        Plot the stats report from a BackTest into detail html file.
+
+        :param choose_results: (bool) If 'False' then the last BackTest result will be used.
+            Defaults to an interactive prompt to choose a 'backtest-result-<timestamp>.json' file.
+        :param strategy: (str, Optional): Strategy to use during BackTesting. Defaults to value in '.hurry'
+        :param output_file_name: (str, Optional) Custom filename for the profit plot '.html' file that will be stored
+            in the format: 'PlotProfitResults-<output_file_name>.html'. Defaults to 'Strategy + Current DateTime'.
+        """
+
+        self.logger.info(Color.title(f'👉 Plotting profit graph for BackTest results'))
+
+        # extend pandas functionality with metrics, etc.
+        qs.extend_pandas()
+
+        if strategy is None:
+            strategy = self.monigomani_config.config['hyperopt']['strategy']
+
+        backtest_results_file = self.freqtrade_cli.choose_backtest_results_file(choose_results=choose_results)
+        backtest_results_path = f'{self.basedir}/user_data/backtest_results/{backtest_results_file}'
+
+        if os.path.isfile(backtest_results_path) is True:
+            # Load the 'backtest-result-<timestamp>.json' file as an object and parse it as a dictionary
+            file_object = open(backtest_results_path, )
+            backtest_results = json.load(file_object)
+
+            if len(backtest_results['strategy'][strategy]['trades']) == 0:
+                self.logger.error(Color.red(f'🤷 No trades where done in the given {backtest_results_file} file.\n'
+                                            f'Please provide a BackTest results file in which '
+                                            f'actual trading has been done!'))
+                return None
+        else:
+            self.logger.error(Color.red(f'🤷 {backtest_results_file} file could not be found.\nPlease make sure that '
+                                        f'the provided BackTest results file actually exists!'))
+            return None
+
+        if output_file_name is None:
+            output_file_name = f'{strategy}-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
+        plot_profit_file_name = f'PlotStatsReports-{output_file_name}'
+        output_file_path = f'{self.basedir}/user_data/plot/{plot_profit_file_name}.html'
+
+        starting_balance = backtest_results['strategy'][strategy]['starting_balance']
+        backtest_trades = pd.DataFrame(backtest_results['strategy'][strategy]['trades'])
+
+        backtest_trades['open_date'] = pd.to_datetime(backtest_trades['open_date'], utc=True, infer_datetime_format=True)
+        daily_returns = backtest_trades[['open_date', 'profit_abs']].groupby(pd.Grouper(key="open_date", freq='D')).sum('profit_abs')
+        daily_returns['balance'] = np.cumsum(daily_returns['profit_abs']) + starting_balance
+
+        dates = pd.date_range(daily_returns.index[0], daily_returns.index[-1], freq='D').tz_localize(None)
+
+        daily_returns = pd.Series(daily_returns.balance).pct_change(1).values
+        returns_time_series = pd.Series(daily_returns, index=pd.to_datetime(list(dates)))
+
+        qs.reports.html(returns=returns_time_series, title=f'{strategy} {backtest_results_file}', output=output_file_path)
+
+        MoniGoManiLogger(self.basedir).post_message(
+            username=self.monigomani_config.config['username'],
+            message=f'🚀 Fresh **{strategy}** Plot Stats Reports ⬇️', results_paths=[output_file_path])
 
     def importance_report(self, output_file_name: str = None) -> None:
         """
@@ -940,7 +1027,7 @@ class MGMHurry:
             return None
 
         if output_file_name is None:
-            output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+            output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
         importance_report_file_name = f'SignalImportanceResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/importance_results/{importance_report_file_name}.log'
 
@@ -981,7 +1068,7 @@ class MGMHurry:
             fthypt_file_path = f'{self.basedir}/user_data/hyperopt_results/{fthypt_name}'
 
         if output_file_name is None:
-            output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}'
+            output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
         csv_results_file_name = f'CsvResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/csv_results/{csv_results_file_name}.csv'
 

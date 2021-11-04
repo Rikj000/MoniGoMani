@@ -76,7 +76,6 @@ freqtrade.service
 freqtrade.service.watchdog
 freqtrade.egg-info
 MANIFEST.in
-mkdocs.yml
 pyproject.toml
 pyproject.yml
 setup.cfg

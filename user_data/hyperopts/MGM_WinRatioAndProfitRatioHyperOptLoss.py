@@ -23,6 +23,9 @@ class MGM_WinRatioAndProfitRatioHyperOptLoss(IHyperOptLoss):
         This might prove to be more reliable for dry and live runs of FreqTrade
         and prevent over-fitting on best profit only.
 
+        It will also punish the HyperOpt if the trades found in an epoch are below the configured
+        'total_trades_threshold_low' as a way to prevent over-fitting on too low trades with too high average duration.
+
         :param results: DataFrame containing the resulting trades. The following columns are available in results
             (corresponds to the output-file of backtesting when used with --export trades):
             pair, profit_ratio, profit_abs, open_date, open_rate, fee_open, close_date, close_rate, fee_close, amount,
@@ -41,8 +44,12 @@ class MGM_WinRatioAndProfitRatioHyperOptLoss(IHyperOptLoss):
                 substructure. Available fields can be seen in generate_strategy_stats() in optimize_reports.py
         """
 
-        wins = len(results[results['profit_ratio'] > 0])
-        avg_profit = results['profit_ratio'].sum() * 100.0
+        if trade_count >= config['monigomani_hyperoptloss_settings']['total_trades']['total_trades_threshold_low']:
+            wins = len(results[results['profit_ratio'] > 0])
+            avg_profit = results['profit_ratio'].sum() * 100.0
 
-        win_ratio = wins / trade_count
-        return -avg_profit * win_ratio * 100
+            win_ratio = wins / trade_count
+            return -avg_profit * win_ratio * 100
+        else:
+            # Punish HyperOpt if the total trade count is under the threshold_low value
+            return 10000

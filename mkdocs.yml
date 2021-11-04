@@ -1,0 +1,41 @@
+site_name: MoniGoMani
+site_url: https://monigomani.readthedocs.io
+repo_url: https://github.com/Rikj000/MoniGoMani
+use_directory_urls: True
+theme:
+  name: material
+  logo: images/MoniGoManiLogo.png
+  favicon: images/MoniGoManiLogo.png
+  palette:
+    - scheme: default
+      primary: black
+      accent: green
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      primary: black
+      accent: green
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+docs_dir: Documentation
+nav:
+  - Home: README.md
+  - Installation: Docs-VeryQuickStart.md
+  - MGM-Hurry: Docs-MGM-Hurry.md
+  - MoniGoMani: Docs-MoniGoMani.md
+  - MGM-HyperOptLoss-Functions: Docs-MGM-HyperOptLoss-Functions.md
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Rikj000/MoniGoMani
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/xFZ9bB6vEz
+markdown_extensions:
+  - markdown.extensions.toc: # Adds anchors to URL's
+      slugify: !!python/name:pymdownx.slugs.uslugify # causes linting issues, but it has to be written this way...
+      permalink: ""
+  - markdown.extensions.admonition # Nice note/warning/info blocks
+  - pymdownx.superfences:
+      preserve_tabs: true

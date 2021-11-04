@@ -168,8 +168,9 @@ class MoniGoManiCli(object):
 
             if os.path.isfile(f'{target_dir + mgm_folder}/setup.exp'):
                 os.remove(f'{target_dir + mgm_folder}/setup.exp')
-
             os.chmod(f'{temp_dirname}/setup.exp', 0o444)
+
+            self.fix_git_object_permissions(temp_dir_filepath=temp_dirname)
             copytree(temp_dirname, target_dir + mgm_folder, dirs_exist_ok=True)
 
             for delete_file in ['docker-compose.yml', 'user_data/logs/freqtrade.log']:
@@ -180,12 +181,12 @@ class MoniGoManiCli(object):
             symlink_objects = {
                 'Documentation',
                 'Some Test Results',
-                'docker/Dockerfile.MoniGoMani',
+                # 'docker/Dockerfile.MoniGoMani',
                 'user_data/logs/freqtrade.log',
                 'user_data/mgm_pair_lists',
                 'user_data/mgm_tools',
                 'user_data/__init__.py',
-                'docker-compose.yml',
+                # 'docker-compose.yml',
                 'mgm-hurry',
                 'requirements-mgm.txt'
             }
@@ -213,6 +214,17 @@ class MoniGoManiCli(object):
         except Exception as e:
             self.logger.critical(str(e))
             return False
+
+    def fix_git_object_permissions(self, temp_dir_filepath: str) -> None:
+        """
+        Fixes permissions of '.idx' and '.pack' files existing in
+        a temporary directory directory during the installation.
+
+        :param temp_dir_filepath: (str) The path to the temporary directory for MoniGoMani or Freqtrade
+        """
+        for file_type in ['.idx', '.pack']:
+            for git_file in glob.glob(f'{temp_dir_filepath}/.git/objects/pack/*{file_type}'):
+                os.chmod(git_file, 0o777)
 
     def apply_mgm_results(self, strategy: str = 'MoniGoManiHyperStrategy') -> bool:
         """
@@ -243,14 +255,16 @@ class MoniGoManiCli(object):
 
         return True
 
-    def run_command(self, command: str, output_file_name: str = None, hyperopt: bool = False) -> int:
+    def run_command(self, command: str, output_file_name: str = None,
+                    hyperopt: bool = False, backtest: bool = False) -> any:
         """
         Execute shell command and log output to mgm logfile if a path + filename is provided.
 
         :param command: (str) Shell command to execute, sir!
         :param output_file_name: (str, Optional) Name of the absolute path to the '.log' file.
         :param hyperopt: (bool, Optional): Must be True if HyperOpt command provided, defaults to false.
-        :return returncode: (int) The returncode of the subprocess
+        :param backtest: (bool, Optional): Must be True if BackTest command provided, defaults to false.
+        :return returncode: (Any) The returncode of the subprocess, HyperOpt results table or BackTest sell reasons
         """
 
         if command is None or command == '':
@@ -264,17 +278,27 @@ class MoniGoManiCli(object):
                                    stderr=subprocess.STDOUT, encoding='utf-8')
 
         hyperopt_results = []
+        backtest_sell_reasons = []
         mgm_logger = MGMLogger(logger.logger)
         monigomani_logger = MoniGoManiLogger(self.basedir)
         elapsed_time = 'Elapsed Time:'
         eta = '| [ETA:'
         break_output = False
+        storing_sell_reasons = False
 
         for line in process.stdout:
             final_line = mgm_logger.clean_line(line)
 
             if (hyperopt is True) and (final_line.count('# Buy hyperspace params:') > 0):
                 break_output = True
+
+            if backtest is True:
+                if final_line.count('= SELL REASON STATS =') > 0:
+                    storing_sell_reasons = True
+                elif final_line.count('= LEFT OPEN TRADES REPORT =') > 0:
+                    storing_sell_reasons = False
+                if storing_sell_reasons is True:
+                    backtest_sell_reasons.append(final_line)
 
             if break_output is False:
                 # Save the output to a '.log' file if enabled
@@ -308,6 +332,26 @@ class MoniGoManiCli(object):
             if os.stat(log_file).st_size == 0:
                 os.remove(log_file)
 
+        if hyperopt is True:
+            last_ho_results_path = f'{self.basedir}/user_data/hyperopt_results/.last_ho_results_table.log'
+            if os.path.isfile(last_ho_results_path):
+                os.remove(last_ho_results_path)
+            last_ho_results_file = open(last_ho_results_path, 'w')
+            if len(hyperopt_results) > 3:
+                for ho_result in hyperopt_results:
+                    last_ho_results_file.write(ho_result)
+            last_ho_results_file.close()
+
+        elif backtest is True:
+            last_sell_reasons_path = f'{self.basedir}/user_data/backtest_results/.last_backtest_sell_reasons.log'
+            if os.path.isfile(last_sell_reasons_path):
+                os.remove(last_sell_reasons_path)
+            last_sell_reasons_file = open(last_sell_reasons_path, 'w')
+            if len(backtest_sell_reasons) > 1:
+                for backtest_sell_reason in backtest_sell_reasons:
+                    last_sell_reasons_file.write(backtest_sell_reason)
+            last_sell_reasons_file.close()
+
         return return_code
 
     def calculate_timerange_start_minus_startup_candle_count(self, timerange: int = None) -> dict:
@@ -322,7 +366,7 @@ class MoniGoManiCli(object):
         # Calculate the amount of days to add to the timerange based on the startup candle count & candle size
         mgm_config_files = self.monigomani_config.load_config_files()
         timeframe_minutes = self.timeframe_to_minutes(
-            mgm_config_files['mgm-config']['monigomani_settings']['timeframe'])
+            mgm_config_files['mgm-config']['monigomani_settings']['timeframes']['timeframe'])
         startup_candle_count = mgm_config_files['mgm-config']['monigomani_settings']['startup_candle_count']
         extra_days = ceil((timeframe_minutes * startup_candle_count) / (60 * 24))
 
