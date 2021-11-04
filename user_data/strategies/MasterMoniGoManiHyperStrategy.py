@@ -15,7 +15,7 @@ import numpy as np  # noqa
 import pandas as pd  # noqa
 import talib.abstract as ta
 from numpy import timedelta64
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from scipy.interpolate import interp1d
 from yaml import full_load
 
@@ -25,7 +25,10 @@ from freqtrade.exchange import timeframe_to_prev_date
 from freqtrade.misc import deep_merge_dicts, round_dict
 from freqtrade.optimize.space import Categorical, Dimension, Integer, SKDecimal
 from freqtrade.persistence import Trade
-from freqtrade.strategy import IntParameter, IStrategy, merge_informative_pair, timeframe_to_minutes
+from freqtrade.strategy import IntParameter, IStrategy, merge_informative_pair, timeframe_to_minutes,DecimalParameter
+
+import freqtrade.vendor.qtpylib.indicators as qtpylib
+import pandas_ta as pta
 
 logger = logging.getLogger(__name__)
 
@@ -205,6 +208,14 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             total_signals_possible[f'{space}_{trend}'] = 0
             total_triggers_possible[f'{space}_{trend}'] = 0
 
+    # CoreTrend Hyperoptable parameters
+    trend_ssl_period = IntParameter(3, 15, default=8, space='buy', optimize=False, load=False)
+    trend_ssl_atr_coef = DecimalParameter(0, 1, decimals=1, default=0.4, space='buy', optimize=False, load=False)
+    trend_ssl_mode = IntParameter(1, 17, default=1, space='buy', optimize=False, load=False)
+    trend_chop_sideway = IntParameter(40, 55, default=41, space='buy', optimize=False, load=False)
+    trend_bb_sideway = IntParameter(5, 15, default=9, space='buy', optimize=False, load=False)
+    
+
     class HyperOpt:
         @staticmethod
         def generate_roi_table(params: Dict) -> Dict[int, float]:
@@ -382,7 +393,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         framework_plots = {
             # Main Plots - Trend Indicator (SAR)
             'main_plot': {
-                'sar': {'color': '#2c05f6'}
+                #'sar': {'color': '#2c05f6'}
             },
             # Sub Plots - Each dict defines one additional plot
             'subplots': {
@@ -390,9 +401,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 'MoniGoMani Core Trend': {
                     'mgm_trend': {'color': '#7fba3c'}
                 },
-                'Hilbert Transform (Trend vs Cycle)': {
-                    'ht_trendmode': {'color': '#6f1a7b'}
-                },
+                #'Hilbert Transform (Trend vs Cycle)': {
+                #    'ht_trendmode': {'color': '#6f1a7b'}
+                #},
                 # Sub Plots - Final Buy + Sell Signals
                 'Buy + Sell Signals Firing': {
                     'buy': {'color': '#09d528'},
@@ -425,6 +436,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: a Dataframe with all core trend indicators for MoniGoMani
         """
 
+        """
+        # --------------------
+        # Current Core Trend Detection
+        # --------------------
         # Momentum Indicators
         # -------------------
         # Hilbert Transform - Trend vs Cycle
@@ -438,6 +453,19 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         dataframe.loc[(dataframe['ht_trendmode'] == 1) & (dataframe['sar'] > dataframe['close']), 'trend'] = 'downwards'
         dataframe.loc[(dataframe['ht_trendmode'] == 0) | (dataframe['sar'] == dataframe['close']), 'trend'] = 'sideways'
         dataframe.loc[(dataframe['ht_trendmode'] == 1) & (dataframe['sar'] < dataframe['close']), 'trend'] = 'upwards'
+        """
+        # --------------------
+        # New Core Trend Detection
+        # --------------------
+        #Upwards / Downwards movement detection
+        df_ssl = SSLChannels_ATR(dataframe,period=self.trend_ssl_period.value,coef=self.trend_ssl_atr_coef.value,mode=self.trend_ssl_mode.value)
+        dataframe = pd.concat([dataframe, df_ssl], axis=1)
+        dataframe['trend'] = np.where((dataframe[f'SSLATR_{self.trend_ssl_mode.value}_{self.trend_ssl_period.value}_{self.trend_ssl_atr_coef.value}_up'] < dataframe[f'SSLATR_{self.trend_ssl_mode.value}_{self.trend_ssl_period.value}_{self.trend_ssl_atr_coef.value}_down'])
+                    , 'downwards', 'upwards')
+        #Sideway movement detection
+        dataframe['chop'] = pta.chop(dataframe["high"], dataframe["low"], dataframe["close"])
+        bollinger = qtpylib.bollinger_bands(qtpylib.typical_price(dataframe), window=20, stds=2)
+        dataframe['trend'] = np.where((dataframe['chop'] > self.trend_chop_sideway.value) & ((((bollinger['upper'] - bollinger['lower']) / bollinger['upper']) * 100) < self.trend_bb_sideway.value),'sideways',dataframe['trend'])
 
         # Add DataFrame column for visualization in FreqUI when Dry/Live RunMode is detected
         if self.is_dry_live_run_detected is True:
@@ -526,7 +554,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
             # Merge core trend to informative data frame
             informative = merge_informative_pair(
-                informative, core_trend[['date', 'ht_trendmode', 'sar', 'trend']].copy(),
+                informative, core_trend[['date', 'trend']].copy(),
                 self.informative_timeframe, self.core_trend_timeframe, ffill=True)
             skip_columns = [f'{s}_{self.core_trend_timeframe}' for s in
                             ['date', 'open', 'high', 'low', 'close', 'volume']]
@@ -560,7 +588,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
             # Merge core trend to main data frame
             dataframe = merge_informative_pair(
-                dataframe, core_trend[['date', 'ht_trendmode', 'sar', 'trend', 'mgm_trend']].copy(),
+                dataframe, core_trend[['date', 'trend', 'mgm_trend']].copy(),
                 self.timeframe, self.core_trend_timeframe, ffill=True)
             skip_columns = [f'{s}_{self.core_trend_timeframe}' for s in
                             ['date', 'open', 'high', 'low', 'close', 'volume']]
@@ -1421,3 +1449,46 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             separator_window = (self.separator / 1) - (1 / self.separator)
             self.separator_candle_weight_reducer = separator_window / self.get_param_value(
                 'sell___unclogger_trend_lookback_candles_window')
+# ---------------------------------------------------
+# Customized SSL Channel function with ATR coef
+# ---------------------------------------------------
+def SSLChannels_ATR(dataframe,period: int=7,coef: int=1,mode: int=1):
+    """
+    SSL Channels with ATR: https://www.tradingview.com/script/SKHqWzql-SSL-ATR-channel/
+    Credit to @JimmyNixx for python
+    """
+    df = dataframe.copy()
+
+    df['ATR'] = ta.ATR(df, timeperiod=int(period))
+
+    #MovingAverage mode
+    if   mode == 1 : mamode = "dema"
+    elif mode == 2 : mamode = "fwma"
+    elif mode == 3 : mamode = "hma"
+    elif mode == 4 : mamode = "linreg"
+    elif mode == 5 : mamode = "midpoint"
+    elif mode == 6 : mamode = "pwma"
+    elif mode == 7 : mamode = "rma"
+    elif mode == 8 : mamode = "sinwma"
+    elif mode == 9 : mamode = "sma"
+    elif mode == 10 : mamode = "swma"
+    elif mode == 11 : mamode = "t3"
+    elif mode == 12 : mamode = "tema"
+    elif mode == 13 : mamode = "trima"
+    elif mode == 14 : mamode = "vidya"
+    elif mode == 15 : mamode = "wma"
+    elif mode == 16 : mamode = "zlma"
+    else : mamode = "ema"
+
+    df['maHigh'] = pta.ma(mamode, dataframe['high'], length=period) + (df['ATR'] * coef)
+    df['maLow'] = pta.ma(mamode, dataframe['low'], length=period) - (df['ATR'] * coef)
+
+    df['hlv'] = np.where(df['close'] > df['maHigh'], 1, np.where(df['close'] < df['maLow'], -1, np.NAN))
+    df['hlv'] = df['hlv'].ffill()
+
+    df[f'SSLATR_{mode}_{period}_{coef}_down'] = np.where(df['hlv'] < 0, df['maHigh'], df['maLow'])
+    df[f'SSLATR_{mode}_{period}_{coef}_up'] = np.where(df['hlv'] < 0, df['maLow'], df['maHigh'])
+
+    return pd.concat([df[f'SSLATR_{mode}_{period}_{coef}_down'], df[f'SSLATR_{mode}_{period}_{coef}_up']], axis=1)
+# ---------------------------------------------------
+
