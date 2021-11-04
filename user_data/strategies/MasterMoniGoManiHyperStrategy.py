@@ -212,7 +212,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     trend_ssl_period = IntParameter(3, 15, default=8, space='buy', optimize=False, load=False)
     trend_ssl_atr_coef = DecimalParameter(0, 1, decimals=1, default=0.4, space='buy', optimize=False, load=False)
     trend_ssl_mode = IntParameter(1, 17, default=1, space='buy', optimize=False, load=False)
-    trend_chop_sideway = IntParameter(40, 55, default=41, space='buy', optimize=False, load=False)
+    trend_chop_sideway = IntParameter(40, 55, default=48, space='buy', optimize=False, load=False)
     trend_bb_sideway = IntParameter(5, 15, default=9, space='buy', optimize=False, load=False)
     
 
