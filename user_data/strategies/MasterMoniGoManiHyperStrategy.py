@@ -109,14 +109,20 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         max_weighted_signal_value = mgm_config['weighted_signal_spaces']['max_weighted_signal_value']
         min_trend_total_signal_needed_value = mgm_config[
             'weighted_signal_spaces']['min_trend_total_signal_needed_value']
+        max_trend_total_signal_needed_value = mgm_config[
+            'weighted_signal_spaces']['max_trend_total_signal_needed_value']
         min_trend_total_signal_needed_candles_lookback_window_value = mgm_config[
             'weighted_signal_spaces']['min_trend_total_signal_needed_candles_lookback_window_value']
         max_trend_total_signal_needed_candles_lookback_window_value = mgm_config[
             'weighted_signal_spaces']['max_trend_total_signal_needed_candles_lookback_window_value']
         min_trend_signal_triggers_needed_value = mgm_config[
             'weighted_signal_spaces']['min_trend_signal_triggers_needed']
+        max_trend_signal_triggers_needed_value = mgm_config[
+            'weighted_signal_spaces']['max_trend_signal_triggers_needed']
         search_threshold_weighted_signal_values = mgm_config[
             'weighted_signal_spaces']['search_threshold_weighted_signal_values']
+        search_threshold_trend_total_signal_needed_values = mgm_config[
+            'weighted_signal_spaces']['search_threshold_trend_total_signal_needed_values']
         search_threshold_trend_total_signal_needed_candles_lookback_window_value = mgm_config[
             'weighted_signal_spaces']['search_threshold_trend_total_signal_needed_candles_lookback_window_value']
         search_threshold_trend_signal_triggers_needed = mgm_config[
@@ -1070,36 +1076,27 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 logger.setLevel(logging.DEBUG)
                 logger.debug(f'CUSTOM - {code_section} - {message}')
 
-    def _generate_weight_condition(self, dataframe: DataFrame, space: str) -> DataFrame:
+    def _generate_weight_condition(self, dataframe: DataFrame, space: str, trend: str) -> DataFrame:
         """
         Generates the final condition that checks the weights per trend
 
-        :param dataframe: DataFrame populated with indicators
-        :param space: buy or sell space
+        :param dataframe: (dataframe) DataFrame populated with indicators
+        :param space: (str) 'buy' or 'sell' space
+        :param trend: (str) 'downwards, 'sideways' or 'upwards' trend
         :return: Lambda conditions
         """
 
-        number_of_weighted_signals = int(getattr(self, f'number_of_weighted_{space}_signals'))
-
         conditions_weight = []
-        for trend in self.mgm_trends:
-            if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
-                corrected_totals = self.get_corrected_totals_needed(
-                    space=space, trend=trend, number_of_weighted_signals=number_of_weighted_signals)
+        if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
+            corrected_totals = self.get_corrected_totals_needed(space=space, trend=trend)
 
-                for weighted_signal_timeframe in self.weighted_signal_timeframes:
-                    core_trend_timeframe = self.core_trend_timeframes[weighted_signal_timeframe]
-
-                    conditions_weight.append(
-                        (dataframe[f'trend_{core_trend_timeframe}_{weighted_signal_timeframe}'] == trend) &
-                        (dataframe[f'total_{space}_signal_strength_{weighted_signal_timeframe}'] >= corrected_totals[
-                            'signal_needed']) &
-                        (dataframe[f'{space}_signals_triggered_{weighted_signal_timeframe}'] >= corrected_totals[
-                            'triggers_needed']))
+            conditions_weight.append(
+                (dataframe[f'total_{space}_{trend}_signal_strength'] >= corrected_totals['signal_needed']) &
+                (dataframe[f'{space}_{trend}_signals_triggered'] >= corrected_totals['triggers_needed']))
 
         return reduce(lambda x, y: x | y, conditions_weight)
 
-    def get_corrected_totals_needed(self, space: str, trend: str, number_of_weighted_signals: int) -> dict:
+    def get_corrected_totals_needed(self, space: str, trend: str) -> dict:
         """
         Fetches a dictionary containing
         - Total Signal Weight Needed
@@ -1108,7 +1105,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         :param space: (str) The 'buy' or 'sell' space
         :param trend: (str) 'upwards', 'sideways', 'downwards'
-        :param number_of_weighted_signals: Number of signals for the given space
         :return: (dict) {'signal_needed', 'triggers_needed'}
         """
         total_signal_needed = getattr(self, f'{space}__{trend}_trend_total_signal_needed')
@@ -1117,14 +1113,14 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         corrected_total_signal_needed = self.apply_weak_strong_overrides(
             parameter_value=total_signal_needed.value,
             parameter_min_value=self.min_trend_total_signal_needed_value,
-            parameter_max_value=self.max_weighted_signal_value * number_of_weighted_signals,
-            parameter_threshold=self.search_threshold_weighted_signal_values
-        ) / self.precision  # ToDo: Perhaps increase search_threshold_weighted_signal_values
+            parameter_max_value=self.max_trend_total_signal_needed_value,
+            parameter_threshold=self.search_threshold_trend_total_signal_needed_values
+        ) / self.precision
 
         corrected_total_triggers_needed = self.apply_weak_strong_overrides(
             parameter_value=total_triggers_needed.value,
             parameter_min_value=self.min_trend_signal_triggers_needed_value,
-            parameter_max_value=number_of_weighted_signals,
+            parameter_max_value=self.max_trend_signal_triggers_needed_value,
             parameter_threshold=self.search_threshold_trend_signal_triggers_needed
         ) / self.precision
 
@@ -1201,14 +1197,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 # If the weighted signal triggered, add the weight to the totals needed in the dataframe
                 dataframe.loc[((dataframe[trend_column_name] == trend) &
                                (condition.rolling(rolling_needed_value).sum() > 0)),
-                              f'total_{space}_signal_strength_{weighted_signal_timeframe}'] += (signal_weight_value /
-                                                                                                self.precision)
+                              f'total_{space}_{trend}_signal_strength'] += (signal_weight_value / self.precision)
 
                 # If the weighted signal is bigger then 0 and triggered, add up the amount of signals that triggered
                 if signal_weight_value > 0:
                     dataframe.loc[((dataframe[trend_column_name] == trend) &
                                    (condition.rolling(rolling_needed_value).sum() > 0)),
-                                  f'{space}_signals_triggered_{weighted_signal_timeframe}'] += 1
+                                  f'{space}_{trend}_signals_triggered'] += 1
             # Override Signals: When configured sell/buy signals can be completely turned off for each kind of trend
             else:
                 dataframe.loc[dataframe[trend_column_name] == trend, space] = 0
@@ -1362,11 +1357,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             for space in ['buy', 'sell']:
                 if cls.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                     param_total_signal_needed = f'_{trend}_trend_total_signal_needed'
-                    number_of_weighted_signals = int(getattr(cls, f'number_of_weighted_{space}_signals'))
                     cls._init_vars(base_cls=base_cls, space=space, parameter_name=param_total_signal_needed,
                                    parameter_min_value=cls.min_trend_total_signal_needed_value,
-                                   parameter_max_value=int(cls.max_weighted_signal_value * number_of_weighted_signals),
-                                   parameter_threshold=cls.search_threshold_weighted_signal_values,
+                                   parameter_max_value=cls.max_trend_total_signal_needed_value,
+                                   parameter_threshold=cls.search_threshold_trend_total_signal_needed_values,
                                    precision=cls.precision, overrideable=True)
 
                     param_needed_candles_lookback_window = f'_{trend}_trend_total_signal_needed_candles_lookback_window'
@@ -1380,7 +1374,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                     param_signal_triggers_needed = f'_{trend}_trend_signal_triggers_needed'
                     cls._init_vars(base_cls=base_cls, space=space, parameter_name=param_signal_triggers_needed,
                                    parameter_min_value=cls.min_trend_signal_triggers_needed_value,
-                                   parameter_max_value=number_of_weighted_signals,
+                                   parameter_max_value=cls.max_trend_signal_triggers_needed_value,
                                    parameter_threshold=cls.search_threshold_trend_signal_triggers_needed,
                                    precision=cls.precision, overrideable=True)
 
@@ -1406,8 +1400,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             setattr(base_cls, 'sell_signals', sell_signals)
 
             # Set number of weighted buy/sell signals for later use.
-            setattr(base_cls, 'number_of_weighted_buy_signals', len(buy_signals))
-            setattr(base_cls, 'number_of_weighted_sell_signals', len(sell_signals))
+            amount_of_weighted_timeframes = len(base_cls.weighted_signal_timeframes)
+            setattr(base_cls, 'number_of_weighted_buy_signals', len(buy_signals) * amount_of_weighted_timeframes)
+            setattr(base_cls, 'number_of_weighted_sell_signals', len(sell_signals) * amount_of_weighted_timeframes)
 
             # Sets the useful parameters of the MGM, such as unclogger and etc
             base_cls.init_util_params(base_cls)
@@ -1432,17 +1427,19 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: DataFrame with debug signals
         """
 
+        # pt = 'Populate Trend'
         # Reset some parameters when a new BackTest starts (during HyperOpting)
-        if (self.is_dry_live_run_detected is False) and (space == 'buy'):
-            self.init_hyperopt_epoch()
+        if space == 'buy':
+            if self.is_dry_live_run_detected is False:
+                self.init_hyperopt_epoch()
 
-        # Initialize total signal and signals triggered columns (should be 0 = false by default)
-        for weighted_signal_timeframe in self.weighted_signal_timeframes:
-            if 'total_buy_signal_strength' not in dataframe.columns:
-                dataframe[f'total_buy_signal_strength_{weighted_signal_timeframe}'] = 0
-                dataframe[f'total_sell_signal_strength_{weighted_signal_timeframe}'] = 0
-            if f'{space}_signals_triggered' not in dataframe.columns:
-                dataframe[f'{space}_signals_triggered_{weighted_signal_timeframe}'] = 0
+            # Initialize total signal and signals triggered columns (should be 0 = false by default)
+            for init_space in ['buy', 'sell']:
+                for trend in self.mgm_trends:
+                    if f'total_{init_space}_{trend}_signal_strength' not in dataframe.columns:
+                        dataframe[f'total_{init_space}_{trend}_signal_strength'] = 0
+                    if f'{init_space}_{trend}_signals_triggered' not in dataframe.columns:
+                        dataframe[f'{init_space}_{trend}_signals_triggered'] = 0
 
         # Fetch the weighted signals used + their min/max search space values and threshold used
         signals = getattr(self, f'{space}_signals')
@@ -1462,15 +1459,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                  condition=signal_condition_func(df=dataframe, t=weighted_signal_timeframe))
 
         # Generates the conditions responsible for searching and comparing the weights needed to activate a buy or sell
-        dataframe.loc[self._generate_weight_condition(dataframe=dataframe, space=space), space] = 1
+        for trend in self.mgm_trends:
+            dataframe.loc[self._generate_weight_condition(dataframe=dataframe, space=space, trend=trend), space] = 1
 
         # Check if total signals needed & triggers needed are possible, if not force the bot to do nothing
-        number_of_weighted_signals = int(getattr(self, f'number_of_weighted_{space}_signals'))
         if self.is_dry_live_run_detected is False:
+            impossible_results_found = False
             for trend in self.mgm_trends:
                 if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
-                    corrected_totals = self.get_corrected_totals_needed(
-                        space=space, trend=trend, number_of_weighted_signals=number_of_weighted_signals)
+                    corrected_totals = self.get_corrected_totals_needed(space=space, trend=trend)
 
                     if ((self.total_signals_possible[f'{space}_{trend}'] < corrected_totals['signal_needed']) or
                         (self.total_triggers_possible[f'{space}_{trend}'] < corrected_totals['triggers_needed'])):
@@ -1493,19 +1490,19 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return:
         """
 
+        amount_of_timeframes = len(self.weighted_signal_timeframes)
         for trend in self.mgm_trends:
-            parameter_name = f'{space}_{trend}_trend_{signal_name}_weight'
-            signal_weight = getattr(self, parameter_name)
+            signal_weight = getattr(self, f'{space}_{trend}_trend_{signal_name}_weight')
 
             # Apply signal overrides to weak and strong signals where needed
             signal_weight_value = self.apply_weak_strong_overrides(
                 signal_weight.value, signal_min_value, signal_max_value, signal_threshold)
 
             # Add found weights to comparison values to check if total signals utilized by HyperOpt are possible
-            self.total_signals_possible[f'{space}_{trend}'] += signal_weight_value
+            self.total_signals_possible[f'{space}_{trend}'] += signal_weight_value * amount_of_timeframes
             # Add a signal trigger if it is possible to compare if total triggers needed by HyperOpt are possible
             if signal_weight_value > 0:
-                self.total_triggers_possible[f'{space}_{trend}'] += 1
+                self.total_triggers_possible[f'{space}_{trend}'] += amount_of_timeframes
 
     def init_hyperopt_epoch(self) -> None:
         """

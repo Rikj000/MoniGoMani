@@ -23,10 +23,13 @@
       "min_weighted_signal_value": 0,
       "max_weighted_signal_value": 100,
       "min_trend_total_signal_needed_value": 60,
+      "max_trend_total_signal_needed_value": 2000,
       "min_trend_total_signal_needed_candles_lookback_window_value": 1,
       "max_trend_total_signal_needed_candles_lookback_window_value": 8,
       "min_trend_signal_triggers_needed": 2,
+      "max_trend_signal_triggers_needed": 20,
       "search_threshold_weighted_signal_values": 22,
+      "search_threshold_trend_total_signal_needed_values": 50,
       "search_threshold_trend_total_signal_needed_candles_lookback_window_value": 1,
       "search_threshold_trend_signal_triggers_needed": 1
     },
