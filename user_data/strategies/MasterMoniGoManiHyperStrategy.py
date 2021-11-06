@@ -1464,7 +1464,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Check if total signals needed & triggers needed are possible, if not force the bot to do nothing
         if self.is_dry_live_run_detected is False:
-            impossible_results_found = False
+
             for trend in self.mgm_trends:
                 if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                     corrected_totals = self.get_corrected_totals_needed(space=space, trend=trend)
