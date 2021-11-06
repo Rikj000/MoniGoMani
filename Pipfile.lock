@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "618077f1628bef55695016e6eb760745b3fcdd3715b8b253f5498c29dd42c486"
+            "sha256": "5482045724b51f6168f189d638d78d70c654be56e5962525beb55ba64cc2212e"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -153,10 +153,10 @@
         },
         "gitdb": {
             "hashes": [
-                "sha256:6c4cc71933456991da20917998acbe6cf4fb41eeaab7d6d67fbc05ecd4c865b0",
-                "sha256:96bf5c08b157a666fec41129e6d327235284cca4c81e92109260f353ba138005"
+                "sha256:8033ad4e853066ba6ca92050b9df2f89301b8fc8bf7e9324d412a63f8bf1a8fd",
+                "sha256:bac2fd45c0a1c9cf619e63a90d62bdc63892ef92387424b855792a6cabe789aa"
             ],
-            "version": "==4.0.7"
+            "version": "==4.0.9"
         },
         "humanfriendly": {
             "hashes": [
