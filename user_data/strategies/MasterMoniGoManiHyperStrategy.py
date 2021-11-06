@@ -461,8 +461,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # Upwards / Downwards movement detection
         # --------------------------------------
         # SSL Channels
-        df_ssl = SSLChannels_ATR(dataframe, period=self.trend_ssl_period.value,
-                                 coef=self.trend_ssl_atr_coef.value, mode=self.trend_ssl_mode.value)
+        df_ssl = ssl_channels_atr(dataframe, period=self.trend_ssl_period.value,
+                                  coef=self.trend_ssl_atr_coef.value, mode=self.trend_ssl_mode.value)
         dataframe = pd.concat([dataframe, df_ssl], axis=1)
 
         ssl_atr = f'SSLATR_{self.trend_ssl_mode.value}_{self.trend_ssl_period.value}_{self.trend_ssl_atr_coef.value}'
@@ -1464,46 +1464,40 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             separator_window = (self.separator / 1) - (1 / self.separator)
             self.separator_candle_weight_reducer = separator_window / self.get_param_value(
                 'sell___unclogger_trend_lookback_candles_window')
-# ---------------------------------------------------
-# Customized SSL Channel function with ATR coef
-# ---------------------------------------------------
-def SSLChannels_ATR(dataframe,period: int=7,coef: int=1,mode: int=1):
+
+
+def ssl_channels_atr(dataframe, period: int = 7, coef: int = 1, mode: int = 1):
     """
-    SSL Channels with ATR: https://www.tradingview.com/script/SKHqWzql-SSL-ATR-channel/
-    Credit to @JimmyNixx for python
+    Customized SSL Channel function with ATR Coefficient
     """
+    ssl_atr = f'SSLATR_{mode}_{period}_{coef}'
     df = dataframe.copy()
 
-    df['ATR'] = ta.ATR(df, timeperiod=int(period))
+    # Moving Average modes
+    ma_modes = {1: 'dema', 2: 'fwma', 3: 'hma', 4: 'linreg', 5: 'midpoint', 6: 'pwma', 7: 'rma', 8: 'sinwma', 9: 'sma',
+                10: 'swma', 11: 't3', 12: 'tema', 13: 'trima', 14: 'vidya', 15: 'wma', 16: 'zlma'}
 
-    #MovingAverage mode
-    if   mode == 1 : mamode = "dema"
-    elif mode == 2 : mamode = "fwma"
-    elif mode == 3 : mamode = "hma"
-    elif mode == 4 : mamode = "linreg"
-    elif mode == 5 : mamode = "midpoint"
-    elif mode == 6 : mamode = "pwma"
-    elif mode == 7 : mamode = "rma"
-    elif mode == 8 : mamode = "sinwma"
-    elif mode == 9 : mamode = "sma"
-    elif mode == 10 : mamode = "swma"
-    elif mode == 11 : mamode = "t3"
-    elif mode == 12 : mamode = "tema"
-    elif mode == 13 : mamode = "trima"
-    elif mode == 14 : mamode = "vidya"
-    elif mode == 15 : mamode = "wma"
-    elif mode == 16 : mamode = "zlma"
-    else : mamode = "ema"
+    # Select the currently used Moving Average mode
+    ma_mode = 'ema'
+    for mode_key, ma_mode_value in ma_modes.items():
+        if mode_key == mode:
+            ma_mode = ma_mode_value
+            break
 
-    df['maHigh'] = pta.ma(mamode, dataframe['high'], length=period) + (df['ATR'] * coef)
-    df['maLow'] = pta.ma(mamode, dataframe['low'], length=period) - (df['ATR'] * coef)
-
+    # Populate indicator data
+    # -----------------------
+    # ATR
+    df['atr'] = ta.ATR(df, timeperiod=int(period))
+    # Moving Average High/Low
+    df['maHigh'] = pta.ma(ma_mode, dataframe['high'], length=period) + (df['atr'] * coef)
+    df['maLow'] = pta.ma(ma_mode, dataframe['low'], length=period) - (df['atr'] * coef)
+    # HLV
     df['hlv'] = np.where(df['close'] > df['maHigh'], 1, np.where(df['close'] < df['maLow'], -1, np.NAN))
     df['hlv'] = df['hlv'].ffill()
+    # SSL Down/Up
+    df[f'{ssl_atr}_down'] = np.where(df['hlv'] < 0, df['maHigh'], df['maLow'])
+    df[f'{ssl_atr}_up'] = np.where(df['hlv'] < 0, df['maLow'], df['maHigh'])
 
-    df[f'SSLATR_{mode}_{period}_{coef}_down'] = np.where(df['hlv'] < 0, df['maHigh'], df['maLow'])
-    df[f'SSLATR_{mode}_{period}_{coef}_up'] = np.where(df['hlv'] < 0, df['maLow'], df['maHigh'])
-
-    return pd.concat([df[f'SSLATR_{mode}_{period}_{coef}_down'], df[f'SSLATR_{mode}_{period}_{coef}_up']], axis=1)
+    return pd.concat([df[f'{ssl_atr}_down'], df[f'{ssl_atr}_up']], axis=1)
 # ---------------------------------------------------
 
