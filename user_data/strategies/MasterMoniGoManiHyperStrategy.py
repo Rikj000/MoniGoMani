@@ -214,7 +214,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     trend_ssl_mode = IntParameter(1, 17, default=1, space='buy', optimize=False, load=False)
     trend_chop_sideway = IntParameter(45, 55, default=50, space='buy', optimize=False, load=False)
     trend_bb_sideway = IntParameter(5, 15, default=8, space='buy', optimize=False, load=False)
-  
+
 
     class HyperOpt:
         @staticmethod
@@ -437,9 +437,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         """
 
         """
-        # --------------------
+        # ----------------------------
         # Current Core Trend Detection
-        # --------------------
+        # ----------------------------
         # Momentum Indicators
         # -------------------
         # Hilbert Transform - Trend vs Cycle
@@ -453,19 +453,34 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         dataframe.loc[(dataframe['ht_trendmode'] == 1) & (dataframe['sar'] > dataframe['close']), 'trend'] = 'downwards'
         dataframe.loc[(dataframe['ht_trendmode'] == 0) | (dataframe['sar'] == dataframe['close']), 'trend'] = 'sideways'
         dataframe.loc[(dataframe['ht_trendmode'] == 1) & (dataframe['sar'] < dataframe['close']), 'trend'] = 'upwards'
-        """
-        # --------------------
+
+        # ------------------------
         # New Core Trend Detection
-        # --------------------
-        #Upwards / Downwards movement detection
-        df_ssl = SSLChannels_ATR(dataframe,period=self.trend_ssl_period.value,coef=self.trend_ssl_atr_coef.value,mode=self.trend_ssl_mode.value)
+        # ------------------------
+        """
+        # Upwards / Downwards movement detection
+        # --------------------------------------
+        # SSL Channels
+        df_ssl = SSLChannels_ATR(dataframe, period=self.trend_ssl_period.value,
+                                 coef=self.trend_ssl_atr_coef.value, mode=self.trend_ssl_mode.value)
         dataframe = pd.concat([dataframe, df_ssl], axis=1)
-        dataframe['trend'] = np.where((dataframe[f'SSLATR_{self.trend_ssl_mode.value}_{self.trend_ssl_period.value}_{self.trend_ssl_atr_coef.value}_up'] < dataframe[f'SSLATR_{self.trend_ssl_mode.value}_{self.trend_ssl_period.value}_{self.trend_ssl_atr_coef.value}_down'])
-                    , 'downwards', 'upwards')
-        #Sideway movement detection
+
+        ssl_atr = f'SSLATR_{self.trend_ssl_mode.value}_{self.trend_ssl_period.value}_{self.trend_ssl_atr_coef.value}'
+        dataframe['trend'] = np.where(dataframe[f'{ssl_atr}_up'] < dataframe[f'{ssl_atr}_down'], 'downwards', 'upwards')
+
+        # Sideways movement detection
+        # ---------------------------
+        # Choppiness Index
         dataframe['chop'] = pta.chop(dataframe["high"], dataframe["low"], dataframe["close"])
+
+        # Bollinger Bands
         bollinger = qtpylib.bollinger_bands(qtpylib.typical_price(dataframe), window=20, stds=2)
-        dataframe['trend'] = np.where((dataframe['chop'] > self.trend_chop_sideway.value) & ((((bollinger['upper'] - bollinger['lower']) / bollinger['upper']) * 100) < self.trend_bb_sideway.value),'sideways',dataframe['trend'])
+
+        dataframe['trend'] = np.where(
+            (dataframe['chop'] > self.trend_chop_sideway.value) &
+            ((((bollinger['upper'] - bollinger['lower']) / bollinger['upper']) * 100) < self.trend_bb_sideway.value),
+            'sideways', dataframe['trend']
+        )
 
         # Add DataFrame column for visualization in FreqUI when Dry/Live RunMode is detected
         if self.is_dry_live_run_detected is True:
