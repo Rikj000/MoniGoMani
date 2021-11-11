@@ -569,6 +569,9 @@ class MGMHurry:
         command = (f'{self.monigomani_config.config["ft_binary"]} download-data --timerange {timerange} '
                    f'-t {tickers} {self.monigomani_config.command_configs()}')
 
+        if self.monigomani_config.config['exchange'] == 'kraken':
+            command += ' --dl-trades'
+
         self.logger.debug(command)
         self.monigomani_cli.run_command(command)
         self.logger.info(Color.green('🍺 Downloading candle data finished.'))
