@@ -25,7 +25,7 @@ from freqtrade.exchange import timeframe_to_prev_date
 from freqtrade.misc import deep_merge_dicts, round_dict
 from freqtrade.optimize.space import Categorical, Dimension, Integer, SKDecimal
 from freqtrade.persistence import Trade
-from freqtrade.strategy import IntParameter, IStrategy, merge_informative_pair, timeframe_to_minutes,DecimalParameter
+from freqtrade.strategy import DecimalParameter, IntParameter, IStrategy, merge_informative_pair, timeframe_to_minutes
 
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 import pandas_ta as pta
