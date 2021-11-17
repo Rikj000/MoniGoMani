@@ -210,7 +210,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         # -----------------
 
         # VWAP - Volume Weighted Average Price
-        dataframe['vwap'] = qtpylib.vwap(dataframe)
+        dataframe['vwap'] = qtpylib.rolling_vwap(dataframe)
 
         return dataframe
 
