@@ -38,7 +38,10 @@
     "roi_spaces": {
       "roi_table_step_size": 5,
       "roi_time_interval_scaling": 1.6,
-      "roi_value_step_scaling": 0.9
+      "roi_value_step_scaling": 0.9,
+      "roi_when_downwards": true,
+      "roi_when_sideways": true,
+      "roi_when_upwards": false
     },
     "unclogger_spaces": {
       "unclogger_buy_cooldown_minutes_window": {

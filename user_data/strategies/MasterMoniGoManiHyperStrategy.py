@@ -124,6 +124,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         roi_table_step_size = mgm_config['roi_spaces']['roi_table_step_size']
         roi_time_interval_scaling = mgm_config['roi_spaces']['roi_time_interval_scaling']
         roi_value_step_scaling = mgm_config['roi_spaces']['roi_value_step_scaling']
+        roi_when_downwards = mgm_config['roi_spaces']['roi_when_downwards']
+        roi_when_sideways = mgm_config['roi_spaces']['roi_when_sideways']
+        roi_when_upwards = mgm_config['roi_spaces']['roi_when_upwards']
         stoploss_min_value = mgm_config['stoploss_spaces']['stoploss_min_value']
         stoploss_max_value = mgm_config['stoploss_spaces']['stoploss_max_value']
         trailing_stop_positive_min_value = mgm_config['stoploss_spaces']['trailing_stop_positive_min_value']
@@ -664,23 +667,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         self.mgm_logger('debug', 'Open Trade Unclogger', 'Fetching all needed "trend" trade data')
         trend_lookback_candles_window = self.get_param_value('sell___unclogger_trend_lookback_candles_window')
         for candle in range(1, trend_lookback_candles_window + 1):
-            # Convert the candle time to the one being used by the 'informative_timeframe'
-            candle_multiplier = int(self.informative_timeframe.rstrip('mhdwM'))
-            candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
-                           timedelta(minutes=int(candle * candle_multiplier)))
-            if self.informative_timeframe.find('h') != -1:
-                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
-                               timedelta(hours=int(candle * candle_multiplier)))
-            elif self.informative_timeframe.find('d') != -1:
-                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
-                               timedelta(days=int(candle * candle_multiplier)))
-            elif self.informative_timeframe.find('w') != -1:
-                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
-                               timedelta(weeks=int(candle * candle_multiplier)))
-            elif self.informative_timeframe.find('M') != -1:
-                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
-                               timedelta64(int(candle * candle_multiplier), 'M'))
-
+            candle_time = self.convert_candle_time(current_time=current_time, current_candle=candle)
             candle_trend = dataframe.loc[dataframe['date'] == candle_time].squeeze()['trend']
 
             if isinstance(candle_trend, str):
@@ -941,6 +928,34 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return None  # By default we don't want a force sell to occur
 
+    def convert_candle_time(self, current_time: datetime, current_candle: int = 1) -> datetime:
+        """
+        Converts the current_time to a candle_time (of an informative_timeframe candle size),
+        which can be used to query the dataframe
+
+        :param current_time: (datetime) Current time object
+        :param current_candle: (int) Amount of candles to offset (look back) from the current_time
+        :return: (datetime) Converted candle time object
+        """
+        # Convert the candle time to the one being used by the 'informative_timeframe'
+        candle_multiplier = int(self.informative_timeframe.rstrip('mhdwM'))
+        candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                       timedelta(minutes=int(current_candle * candle_multiplier)))
+        if self.informative_timeframe.find('h') != -1:
+            candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                           timedelta(hours=int(current_candle * candle_multiplier)))
+        elif self.informative_timeframe.find('d') != -1:
+            candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                           timedelta(days=int(current_candle * candle_multiplier)))
+        elif self.informative_timeframe.find('w') != -1:
+            candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                           timedelta(weeks=int(current_candle * candle_multiplier)))
+        elif self.informative_timeframe.find('M') != -1:
+            candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                           timedelta64(int(current_candle * candle_multiplier), 'M'))
+
+        return candle_time
+
     def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
                             time_in_force: str, current_time: datetime, **kwargs) -> bool:
         """
@@ -1007,9 +1022,20 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return bool: When True is returned, then the sell-order is placed on the exchange. False aborts the process
         """
 
+        # Check if weighted signal is profitable if sell_profit_only is enabled in the weighted_signal_spaces
         if ((self.mgm_config['weighted_signal_spaces']['sell_profit_only'] is
              True) and (sell_reason == 'sell_signal') and (trade.calc_profit_ratio(rate) < 0)):
             return False
+        # Check if ROI is enabled for the currently detected trend
+        elif sell_reason == 'roi':
+            # Fetch the 'trend' data for the current candle
+            dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+            candle_time = self.convert_candle_time(current_time=current_time)
+            candle_trend = dataframe.loc[dataframe['date'] == candle_time].squeeze()['trend']
+            for mgm_trend in self.mgm_trends:
+                roi_when_trend = getattr(self, f'roi_when_{mgm_trend}')
+                if (mgm_trend == candle_trend) and (roi_when_trend is False):
+                    return False
 
         return True  # By default we want the sell signal to go through
 
