@@ -88,7 +88,7 @@ Further it also assumes you familiarized yourself with **mgm-hurry**'s commands 
     ```powershell
     mgm-hurry download_candle_data
     ```
-5. Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)**
+5. **Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)**
 6. HyperOpt for a **1st Initial HyperOpt Run** with:
     ```powershell
     mgm-hurry hyperopt
