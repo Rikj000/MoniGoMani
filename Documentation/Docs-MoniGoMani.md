@@ -34,8 +34,9 @@
 - [How to Optimize MoniGoMani](#how-to-optimize-monigomani)
 - [How to Configure MoniGoMani](#how-to-configure-monigomani)
   - [mgm-config.json](#mgm-configjson)
-    - [TimeFrame-Zoom](#timeframe-zoom)
-      - [TimeFrame-Zoom Examples](#timeframe-zoom-examples)
+    - [TimeFrames](#timeframes)
+      - [TimeFrame-Zoom](#timeframe-zoom)
+        - [TimeFrame-Zoom Examples](#timeframe-zoom-examples)
     - [Precision Setting](#precision-setting)
       - [Precision Examples](#precision-examples)
     - [Trading During Trends](#trading-during-trends)
@@ -138,7 +139,7 @@ The main `MoniGoMani` settings can be found under `monigomani_settings`:
 
 | Parameter(s) | Description |
 | --- | --- |
-| **timeframe** <br> **backtest_timeframe** | These values configure the `timeframe`s used in MoniGoMani. <br> **Documentation:** [TimeFrame-Zoom](#timeframe-zoom) <br> **Datatypes:** Integer |
+| **timeframes**| These define the different `timeframe`s *(a.k.a. candle-sizes)* used by MoniGoMani. <br> **Documentation:** [TimeFrames](#timeframes) <br> **Datatypes:** Dictionary |
 | **startup_candle_count** | Number of candles the strategy requires before producing valid signals during BackTesting/HyperOpting. <br> By default this is set to `400` since MoniGoMani uses a 200EMA, which needs 400 candles worth of data to be calculated. <br> **Datatype:** Integer |
 | **precision** | This value can be used to control the precision of HyperOpting. Default is `1`. <br> **Documentation:** [Precision Setting](#precision-setting) <br> **Datatype:** Integer |
 | **trading_during_trends** | The settings inside the `trading_during_trends` section are used to configure during which trends (Downwards/Sideways/Upwards) MGM will be allowed to trade (for Buys/Sells).<br> **Documentation:** [Trading During Trends](#trading-during-trends) <br> **Datatype:** Dictionary |
@@ -151,11 +152,21 @@ The main `MoniGoMani` settings can be found under `monigomani_settings`:
 | **use_mgm_logging** | If set to `True` MoniGoMani logging will be displayed to the console and be integrated in Freqtrades native logging, further logging configuration can be done by setting individual `mgm_log_levels_enabled`. <br> It's recommended to set this to `False` for HyperOpting/BackTesting unless you are testing with breakpoints. <br> **Datatype:** Boolean |
 | **mgm_log_levels_enabled** | It allows turning on/off individual `info`, `warning`, `error`, `debug` and `custom` logging <br> For Live Runs it's recommended to disable at least `info` and `debug` logging, to keep MGM as lightweight as possible! <br> `debug` is very verbose! Always set it to `False` when BackTesting/HyperOpting! <br> **Datatype:** Dictionary |
 
-### TimeFrame-Zoom
+### TimeFrames
+MoniGoMani makes use of multiple different TimeFrames *(a.k.a. candle-size)*.
+Make sure to [download candle data](https://monigomani.readthedocs.io/Docs-MGM-Hurry/#mgm-hurry-download_candle_data) for all configured TimeFrames!
+
+| Parameter | Description |
+| --- | --- |
+| **backtest_timeframe** | A small zoomed in TimeFrame, only used during BackTesting/HyperOpting to get intra-candle price fluctuations in our tests and to prevent profit exploitation.<br> **Documentation:** [TimeFrame-Zoom](https://monigomani.readthedocs.io/Docs-MoniGoMani/#timeframe-zoom)<br> **Datatype:** String |
+| **core_trend_timeframe** | A larger zoomed out TimeFrame, only used to populate the core `trend` indicator *(upwards/sideways/downwards)* to prevent that small market moves would change the currently used trend setup by the MGM framework.<br> **Datatype:** String |
+| **roi_timeframe** | The TimeFrame used to generate the ROI-Table during HyperOpting. Use larger TimeFrames to make ROI triggering slower and smaller TimeFrames to make ROI trigger faster.<br> **Datatype:** String |
+| **timeframe** | The "main" TimeFrame used by MoniGoMani, mostly used to generate the Weighted Signal indicators.<br> **Datatype:** String |
+
+#### TimeFrame-Zoom
 To prevent profit exploitation during BackTesting/HyperOpting we BackTest/HyperOpt MoniGoMani using TimeFrame-Zoom.
 When normally a `timeframe` (1h candles) would be used, you can zoom in using a smaller `backtest_timeframe`
-(5m candles) instead. This happens while still using an `informative_timeframe` (original 1h candles) to generate
-the buy/sell signals.
+(5m candles) instead. This happens while still using the `timeframe` (original 1h candles) to generate the buy/sell signals.
 
 With this more realistic results should be found during BackTesting/HyperOpting. Since the buy/sell signals will
 operate on the same `timeframe` that Live would use (1h candles), while at the same time `backtest_timeframe`
@@ -168,9 +179,9 @@ If you haven't yet please read: [BackTesting-Traps](https://brookmiles.github.io
 
 **<span style="color:darkorange">WARNING:</span> Candle data for both `timeframe` as `backtest_timeframe` will have to be downloaded before you will be able to BackTest/HyperOpt! (Since both will be used)**
 
-**<span style="color:darkorange">WARNING:</span> This will be slower than BackTesting at 1h and 1m is a CPU killer. If you plan on using trailing stoploss or ROI, you probably want to know that your BackTest results are not complete lies.**
+**<span style="color:darkorange">WARNING:</span> This will be slower than BackTesting at 1h and 1m is a CPU killer. If you plan on using (trailing) stoploss or ROI, you probably want to know that your BackTest results are not complete lies.**
 
-#### TimeFrame-Zoom Examples
+##### TimeFrame-Zoom Examples
 | Parameter | Description |
 | --- | --- |
 | **timeframe**='1h' | TimeFrame used during Dry/Live-runs |
