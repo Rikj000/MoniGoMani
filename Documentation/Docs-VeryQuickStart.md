@@ -78,8 +78,8 @@ alias mgm-hurry="python3 /path/to/installation/freqtrade-mgm/mgm-hurry"
 
 ### OS Support Priority list
 
-1) **Linux/Unix** *(MoniGoMani is written on Linux, for Linux!)*
-2) **MacOS** *(Thanks to topscoder and other MacOS users)*
-3) **WSL** *(Because we have to give those Windows users something..)*
-4) **Docker** *(Perhaps someday, but not at this point in time..)*
-5) **Windows** *(Such a SpyWare infested OS will **never** receive support for this project!)*
+1. **Linux/Unix** *(MoniGoMani is written on Linux, for Linux!)*
+2. **MacOS** *(Thanks to topscoder and other MacOS users)*
+3. **WSL** *(Because we have to give those Windows users something..)*
+4. **Docker** *(Perhaps someday, but not at this point in time..)*
+5. **Windows** *(Such a SpyWare infested OS will **never** receive support for this project!)*
