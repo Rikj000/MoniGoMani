@@ -98,7 +98,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     # Apply the loaded MoniGoMani Settings
     try:
         backtest_timeframe = mgm_config['timeframes']['backtest_timeframe']
-        core_trend_timeframe_multiplier = mgm_config['timeframes']['core_trend_timeframe_multiplier']
+        core_trend_timeframe = mgm_config['timeframes']['core_trend_timeframe']
         roi_timeframe = mgm_config['timeframes']['roi_timeframe']
         timeframe = mgm_config['timeframes']['timeframe']
         startup_candle_count = mgm_config['startup_candle_count']
@@ -414,11 +414,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         }
 
         return deep_merge_dicts(framework_plots, weighted_signal_plots)
-
-    @property
-    def core_trend_timeframe(self):
-        return self.minutes_to_timeframe(
-            minutes=(timeframe_to_minutes(self.informative_timeframe) * self.core_trend_timeframe_multiplier))
 
     def _populate_core_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """

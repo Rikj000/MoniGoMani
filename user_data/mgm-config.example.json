@@ -2,7 +2,7 @@
   "monigomani_settings": {
     "timeframes": {
       "backtest_timeframe": "5m",
-      "core_trend_timeframe_multiplier": 8,
+      "core_trend_timeframe": "4h",
       "roi_timeframe": "4h",
       "timeframe": "30m"
     },
