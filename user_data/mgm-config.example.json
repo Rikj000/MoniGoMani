@@ -37,6 +37,7 @@
       "trailing_stop_positive_offset_max_value": 0.1
     },
     "roi_spaces": {
+      "roi_delay": 120,
       "roi_table_step_size": 5,
       "roi_time_interval_scaling": 1.6,
       "roi_value_step_scaling": 0.9,

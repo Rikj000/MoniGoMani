@@ -119,6 +119,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             'weighted_signal_spaces']['search_threshold_trend_total_signal_needed_candles_lookback_window_value']
         search_threshold_trend_signal_triggers_needed = mgm_config[
             'weighted_signal_spaces']['search_threshold_trend_signal_triggers_needed']
+        roi_delay = mgm_config['roi_spaces']['roi_delay']
         roi_table_step_size = mgm_config['roi_spaces']['roi_table_step_size']
         roi_time_interval_scaling = mgm_config['roi_spaces']['roi_time_interval_scaling']
         roi_value_step_scaling = mgm_config['roi_spaces']['roi_value_step_scaling']
@@ -144,9 +145,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         use_mgm_logging = mgm_config['use_mgm_logging']
         mgm_log_levels_enabled = mgm_config['mgm_log_levels_enabled']
     except KeyError as missing_setting:
-        sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file "mgm-config" is '
-                 f'missing some settings. Please make sure that all MoniGoMani related settings are existing inside '
-                 f'this file. {missing_setting} has been detected as missing from the file...')
+        sys.exit(f'MoniGoManiHyperStrategy - ERROR - '
+                 f'The main MoniGoMani configuration file "mgm-config" is missing some settings.'
+                 f'\nPlease make sure that all MoniGoMani related settings are existing inside this file!'
+                 f'\n{missing_setting} has been detected as missing from the file...'
+                 f'\nCompare with the latest "mgm-config.example" to see if you are up to date with the latest settings'
+                 f': \nhttps://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.example.json')
 
     # If results from a previous HyperOpt Run are found then continue the next HyperOpt Run upon them
     mgm_config_hyperopt_path = f'{os.getcwd()}/user_data/{mgm_config_hyperopt_name}'
@@ -227,8 +231,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                            params['roi_t3'] + params['roi_t2'] + params['roi_t1']: 0}
 
             max_value = max(map(int, minimal_roi.keys()))
+            min_value = MasterMoniGoManiHyperStrategy.roi_delay
             f = interp1d(list(map(int, minimal_roi.keys())), list(minimal_roi.values()))
-            x = list(range(0, max_value, step))
+            x = list(range(min_value, max_value, step))
             y = list(map(float, map(f, x)))
             if y[-1] != 0:
                 x.append(x[-1] + step)
