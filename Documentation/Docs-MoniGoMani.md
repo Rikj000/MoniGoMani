@@ -248,7 +248,8 @@ The settings inside `mgm-config.json`'s `roi_spaces` section are used to tweak t
 
 | Parameter | Description |
 | --- | --- |
-| **roi_table_step_size** | MoniGoMani generates a really long custom ROI-Table (Return of Interest), so it will have fewer gaps in it and be more continuous in it's decrease.<br> This setting alters the size of the steps (in minutes) to be used when calculating the long continuous ROI-Table. <br> **Datatype:** Integer |
+| **roi_delay** | Amount of delay in minutes that MoniGoMani's ROi-Table should use during HyperOpting. <br> This can be used to keep ROI from triggering too early to our liking. <br> **Datatype:** Integer |
+| **roi_table_step_size** | MoniGoMani generates a really long custom ROI-Table, so it will have fewer gaps in it and be more continuous in it's decrease.<br> This setting alters the size of the steps (in minutes) to be used when calculating the long continuous ROI-Table. <br> **Datatype:** Integer |
 | **roi_time_interval_scaling** | Default scaling coefficients for the ROI HyperSpace. Can be changed to adjust resulting ranges of the ROI tables.<br> Increase if you need wider ranges in the ROI HyperSpace, decrease if shorter ranges are needed. Limits for the time intervals in the ROI tables. Components are scaled linearly.<br> **Datatype:** Decimal |
 | **roi_value_step_scaling** | Limits for the ROI value steps. Components are scaled logarithmically.<br> **Datatype:** Decimal |
 | **roi_when_downwards** | Enable or completely disable ROI as a sell reason during downwards trends.<br> **Datatype:** Boolean |
