@@ -443,8 +443,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         dataframe.loc[(dataframe['ht_trendmode'] == 0) | (dataframe['sar'] == dataframe['close']), 'trend'] = 'sideways'
         dataframe.loc[(dataframe['ht_trendmode'] == 1) & (dataframe['sar'] < dataframe['close']), 'trend'] = 'upwards'
 
-        # Add DataFrame column for visualization in FreqUI when Dry/Live RunMode is detected
-        if self.is_dry_live_run_detected is True:
+        # Add DataFrame column for visualization in FreqUI when Dry/Live RunMode is detected or when not using TFZ
+        if (self.is_dry_live_run_detected is True) or (self.informative_timeframe == self.backtest_timeframe):
             dataframe.loc[(dataframe['trend'] == 'downwards'), 'mgm_trend'] = -1
             dataframe.loc[(dataframe['trend'] == 'sideways'), 'mgm_trend'] = 0
             dataframe.loc[(dataframe['trend'] == 'upwards'), 'mgm_trend'] = 1
