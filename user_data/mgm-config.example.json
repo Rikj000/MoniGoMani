@@ -3,7 +3,7 @@
     "timeframes": {
       "backtest_timeframe": "5m",
       "core_trend_timeframe": "4h",
-      "roi_timeframe": "4h",
+      "roi_timeframe": "2h",
       "timeframe": "30m"
     },
     "startup_candle_count": 400,
