@@ -67,7 +67,6 @@ config_examples/
 docker/
 !docker/Dockerfile.MoniGoMani
 docs/
-freqtrade/
 junit/
 scripts/
 tests/junit/
