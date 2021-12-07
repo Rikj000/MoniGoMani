@@ -206,6 +206,19 @@ class MoniGoManiConfig(object):
 
         return hurry_config
 
+    def get_freqtrade_cmd(self):
+        if self.config['install_type'] == 'docker-compose':
+            cmd = 'docker-compose run'
+
+            # cmd += f' -v {self.__basedir}/{self.config["mgm_config_folder"]}:/strategy-config'
+            cmd += f' -e MGM_CONFIG_FOLDER_PATH=/strategy-config'
+
+            cmd += f' --rm freqtrade'
+
+            return cmd
+        else:
+            raise "TODO install_type unsupported"
+
     def get_config_filepath(self, cfg_key: str) -> str:
         """
         Transforms given cfg_key into the corresponding absolute config filepath.
@@ -474,15 +487,15 @@ class MoniGoManiConfig(object):
         self.logger.debug(f'Strong and weak signals automatically over-written in "{mgm_config_hyperopt_name}"')
         return True
 
-    def command_configs(self) -> str:
+    def get_command_configs(self) -> str:
         """
         Returns a string with the 'mgm-config' & 'mgm-config-private' names loaded from '.hurry'
         ready to implement in a freqtrade command.
         :return str: String with 'mgm-config' & 'mgm-config-private' for a freqtrade command
         """
-        mgm_json_name = self.config['mgm_config_names']['mgm-config']
-        mgm_private_json_name = self.config['mgm_config_names']['mgm-config-private']
-        return f'-c ./user_data/{mgm_json_name} -c ./user_data/{mgm_private_json_name} '
+        mgm_config_folder_path = self.config['mgm_config_folder']
+
+        return '-c /strategy-config/mgm-config.json -c /strategy-config/mgm-config-private.json'
 
     def get_preset_timerange(self, timerange: str) -> str:
         """
