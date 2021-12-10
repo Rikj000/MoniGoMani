@@ -324,10 +324,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :param config: (dict)
         """
 
-        logger.info('start')
-        logger.info(config['monigomani_hyperoptloss_settings'])
-        logger.info('end')
-
         i = 'Initialization'
         if RunMode(config.get('runmode', RunMode.OTHER)) in (RunMode.BACKTEST, RunMode.HYPEROPT):
             self.timeframe = self.backtest_timeframe

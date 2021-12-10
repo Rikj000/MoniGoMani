@@ -69,6 +69,7 @@ class MGMHurry:
         self.freqtrade_cli = FreqtradeCli(self.basedir)
         self.monigomani_cli = MoniGoManiCli(self.basedir)
 
+    # TODO redo.
     def version(self):
         if self.freqtrade_cli.install_type == 'source':
             if self.freqtrade_cli.installation_exists(silent=True):
@@ -82,7 +83,6 @@ class MGMHurry:
                 self.monigomani_cli.run_command('git log -1; echo "";')
             else:
                 self.logger.warning(Color.yellow('"No Freqtrade installation detected!'))
-
         else:
             self.logger.warning(Color.yellow('"version" command currently only supported on "source" installations.'))
 
@@ -577,8 +577,9 @@ class MGMHurry:
 
         self.logger.info(f'👉 Downloading candle data ({tickers}) for timerange ({timerange})')
 
-        command = (f'{self.monigomani_config.config["ft_binary"]} download-data --timerange {timerange} '
-                   f'-t {tickers} {self.monigomani_config.command_configs()}')
+        command = f'{self.monigomani_config.get_freqtrade_cmd()} download-data'
+        command += f' --timerange {timerange}'
+        command += f' -t {tickers} {self.monigomani_config.command_configs()}'
 
         if self.monigomani_config.config['exchange'] == 'kraken':
             command += ' --dl-trades'
@@ -698,30 +699,24 @@ class MGMHurry:
         if spaces is None:
             spaces = self.monigomani_config.config['hyperopt']['spaces']
 
-        command = (f'$ft_binary hyperopt -s $ho_strategy {self.monigomani_config.command_configs()}'
-                   f'--hyperopt-loss $ho_loss --spaces $ho_spaces -e $ho_epochs --timerange $timerange ')
+        command = f'{self.monigomani_config.get_freqtrade_cmd()} hyperopt'
+        command += f' {self.monigomani_config.command_configs()}'
+        command += f' --hyperopt-loss {strategy}'
+        command += f' --spaces {spaces}'
+        command += f' -e {epochs}'
+        command += f' --timerange {timerange}'
 
         if enable_protections is True:
-            command = f'{command.strip()} --enable-protections '
+            command = f' {command.strip()} --enable-protections'
         if random_state is not None:
-            command = f'{command.strip()} --random-state $random_state '
+            command = f' {command.strip()} --random-state {random_state}'
         if jobs is not None:
-            command = f'{command.strip()} -j $jobs '
+            command = f' {command.strip()} -j {jobs}'
         if min_trades is not None:
-            command = f'{command.strip()} --min-trades $min_trades '
-
-        command = Template(command).substitute(
-            ft_binary=self.monigomani_config.config['ft_binary'],
-            ho_strategy=strategy,
-            ho_loss=loss,
-            ho_spaces=spaces,
-            ho_epochs=epochs,
-            timerange=timerange,
-            random_state=random_state,
-            jobs=jobs,
-            min_trades=min_trades)
+            command = f' {command.strip()} --min-trades {min_trades}'
 
         self.logger.debug(command)
+
         if output_file_name is None:
             output_file_name = f'{strategy}-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
         hyperopt_file_name = f'HyperOptResults-{output_file_name}'
@@ -794,7 +789,7 @@ class MGMHurry:
         best = '--best' if only_best is True else ''
         profit = '--profitable' if only_profitable is True else ''
 
-        command = (f'{self.monigomani_config.config["ft_binary"]} hyperopt-list '
+        command = (f'{self.monigomani_config.get_freqtrade_cmd()} hyperopt-list '
                    f'--hyperopt-filename "{choice}" {best} {profit}')
         self.logger.debug(command)
 
@@ -823,7 +818,7 @@ class MGMHurry:
 
         self.logger.info(f'👉 Showing {"" if apply is False else "and applying "}HyperOpt results for epoch #{epoch}')
 
-        command = (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} '
+        command = (f'{self.monigomani_config.get_freqtrade_cmd()} hyperopt-show -n {epoch} '
                    f'{self.monigomani_config.command_configs()}')
 
         if fthypt_name is not None:
@@ -857,7 +852,7 @@ class MGMHurry:
         self.logger.info(Color.title('👉 Start BackTesting. Lets see how it all turns out!'))
 
         timerange = self.monigomani_config.get_preset_timerange(timerange)
-        command = (f'$ft_binary backtesting -s $ho_strategy {self.monigomani_config.command_configs()}'
+        command = (f'{self.monigomani_config.get_freqtrade_cmd()} backtesting -s $ho_strategy {self.monigomani_config.command_configs()}'
                    f'--timerange $timerange')
 
         if timerange is None:
@@ -950,7 +945,7 @@ class MGMHurry:
         output_file_path = f'{self.basedir}/user_data/plot/{plot_profit_file_name}.html'
 
         self.monigomani_cli.run_command(
-            f'{self.monigomani_config.config["ft_binary"]} plot-profit {self.monigomani_config.command_configs()}'
+            f'{self.monigomani_config.get_freqtrade_cmd()} plot-profit {self.monigomani_config.command_configs()}'
             f'--export-filename {backtest_results_path} --timerange {timerange} --timeframe {timeframe} && '
             f'mv {self.basedir}/user_data/plot/freqtrade-profit-plot.html {output_file_path}')
 
@@ -1108,7 +1103,7 @@ class MGMHurry:
                                      f'{"in Dry-Run Mode!" if dry_run else "in Live-Run Mode, fingers crossed! 🤞"}'))
 
         command = f'{self.monigomani_config.get_freqtrade_cmd()} trade'
-        command += f' {self.monigomani_config.get_command_configs()}'
+        command += f' {self.monigomani_config.command_configs()}'
         command += f' --strategy {self.monigomani_config.config["hyperopt"]["strategy"]}'
 
         if dry_run is True:

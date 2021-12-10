@@ -210,14 +210,21 @@ class MoniGoManiConfig(object):
         if self.config['install_type'] == 'docker-compose':
             cmd = 'docker-compose run'
 
-            # cmd += f' -v {self.__basedir}/{self.config["mgm_config_folder"]}:/strategy-config'
+            cmd += f' -v {self.__basedir}/{self.config["mgm_config_folder"]}:/strategy-config'
             cmd += f' -e MGM_CONFIG_FOLDER_PATH=/strategy-config'
 
             cmd += f' --rm freqtrade'
 
             return cmd
-        else:
-            raise "TODO install_type unsupported"
+        elif self.config['install_type'] == 'command':
+            cmd = f'source freqtrade/.env/bin/activate;'
+
+            cmd += f' MGM_CONFIG_FOLDER_PATH="{self.__basedir}/{self.config["mgm_config_folder"]}"'
+            cmd += ' freqtrade'
+
+            return cmd
+        elif self.config['install_type'] == 'custom':
+            raise "TODO install_type 'custom' unsupported"
 
     def get_config_filepath(self, cfg_key: str) -> str:
         """
@@ -487,7 +494,7 @@ class MoniGoManiConfig(object):
         self.logger.debug(f'Strong and weak signals automatically over-written in "{mgm_config_hyperopt_name}"')
         return True
 
-    def get_command_configs(self) -> str:
+    def command_configs(self) -> str:
         """
         Returns a string with the 'mgm-config' & 'mgm-config-private' names loaded from '.hurry'
         ready to implement in a freqtrade command.
@@ -495,7 +502,13 @@ class MoniGoManiConfig(object):
         """
         mgm_config_folder_path = self.config['mgm_config_folder']
 
-        return '-c /strategy-config/mgm-config.json -c /strategy-config/mgm-config-private.json'
+        if self.config['install_type'] == 'docker-compose':
+            return '-c /strategy-config/mgm-config.json -c /strategy-config/mgm-config-private.json'
+        else:
+            config_args = f'-c {self.basedir}/{mgm_config_folder_path}/mgm-config.json'
+            config_args += f' -c {self.basedir}/{mgm_config_folder_path}/mgm-config-private.json'
+
+            return config_args
 
     def get_preset_timerange(self, timerange: str) -> str:
         """
