@@ -136,7 +136,7 @@ class FreqtradeCli:
                                       'install_type is set to docker.')
             return True
 
-        if self.install_type == 'submodule':
+        if self.install_type == 'source':
             if silent is False:
                 self.cli_logger.debug('FreqtradeCli - installation_exists() install_type is "source".')
 

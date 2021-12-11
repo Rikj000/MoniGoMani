@@ -1,7 +1,7 @@
 config:
   username: MoniGoMani Community
   exchange: binance
-  install_type: submodule
+  install_type: source
   hyperopt:
     epochs: 1000
     loss: MGM_WinRatioAndProfitRatioHyperOptLoss

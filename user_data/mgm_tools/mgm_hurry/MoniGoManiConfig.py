@@ -211,7 +211,7 @@ class MoniGoManiConfig(object):
             cmd = 'docker-compose run --rm freqtrade'
 
             return cmd
-        elif self.config['install_type'] == 'submodule':
+        elif self.config['install_type'] == 'source':
             cmd = f'{self.basedir}/freqtrade/.env/bin/freqtrade'
 
             return cmd
