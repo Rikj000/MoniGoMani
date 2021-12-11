@@ -33,8 +33,6 @@ logger = logging.getLogger(__name__)
 
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
-MGM_CONFIG_FOLDER_PATH = os.environ["MGM_CONFIG_FOLDER_PATH"]
-
 class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     """
     ####################################################################################
@@ -69,8 +67,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     buy_params = {}
     sell_params = {}
 
-    mgm_config_path = f'{MGM_CONFIG_FOLDER_PATH}/mgm-config.json'
-    mgm_config_hyperopt_path = f'{MGM_CONFIG_FOLDER_PATH}/mgm-config-hyperopt.json'
+    mgm_config_path = './user_data/mgm-config.json'
+    mgm_config_hyperopt_path = './user_data/mgm-config-hyperopt.json'
 
     # Load the MoniGoMani settings
     try:

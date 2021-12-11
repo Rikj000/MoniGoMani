@@ -15,7 +15,6 @@ services:
     container_name: freqtrade
     volumes:
       - "./user_data:/freqtrade/user_data"
-      - "./strategy-config:/strategy-config"
     # Expose api on port 8080 (localhost only)
     # Please read the https://www.freqtrade.io/en/stable/rest-api/ documentation
     # before enabling this.

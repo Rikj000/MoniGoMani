@@ -208,19 +208,11 @@ class MoniGoManiConfig(object):
 
     def get_freqtrade_cmd(self):
         if self.config['install_type'] == 'docker-compose':
-            cmd = 'docker-compose run'
-
-            cmd += f' -v {self.__basedir}/{self.config["mgm_config_folder"]}:/strategy-config'
-            cmd += f' -e MGM_CONFIG_FOLDER_PATH=/strategy-config'
-
-            cmd += f' --rm freqtrade'
+            cmd = 'docker-compose run --rm freqtrade'
 
             return cmd
-        elif self.config['install_type'] == 'command':
-            cmd = f'source freqtrade/.env/bin/activate;'
-
-            cmd += f' MGM_CONFIG_FOLDER_PATH="{self.__basedir}/{self.config["mgm_config_folder"]}"'
-            cmd += ' freqtrade'
+        elif self.config['install_type'] == 'submodule':
+            cmd = f'{self.basedir}/freqtrade/.env/bin/freqtrade'
 
             return cmd
         elif self.config['install_type'] == 'custom':
@@ -496,19 +488,12 @@ class MoniGoManiConfig(object):
 
     def command_configs(self) -> str:
         """
-        Returns a string with the 'mgm-config' & 'mgm-config-private' names loaded from '.hurry'
+        Returns a string with the 'mgm-config' & 'mgm-config-private' file paths
         ready to implement in a freqtrade command.
         :return str: String with 'mgm-config' & 'mgm-config-private' for a freqtrade command
         """
-        mgm_config_folder_path = self.config['mgm_config_folder']
 
-        if self.config['install_type'] == 'docker-compose':
-            return '-c /strategy-config/mgm-config.json -c /strategy-config/mgm-config-private.json'
-        else:
-            config_args = f'-c {self.basedir}/{mgm_config_folder_path}/mgm-config.json'
-            config_args += f' -c {self.basedir}/{mgm_config_folder_path}/mgm-config-private.json'
-
-            return config_args
+        return '-c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json'
 
     def get_preset_timerange(self, timerange: str) -> str:
         """

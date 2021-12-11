@@ -1,12 +1,11 @@
 config:
   username: MoniGoMani Community
   exchange: binance
-  install_type: docker-compose
+  install_type: submodule
   hyperopt:
     epochs: 1000
     loss: MGM_WinRatioAndProfitRatioHyperOptLoss
     stake_currency: USDT
     spaces: buy sell
     strategy: MoniGoManiHyperStrategy
-  mgm_config_folder: strategy-config
   timerange: 20210501-20210616
