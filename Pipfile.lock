@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b648ece932e14ca56f72ace040abe2088b62eedf8b351e7806b6c6b5f9ccc293"
+            "sha256": "6fc7c72f49b989a2fae62d5897d0206fac26f6116bcac7a42b547439c2747365"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -193,10 +193,10 @@
         },
         "inquirerpy": {
             "hashes": [
-                "sha256:3f45515dfb58c590759df91ae9534f9391f241480cc535e7e134fb3c3bd3d269",
-                "sha256:8849da1e2dfa4b1d576a9cd9b158ad0755d7fc6883eb0cf839b6a2fc6b1a10fb"
+                "sha256:73b73f446031227bc7914c4ffad4f1d86ace2fe5494bb89897dd3930cb9b0949",
+                "sha256:82995b728fa4cdac29bc6118d9da02e2f7f61f7b93ab430ca8ff40397ed8290b"
             ],
-            "version": "==0.3.0"
+            "version": "==0.3.1"
         },
         "kiwisolver": {
             "hashes": [
