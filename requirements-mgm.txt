@@ -16,7 +16,7 @@ cycler==0.11.0; python_version >= '3.6'
 discord-webhook==0.14.0
 distro==1.6.0
 fire==0.4.0
-fonttools==4.28.2; python_version >= '3.7'
+fonttools==4.28.4; python_version >= '3.7'
 gitdb==4.0.9
 humanfriendly==10.0
 idna==3.3; python_version >= '3'
