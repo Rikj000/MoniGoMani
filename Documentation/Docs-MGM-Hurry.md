@@ -82,8 +82,8 @@ Setting it all up requires some knowledge of the entire process, until you found
 ## `mgm-hurry` Command Usage
 ---
 
-⚠️ A [shell alias](https://monigomani.readthedocs.io/Docs-VeryQuickStart/#pro-tip) has been configured for these shorter example commands.
-If you haven't done that optional step then you will need to prefix all your commands with `python3`!
+⚠️ A [shell alias](https://monigomani.readthedocs.io/Docs-VeryQuickStart/#shell-alias) has been configured for these shorter example commands.
+If you haven't done that optional step then you will need to prefix all your commands with `python3 -m pipenv run ./mgm-hurry ...` in the root installation folder instead of just being able to run `mgm-hurry ...` anywhere!
 
 
 ### `mgm-hurry --help`
