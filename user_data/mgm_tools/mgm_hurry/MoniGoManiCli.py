@@ -177,6 +177,9 @@ class MoniGoManiCli(object):
                 if os.path.isfile(f'{target_dir}/{delete_file}'):
                     os.remove(f'{target_dir}/{delete_file}')
 
+            for pip_file in ['Pipfile', 'Pipfile.lock']:
+                copy2(f'{target_dir + mgm_folder}/{pip_file}', f'{target_dir}/{pip_file}')
+
             # Symlink separate files and whole directories
             symlink_objects = {
                 'Documentation',
