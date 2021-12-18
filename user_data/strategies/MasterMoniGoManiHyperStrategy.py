@@ -25,7 +25,8 @@ from freqtrade.exchange import timeframe_to_prev_date
 from freqtrade.misc import deep_merge_dicts, round_dict
 from freqtrade.optimize.space import Categorical, Dimension, Integer, SKDecimal
 from freqtrade.persistence import Trade
-from freqtrade.strategy import IntParameter, IStrategy, merge_informative_pair, timeframe_to_minutes, DecimalParameter
+from freqtrade.strategy import (BooleanParameter, DecimalParameter, IntParameter, IStrategy, 
+                                merge_informative_pair, timeframe_to_minutes)
 
 logger = logging.getLogger(__name__)
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
