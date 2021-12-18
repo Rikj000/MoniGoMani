@@ -2,7 +2,7 @@
 # -* vim: syntax=python -*-
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 from datetime import datetime
-from typing import Dict
+from typing import Any, Dict
 
 from pandas import DataFrame
 
