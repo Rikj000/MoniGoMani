@@ -219,8 +219,8 @@ class MGMHurry:
         else:
             self.logger.info(Color.green('💨 Executing mgm-hurry up finished.'))
 
-    def install_freqtrade(self, target_dir: str = None, branch: str = 'develop',
-                          commit: str = '3503fdb4ec31be99f433fdce039543e0911964d6', install_ui: bool = True):
+    def install_freqtrade(self, target_dir: str = None, branch: str = 'stable',
+                          commit: str = '4179a1a7971f9547fad16dd8ec6e252489a3e62d', install_ui: bool = True):
         """
         Install or update Freqtrade the easy way.
 
