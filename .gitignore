@@ -26,6 +26,9 @@ user_data/plot/
 .vscode/
 *.code-workspace
 
+# Ignore Logo Folder
+Logo/
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
