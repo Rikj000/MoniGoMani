@@ -206,6 +206,18 @@ class MoniGoManiConfig(object):
 
         return hurry_config
 
+    def get_freqtrade_cmd(self):
+        if self.config['install_type'] == 'docker-compose':
+            cmd = 'docker-compose run --rm freqtrade'
+
+            return cmd
+        elif self.config['install_type'] == 'source':
+            cmd = f'{self.basedir}/freqtrade/.env/bin/freqtrade'
+
+            return cmd
+        elif self.config['install_type'] == 'custom':
+            raise "TODO install_type 'custom' unsupported"
+
     def get_config_filepath(self, cfg_key: str) -> str:
         """
         Transforms given cfg_key into the corresponding absolute config filepath.
@@ -476,13 +488,12 @@ class MoniGoManiConfig(object):
 
     def command_configs(self) -> str:
         """
-        Returns a string with the 'mgm-config' & 'mgm-config-private' names loaded from '.hurry'
+        Returns a string with the 'mgm-config' & 'mgm-config-private' file paths
         ready to implement in a freqtrade command.
         :return str: String with 'mgm-config' & 'mgm-config-private' for a freqtrade command
         """
-        mgm_json_name = self.config['mgm_config_names']['mgm-config']
-        mgm_private_json_name = self.config['mgm_config_names']['mgm-config-private']
-        return f'-c ./user_data/{mgm_json_name} -c ./user_data/{mgm_private_json_name} '
+
+        return '-c ./user_data/mgm-config.json -c ./user_data/mgm-config-private.json'
 
     def get_preset_timerange(self, timerange: str) -> str:
         """

@@ -1,16 +1,11 @@
 config:
   username: MoniGoMani Community
   exchange: binance
-  ft_binary: source ./.env/bin/activate; freqtrade
+  install_type: source
   hyperopt:
     epochs: 1000
     loss: MGM_WinRatioAndProfitRatioHyperOptLoss
     stake_currency: USDT
     spaces: buy sell
     strategy: MoniGoManiHyperStrategy
-  install_type: source
-  mgm_config_names:
-    mgm-config: mgm-config.json
-    mgm-config-hyperopt: mgm-config-hyperopt.json
-    mgm-config-private: mgm-config-private.json
   timerange: 20210501-20210616
