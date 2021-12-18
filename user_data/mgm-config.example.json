@@ -272,22 +272,6 @@
       "sort_key": "quoteVolume"
     }
   ],
-  "protections": [
-    {
-      "method": "StoplossGuard",
-      "lookback_period": 1440,
-      "trade_limit": 10,
-      "stop_duration": 1440,
-      "only_per_pair": false
-    },
-    {
-      "method": "StoplossGuard",
-      "lookback_period": 1440,
-      "trade_limit": 2,
-      "stop_duration": 1440,
-      "only_per_pair": true
-    }
-  ],
   "initial_state": "running",
   "forcebuy_enable": false,
   "internals": {
