@@ -25,7 +25,8 @@ from freqtrade.exchange import timeframe_to_prev_date
 from freqtrade.misc import deep_merge_dicts, round_dict
 from freqtrade.optimize.space import Categorical, Dimension, Integer, SKDecimal
 from freqtrade.persistence import Trade
-from freqtrade.strategy import IntParameter, IStrategy, merge_informative_pair, timeframe_to_minutes
+from freqtrade.strategy import (BooleanParameter, DecimalParameter, IntParameter, IStrategy, 
+                                merge_informative_pair, timeframe_to_minutes)
 
 logger = logging.getLogger(__name__)
 
@@ -212,6 +213,92 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         for space in ['buy', 'sell']:
             total_signals_possible[f'{space}_{trend}'] = 0
             total_triggers_possible[f'{space}_{trend}'] = 0
+
+    ########################################################################################################
+    # Define the protection space parameters
+    use_protection_cooldown = BooleanParameter(default=False, space="protection", optimize=True, load=True)
+    cooldown_lookback = IntParameter(2, 200, default=5, space="protection", optimize=True, load=True)
+
+    use_protection_drawdown = BooleanParameter(default=False, space="protection", optimize=True, load=True)
+    drawdown_lookback = IntParameter(2, 200, default=48, space="protection", optimize=True, load=True)
+    drawdown_trade_limit = IntParameter(2, 100, default=10, space="protection", optimize=True, load=True)
+    drawdown_stop_duration = IntParameter(2, 100, default=4, space="protection", optimize=True, load=True)
+    drawdown_max = DecimalParameter(0, 1, default=0.2, space='protection', optimize=True, load=True)       
+
+    use_protection_stoploss = BooleanParameter(default=False, space="protection", optimize=True, load=True)
+    stoploss_lookback = IntParameter(2, 200, default=48, space="protection", optimize=True, load=True)
+    stoploss_trade_limit = IntParameter(2, 100, default=10, space="protection", optimize=True, load=True)
+    stoploss_stop_duration = IntParameter(2, 100, default=4, space="protection", optimize=True, load=True)
+
+    use_protection_stoploss_pp = BooleanParameter(default=False, space="protection", optimize=True, load=True)
+    stoploss_lookback_pp = IntParameter(2, 200, default=48, space="protection", optimize=True, load=True)
+    stoploss_trade_limit_pp = IntParameter(2, 100, default=10, space="protection", optimize=True, load=True)
+    stoploss_stop_duration_pp = IntParameter(2, 100, default=4, space="protection", optimize=True, load=True)
+
+    use_protection_lowprofit1 = BooleanParameter(default=False, space="protection", optimize=True, load=True)
+    lowprofit1_lookback = IntParameter(2, 200, default=6, space="protection", optimize=True, load=True)
+    lowprofit1_trade_limit = IntParameter(2, 100, default=2, space="protection", optimize=True, load=True)
+    lowprofit1_stop_duration = IntParameter(2, 100, default=60, space="protection", optimize=True, load=True)
+    lowprofit1_profit = DecimalParameter(0, 1, default=0.02, space='protection', optimize=True, load=True)     
+
+    use_protection_lowprofit2 = BooleanParameter(default=False, space="protection", optimize=True, load=True)
+    lowprofit2_lookback = IntParameter(2, 200, default=624, space="protection", optimize=True, load=True)
+    lowprofit2_trade_limit = IntParameter(2, 100, default=4, space="protection", optimize=True, load=True)
+    lowprofit2_stop_duration = IntParameter(2, 100, default=2, space="protection", optimize=True, load=True)
+    lowprofit2_profit = DecimalParameter(0, 1, default=0.01, space='protection', optimize=True, load=True)        
+
+    @property
+    def protections(self):
+        prot = []
+
+        if self.use_protection_cooldown.value:
+            prot.append({
+                "method": "CooldownPeriod",
+                "stop_duration_candles": self.cooldown_lookback.value
+            })
+        if self.use_protection_drawdown.value:
+            prot.append({
+                "method": "MaxDrawdown",
+                "lookback_period_candles": self.drawdown_lookback.value,
+                "trade_limit": self.drawdown_trade_limit.value,
+                "stop_duration_candles": self.drawdown_stop_duration.value,
+                "max_allowed_drawdown": self.drawdown_max.value
+            })
+        if self.use_protection_stoploss.value:
+            prot.append({
+                "method": "StoplossGuard",
+                "lookback_period_candles": self.stoploss_lookback.value,
+                "trade_limit": self.stoploss_trade_limit.value,
+                "stop_duration_candles": self.stoploss_stop_duration.value,
+                "only_per_pair": False
+            })
+        if self.use_protection_stoploss_pp.value:
+            prot.append({
+                "method": "StoplossGuard",
+                "lookback_period_candles": self.stoploss_lookback_pp.value,
+                "trade_limit": self.stoploss_trade_limit_pp.value,
+                "stop_duration_candles": self.stoploss_stop_duration_pp.value,
+                "only_per_pair": True
+            })
+        if self.use_protection_lowprofit1.value:
+            prot.append({
+                "method": "LowProfitPairs",
+                "lookback_period_candles": self.lowprofit1_lookback.value,
+                "trade_limit": self.lowprofit1_trade_limit.value,
+                "stop_duration_candles": self.lowprofit1_stop_duration.value,
+                "required_profit": self.lowprofit1_profit.value
+            })
+        if self.use_protection_lowprofit2.value:
+            prot.append({
+                "method": "LowProfitPairs",
+                "lookback_period_candles": self.lowprofit2_lookback.value,
+                "trade_limit": self.lowprofit2_trade_limit.value,
+                "stop_duration_candles": self.lowprofit2_stop_duration.value,
+                "required_profit": self.lowprofit2_profit.value
+            })
+
+        return prot
+    ########################################################################################################
 
     class HyperOpt:
         @staticmethod
