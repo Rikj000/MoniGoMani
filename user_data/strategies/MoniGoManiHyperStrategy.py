@@ -94,7 +94,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
     """
 
     # Strategy interface version - allow new iterations of the strategy interface.
-    # Check the Freqtrade documentation or it's Sample strategy to get the latest version.
+    # Check the Freqtrade documentation, or it's Sample strategy to get the latest version.
     INTERFACE_VERSION = 2
 
     # Plot configuration to show all Weighted Signals/Indicators used by MoniGoMani in FreqUI.
@@ -160,7 +160,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
 
     def do_populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Adds several different TA indicators to MoniGoMani's DataFrame per pair.
+        Adds several TA indicators to MoniGoMani's DataFrame, per pair.
         Should be called with 'informative_pair' (1h candles) during backtesting/hyperopting with TimeFrame-Zoom!
 
         Performance Note: For the best performance be frugal on the number of indicators you are using.

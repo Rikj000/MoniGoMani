@@ -218,7 +218,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         @staticmethod
         def generate_roi_table(params: Dict) -> Dict[int, float]:
             """
-            Generates a Custom Long Continuous ROI (Return of Interest) Table with less gaps in it.
+            Generates a Custom Long Continuous ROI (Return of Interest) Table with fewer gaps in it.
             Configurable step_size is loaded in from the Master MGM Framework.
 
             :param params: (Dict) Base Parameters used for the ROI Table calculation
@@ -244,7 +244,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         @staticmethod
         def roi_space() -> List[Dimension]:
             """
-            Create a ROI (Return of Interest) space. Defines values to search for each ROI steps.
+            Create a ROI (Return of Interest) space. Define values to search for each ROI steps.
             This method implements adaptive ROI HyperSpace with varied ranges for parameters which automatically adapts
             to the un-zoomed base_weighted_signal_timeframe used by the MGM Framework during BackTesting & HyperOpting.
 
@@ -315,8 +315,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             :return List: Generated Trailing Space
             """
             return [
-                # It was decided to always set trailing_stop is to True if the 'trailing' hyperspace
-                # is used. Otherwise hyperopt will vary other parameters that won't have effect if
+                # It was decided to always set trailing_stop is to True if the 'trailing' hyperspace is used.
+                # Otherwise, hyperopt will vary other parameters that won't have effect if
                 # trailing_stop is set False.
                 # This parameter is included into the hyperspace dimensions rather than assigning
                 # it explicitly in the code in order to have it printed in the results along with
@@ -809,10 +809,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         Override Sell Signal: When enabled attempts to unclog the bot when it's stuck with losing trades & unable to
         trade more new trades.
 
-        It will only unclog a losing trade when all of following checks have been full-filled:
-        => Check if everything in custom_storage is up to date with all_open_trades
+        It will only unclog a losing trade when all following checks have been full-filled:
+        => Check if everything in custom_storage is up-to-date with all_open_trades
         => Check if there are enough losing trades open for unclogging to occur
-        => Check if there is a losing trade open for the pair currently being ran through the MoniGoMani loop
+        => Check if there is a losing trade open for the pair currently being run through the MoniGoMani loop
         => Check if trade has been open for X minutes (long enough to give it a recovery chance)
         => Check if total open trades losing % is met
         => Check if open_trade's trend changed negatively during past X candles
@@ -843,12 +843,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 # -------------------------------------
                 # Fetch all open trade data depending on RunMode
                 all_open_trades = self.get_all_current_open_trades(trade)
-                # Check if everything in custom_storage is up to date with all_open_trades
+                # Check if everything in custom_storage is up-to-date with all_open_trades
                 if len(all_open_trades) > len(self.custom_info['open_trades']):
                     self.mgm_logger('warning', cis, f'Open trades ({str(len(self.custom_info["open_trades"]))}) in '
                                                     f'custom_storage do not match yet with trades in live open trades '
                                                     f'({str(len(all_open_trades))}) aborting unclogger for now!')
-                    return None  # By default we don't want a force sell to occurs
+                    return None  # By default, we don't want a force sell to occur
 
                 # Open Trade Unclogger
                 # --------------------
@@ -869,14 +869,14 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 minimal_losing_trades_open = self.get_param_value(f'{su}minimal_losing_trades_open')
                 if len(losing_open_trades) < minimal_losing_trades_open:
                     self.mgm_logger('debug', otu, f'{abort}Not enough losing trades currently open!')
-                    return None  # By default we don't want a force sell to occur
+                    return None  # By default, we don't want a force sell to occur
                 self.mgm_logger('debug', otu, f'Enough losing trades detected!{proceed}')
 
-                # Check if there is a losing trade open for the pair currently being ran through the MoniGoMani
+                # Check if there is a losing trade open for the pair currently being run through the MoniGoMani
                 if pair not in losing_open_trades:
                     self.mgm_logger('debug', otu, f'{abort}Currently checked pair ({pair}) is not '
                                                   f'making a loss at this point in time!')
-                    return None  # By default we don't want a force sell to occur
+                    return None  # By default, we don't want a force sell to occur
                 self.mgm_logger('debug', otu, f'Currently checked pair ({pair}) is losing!{proceed}')
 
                 trade_open_time = trade.open_date_utc.replace(tzinfo=None)
@@ -890,7 +890,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 if trade_open_time > minimal_open_time:
                     self.mgm_logger('debug', otu, f'{abort}Currently checked pair ({pair}) has not '
                                                   f'been open been open for long enough!')
-                    return None  # By default we don't want a force sell to occur
+                    return None  # By default, we don't want a force sell to occur
                 self.mgm_logger('debug', otu, f'Trade has been open for long enough!{proceed}')
 
                 # Check if total open trades losing % is met
@@ -900,10 +900,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 if percentage_open_trades_losing < trades_losing_percentage_needed:
                     self.mgm_logger('debug', otu,
                                     f'{abort}Percentage of open trades losing needed has not been satisfied!')
-                    return None  # By default we don't want a force sell to occur
+                    return None  # By default, we don't want a force sell to occur
                 self.mgm_logger('debug', otu, f'Percentage of open trades losing needed has been satisfied!{proceed}')
 
-                # Fetch current dataframe for the pair currently being ran through MoniGoMani
+                # Fetch current dataframe for the pair currently being run through MoniGoMani
                 trend_lookback_candles_window = self.get_param_value(f'{su}trend_lookback_candles_window')
                 self.mgm_logger('debug', otu, f'Fetching currently needed "trend" dataframe data to check how pair '
                                               f'({pair}) has been doing in during the last '
@@ -915,7 +915,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 # Check if enough trend data has been stored to do the next check
                 if len(stored_trend_dataframe) < trend_lookback_candles_window:
                     self.mgm_logger('debug', otu, f'{abort}Not enough trend data stored yet!')
-                    return None  # By default we don't want a force sell to occur
+                    return None  # By default, we don't want a force sell to occur
 
                 # Print all fetched 'trend' trade data
                 self.mgm_logger('debug', otu, f'All needed "trend" trade data '
@@ -932,7 +932,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
                 if negative_trend is False:
                     self.mgm_logger('debug', otu, f'{abort}Positive trend currently detected!')
-                    return None  # By default we don't want a force sell to occur
+                    return None  # By default, we don't want a force sell to occur
 
                 # Check if open_trade's trend changed negatively during past X candles
                 self.mgm_logger('debug', otu, f'Calculating amount of unclogger_trend_lookback_candles_window '
@@ -975,7 +975,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             except Exception as e:
                 self.mgm_logger('error', otu, f'Following error has occurred: {str(e)}')
 
-        return None  # By default we don't want a force sell to occur
+        return None  # By default, we don't want a force sell to occur
 
     def convert_candle_time(self, current_time: datetime, current_candle: int = 1) -> datetime:
         """
@@ -1010,7 +1010,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         """
         Open Trade Unclogger Buy Cooldown Window
         ----------------------------------------
-        Override Buy Signal - Cancels out a buy order when all of the following are fulfilled:
+        Override Buy Signal - Cancels out a buy order when all the following are fulfilled:
             - The Open Trade Unclogger is enabled
             - The Buy Cooldown Window set into place after unclogging said losing pair has not expired yet
 
@@ -1086,7 +1086,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 if (mgm_trend == candle_trend) and (roi_when_trend is False):
                     return False
 
-        return True  # By default we want the sell signal to go through
+        return True  # By default, we want the sell signal to go through
 
     def mgm_logger(self, message_type: str, code_section: str, message: str):
         """
@@ -1242,7 +1242,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
                               f'total_{space}_signal_strength'] += signal_weight_value / self.precision
 
-                # If the weighted signal is bigger then 0 and triggered => Add up the amount of signals that triggered
+                # If the weighted signal is bigger than 0 and triggered => Add up the amount of signals that triggered
                 if signal_weight_value > 0:
                     dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
                                   f'{space}_signals_triggered'] += 1
@@ -1327,7 +1327,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 # Limit search space min_value to not go too low
                 elif (parameter_value - parameter_threshold) < parameter_min_value:
                     min_value = parameter_min_value
-                # Otherwise just refine the search space
+                # Otherwise, just refine the search space
                 else:
                     min_value = parameter_value - parameter_threshold
 
@@ -1337,7 +1337,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 # Limit search space max_value to not go too high
                 elif (parameter_value + parameter_threshold) > parameter_max_value:
                     max_value = parameter_max_value
-                # Otherwise just refine the search space
+                # Otherwise, just refine the search space
                 else:
                     max_value = parameter_value + parameter_threshold
 
