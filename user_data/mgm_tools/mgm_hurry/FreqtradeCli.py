@@ -88,7 +88,8 @@ class FreqtradeCli:
                                                  '"mgm-hurry install_freqtrade" before attempting to go further!'))
             return False
 
-        self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
+        if self.freqtrade_binary is None:
+            self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
 
         self.cli_logger.debug(f'👉 Freqtrade binary: `{self.freqtrade_binary}`')
 
