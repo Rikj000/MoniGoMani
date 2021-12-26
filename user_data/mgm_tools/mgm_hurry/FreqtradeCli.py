@@ -328,7 +328,7 @@ class FreqtradeCli:
         freqtrade_binary = 'docker-compose run --rm freqtrade'
 
         if install_type == 'source':
-            freqtrade_binary = f'source {basedir}/.env/bin/activate; freqtrade'
+            freqtrade_binary = f'. {basedir}/.env/bin/activate; freqtrade'
 
         return freqtrade_binary
 
