@@ -450,7 +450,7 @@ class MGMHurry:
 
         """
         if answers.get('install_type') == 'source':
-            ft_binary = f'source {self.basedir}/.env/bin/activate; freqtrade'
+            ft_binary = f'. {self.basedir}/.env/bin/activate; freqtrade'
         else:
             ft_binary = 'docker-compose run --rm freqtrade'
         """
@@ -458,7 +458,7 @@ class MGMHurry:
             'config': {
                 'username': answers.get('username'),
                 'install_type': 'source',  # answers.get('install_type'),
-                'ft_binary': f'source {self.basedir}/.env/bin/activate; freqtrade',  # ft_binary,
+                'ft_binary': f'. {self.basedir}/.env/bin/activate; freqtrade',  # ft_binary,
                 'timerange': answers.get('timerange'),
                 'exchange': exchange or 'none',
                 'hyperopt': {
