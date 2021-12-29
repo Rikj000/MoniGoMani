@@ -69,6 +69,16 @@ class MGMHurry:
         self.freqtrade_cli = FreqtradeCli(self.basedir)
         self.monigomani_cli = MoniGoManiCli(self.basedir)
 
+    def export_results(self):
+        self.logger.info(Color.green(" ℹ️ This function will export the latest HO result output to the 'mgm_result_export/' folder that it can be submitted for analysis."))
+        
+        def newest(path):
+            files = os.listdir(path)
+            paths = [os.path.join(path, basename) for basename in files]
+            return max(paths, key=os.path.getctime)
+
+        self.logger.info(f"The newest file in self.basedir is: {newest(self.basedir+'/hyperopt_results')}")
+
     def version(self):
         if self.freqtrade_cli.install_type == 'source':
             if self.freqtrade_cli.installation_exists(silent=True):
