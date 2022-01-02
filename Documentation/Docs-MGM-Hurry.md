@@ -239,6 +239,10 @@ Export the `.fthypt` results to an easy to interpret/sort/filter `.csv` SpreadSh
     - **Defaults to:** The last known `.fthypt` file. Provide `True` to launch a prompt to easily choose a specific. `.fthypt` file.
 
 
+### `mgm-hurry export_results`
+Export the results that are selected. Creates a '.zip' archive of the various files created by HyperOpt runs after the user selects which HyperOpt run they would like to export. Archive is placed in `user_data/mgm_result_export`.
+
+
 ### `mgm-hurry hyperopt_show_epoch`
 Prints & applies the HyperOpt Results for an epoch of choice.
 #### Options
