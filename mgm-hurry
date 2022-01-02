@@ -1117,7 +1117,7 @@ class MGMHurry:
 
         newest_file_in_directory = str(newest(hyperopt_results)).split('/')[-1]
         answer = prompt(questions=[{
-            'type': 'rawlist',
+            'type': 'list',
             'name': 'ho_log_file',
             'message': f'Please select the HyperOpt result that you wish to export. \nThe newest HyperOpt log file is named \'{newest_file_in_directory}\': ',
             'default': '',
