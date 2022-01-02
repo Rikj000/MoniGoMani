@@ -1104,6 +1104,9 @@ class MGMHurry:
                                                     results_paths=[output_file_path])
 
     def export_results(self):
+        """
+        Export the results that are selected by the user. Creates a '.zip' archive of the various files created by HyperOpt runs after the user selects which HyperOpt run they would like to export.
+        """
         self.logger.info(Color.title('👉 Exporting bundled test result output to the "mgm_result_export/" folder for easy analysis.'))
         
         export_base_dir = f'{self.basedir}/user_data/mgm_result_export'
