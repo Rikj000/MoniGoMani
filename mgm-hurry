@@ -95,7 +95,7 @@ class MGMHurry:
 
         hyperopt_log_filename = answer.get('ho_log_file')
         hyperopt_log_filepath = f'{self.basedir}/user_data/hyperopt_results/{answer.get("ho_log_file")}'
-        backtest_log_filepath = f'{self.basedir}/user_data/backtest_results/{hyperopt_log_filename.replace(hyperopt_log_filename.split("-")[0], 'BackTestResults')}'
+        backtest_log_filepath = f'{self.basedir}/user_data/backtest_results/{hyperopt_log_filename.replace(hyperopt_log_filename.split("-")[0], "BackTestResults")}'
         mgm_config_filepath = f'{self.basedir}/user_data/{self.monigomani_config.config["mgm_config_names"]["mgm-config"]}'
         ho_config_filepath = f'{self.basedir}/user_data/{self.monigomani_config.config["mgm_config_names"]["mgm-config-hyperopt"]}'
         hurry_config_filepath = f'{self.basedir}/.hurry'
