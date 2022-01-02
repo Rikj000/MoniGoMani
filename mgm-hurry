@@ -1147,8 +1147,9 @@ class MGMHurry:
             except Exception:
                 pass
 
-        archive_location = f'{export_base_dir + export_dir.split("/")[-1]}.zip'
-        shutil.make_archive(export_dir, 'zip', export_base_dir, f'{export_dir.split("/")[-1]}.zip')
+        archive_name = f'{export_dir.split("/")[-1]}.zip'
+        archive_location = f'{export_base_dir}/{archive_name}'
+        shutil.make_archive(export_dir, 'zip', export_dir)
         self.logger.info(f'Result export created at {archive_location}!')
         formatted_message = '🚀 Fresh **Bundled Test Results** available ⬇️\n'
 
@@ -1157,7 +1158,9 @@ class MGMHurry:
             b'SZ3AXIKNS8E8uKBknZTjUKMdTfGwkcyB8Q9OQvmj3-ziAgXjzXsUBDeQvMBThOU5TlOE_idXPHE5Ft6qTun'
             b'r1tIkm3YA0r8OcogCsqn2B9T6qT20pIrXT1FKGsyLAU3cwLYNhX_lS6p8iLU-ES1CcRvA3thUllOppnb8='), 'utf-8'), 
             username=self.monigomani_config.config['username'], content=formatted_message)
-        wh.add_file(file=archive_location, filename=f'{export_dir.split("/")[-1]}.zip')
+        
+        with open(archive_location, 'rb') as f:
+            wh.add_file(file=f.read(), filename=archive_name)
         wh.execute()
 
     def start_trader(self, dry_run: bool = True):
