@@ -25,9 +25,6 @@ import shutil
 from datetime import datetime
 from string import Template
 
-from cryptography.fernet import Fernet
-from discord_webhook import DiscordWebhook
-
 import fire
 import numpy as np  # noqa
 import pandas as pd  # noqa
@@ -1168,8 +1165,7 @@ class MGMHurry:
 
         MoniGoManiLogger(self.basedir).post_message(
             username=self.monigomani_config.config['username'],
-            message=formatted_message,
-            results_paths=[archive_location])
+            message=formatted_message, results_paths=[archive_location])
 
     def start_trader(self, dry_run: bool = True):
         """
