@@ -74,7 +74,7 @@ class MGMHurry:
         self.monigomani_cli = MoniGoManiCli(self.basedir)
 
     def export_results(self):
-        self.logger.info(Color.green(" ℹ️ This function will export the latest HO result output to the 'mgm_result_export/' folder so that it can be submitted for analysis. ℹ️ "))
+        self.logger.info(Color.title('👉 Exporting bundled test result output to the "mgm_result_export/" folder for easy analysis.'))
         
         export_base_dir = self.basedir + "/user_data/mgm_result_export"
         hyperopt_results = self.basedir + '/user_data/hyperopt_results'
