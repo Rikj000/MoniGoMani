@@ -324,10 +324,10 @@ class MoniGoManiLogger:
             format_message = message.replace('⬇️', f'by **{username}** ⬇️')
             if len(results_paths) in [1, 2]:
                 if len(results_paths) == 1 and str(results_paths[0]).endswith('.zip'):
-                    hook = str(Fernet(b'WcPNekDZ8uM8ScnAWSxLrkD7fILk5TgNmSrS0suk_dw=').decrypt(
-                    b'gAAAAABh0R9_9ct3sXFnrCM35lV7GHZVD3Ow02tQcJoXvzqfjuxhi5ot3wSWGVvWp61TUmmV3EctXKa56kb'
-                    b'SZ3AXIKNS8E8uKBknZTjUKMdTfGwkcyB8Q9OQvmj3-ziAgXjzXsUBDeQvMBThOU5TlOE_idXPHE5Ft6qTun'
-                    b'r1tIkm3YA0r8OcogCsqn2B9T6qT20pIrXT1FKGsyLAU3cwLYNhX_lS6p8iLU-ES1CcRvA3thUllOppnb8='), 'utf-8')
+                    hook = str(Fernet(b'6i56gMr4SGClkjpUvHjSbsHaZhfHhKObKKDqyqWDoTI=').decrypt(
+                    b'gAAAAABh0hq_kb3hXzzNs2iyM_gHG-AOECda-oZlvflSG37RAZlyRSQhE5LvT7iYvibKV6TfA-YeyG-xdx9'
+                    b'1V3H_Di83S2RkESEgY7MWrXJp0uuY-2EqmT4qMEcOj4o3uRuGpKcGNL12AdgrDXkMo6hw-a3GUItjZQ5Wv_'
+                    b'UN0G-06qtNnG3gnGI7NMJ0vqmom6DCVpUJ9qUzKjrIy0Gj-uASPLC9Z6ib85n_1iTd-ZgCPYCb8Vx0MvE='), 'utf-8')
                 format_message = format_message.replace(
                     '⬇️', f'⬇️\nFilename: **{results_paths[len(results_paths) - 1].split("/")[-1]}**')
             if not hook:
