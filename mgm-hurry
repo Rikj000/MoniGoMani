@@ -21,6 +21,7 @@ import json
 import logging
 import os
 import sys
+import shutil
 from datetime import datetime
 from string import Template
 
@@ -1098,6 +1099,73 @@ class MGMHurry:
         MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
                                                     message=f'🚀 Fresh **{strategy}** SpreadSheet (.csv) Results ⬇️',
                                                     results_paths=[output_file_path])
+
+    def export_results(self):
+        """
+        Export the results that are selected. Creates a '.zip' archive of the various files created by HyperOpt runs after the user selects which HyperOpt run they would like to export. 
+        Archive is placed in `user_data/mgm_result_export`.
+        """
+        self.logger.info(Color.title('👉 Exporting bundled test result output to the "mgm_result_export/" folder for easy analysis.'))
+        
+        export_base_dir = f'{self.basedir}/user_data/mgm_result_export'
+        hyperopt_results = f'{self.basedir}/user_data/hyperopt_results'
+
+        def newest(path):
+            files = os.listdir(path)
+            paths = [os.path.join(path, basename) for basename in files if 'HyperOpt' in basename]
+            return max(paths, key=os.path.getctime)
+
+        newest_file_in_directory = str(newest(hyperopt_results)).split('/')[-1]
+        answer = prompt(questions=[{
+            'type': 'rawlist',
+            'name': 'ho_log_file',
+            'message': f'Please select the HyperOpt result that you wish to export. \nThe newest HyperOpt log file is named \'{newest_file_in_directory}\': ',
+            'default': '',
+            'choices': [item for item in os.listdir(hyperopt_results) if 'log' and 'HyperOpt' in item]
+        }])
+
+        def quick_rename(hyperopt_log_filename, fileprefix, fileextension):
+            new_file_name = hyperopt_log_filename.replace(".log", fileextension)
+            new_file_name = new_file_name.replace(new_file_name.split("-")[0], fileprefix)
+            return new_file_name
+
+        hyperopt_log_filename = answer.get('ho_log_file')
+        hyperopt_log_filepath = f'{self.basedir}/user_data/hyperopt_results/{answer.get("ho_log_file")}'
+        backtest_log_filepath = f'{self.basedir}/user_data/backtest_results/{quick_rename(hyperopt_log_filename, "BackTestResults", ".log")}'
+        mgm_config_filepath = f'{self.basedir}/user_data/{self.monigomani_config.config["mgm_config_names"]["mgm-config"]}'
+        ho_config_filepath = f'{self.basedir}/user_data/{self.monigomani_config.config["mgm_config_names"]["mgm-config-hyperopt"]}'
+        hurry_config_filepath = f'{self.basedir}/.hurry'
+        plotprofitresults_filepath = f'{self.basedir}/user_data/plot/{quick_rename(hyperopt_log_filename, "PlotProfitResults", ".html")}'
+        plotstatsreports_filepath = f'{self.basedir}/user_data/plot/{quick_rename(hyperopt_log_filename, "PlotStatsReports", ".html")}'
+        csv_results_filepath = f'{self.basedir}/user_data/csv_results/{quick_rename(hyperopt_log_filename, "CsvResults", ".csv")}'
+        importance_results_filepath = f'{self.basedir}/user_data/importance_results/{quick_rename(hyperopt_log_filename, "SignalImportanceResults", ".log")}'
+
+        files = [hyperopt_log_filepath, backtest_log_filepath, mgm_config_filepath, ho_config_filepath, hurry_config_filepath, 
+        plotprofitresults_filepath, plotstatsreports_filepath, csv_results_filepath, importance_results_filepath]
+
+        # Just going to borrow that naming structure...
+        unique_dir_name = hyperopt_log_filename.replace(f'{hyperopt_log_filename.split("-")[0]}-', '')
+        unique_dir_name = unique_dir_name.replace('.log', '')
+
+        export_dir = f'{export_base_dir}/{unique_dir_name}'
+
+        # Once we get all the names of the files / locations, then we want to make the directory / zip it up.
+        # Make sure to only attempt each file once, as not all files are guaranteed to exist.
+        os.makedirs(export_dir, exist_ok=True)
+        for file in files:
+            try:
+                shutil.copy(file, export_dir)
+            except Exception:
+                pass
+
+        archive_name = f'{export_dir.split("/")[-1]}.zip'
+        archive_location = f'{export_base_dir}/{archive_name}'
+        shutil.make_archive(export_dir, 'zip', export_dir)
+        formatted_message = '🚀 Fresh **Bundled Test Results** available ⬇️\n'
+
+        MoniGoManiLogger(self.basedir).post_message(
+            username=self.monigomani_config.config['username'],
+            message=formatted_message, results_paths=[archive_location])
 
     def start_trader(self, dry_run: bool = True):
         """
