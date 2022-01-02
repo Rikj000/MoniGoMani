@@ -749,6 +749,7 @@ class MGMHurry:
                 (strategy == 'MoniGoManiHyperStrategy') and (
                 os.path.isfile(self.monigomani_config.get_config_filepath('mgm-config-hyperopt')) is True)):
             initial_run = False
+            self.logger.info('🍺 Previous HyperOpt run found! This HyperOpt run will be refining on the already existing HyperOpt output.')
 
         self.logger.info(Color.title('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥'))
 
