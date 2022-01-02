@@ -1162,15 +1162,10 @@ class MGMHurry:
         shutil.make_archive(export_dir, 'zip', export_dir)
         formatted_message = '🚀 Fresh **Bundled Test Results** available ⬇️\n'
 
-        wh = DiscordWebhook(str(Fernet(b'WcPNekDZ8uM8ScnAWSxLrkD7fILk5TgNmSrS0suk_dw=').decrypt(
-            b'gAAAAABh0R9_9ct3sXFnrCM35lV7GHZVD3Ow02tQcJoXvzqfjuxhi5ot3wSWGVvWp61TUmmV3EctXKa56kb'
-            b'SZ3AXIKNS8E8uKBknZTjUKMdTfGwkcyB8Q9OQvmj3-ziAgXjzXsUBDeQvMBThOU5TlOE_idXPHE5Ft6qTun'
-            b'r1tIkm3YA0r8OcogCsqn2B9T6qT20pIrXT1FKGsyLAU3cwLYNhX_lS6p8iLU-ES1CcRvA3thUllOppnb8='), 'utf-8'), 
-            username=self.monigomani_config.config['username'], content=formatted_message)
-        
-        with open(archive_location, 'rb') as f:
-            wh.add_file(file=f.read(), filename=archive_name)
-        wh.execute()
+        MoniGoManiLogger(self.basedir).post_message(
+            username=self.monigomani_config.config['username'],
+            message=formatted_message,
+            results_paths=[archive_location])
 
     def start_trader(self, dry_run: bool = True):
         """
