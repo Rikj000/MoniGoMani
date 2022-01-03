@@ -366,11 +366,12 @@ A different amount of buy and sell signals is possible, and the initial search s
 #### Defining Indicators Examples
 First add the technical analysis indicators you wish to use to MGM's `do_populate_indicators()` function.
 
-Check out these **+200 Easy to implement Indicators** for toying with the Weighted Signal Interface:
+Check out these **+300 Easy to implement Indicators** for toying with the Weighted Signal Interface:
 
 - [Freqtrade Technical](https://github.com/freqtrade/technical)
 - [TA-Lib](https://mrjbq7.github.io/ta-lib/funcs.html)
 - [Pandas-TA](https://twopirllc.github.io/pandas-ta)
+- [FinTA](https://github.com/peerchemist/finta)
 - [Hacks for Life Blog](https://hacks-for-life.blogspot.com)
 
 But feel free to look for other means of implementing indicators too.
