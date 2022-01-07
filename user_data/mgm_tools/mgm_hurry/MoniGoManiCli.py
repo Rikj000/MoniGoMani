@@ -160,7 +160,7 @@ class MoniGoManiCli(object):
         try:
             mgm_folder = '/monigomani'
             make_directories = [target_dir + mgm_folder, f'{target_dir}/user_data/importance_results',
-                                f'{target_dir}/user_data/csv_results']
+                                f'{target_dir}/user_data/csv_results', f'{target_dir}/user_data/mgm_result_export']
 
             for make_dir in make_directories:
                 if not os.path.exists(make_dir):
