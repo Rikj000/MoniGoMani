@@ -1134,6 +1134,8 @@ class MGMHurry:
         backtest_log_filepath = f'{self.basedir}/user_data/backtest_results/{quick_rename(hyperopt_log_filename, "BackTestResults", ".log")}'
         mgm_config_filepath = f'{self.basedir}/user_data/{self.monigomani_config.config["mgm_config_names"]["mgm-config"]}'
         ho_config_filepath = f'{self.basedir}/user_data/{self.monigomani_config.config["mgm_config_names"]["mgm-config-hyperopt"]}'
+        strategy_filepath = f'{self.basedir}/user_data/strategies/{self.monigomani_config.config["hyperopt"]["strategy"]}.py'
+        loss_strategy_filepath = f'{self.basedir}/user_data/hyperopts/{self.monigomani_config.config["hyperopt"]["loss"]}.py'
         hurry_config_filepath = f'{self.basedir}/.hurry'
         plotprofitresults_filepath = f'{self.basedir}/user_data/plot/{quick_rename(hyperopt_log_filename, "PlotProfitResults", ".html")}'
         plotstatsreports_filepath = f'{self.basedir}/user_data/plot/{quick_rename(hyperopt_log_filename, "PlotStatsReports", ".html")}'
@@ -1141,7 +1143,8 @@ class MGMHurry:
         importance_results_filepath = f'{self.basedir}/user_data/importance_results/{quick_rename(hyperopt_log_filename, "SignalImportanceResults", ".log")}'
 
         files = [hyperopt_log_filepath, backtest_log_filepath, mgm_config_filepath, ho_config_filepath, hurry_config_filepath, 
-        plotprofitresults_filepath, plotstatsreports_filepath, csv_results_filepath, importance_results_filepath]
+        plotprofitresults_filepath, plotstatsreports_filepath, csv_results_filepath, importance_results_filepath, 
+        strategy_filepath, loss_strategy_filepath]
 
         # Just going to borrow that naming structure...
         unique_dir_name = hyperopt_log_filename.replace(f'{hyperopt_log_filename.split("-")[0]}-', '')
