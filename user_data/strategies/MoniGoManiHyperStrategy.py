@@ -22,42 +22,50 @@ from MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
 
 # Define the Weighted Buy Signals to be used by MGM
 buy_signals = {
-    # Weighted Buy Signal: MACD above Signal
-    'macd': lambda df: (df['macd'] > df['macdsignal']),
-    # Weighted Buy Signal: MFI crosses above 20 (Under-bought / low-price and rising indication)
-    'mfi': lambda df: (qtpylib.crossed_above(df['mfi'], 20)),
-    # Weighted Buy Signal: VWAP crosses above current price
-    'vwap_cross': lambda df: (qtpylib.crossed_above(df['vwap'], df['close'])),
-    # Weighted Buy Signal: Price crosses above Parabolic SAR
-    'sar_cross': lambda df: (qtpylib.crossed_above(df['sar'], df['close'])),
-    # Weighted Buy Signal: Stochastic Slow below 20 (Under-bought, indication of starting to move up)
-    'stoch': lambda df: (df['slowk'] < 20),
-    # Weighted Buy Signal: SMA long term Golden Cross (Medium term SMA crosses above Long term SMA)
-    'sma_long_golden_cross': lambda df: (qtpylib.crossed_above(df['sma50'], df['sma200'])),
-    # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
-    'sma_short_golden_cross': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
-    # Weighted Buy Signal: TEMA
-    'tema': lambda df: (df['tema'] <= df['bb_middleband']) & (df['tema'] > df['tema'].shift(1))
+    'triggers' : {
+        # Weighted Buy Signal: Rolling VWAP crosses above current price
+        'rolling_vwap_cross': lambda df: (qtpylib.crossed_above(df['rolling_vwap'], df['close'])),
+        # Weighted Buy Signal: Price crosses above Parabolic SAR
+        'sar_cross': lambda df: (qtpylib.crossed_above(df['sar'], df['close'])),
+        # Weighted Buy Signal: SMA long term Golden Cross (Medium term SMA crosses above Long term SMA)
+        'sma_long_golden_cross': lambda df: (qtpylib.crossed_above(df['sma50'], df['sma200'])),
+        # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
+        'sma_short_golden_cross': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
+    },
+    'guards' : {
+        # Weighted Buy Signal: MACD above Signal
+        'macd': lambda df: (df['macd'] > df['macdsignal']),
+        # Weighted Buy Signal: MFI under 20 (Under-bought / low-price and rising indication)
+        'mfi': lambda df: (df['mfi'] <= 20),
+        # Weighted Buy Signal: Stochastic Slow below 20 (Under-bought, indication of starting to move up)
+        'stoch': lambda df: (df['slowk'] < 20),
+        # Weighted Buy Signal: TEMA
+        'tema': lambda df: (df['tema'] <= df['bb_middleband']) & (df['tema'] > df['tema'].shift(1)),
+    }
 }
 
 # Define the Weighted Sell Signals to be used by MGM
 sell_signals = {
-    # Weighted Sell Signal: MACD below Signal
-    'macd': lambda df: (df['macd'] < df['macdsignal']),
-    # Weighted Sell Signal: MFI crosses below 80 (Over-bought / high-price and dropping indication)
-    'mfi': lambda df: (qtpylib.crossed_below(df['mfi'], 80)),
-    # Weighted Sell Signal: VWAP crosses below current price
-    'vwap_cross': lambda df: (qtpylib.crossed_below(df['vwap'], df['close'])),
-    # Weighted Sell Signal: Price crosses below Parabolic SAR
-    'sar_cross': lambda df: (qtpylib.crossed_below(df['sar'], df['close'])),
-    # Weighted Sell Signal: Stochastic Slow above 80 (Over-bought, indication of starting to move down)
-    'stoch': lambda df: (df['slowk'] > 80),
-    # Weighted Sell Signal: SMA long term Death Cross (Medium term SMA crosses below Long term SMA)
-    'sma_long_death_cross': lambda df: (qtpylib.crossed_below(df['sma50'], df['sma200'])),
-    # Weighted Sell Signal: SMA short term Death Cross (Short term SMA crosses below Medium term SMA)
-    'sma_short_death_cross': lambda df: (qtpylib.crossed_below(df['sma9'], df['sma50'])),
-    # Weighted Buy Signal: TEMA
-    'tema': lambda df: (df['tema'] > df['bb_middleband']) & (df['tema'] < df['tema'].shift(1))
+    'triggers' : {
+        # Weighted Sell Signal: Rolling VWAP crosses below current price
+        'rolling_vwap_cross': lambda df: (qtpylib.crossed_below(df['rolling_vwap'], df['close'])),
+        # Weighted Sell Signal: Price crosses below Parabolic SAR
+        'sar_cross': lambda df: (qtpylib.crossed_below(df['sar'], df['close'])),
+        # Weighted Sell Signal: SMA long term Death Cross (Medium term SMA crosses below Long term SMA)
+        'sma_long_death_cross': lambda df: (qtpylib.crossed_below(df['sma50'], df['sma200'])),
+        # Weighted Sell Signal: SMA short term Death Cross (Short term SMA crosses below Medium term SMA)
+        'sma_short_death_cross': lambda df: (qtpylib.crossed_below(df['sma9'], df['sma50'])),
+    },
+    'guards' : {
+        # Weighted Sell Signal: MACD below Signal
+        'macd': lambda df: (df['macd'] < df['macdsignal']),
+        # Weighted Sell Signal: MFI above 80 (Over-bought / high-price and dropping indication)
+        'mfi': lambda df: (df['mfi'] >= 80),
+        # Weighted Sell Signal: Stochastic Slow above 80 (Over-bought, indication of starting to move down)
+        'stoch': lambda df: (df['slowk'] > 80),
+        # Weighted Buy Signal: TEMA
+        'tema': lambda df: (df['tema'] > df['bb_middleband']) & (df['tema'] < df['tema'].shift(1)),
+    }
 }
 
 
@@ -100,7 +108,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
     # Plot configuration to show all Weighted Signals/Indicators used by MoniGoMani in FreqUI.
     # Also loads in MGM Framework Plots for Buy/Sell Signals/Indicators and Trend Detection.
     plot_config = MasterMoniGoManiHyperStrategy.populate_frequi_plots({
-        # Main Plots Signals/Indicators (SMAs, EMAs, Bollinger Bands, VWAP, TEMA)
+        # Main Plots Signals/Indicators (SMAs, EMAs, Bollinger Bands, Rolling VWAP, TEMA)
         'main_plot': {
             'sma9': {'color': '#2c05f6'},
             'sma50': {'color': '#19038a'},
@@ -109,7 +117,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
             'ema50': {'color': '#0a8963'},
             'ema200': {'color': '#074b36'},
             'bb_middleband': {'color': '#6f1a7b'},
-            'vwap': {'color': '#727272'},
+            'rolling_vwap': {'color': '#727272'},
             'tema': {'color': '#9345ee'}
         },
         # Sub Plots - Each dict defines one additional plot
@@ -209,8 +217,8 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         # Volume Indicators
         # -----------------
 
-        # VWAP - Volume Weighted Average Price
-        dataframe['vwap'] = qtpylib.vwap(dataframe)
+        # Rolling VWAP - Volume Weighted Average Price
+        dataframe['rolling_vwap'] = qtpylib.rolling_vwap(dataframe)
 
         return dataframe
 
