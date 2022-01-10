@@ -160,7 +160,7 @@ class MoniGoManiCli(object):
         try:
             mgm_folder = '/monigomani'
             make_directories = [target_dir + mgm_folder, f'{target_dir}/user_data/importance_results',
-                                f'{target_dir}/user_data/csv_results']
+                                f'{target_dir}/user_data/csv_results', f'{target_dir}/user_data/mgm_result_export']
 
             for make_dir in make_directories:
                 if not os.path.exists(make_dir):
@@ -176,6 +176,9 @@ class MoniGoManiCli(object):
             for delete_file in ['docker-compose.yml', 'user_data/logs/freqtrade.log']:
                 if os.path.isfile(f'{target_dir}/{delete_file}'):
                     os.remove(f'{target_dir}/{delete_file}')
+
+            for pip_file in ['Pipfile', 'Pipfile.lock']:
+                copy2(f'{target_dir + mgm_folder}/{pip_file}', f'{target_dir}/{pip_file}')
 
             # Symlink separate files and whole directories
             symlink_objects = {

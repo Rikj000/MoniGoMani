@@ -98,7 +98,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     # Apply the loaded MoniGoMani Settings
     try:
         backtest_timeframe = mgm_config['timeframes']['backtest_timeframe']
-        core_trend_timeframe_multiplier = mgm_config['timeframes']['core_trend_timeframe_multiplier']
+        core_trend_timeframe = mgm_config['timeframes']['core_trend_timeframe']
+        roi_timeframe = mgm_config['timeframes']['roi_timeframe']
         timeframe = mgm_config['timeframes']['timeframe']
         startup_candle_count = mgm_config['startup_candle_count']
         precision = mgm_config['precision']
@@ -118,9 +119,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             'weighted_signal_spaces']['search_threshold_trend_total_signal_needed_candles_lookback_window_value']
         search_threshold_trend_signal_triggers_needed = mgm_config[
             'weighted_signal_spaces']['search_threshold_trend_signal_triggers_needed']
+        roi_delay = mgm_config['roi_spaces']['roi_delay']
         roi_table_step_size = mgm_config['roi_spaces']['roi_table_step_size']
         roi_time_interval_scaling = mgm_config['roi_spaces']['roi_time_interval_scaling']
         roi_value_step_scaling = mgm_config['roi_spaces']['roi_value_step_scaling']
+        roi_when_downwards = mgm_config['roi_spaces']['roi_when_downwards']
+        roi_when_sideways = mgm_config['roi_spaces']['roi_when_sideways']
+        roi_when_upwards = mgm_config['roi_spaces']['roi_when_upwards']
         stoploss_min_value = mgm_config['stoploss_spaces']['stoploss_min_value']
         stoploss_max_value = mgm_config['stoploss_spaces']['stoploss_max_value']
         trailing_stop_positive_min_value = mgm_config['stoploss_spaces']['trailing_stop_positive_min_value']
@@ -140,9 +145,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         use_mgm_logging = mgm_config['use_mgm_logging']
         mgm_log_levels_enabled = mgm_config['mgm_log_levels_enabled']
     except KeyError as missing_setting:
-        sys.exit(f'MoniGoManiHyperStrategy - ERROR - The main MoniGoMani configuration file "mgm-config" is '
-                 f'missing some settings. Please make sure that all MoniGoMani related settings are existing inside '
-                 f'this file. {missing_setting} has been detected as missing from the file...')
+        sys.exit(f'MoniGoManiHyperStrategy - ERROR - '
+                 f'The main MoniGoMani configuration file "mgm-config" is missing some settings.'
+                 f'\nPlease make sure that all MoniGoMani related settings are existing inside this file!'
+                 f'\n{missing_setting} has been detected as missing from the file...'
+                 f'\nCompare with the latest "mgm-config.example" to see if you are up to date with the latest settings'
+                 f': \nhttps://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config.example.json')
 
     # If results from a previous HyperOpt Run are found then continue the next HyperOpt Run upon them
     mgm_config_hyperopt_path = f'{os.getcwd()}/user_data/{mgm_config_hyperopt_name}'
@@ -210,7 +218,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         @staticmethod
         def generate_roi_table(params: Dict) -> Dict[int, float]:
             """
-            Generates a Custom Long Continuous ROI Table with less gaps in it.
+            Generates a Custom Long Continuous ROI (Return of Interest) Table with less gaps in it.
             Configurable step_size is loaded in from the Master MGM Framework.
 
             :param params: (Dict) Base Parameters used for the ROI Table calculation
@@ -224,8 +232,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                            params['roi_t3'] + params['roi_t2'] + params['roi_t1']: 0}
 
             max_value = max(map(int, minimal_roi.keys()))
+            min_value = MasterMoniGoManiHyperStrategy.roi_delay
             f = interp1d(list(map(int, minimal_roi.keys())), list(minimal_roi.values()))
-            x = list(range(0, max_value, step))
+            x = list(range(min_value, max_value, step))
             y = list(map(float, map(f, x)))
             if y[-1] != 0:
                 x.append(x[-1] + step)
@@ -235,9 +244,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         @staticmethod
         def roi_space() -> List[Dimension]:
             """
-            Create a ROI space. Defines values to search for each ROI steps.
-            This method implements adaptive roi HyperSpace with varied ranges for parameters which automatically adapts
-            to the un-zoomed informative_timeframe used by the MGM Framework during BackTesting & HyperOpting.
+            Create a ROI (Return of Interest) space. Defines values to search for each ROI steps.
+            This method implements adaptive ROI HyperSpace with varied ranges for parameters which automatically adapts
+            to the un-zoomed base_weighted_signal_timeframe used by the MGM Framework during BackTesting & HyperOpting.
 
             :return List: Generated ROI Space
             """
@@ -249,8 +258,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             # roi_p_alpha: Limits for the ROI value steps. Components are scaled logarithmically.
             roi_p_alpha = MasterMoniGoManiHyperStrategy.roi_value_step_scaling
 
-            # Load in the un-zoomed timeframe size from the Master MGM Framework
-            timeframe_min = timeframe_to_minutes(MasterMoniGoManiHyperStrategy.informative_timeframe)
+            # Load in the ROI timeframe size from the Master MGM Framework
+            timeframe_min = timeframe_to_minutes(MasterMoniGoManiHyperStrategy.roi_timeframe)
 
             # The scaling is designed so that it maps exactly to the legacy Freqtrade roi_space()
             # method for the 5m timeframe.
@@ -416,11 +425,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return deep_merge_dicts(framework_plots, weighted_signal_plots)
 
-    @property
-    def core_trend_timeframe(self):
-        return self.minutes_to_timeframe(
-            minutes=(timeframe_to_minutes(self.informative_timeframe) * self.core_trend_timeframe_multiplier))
-
     def _populate_core_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
         Adds the core indicators used to define trends to the strategy engine.
@@ -444,8 +448,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         dataframe.loc[(dataframe['ht_trendmode'] == 0) | (dataframe['sar'] == dataframe['close']), 'trend'] = 'sideways'
         dataframe.loc[(dataframe['ht_trendmode'] == 1) & (dataframe['sar'] < dataframe['close']), 'trend'] = 'upwards'
 
-        # Add DataFrame column for visualization in FreqUI when Dry/Live RunMode is detected
-        if self.is_dry_live_run_detected is True:
+        # Add DataFrame column for visualization in FreqUI when Dry/Live RunMode is detected or when not using TFZ
+        if (self.is_dry_live_run_detected is True) or (self.informative_timeframe == self.backtest_timeframe):
             dataframe.loc[(dataframe['trend'] == 'downwards'), 'mgm_trend'] = -1
             dataframe.loc[(dataframe['trend'] == 'sideways'), 'mgm_trend'] = 0
             dataframe.loc[(dataframe['trend'] == 'upwards'), 'mgm_trend'] = 1
@@ -626,23 +630,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         self.mgm_logger('debug', 'Open Trade Unclogger', 'Fetching all needed "trend" trade data')
         trend_lookback_candles_window = self.get_param_value('sell___unclogger_trend_lookback_candles_window')
         for candle in range(1, trend_lookback_candles_window + 1):
-            # Convert the candle time to the one being used by the 'informative_timeframe'
-            candle_multiplier = int(self.informative_timeframe.rstrip('mhdwM'))
-            candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
-                           timedelta(minutes=int(candle * candle_multiplier)))
-            if self.informative_timeframe.find('h') != -1:
-                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
-                               timedelta(hours=int(candle * candle_multiplier)))
-            elif self.informative_timeframe.find('d') != -1:
-                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
-                               timedelta(days=int(candle * candle_multiplier)))
-            elif self.informative_timeframe.find('w') != -1:
-                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
-                               timedelta(weeks=int(candle * candle_multiplier)))
-            elif self.informative_timeframe.find('M') != -1:
-                candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
-                               timedelta64(int(candle * candle_multiplier), 'M'))
-
+            candle_time = self.convert_candle_time(current_time=current_time, current_candle=candle)
             candle_trend = dataframe.loc[dataframe['date'] == candle_time].squeeze()['trend']
 
             if isinstance(candle_trend, str):
@@ -903,6 +891,34 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return None  # By default we don't want a force sell to occur
 
+    def convert_candle_time(self, current_time: datetime, current_candle: int = 1) -> datetime:
+        """
+        Converts the current_time to a candle_time (of an informative_timeframe candle size),
+        which can be used to query the dataframe
+
+        :param current_time: (datetime) Current time object
+        :param current_candle: (int) Amount of candles to offset (look back) from the current_time
+        :return: (datetime) Converted candle time object
+        """
+        # Convert the candle time to the one being used by the 'informative_timeframe'
+        candle_multiplier = int(self.informative_timeframe.rstrip('mhdwM'))
+        candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                       timedelta(minutes=int(current_candle * candle_multiplier)))
+        if self.informative_timeframe.find('h') != -1:
+            candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                           timedelta(hours=int(current_candle * candle_multiplier)))
+        elif self.informative_timeframe.find('d') != -1:
+            candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                           timedelta(days=int(current_candle * candle_multiplier)))
+        elif self.informative_timeframe.find('w') != -1:
+            candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                           timedelta(weeks=int(current_candle * candle_multiplier)))
+        elif self.informative_timeframe.find('M') != -1:
+            candle_time = (timeframe_to_prev_date(self.informative_timeframe, current_time) -
+                           timedelta64(int(current_candle * candle_multiplier), 'M'))
+
+        return candle_time
+
     def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
                             time_in_force: str, current_time: datetime, **kwargs) -> bool:
         """
@@ -969,9 +985,20 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return bool: When True is returned, then the sell-order is placed on the exchange. False aborts the process
         """
 
+        # Check if weighted signal is profitable if sell_profit_only is enabled in the weighted_signal_spaces
         if ((self.mgm_config['weighted_signal_spaces']['sell_profit_only'] is
              True) and (sell_reason == 'sell_signal') and (trade.calc_profit_ratio(rate) < 0)):
             return False
+        # Check if ROI is enabled for the currently detected trend
+        elif sell_reason == 'roi':
+            # Fetch the 'trend' data for the current candle
+            dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+            candle_time = self.convert_candle_time(current_time=current_time)
+            candle_trend = dataframe.loc[dataframe['date'] == candle_time].squeeze()['trend']
+            for mgm_trend in self.mgm_trends:
+                roi_when_trend = getattr(self, f'roi_when_{mgm_trend}')
+                if (mgm_trend == candle_trend) and (roi_when_trend is False):
+                    return False
 
         return True  # By default we want the sell signal to go through
 

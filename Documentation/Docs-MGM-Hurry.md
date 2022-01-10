@@ -82,8 +82,8 @@ Setting it all up requires some knowledge of the entire process, until you found
 ## `mgm-hurry` Command Usage
 ---
 
-⚠️ A [shell alias](https://monigomani.readthedocs.io/Docs-VeryQuickStart/#pro-tip) has been configured for these shorter example commands.
-If you haven't done that optional step then you will need to prefix all your commands with `python3`!
+⚠️ A [shell alias](https://monigomani.readthedocs.io/Docs-VeryQuickStart/#shell-alias) has been configured for these shorter example commands.
+If you haven't done that optional step then you will need to prefix all your commands with `python3 -m pipenv run ./mgm-hurry ...` in the root installation folder instead of just being able to run `mgm-hurry ...` anywhere!
 
 
 ### `mgm-hurry --help`
@@ -237,6 +237,10 @@ Export the `.fthypt` results to an easy to interpret/sort/filter `.csv` SpreadSh
     - **Defaults to:** Defaults to `CsvResults-<Strategy-Name>-<Current-DateTime>`
 - **`--fthypt`:** *(Optional)* Launches a prompt to easily choose a certain `.fthypt` file or a specific `.fthypt` by providing it's name.
     - **Defaults to:** The last known `.fthypt` file. Provide `True` to launch a prompt to easily choose a specific. `.fthypt` file.
+
+
+### `mgm-hurry export_results`
+Export the results that are selected. Creates a `.zip` archive of the various files created by HyperOpt runs after the user selects which HyperOpt run they would like to export. Archive is placed in `user_data/mgm_result_export`.
 
 
 ### `mgm-hurry hyperopt_show_epoch`

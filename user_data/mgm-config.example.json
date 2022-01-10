@@ -2,7 +2,8 @@
   "monigomani_settings": {
     "timeframes": {
       "backtest_timeframe": "5m",
-      "core_trend_timeframe_multiplier": 8,
+      "core_trend_timeframe": "4h",
+      "roi_timeframe": "2h",
       "timeframe": "30m"
     },
     "startup_candle_count": 400,
@@ -36,9 +37,13 @@
       "trailing_stop_positive_offset_max_value": 0.1
     },
     "roi_spaces": {
+      "roi_delay": 120,
       "roi_table_step_size": 5,
       "roi_time_interval_scaling": 1.6,
-      "roi_value_step_scaling": 0.9
+      "roi_value_step_scaling": 0.9,
+      "roi_when_downwards": true,
+      "roi_when_sideways": true,
+      "roi_when_upwards": false
     },
     "unclogger_spaces": {
       "unclogger_buy_cooldown_minutes_window": {

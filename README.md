@@ -45,11 +45,14 @@
 </p>
 
 ## Motivation
-Isn't that what we all want? Our money to go many? Well that's what this Freqtrade  Framework & Strategy hopes to do for you "easily", in any market!
+Isn't that what we all want? Our money to go many?   
+Well that's what this Freqtrade Framework & Strategy hopes to do for you "easily", in any market!
 
-Big thank you to xmatthias and everyone who helped on MoniGoMani, Freqtrade Discord support was also really helpful, so thank you as-well!
+Big thank you to xmatthias and everyone who helped on MoniGoMani,   
+Freqtrade Discord support was also really helpful, so thank you as-well!
 
-If you like my work, feel free to donate or use [one of my referral links](#supported-exchanges), that would also greatly be appreciated:
+If you like my work, feel free to donate or use [one of my referral links](#supported-exchanges),   
+that would also greatly be appreciated:
 
 <p align=center>
     <a href="https://www.iconomi.com/register?ref=JdFzz">

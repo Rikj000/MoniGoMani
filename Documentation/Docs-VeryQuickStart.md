@@ -29,9 +29,9 @@
 <hr>
 
 ## Requirements
-Make sure that you have all of the following available on your system before proceeding:
+Make sure that you have all the following available on your system before proceeding:
 
-- [**Python3**](https://www.python.org/) - Python 3.8+ is required.
+- [**Python3**](https://www.python.org/) - Python 3 is required.
 - [**Pip3**](https://pypi.org/project/pip/) - Package manager to install & manage Python packages.
 - [**Git**](https://git-scm.com/downloads) - Software version management
 - [**cURL**](https://curl.se/) - Command line data transferring through URLs, usually already installed
@@ -39,7 +39,7 @@ Make sure that you have all of the following available on your system before pro
 - [**TA-Lib**](https://github.com/mrjbq7/ta-lib) - Technical Analysis Library written in C
 - [**VSCodium**](https://vscodium.com/) - *(Optional)* A light weight open-source IDE that comes pre-installed with good color codes to make it easier to read `.json` and `.log` files & many more great features.
 
-#### Additional Ubuntu requirements:
+#### Additional Debian & Ubuntu requirements:
 - [**Switch `sh` to `bash`**](https://unix.stackexchange.com/a/442517) - Run `sudo dpkg-reconfigure dash`, this will ask whether you want dash to be the default system shell. Answer `No` (`Tab` then `Enter`) and bash will become the default instead.
 - [**Python-venv**](https://pypi.org/project/virtualenv/) - The installer will prompt you how to install it on your version
 
@@ -58,28 +58,43 @@ To run the `installer.sh`, just run the following command:
 /usr/bin/env sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
 ```
 
-After installation all you need to do to get started is run:
+### Shell Alias
+Add an alias in the config file of your shell *(eg. `~/.bashrc`)*, then you can use MGM-Hurry everywhere as simply `mgm-hurry ...`! 😄
+Without a shell alias you will be limited to only being able to use MGM-hurry in its installation folder with `python3 -m pipenv run python3 ./mgm-hurry ...` prefixed to it.
 
+The `ìnstaller.sh` should ask you during the initial installation if you wish to add a shell alias.
+If you did not add it through the installer then you can still manually add the shell alias by executing following commands:
+
+- **For `bash`:**
+    ```powershell
+    # Replace '/path/to/installation/Freqtrade-MGM/'
+    echo "mgm-hurry() { pushd /path/to/installation/Freqtrade-MGM/ &> /dev/null; python3 -m pipenv run python3 ./mgm-hurry "\$@"; popd &> /dev/null; }" >> ~/.bashrc
+    ```
+- **For `fish`:**
+    ```powershell
+    mkdir -p ~/.config/fish/functions/; touch ~/.config/fish/functions/mgm-hurry.fish;
+    echo "function mgm-hurry" >> ~/.config/fish/functions/mgm-hurry.fish
+    # Replace '/path/to/installation/Freqtrade-MGM/'
+    echo "pushd /path/to/installation/Freqtrade-MGM/ &> /dev/null; python3 -m pipenv run python3 ./mgm-hurry \$argv; popd &> /dev/null;" >> ~/.config/fish/functions/mgm-hurry.fish
+    echo "end" >> ~/.config/fish/functions/mgm-hurry.fish
+    ```
+
+For other shells you'll have to look up where it's config file is stored & add a similar alias there.
+
+### After installation
+After installation all you need to do to get started is run:
 ```powershell
-cd ./freqtrade-mgm
-python3 mgm-hurry up
+mgm-hurry up
 ```
 
 That's it you successfully installed `MoniGoMani` and/or `Freqtrade`!
-You can now start using `MoniGoMani` for HyperOpting/BackTesting/Dry/Live-running! Congratulations :tada:
+You can now start using `MoniGoMani` for HyperOpting/BackTesting/Dry/Live-running! Congratulations 🎉
 This is only the beginning though, now please read the [Docs-MoniGoMani.md](https://monigomani.readthedocs.io/Docs-MoniGoMani) & [Docs-MGM-Hurry.md](https://monigomani.readthedocs.io/Docs-MGM-Hurry) to learn how to use it properly!
-
-### Pro tip
-Add an alias in the config file of your shell *(eg. ~/.zshrc)* so you can use MGM-Hurry as `mgm-hurry` without the need of pre-fixing Python in your commands anymore! :smile:
-Following is a non-sticking example line, this needs to be added to your shell config:
-```powershell
-alias mgm-hurry="python3 /path/to/installation/freqtrade-mgm/mgm-hurry"
-```
 
 ### OS Support Priority list
 
-1) **Linux/Unix** *(MoniGoMani is written on Linux, for Linux!)*
-2) **MacOS** *(Thanks to topscoder and other MacOS users)*
-3) **WSL** *(Because we have to give those Windows users something..)*
-4) **Docker** *(Perhaps someday, but not at this point in time..)*
-5) **Windows** *(Such a SpyWare infested OS will **never** receive support for this project!)*
+1. **Linux/Unix** *(MoniGoMani is written on Linux, for Linux!)*
+2. **MacOS** *(Thanks to topscoder and other MacOS users)*
+3. **WSL** *(Because we have to give those Windows users something..)*
+4. **Docker** *(Perhaps someday, but not at this point in time..)*
+5. **Windows** *(Such a SpyWare infested OS will **never** receive support for this project!)*

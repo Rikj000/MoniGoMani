@@ -88,7 +88,8 @@ class FreqtradeCli:
                                                  '"mgm-hurry install_freqtrade" before attempting to go further!'))
             return False
 
-        self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
+        if self.freqtrade_binary is None:
+            self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
 
         self.cli_logger.debug(f'👉 Freqtrade binary: `{self.freqtrade_binary}`')
 
@@ -237,10 +238,13 @@ class FreqtradeCli:
         if os.path.isfile(f'{target_dir}/setup.exp'):
             command = f'expect {target_dir}/setup.exp'
             if distro.id() in ['ubuntu', 'debian']:
-                command = f'sudo {command}'
+                command = f'echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/$USER-temp-root; ' \
+                          f'{command}; sudo rm /etc/sudoers.d/$USER-temp-root'
 
             # Using 'except' to automatically skip resetting the git repo, but do install all dependencies
-            self.monigomani_cli.run_command(command)
+            # Temporarily unset the VIRTUAL_ENV environment variable to keep Freqtrade from aborting the installation
+            self.monigomani_cli.run_command(f'export VIRTUAL_ENV_BAK=$VIRTUAL_ENV; unset VIRTUAL_ENV; {command}; '
+                                            f'export VIRTUAL_ENV=$VIRTUAL_ENV_BAK; unset VIRTUAL_ENV_BAK;')
             if install_ui is True:
                 # Explicitly re-fetch the Freqtrade binary path after installation
                 self.freqtrade_binary = self._get_freqtrade_binary_path(self.basedir, self.install_type)
@@ -325,7 +329,7 @@ class FreqtradeCli:
         freqtrade_binary = 'docker-compose run --rm freqtrade'
 
         if install_type == 'source':
-            freqtrade_binary = f'source {basedir}/.env/bin/activate; freqtrade'
+            freqtrade_binary = f'. {basedir}/.env/bin/activate; freqtrade'
 
         return freqtrade_binary
 
