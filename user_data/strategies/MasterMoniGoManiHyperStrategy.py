@@ -62,6 +62,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
     # MGM trend names
     mgm_trends = ['downwards', 'sideways', 'upwards']
+    list_of_space = ['buy', 'sell']
+    list_of_signal_type = ['triggers', 'guards']
 
     # Initialize empty buy/sell_params dictionaries
     buy_params = {}
@@ -170,7 +172,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # Default stub values from 'mgm-config' are used otherwise.
         if mgm_config_hyperopt != {}:
             for space in mgm_config_hyperopt['params']:
-                if space in ['buy', 'sell']:
+                if space in list_of_space:
                     for param, param_value in mgm_config_hyperopt['params'][space].items():
                         if param.startswith('buy'):
                             buy_params[param] = param_value
@@ -209,8 +211,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     total_signals_possible = {}
     total_triggers_possible = {}
     for trend in mgm_trends:
-        for space in ['buy', 'sell']:
-            for signal_type in ['triggers', 'guards']:
+        for space in list_of_space:
+            for signal_type in list_of_signal_type:
                 total_signals_possible[f'{space}_{signal_type}_{trend}'] = 0
                 total_triggers_possible[f'{space}_{signal_type}_{trend}'] = 0
 
@@ -919,7 +921,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return candle_time
 
-    def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
+def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
                             time_in_force: str, current_time: datetime, **kwargs) -> bool:
         """
         Open Trade Unclogger Buy Cooldown Window
@@ -1325,14 +1327,23 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Generate the utility attributes for the logic of the weighted_signal_spaces
         for trend in cls.mgm_trends:
-            for space in ['buy', 'sell']:
-                for signal_type in ['triggers', 'guards']:
+            for space in cls.list_of_space:
+                for signal_type in cls.list_of_signal_type:
                     if cls.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                         param_total_signal_needed = f'_{signal_type}_{trend}_trend_total_signal_needed'
                         number_of_weighted_signals = int(getattr(cls, f'number_of_weighted_{space}_{signal_type}'))
+
+                        # 1st HyperOpt Run: No need to search up to max value, (max value - search_threshold) is enough, 2nd Hyperopt Run will be able to go to max value
+                        parameter_dictionary = getattr(cls, f'{space}_params')
+                        parameter_value = parameter_dictionary.get(f'{space}_{param_total_signal_needed}')
+                        if parameter_value is None:
+                            search_threshold = 0
+                        else:
+                            search_threshold = cls.search_threshold_trend_signal_triggers_needed
+                            
                         cls._init_vars(base_cls=base_cls, space=space, parameter_name=param_total_signal_needed,
                                     parameter_min_value=cls.min_trend_total_signal_needed_value,
-                                    parameter_max_value=int(cls.max_weighted_signal_value * number_of_weighted_signals),
+                                    parameter_max_value=int(cls.max_weighted_signal_value * (number_of_weighted_signals - search_threshold)),
                                     parameter_threshold=cls.search_threshold_weighted_signal_values,
                                     precision=cls.precision, overrideable=True)
 
@@ -1347,7 +1358,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                         param_signal_triggers_needed = f'_{signal_type}_{trend}_trend_signal_triggers_needed'
                         cls._init_vars(base_cls=base_cls, space=space, parameter_name=param_signal_triggers_needed,
                                     parameter_min_value=cls.min_trend_signal_triggers_needed_value,
-                                    parameter_max_value=number_of_weighted_signals,
+                                    parameter_max_value=int(number_of_weighted_signals - search_threshold),
                                     parameter_threshold=cls.search_threshold_trend_signal_triggers_needed,
                                     precision=cls.precision, overrideable=True)
 
@@ -1368,33 +1379,21 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # It will be set as the decorator of the base class
         def apply_attributes(base_cls):
 
-            # Set all signs in the class for later use.
-            setattr(base_cls, 'buy_triggers', buy_signals['triggers'])
-            setattr(base_cls, 'buy_guards', buy_signals['guards'])
-            setattr(base_cls, 'sell_triggers', sell_signals['triggers'])
-            setattr(base_cls, 'sell_guards', sell_signals['guards'])
-
-            # Set number of weighted buy/sell triggers and guards for later use.
-            setattr(base_cls, 'number_of_weighted_buy_triggers', len(buy_signals['triggers']))
-            setattr(base_cls, 'number_of_weighted_buy_guards', len(buy_signals['guards']))
-            setattr(base_cls, 'number_of_weighted_sell_triggers', len(sell_signals['triggers']))
-            setattr(base_cls, 'number_of_weighted_sell_guards', len(sell_signals['guards']))
+            for signal_type in base_cls.list_of_signal_type:
+                # Set all signs in the class for later use.
+                setattr(base_cls, f'buy_{signal_type}', buy_signals[f'{signal_type}'])
+                setattr(base_cls, f'sell_{signal_type}', sell_signals[f'{signal_type}'])
+                # Set number of weighted buy/sell triggers and guards for later use.
+                setattr(base_cls, f'number_of_weighted_buy_{signal_type}', len(buy_signals[f'{signal_type}']))
+                setattr(base_cls, f'number_of_weighted_sell_{signal_type}', len(sell_signals[f'{signal_type}']))
+                # Registering signals attributes on class
+                for name in buy_signals[f'{signal_type}']:
+                    base_cls.register_signal_attr(base_cls, name, f'{signal_type}', 'buy')
+                for name in sell_signals[f'{signal_type}']:
+                    base_cls.register_signal_attr(base_cls, name, f'{signal_type}', 'sell')
 
             # Sets the useful parameters of the MGM, such as unclogger and etc
             base_cls.init_util_params(base_cls)
-
-            # Registering signals attributes on class
-            for name in buy_signals['triggers']:
-                base_cls.register_signal_attr(base_cls, name, 'triggers', 'buy')
-
-            for name in buy_signals['guards']:
-                base_cls.register_signal_attr(base_cls, name, 'guards', 'buy')
-
-            for name in sell_signals['triggers']:
-                base_cls.register_signal_attr(base_cls, name, 'triggers', 'sell')
-
-            for name in sell_signals['guards']:
-                base_cls.register_signal_attr(base_cls, name, 'guards', 'sell')
 
             return base_cls
 
@@ -1420,7 +1419,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             dataframe[f'{space}_triggers_triggered'] = dataframe[f'{space}_guards_triggered'] = 0
 
         # Calculates the weight and/or generates the debug column for each signal
-        for signal_type in ['triggers','guards']:
+        for signal_type in self.list_of_signal_type:
             # Fetch the weighted signals used + their min/max search space values and threshold used
             signals = getattr(self, f'{space}_{signal_type}')
             signal_min_value = self.mgm_config['weighted_signal_spaces']['min_weighted_signal_value']
@@ -1436,14 +1435,14 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         dataframe.loc[self._generate_weight_condition(dataframe=dataframe, space=space), space] = 1
 
         # Check if total signals needed & triggers needed are possible, if not force the bot to do nothing
-        for signal_type in ['triggers','guards']:
+        for signal_type in self.list_of_signal_type:
             number_of_weighted_signals = int(getattr(self, f'number_of_weighted_{space}_{signal_type}'))
             if self.is_dry_live_run_detected is False:
                 for trend in self.mgm_trends:
                     if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                         corrected_totals = self.get_corrected_totals_needed(
                             space=space, trend=trend, signal_type=signal_type, number_of_weighted_signals=number_of_weighted_signals)
-                                                    
+                            
                         if ((self.total_signals_possible[f'{space}_{signal_type}_{trend}'] < corrected_totals['signal_needed']) or
                             (self.total_triggers_possible[f'{space}_{signal_type}_{trend}'] < corrected_totals['triggers_needed'])):
                             dataframe['buy'] = dataframe['sell'] = 0
@@ -1460,8 +1459,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Reset the total signals and triggers possible
         for trend in self.mgm_trends:
-            for space in ['buy', 'sell']:
-                for signal_type in ['triggers', 'guards']:
+            for space in self.list_of_space:
+                for signal_type in self.list_of_signal_type:
                     self.total_signals_possible[f'{space}_{signal_type}_{trend}'] = 0
                     self.total_triggers_possible[f'{space}_{signal_type}_{trend}'] = 0
 
