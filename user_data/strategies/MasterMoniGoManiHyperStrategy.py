@@ -921,7 +921,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return candle_time
 
-def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
+    def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
                             time_in_force: str, current_time: datetime, **kwargs) -> bool:
         """
         Open Trade Unclogger Buy Cooldown Window
