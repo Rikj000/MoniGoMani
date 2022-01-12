@@ -1288,6 +1288,11 @@ def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: f
         else:
             optimize = True
 
+        # In case min = max value no need to optimize, force default value to min/max
+        if min_value == max_value:
+            default_value = min_value
+            optimize = False
+
         parameter_config = {
             'min_value': int(min_value * precision),
             'max_value': int(max_value * precision),
