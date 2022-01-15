@@ -1051,9 +1051,9 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         for trend in self.mgm_trends:
             if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                 corrected_triggers_totals = self.get_corrected_totals_needed(
-                    space=space, trend=trend, signal_type='triggers', number_of_weighted_signals=number_of_weighted_triggers)
+                    space=space, trend=trend, signal_type='triggers', number_of_weighted_signals=number_of_weighted_triggers,metadata={})
                 corrected_guards_totals = self.get_corrected_totals_needed(
-                    space=space, trend=trend, signal_type='guards', number_of_weighted_signals=number_of_weighted_guards)
+                    space=space, trend=trend, signal_type='guards', number_of_weighted_signals=number_of_weighted_guards,metadata={})
 
                 conditions_weight.append(
                     (dataframe['trend'] == trend) &
@@ -1065,7 +1065,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         return reduce(lambda x, y: x | y, conditions_weight)
 
-    def get_corrected_totals_needed(self, space: str, trend: str, signal_type: str, number_of_weighted_signals: int) -> dict:
+    def get_corrected_totals_needed(self, space: str, trend: str, signal_type: str, number_of_weighted_signals: int, metadata: dict) -> dict:
         """
         Fetches a dictionary containing
         - Total Signal Weight Needed
@@ -1085,7 +1085,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             parameter_value=total_signal_needed.value,
             parameter_min_value=self.min_trend_total_signal_needed_value,
             parameter_max_value=self.max_weighted_signal_value * number_of_weighted_signals,
-            parameter_threshold=self.search_threshold_weighted_signal_values
+            parameter_threshold=self.search_threshold_weighted_signal_values * number_of_weighted_signals
         ) / self.precision
 
         corrected_total_triggers_needed = self.apply_weak_strong_overrides(
@@ -1095,6 +1095,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             parameter_threshold=self.search_threshold_trend_signal_triggers_needed
         ) / self.precision
 
+        print(f'DEBUG --- {metadata}_{space}_{signal_type}_{trend}_corrected_total_signal_needed:{corrected_total_signal_needed}')
+        print(f'DEBUG --- {metadata}_{space}_{signal_type}_{trend}_corrected_total_triggers_needed:{corrected_total_triggers_needed}')
         return {'signal_needed': corrected_total_signal_needed, 'triggers_needed': corrected_total_triggers_needed}
 
     def apply_weak_strong_overrides(self, parameter_value,
@@ -1198,10 +1200,12 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         for trend in cls.mgm_trends:
             parameter_name = f'{signal_type}_{trend}_trend_{name}_weight'
             if cls.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
+                signals = getattr(cls, f'{space}_{signal_type}')
+                signal_attributes = cls.calculate_signal_attr(cls, name, signals[name]['min_weight'], signals[name]['max_weight'])
                 cls._init_vars(base_cls, space=space, parameter_name=parameter_name,
-                               parameter_min_value=cls.min_weighted_signal_value,
-                               parameter_max_value=cls.max_weighted_signal_value,
-                               parameter_threshold=cls.search_threshold_weighted_signal_values,
+                               parameter_min_value=signal_attributes['min_value'],
+                               parameter_max_value=signal_attributes['max_value'],
+                               parameter_threshold=signal_attributes['threshold'],
                                precision=cls.precision, overrideable=True)
 
     @classmethod
@@ -1223,12 +1227,17 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         :return: None
         """
 
+        print(f'DEBUG --- _init_vars -- START space : {space} parameter_name : {parameter_name} min : {parameter_min_value}, max : {parameter_max_value}, parameter_threshold : {parameter_threshold}, overrideable : {overrideable}')
+
         # Narrow the search spaces for overrideable parameters by default
         override_parameter_min_value = parameter_min_value
         override_parameter_max_value = parameter_max_value
         if overrideable is True:
             parameter_min_value = parameter_min_value + parameter_threshold
             parameter_max_value = parameter_max_value - parameter_threshold
+            # Keep the original min value if search space is not big enough to restrict it
+            if parameter_min_value > parameter_max_value :
+                parameter_min_value = override_parameter_min_value
 
         parameter_dictionary = getattr(cls, f'{space}_params')
         parameter_key = f'{space}_{parameter_name}'
@@ -1250,8 +1259,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 if parameter_value <= parameter_min_value:
                     min_value = override_parameter_min_value
                 # Limit search space min_value to not go too low
-                elif (parameter_value - parameter_threshold) < parameter_min_value:
-                    min_value = parameter_min_value
+                #elif (parameter_value - parameter_threshold) < parameter_min_value:
+                #    min_value = parameter_min_value
                 # Otherwise just refine the search space
                 else:
                     min_value = parameter_value - parameter_threshold
@@ -1260,8 +1269,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 if parameter_value >= parameter_max_value:
                     max_value = override_parameter_max_value
                 # Limit search space max_value to not go too high
-                elif (parameter_value + parameter_threshold) > parameter_max_value:
-                    max_value = parameter_max_value
+                #elif (parameter_value + parameter_threshold) > parameter_max_value:
+                #    max_value = parameter_max_value
                 # Otherwise just refine the search space
                 else:
                     max_value = parameter_value + parameter_threshold
@@ -1280,7 +1289,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # 2nd HyperOpt Run: Apply Overrides where needed
         if (parameter_value is not None) and (overrideable is True):
-            if default_value == override_parameter_min_value or default_value == override_parameter_max_value:
+            if (default_value == override_parameter_min_value or default_value == override_parameter_max_value) and ((override_parameter_max_value - override_parameter_min_value) > parameter_threshold):
                 optimize = False
             else:
                 optimize = True
@@ -1288,10 +1297,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         else:
             optimize = True
 
-        # In case min = max value no need to optimize, force default value to min/max
-        if min_value == max_value:
-            default_value = min_value
+        # In case max <= min value no need to optimize, force default/max value to min
+        print(f'DEBUG --- _init_vars -- MIDDLE parameter_name : {parameter_name} min : {min_value}, max : {max_value}, default : {default_value}, optimize : {optimize}')
+        if max_value <= min_value:
+            default_value = max_value = min_value
             optimize = False
+
+        print(f'DEBUG --- _init_vars -- END parameter_name : {parameter_name} min : {min_value}, max : {max_value}, default : {default_value}, optimize : {optimize}\n')
 
         parameter_config = {
             'min_value': int(min_value * precision),
@@ -1324,7 +1336,6 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             if isinstance(param_config, dict) is True:
                 param_config['threshold'] = (param_config['threshold'] if 'threshold' in param_config
                                              else cls.search_threshold_weighted_signal_values)
-
                 cls._init_vars(base_cls=base_cls, space='sell', parameter_name=parameter_name,
                                parameter_min_value=param_config['min'], parameter_max_value=param_config['max'],
                                parameter_threshold=param_config['threshold'],
@@ -1338,18 +1349,27 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                         param_total_signal_needed = f'_{signal_type}_{trend}_trend_total_signal_needed'
                         number_of_weighted_signals = int(getattr(cls, f'number_of_weighted_{space}_{signal_type}'))
 
-                        # 1st HyperOpt Run: No need to search up to max value, (max value - search_threshold) is enough, 2nd Hyperopt Run will be able to go to max value
+                        # 1st HyperOpt Run: hack to start with the real min to avoid starting with too high expectations
                         parameter_dictionary = getattr(cls, f'{space}_params')
                         parameter_value = parameter_dictionary.get(f'{space}_{param_total_signal_needed}')
                         if parameter_value is None:
-                            search_threshold = 0
+                            #1st Hyperopt
+                            if cls.min_trend_total_signal_needed_value < (cls.search_threshold_weighted_signal_values*number_of_weighted_signals):
+                                min_total_signal_needed = 0
+                            else:
+                                min_total_signal_needed = (cls.min_trend_total_signal_needed_value - 
+                                                          (cls.search_threshold_weighted_signal_values* number_of_weighted_signals))
+                            min_triggers_needed = (cls.min_trend_signal_triggers_needed_value - 
+                                                  cls.search_threshold_trend_signal_triggers_needed)
                         else:
-                            search_threshold = cls.search_threshold_trend_signal_triggers_needed
-                            
+                            #2nd Hyperopt
+                            min_total_signal_needed = cls.min_trend_total_signal_needed_value
+                            min_triggers_needed = cls.min_trend_signal_triggers_needed_value
+
                         cls._init_vars(base_cls=base_cls, space=space, parameter_name=param_total_signal_needed,
-                                    parameter_min_value=cls.min_trend_total_signal_needed_value,
-                                    parameter_max_value=int(cls.max_weighted_signal_value * (number_of_weighted_signals - search_threshold)),
-                                    parameter_threshold=cls.search_threshold_weighted_signal_values,
+                                    parameter_min_value=min_total_signal_needed,
+                                    parameter_max_value=int(cls.max_weighted_signal_value * number_of_weighted_signals),
+                                    parameter_threshold=int(cls.search_threshold_weighted_signal_values* number_of_weighted_signals),
                                     precision=cls.precision, overrideable=True)
 
                         param_needed_candles_lookback_window = f'_{signal_type}_{trend}_trend_total_signal_needed_candles_lookback_window'
@@ -1362,8 +1382,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
                         param_signal_triggers_needed = f'_{signal_type}_{trend}_trend_signal_triggers_needed'
                         cls._init_vars(base_cls=base_cls, space=space, parameter_name=param_signal_triggers_needed,
-                                    parameter_min_value=cls.min_trend_signal_triggers_needed_value,
-                                    parameter_max_value=int(number_of_weighted_signals - search_threshold),
+                                    parameter_min_value=min_triggers_needed,
+                                    parameter_max_value=number_of_weighted_signals,
                                     parameter_threshold=cls.search_threshold_trend_signal_triggers_needed,
                                     precision=cls.precision, overrideable=True)
 
@@ -1425,19 +1445,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Calculates the weight and/or generates the debug column for each signal
         for signal_type in self.list_of_signal_type:
-            # Fetch the weighted signals used + their min/max search space values and threshold used
+            # Fetch the weighted signals used
             signals = getattr(self, f'{space}_{signal_type}')
-            signal_min_value = self.mgm_config['weighted_signal_spaces']['min_weighted_signal_value']
-            signal_max_value = self.mgm_config['weighted_signal_spaces']['max_weighted_signal_value']
-            signal_threshold = self.mgm_config['weighted_signal_spaces']['search_threshold_weighted_signal_values']
-
-            for signal_name, condition_func in signals.items():
-                self._add_signal(signal_name=signal_name, signal_type=signal_type, signal_min_value=signal_min_value,
-                                signal_max_value=signal_max_value, signal_threshold=signal_threshold,
+            for signal_name, signal_params in signals.items():
+                condition_func = signal_params['condition']
+                signal_attributes = self.calculate_signal_attr(signal_name, signal_params['min_weight'], signal_params["max_weight"])
+                # Populate signal
+                self._add_signal(signal_name=signal_name, signal_type=signal_type, signal_min_value=signal_attributes['min_value'],
+                                signal_max_value=signal_attributes['max_value'], signal_threshold=signal_attributes['threshold'],
                                 space=space, dataframe=dataframe, condition=condition_func(dataframe))
-
-        # Generates the conditions responsible for searching and comparing the weights needed to activate a buy or sell
-        dataframe.loc[self._generate_weight_condition(dataframe=dataframe, space=space), space] = 1
 
         # Check if total signals needed & triggers needed are possible, if not force the bot to do nothing
         for signal_type in self.list_of_signal_type:
@@ -1446,11 +1462,23 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 for trend in self.mgm_trends:
                     if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                         corrected_totals = self.get_corrected_totals_needed(
-                            space=space, trend=trend, signal_type=signal_type, number_of_weighted_signals=number_of_weighted_signals)
+                            space=space, trend=trend, signal_type=signal_type, number_of_weighted_signals=number_of_weighted_signals, metadata=metadata)
                             
                         if ((self.total_signals_possible[f'{space}_{signal_type}_{trend}'] < corrected_totals['signal_needed']) or
                             (self.total_triggers_possible[f'{space}_{signal_type}_{trend}'] < corrected_totals['triggers_needed'])):
-                            dataframe['buy'] = dataframe['sell'] = 0
+                            self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] = False
+                            print(f'DEBUG --- _populate_trend -- {metadata}_{space}_{signal_type}_{trend}_trading_during_trends = False')
+
+        is_valid_epoch = False
+        # if at leat one trend of the current space is tradable 
+        for trend in self.mgm_trends:
+            is_valid_epoch = (self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True or is_valid_epoch)
+
+        if is_valid_epoch:
+            # Generates the conditions responsible for searching and comparing the weights needed to activate a buy or sell
+            dataframe.loc[self._generate_weight_condition(dataframe=dataframe, space=space), space] = 1
+        else:
+            dataframe['buy'] = dataframe['sell'] = 0
         
         return dataframe
 
@@ -1480,3 +1508,28 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             separator_window = (self.separator / 1) - (1 / self.separator)
             self.separator_candle_weight_reducer = separator_window / self.get_param_value(
                 'sell___unclogger_trend_lookback_candles_window')
+
+    def calculate_signal_attr(self, signal_name: str, min_weight: int=None, max_weight: int=None) -> dict:
+        """
+        Calculates the min / max / threshold values for a signal given some forced values.
+        If none then apply default config values
+        :param signal_name: Signal name
+        :param min_weight: forced min weight value for the signal
+        :param max_weight : forced min weight value for the signal
+        :return: (dict) {min_value, max_value, threshold}
+        """
+
+        signal_min_value = self.min_weighted_signal_value
+        signal_max_value = self.max_weighted_signal_value
+        signal_threshold = self.search_threshold_weighted_signal_values
+
+        if min_weight is not None:
+            signal_min_value = min_weight
+        if max_weight is not None:
+            signal_max_value = max_weight
+
+        signal_threshold = min(signal_threshold,int((signal_max_value - signal_min_value) / 2))
+
+        #print(f'DEBUG --- calculate_signal_attr -- signal_name : {signal_name} min : {signal_min_value} max : {signal_max_value} threshold : {signal_threshold}')
+
+        return {'min_value' : signal_min_value, 'max_value' : signal_max_value, 'threshold' : signal_threshold}
