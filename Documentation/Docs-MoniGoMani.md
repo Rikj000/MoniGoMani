@@ -43,6 +43,12 @@
     - [Weighted Signal Spaces](#weighted-signal-spaces)
     - [Stoploss Spaces](#stoploss-spaces)
     - [ROI Spaces](#roi-spaces)
+    - [Protection Spaces](#protection-spaces)
+      - [Available Protections](#available-protections)
+      - [Define Configurable HyperOptable Protections](#define-configurable-hyperoptable-protections)
+        - [Common settings to all Configurable HyperOptable Protections](#common-settings-to-all-configurable-hyperoptable-protections)
+      - [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters)
+      - [Full example of Configurable HyperOPtable Protections](#full-example-of-configurable-hyperoptable-protections)
     - [Open Trade Unclogger](#open-trade-unclogger)
       - [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries)
     - [Default Stub Values](#default-stub-values)
@@ -256,6 +262,79 @@ The settings inside `mgm-config.json`'s `roi_spaces` section are used to tweak t
 | **roi_when_sideways** | Enable or completely disable ROI as a sell reason during sideways trends.<br> **Datatype:** Boolean |
 | **roi_when_upwards** | Enable or completely disable ROI as a sell reason during upwards trends.<br> **Datatype:** Boolean |
 
+### Protection Spaces
+The list inside `mgm-config.json`'s `protection_spaces` is used to define configurable HyperOptable [Freqtrade protections](https://www.freqtrade.io/en/latest/plugins/#protections)!
+
+- To HyperOpt these make sure to pass `--space 'protection' --protections_enabled True` to your `mgm-hurry hyperopt` command!
+- To disable HyperOpting but still using them pass `--protections_enabled True` *(Default behavior)*
+- To disable protections pass `--protections_enabled False`
+
+#### Available Protections
+***<span style="color:blue">NOTE:</span>** The functionality of the protections is the same as Freqtrade, but the way MoniGoMani defines them is different, see: [Define Configurable HyperOptable Protections](#define-configurable-hyperoptable-protections)*
+
+| Name | Description |
+| ---- | ----------- |
+| [**StoplossGuard**](https://www.freqtrade.io/en/latest/plugins/#stoploss-guard) | Stop trading if a certain amount of stoploss occurred within a certain time window |
+| [**MaxDrawdown**](https://www.freqtrade.io/en/latest/plugins/#maxdrawdown) | Stop trading if max-drawdown is reached |
+| [**LowProfitPairs**](https://www.freqtrade.io/en/latest/plugins/#low-profit-pairs) | Lock pairs with low profits |
+| [**CooldownPeriod**](https://www.freqtrade.io/en/latest/plugins/#cooldown-period) | Don't enter a trade right after selling a trade |
+
+#### Define Configurable HyperOptable Protections
+You can define as much or as little protections as you see fit & tweak their individual search spaces.
+
+##### Common settings to all Configurable HyperOptable Protections
+| Parameter | Description |
+| --------- | ----------- |
+| **method** | Protection name to use *(e.g. `StoplossGuard`, `MaxDrawdown`, `LowProfitPairs` or `CooldownPeriod`)*<br> **Datatype:** String, selected from [Available Protections](#available-protections) |
+| **id** | Optional parameter, however **mandatory** if using multiple of the same Protection `method`.<br> Used to identify which protection is which.<br> **Datatype:** String |
+| **stop_duration_candles** |	For how many candles should the lock be set?<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `integer` *(positive, in candles)*) |
+| **stop_duration** | How many minutes should protections be locked. Cannot be used together with `stop_duration_candles`.<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `decimal` *(positive, in minutes)*) |
+| **lookback_period_candles** | Only trades that completed within the last `lookback_period_candles` candles will be considered. <br>This setting may be ignored by some Protections.<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `integer` *(positive, in candles)*) |
+| **lookback_period** | Only trades that completed after `current_time` - `lookback_period` will be considered.<br> Cannot be used together with `lookback_period_candles`.<br> This setting may be ignored by some Protections.<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `decimal` *(positive, in minutes)*) |
+| **trade_limit** | Number of trades required at minimum *(not used by all Protections)*.<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `integer` *(positive)* |
+| **max_allowed_drawdown** | Only used by `MaxDrawdown`.<br> If all trades within `lookback_period` in minutes *(or in candles when using `lookback_period_candles`)* to determine the maximum drawdown.<br> If the drawdown is below `max_allowed_drawdown`, trading will stop for `stop_duration` in minutes *(or in candles when using `stop_duration_candles`)* after the last trade.<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `decimal` *(positive)*
+| **required_profit** | Only used by `LowProfitPairs`.<br> If all trades for a pair within `lookback_period` in minutes (or in candles when using `lookback_period_candles`) to determine the overall profit ratio.<br> If that ratio is below `required_profit`, that pair will be locked for `stop_duration` in minutes (or in candles when using `stop_duration_candles`).<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `decimal` *(positive)* |
+| **only_per_pair** | Only used by `StoplossGuard`.<br> If not used then the protection will be applied across all pairs. <br> If `only_per_pair` is set to `true`, then it will only look at one pair at a time. <br> **Datatype:** Boolean | 
+
+#### Common settings to all Configurable HyperOptable Protection Parameters
+| Parameter | Description |
+| --------- | ----------- |
+| **min** | **1st HyperOpt Run:** Minimal value used in the HyperOpt Space for the protection parameter. <br> **2nd HyperOpt Run:** Low values (below `min` + `threshold`) are weeded out by overriding them to their respective Minimal value. <br> **Datatype:** Same as `type` |
+| **max** | **1st HyperOpt Run:** Maximum value used in the HyperOpt Space for the protection parameter. <br> **2nd HyperOpt Run:** Low values (above `max` - `threshold`) are boosted by overriding them to their respective Maximum value. <br> **Datatype:** Same as `type` |
+| **threshold** | **2nd HyperOpt Run:** Used to refine the search spaces for remaining protection parameters with the value found in the 1st run +- the threshold. <br> **Datatype:** Same as `type` |
+| **type** | Defines if the protection parameter space will work with `integer`s *(Only whole numbers)* <br> or `decimal`s *(Also fractions, keep in mind this greatly increases the search space)* <br> **Datatype:** String, either `integer` or `decimal` |
+
+#### Full example of Configurable HyperOPtable Protections
+```json
+"protection_spaces": [
+      {
+        "method": "CooldownPeriod",
+        "stop_duration_candles": { "min" : 2, "max": 5, "threshold": 1, "type": "integer" }
+      },
+      {
+        "method": "MaxDrawdown",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "max_allowed_drawdown": { "min" : 0, "max": 1, "threshold": 0.1, "type": "decimal" }
+      },
+      {
+        "method": "StoplossGuard",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "only_per_pair": false
+      },
+      {
+        "method": "StoplossGuard",
+        "id": "PerPair",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "only_per_pair": true
+      }
+    ]
+```
 
 ### Open Trade Unclogger
 When the Open Trade Unclogger is enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades.
