@@ -275,6 +275,13 @@ class MoniGoManiCli(object):
             sys.exit(1)
         return_code = 1
 
+        self.logger.info(f'👉 MGM-Hurry will now run the following command for you:\n {command}')
+        last_command_path = f'{self.basedir}/user_data/.last_command.json'
+        command_object = self.parse_command(command)
+        with open(last_command_path, 'w') as retrieve_json_file:
+            json.dump(command_object, retrieve_json_file, indent=4)
+            retrieve_json_file.close()
+
         if output_file_name is not None:
             output_file = open(output_file_name, 'w')
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
