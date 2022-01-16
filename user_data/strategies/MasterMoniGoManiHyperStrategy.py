@@ -63,9 +63,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     # MGM trend names
     mgm_trends = ['downwards', 'sideways', 'upwards']
 
-    # Initialize empty buy/sell_params dictionaries
+    # Initialize empty buy/sell/protection_params dictionaries
     buy_params = {}
     sell_params = {}
+    protection_params = {}
 
     # Load the MoniGoMani config names from '.hurry'
     mgm_config_name = mgm_config_hyperopt_name = None
@@ -134,7 +135,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             'stoploss_spaces']['trailing_stop_positive_offset_min_value']
         trailing_stop_positive_offset_max_value = mgm_config[
             'stoploss_spaces']['trailing_stop_positive_offset_max_value']
-        mgm_unclogger_add_params = mgm_config['unclogger_spaces']
+        mgm_unclogger_params = mgm_config['unclogger_spaces']
+        mgm_protection_params = mgm_config['protection_spaces']
         minimal_roi = mgm_config['default_stub_values']['minimal_roi']
         stoploss = mgm_config['default_stub_values']['stoploss']
         trailing_stop = mgm_config['default_stub_values']['trailing_stop']
@@ -170,12 +172,14 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         # Default stub values from 'mgm-config' are used otherwise.
         if mgm_config_hyperopt != {}:
             for space in mgm_config_hyperopt['params']:
-                if space in ['buy', 'sell']:
+                if space in ['buy', 'sell', 'protection']:
                     for param, param_value in mgm_config_hyperopt['params'][space].items():
                         if param.startswith('buy'):
                             buy_params[param] = param_value
-                        else:
+                        elif param.startswith('sell'):
                             sell_params[param] = param_value
+                        else:
+                            protection_params[param] = param_value
 
                 if space == 'roi':
                     minimal_roi = mgm_config_hyperopt['params'][space]
@@ -334,95 +338,34 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                           decimals=3, name='trailing_stop_positive_offset_p1'),
                 Categorical([True, False], name='trailing_only_offset_is_reached')]
 
-    # Initialize the hyperoptable cooldown protection parameter space
-    use_protection_cooldown = BooleanParameter(default=False, space='protection', optimize=True, load=True)
-    cooldown_lookback = IntParameter(2, 200, default=5, space='protection', optimize=True, load=True)
-
-    # Initialize the hyperoptable drawdown protection parameter space
-    use_protection_drawdown = BooleanParameter(default=False, space='protection', optimize=True, load=True)
-    drawdown_lookback = IntParameter(2, 200, default=48, space='protection', optimize=True, load=True)
-    drawdown_trade_limit = IntParameter(2, 100, default=10, space='protection', optimize=True, load=True)
-    drawdown_stop_duration = IntParameter(2, 100, default=4, space='protection', optimize=True, load=True)
-    drawdown_max = DecimalParameter(0, 1, default=0.2, space='protection', optimize=True, load=True)
-
-    # Initialize the hyperoptable stoploss protection parameter space
-    use_protection_stoploss = BooleanParameter(default=False, space='protection', optimize=True, load=True)
-    stoploss_lookback = IntParameter(2, 200, default=48, space='protection', optimize=True, load=True)
-    stoploss_trade_limit = IntParameter(2, 100, default=10, space='protection', optimize=True, load=True)
-    stoploss_stop_duration = IntParameter(2, 100, default=4, space='protection', optimize=True, load=True)
-
-    # Initialize the hyperoptable per pair stoploss protection parameter space
-    use_protection_stoploss_pp = BooleanParameter(default=False, space='protection', optimize=True, load=True)
-    stoploss_lookback_pp = IntParameter(2, 200, default=48, space='protection', optimize=True, load=True)
-    stoploss_trade_limit_pp = IntParameter(2, 100, default=10, space='protection', optimize=True, load=True)
-    stoploss_stop_duration_pp = IntParameter(2, 100, default=4, space='protection', optimize=True, load=True)
-
-    # Initialize the first hyperoptable low profit protection parameter space
-    use_protection_low_profit1 = BooleanParameter(default=False, space='protection', optimize=True, load=True)
-    low_profit1_lookback = IntParameter(2, 200, default=6, space='protection', optimize=True, load=True)
-    low_profit1_trade_limit = IntParameter(2, 100, default=2, space='protection', optimize=True, load=True)
-    low_profit1_stop_duration = IntParameter(2, 100, default=60, space='protection', optimize=True, load=True)
-    low_profit1_profit = DecimalParameter(0, 1, default=0.02, space='protection', optimize=True, load=True)
-
-    # Initialize the second hyperoptable low profit protection parameter space
-    use_protection_low_profit2 = BooleanParameter(default=False, space='protection', optimize=True, load=True)
-    low_profit2_lookback = IntParameter(2, 200, default=624, space='protection', optimize=True, load=True)
-    low_profit2_trade_limit = IntParameter(2, 100, default=4, space='protection', optimize=True, load=True)
-    low_profit2_stop_duration = IntParameter(2, 100, default=2, space='protection', optimize=True, load=True)
-    low_profit2_profit = DecimalParameter(0, 1, default=0.01, space='protection', optimize=True, load=True)
-
     # Initialize the hyperoptable freqtrade protections
     @property
     def protections(self):
-        prot = []
+        protections = []
 
-        if self.use_protection_cooldown.value:
-            prot.append({
-                'method': 'CooldownPeriod',
-                'stop_duration_candles': self.cooldown_lookback.value
-            })
-        if self.use_protection_drawdown.value:
-            prot.append({
-                'method': 'MaxDrawdown',
-                'lookback_period_candles': self.drawdown_lookback.value,
-                'trade_limit': self.drawdown_trade_limit.value,
-                'stop_duration_candles': self.drawdown_stop_duration.value,
-                'max_allowed_drawdown': self.drawdown_max.value
-            })
-        if self.use_protection_stoploss.value:
-            prot.append({
-                'method': 'StoplossGuard',
-                'lookback_period_candles': self.stoploss_lookback.value,
-                'trade_limit': self.stoploss_trade_limit.value,
-                'stop_duration_candles': self.stoploss_stop_duration.value,
-                'only_per_pair': False
-            })
-        if self.use_protection_stoploss_pp.value:
-            prot.append({
-                'method': 'StoplossGuard',
-                'lookback_period_candles': self.stoploss_lookback_pp.value,
-                'trade_limit': self.stoploss_trade_limit_pp.value,
-                'stop_duration_candles': self.stoploss_stop_duration_pp.value,
-                'only_per_pair': True
-            })
-        if self.use_protection_low_profit1.value:
-            prot.append({
-                'method': 'LowProfitPairs',
-                'lookback_period_candles': self.low_profit1_lookback.value,
-                'trade_limit': self.low_profit1_trade_limit.value,
-                'stop_duration_candles': self.low_profit1_stop_duration.value,
-                'required_profit': self.low_profit1_profit.value
-            })
-        if self.use_protection_low_profit2.value:
-            prot.append({
-                'method': 'LowProfitPairs',
-                'lookback_period_candles': self.low_profit2_lookback.value,
-                'trade_limit': self.low_profit2_trade_limit.value,
-                'stop_duration_candles': self.low_profit2_stop_duration.value,
-                'required_profit': self.low_profit2_profit.value
-            })
+        # Generates the hyperoptable protections with the correct spaces
+        for protection_config in self.mgm_protection_params:
+            protection = {}
 
-        return prot
+            if isinstance(protection_config, dict) is True:
+                for protection_parameter_key in protection_config:
+                    protection_parameter_value = protection_config[protection_parameter_key]
+
+                    # If the protection parameter value is a dict, then fetch the hyperoptable parameter value from MGM
+                    if isinstance(protection_parameter_value, dict) is True:
+                        protection_parameter_name = (
+                            f'{protection_config["method"]}_{protection_parameter_key}' if 'id' not in protection_config
+                            else f'{protection_config["method"]}_{protection_config["id"]}_{protection_parameter_key}')
+
+                        protection_parameter = getattr(self, f'protection_{protection_parameter_name}')
+                        protection[protection_parameter_key] = protection_parameter.value
+
+                    # Else just append the protection parameter value
+                    elif protection_parameter_key != 'id':
+                        protection[protection_parameter_key] = protection_parameter_value
+            protections.append(protection)
+
+        return protections
 
     def __init__(self, config: dict):
         """
@@ -1397,9 +1340,10 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     def init_util_params(cls, base_cls):
         """
          Generates custom utility parameters used by:
+         - unclogger_spaces
+         - protection_spaces
          - trading_during_trends
          - weighted_signal_spaces
-         - unclogger_spaces
          :param base_cls: The inheritor class of the MGM where the attributes will be added
         """
 
@@ -1414,6 +1358,28 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                parameter_min_value=unclogger_config['min'], parameter_max_value=unclogger_config['max'],
                                parameter_threshold=unclogger_config['threshold'],
                                precision=cls.precision, overrideable=False)
+
+        # Generates the utility attributes for the protection_spaces
+        for protection_config in cls.mgm_protection_params:
+            if isinstance(protection_config, dict) is True:
+                for protection_parameter_key in protection_config:
+                    protection_parameter_value = protection_config[protection_parameter_key]
+
+                    # Only generate a hyperoptable parameter for dictionary entries
+                    if isinstance(protection_parameter_value, dict) is True:
+                        protection_parameter_name = (
+                            f'{protection_config["method"]}_{protection_parameter_key}' if 'id' not in protection_config
+                            else f'{protection_config["method"]}_{protection_config["id"]}_{protection_parameter_key}')
+                        protection_parameter_value['threshold'] = (
+                            protection_parameter_value['threshold'] if 'threshold' in protection_parameter_value
+                            else cls.search_threshold_weighted_signal_values)
+
+                        cls._init_vars(base_cls=base_cls, space='protection', parameter_name=protection_parameter_name,
+                                       parameter_min_value=protection_parameter_value['min'],
+                                       parameter_max_value=protection_parameter_value['max'],
+                                       parameter_threshold=protection_parameter_value['threshold'],
+                                       precision=cls.precision, overrideable=False,
+                                       parameter_type=protection_parameter_value['type'])
 
         # Generate the utility attributes for the logic of the weighted_signal_spaces
         for trend in cls.mgm_trends:
@@ -1467,7 +1433,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             setattr(base_cls, 'number_of_weighted_buy_signals', len(buy_signals))
             setattr(base_cls, 'number_of_weighted_sell_signals', len(sell_signals))
 
-            # Sets the useful parameters of the MGM, such as unclogger and etc
+            # Sets utility hyperoptable parameters for MoniGoMani (unclogger, protections, weighted signals, ...)
             base_cls.init_util_params(base_cls)
 
             # Registering signals attributes on class
