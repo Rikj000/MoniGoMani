@@ -433,10 +433,11 @@ class MoniGoManiConfig(object):
 
         return True
 
-    def save_weak_strong_signal_overrides(self) -> bool:
+    def save_weak_strong_signal_overrides(self, previously_hyperopted_spaces: list[str]) -> bool:
         """
         Overrides weak and strong signals to their actual values used by MoniGoMani in 'mgm-config-hyperopt'
 
+        :param previously_hyperopted_spaces: (list[str]) List containing previously HyperOpted spaces
         :return bool: True if json data is overwritten correctly, False otherwise.
         """
         # Check if 'mgm-config-hyperopt' exists
@@ -497,9 +498,18 @@ class MoniGoManiConfig(object):
                             elif signal_weight_value >= (number_of_weighted_signals - signal_triggers_needed_threshold):
                                 mgm_config_hyperopt['params'][space][signal] = number_of_weighted_signals
 
-        # Sort the spaces to Freqtrades default order
+        # Fetch all used spaces, for the previous + current hyperopt
+        all_used_spaces = previously_hyperopted_spaces
+        command_object = self.load_config_file(filename=f'{self.basedir}/user_data/.last_command.json')
+        currently_used_spaces = list(command_object['properties']['spaces'].split(' '))
+
+        for currently_used_space in currently_used_spaces:
+            if currently_used_space not in previously_hyperopted_spaces:
+                all_used_spaces.append(currently_used_space)
+
+        # Sort the spaces to the order used during hyperopting
         sorted_spaces = {}
-        for space_name in ['buy', 'sell', 'roi', 'stoploss', 'trailing']:
+        for space_name in all_used_spaces:
             if space_name in mgm_config_hyperopt['params']:
                 sorted_spaces[space_name] = mgm_config_hyperopt['params'][space_name]
         mgm_config_hyperopt['params'] = sorted_spaces

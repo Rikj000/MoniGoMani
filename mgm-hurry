@@ -681,12 +681,15 @@ class MGMHurry:
             epochs = self.monigomani_config.config['hyperopt']['epochs']
 
         initial_run = True
+        previously_hyperopted_spaces = []
         if clean_start is True:
             self.cleanup(strategy)
         elif os.path.isfile(f'{self.basedir}/user_data/strategies/{strategy}.json') or (
                 (strategy == 'MoniGoManiHyperStrategy') and (
                 os.path.isfile(self.monigomani_config.get_config_filepath('mgm-config-hyperopt')) is True)):
             initial_run = False
+            if strategy == 'MoniGoManiHyperStrategy':
+                previously_hyperopted_spaces = self.monigomani_config.get_hyperopted_spaces()
 
         self.logger.info(Color.title('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥'))
 
@@ -725,8 +728,9 @@ class MGMHurry:
             sys.exit(1)
 
         if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
-            self.monigomani_cli.apply_mgm_results(strategy)
-            self.monigomani_config.save_weak_strong_signal_overrides()
+            self.monigomani_cli.apply_mgm_results(strategy=strategy)
+            self.monigomani_config.save_weak_strong_signal_overrides(
+                previously_hyperopted_spaces=previously_hyperopted_spaces)
 
         # Read 'mgm-config-hyperopt' or <StrategyName>.json and pretty print it
         if strategy == 'MoniGoManiHyperStrategy':
