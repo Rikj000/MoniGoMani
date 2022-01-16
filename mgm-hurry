@@ -919,20 +919,9 @@ class MGMHurry:
 
         backtest_results_file = self.freqtrade_cli.choose_backtest_results_file(choose_results=choose_results)
         backtest_results_path = f'{self.basedir}/user_data/backtest_results/{backtest_results_file}'
-
-        if os.path.isfile(backtest_results_path) is True:
-            # Load the 'backtest-result-<timestamp>.json' file as an object and parse it as a dictionary
-            file_object = open(backtest_results_path, )
-            backtest_results = json.load(file_object)
-
-            if len(backtest_results['strategy'][strategy]['trades']) == 0:
-                self.logger.error(Color.red(f'🤷 No trades where done in the given {backtest_results_file} file.\n'
-                                            f'Please provide a BackTest results file in which '
-                                            f'actual trading has been done!'))
-                return None
-        else:
-            self.logger.error(Color.red(f'🤷 {backtest_results_file} file could not be found.\nPlease make sure that '
-                                        f'the provided BackTest results file actually exists!'))
+        backtest_results = self.monigomani_cli.parse_backtest_results(
+            backtest_results_file=backtest_results_file, strategy=strategy)
+        if backtest_results == {}:
             return None
 
         if output_file_name is None:
@@ -970,21 +959,9 @@ class MGMHurry:
             strategy = self.monigomani_config.config['hyperopt']['strategy']
 
         backtest_results_file = self.freqtrade_cli.choose_backtest_results_file(choose_results=choose_results)
-        backtest_results_path = f'{self.basedir}/user_data/backtest_results/{backtest_results_file}'
-
-        if os.path.isfile(backtest_results_path) is True:
-            # Load the 'backtest-result-<timestamp>.json' file as an object and parse it as a dictionary
-            file_object = open(backtest_results_path, )
-            backtest_results = json.load(file_object)
-
-            if len(backtest_results['strategy'][strategy]['trades']) == 0:
-                self.logger.error(Color.red(f'🤷 No trades where done in the given {backtest_results_file} file.\n'
-                                            f'Please provide a BackTest results file in which '
-                                            f'actual trading has been done!'))
-                return None
-        else:
-            self.logger.error(Color.red(f'🤷 {backtest_results_file} file could not be found.\nPlease make sure that '
-                                        f'the provided BackTest results file actually exists!'))
+        backtest_results = self.monigomani_cli.parse_backtest_results(
+            backtest_results_file=backtest_results_file, strategy=strategy)
+        if backtest_results == {}:
             return None
 
         if output_file_name is None:
