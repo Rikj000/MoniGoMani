@@ -46,33 +46,13 @@
       "roi_when_upwards": false
     },
     "unclogger_spaces": {
-      "unclogger_buy_cooldown_minutes_window": {
-        "min": 180,
-        "max": 360,
-        "threshold": 20
-      },
+      "unclogger_buy_cooldown_minutes_window": { "min": 180, "max": 360, "threshold": 20 },
       "unclogger_enabled": true,
-      "unclogger_minimal_losing_trade_duration_minutes": {
-        "min": 15,
-        "max": 560
-      },
-      "unclogger_minimal_losing_trades_open": {
-        "min": 1,
-        "max": 5,
-        "threshold": 1
-      },
-      "unclogger_open_trades_losing_percentage_needed": {
-        "min": 1,
-        "max": 60
-      },
-      "unclogger_trend_lookback_candles_window": {
-        "min": 10,
-        "max": 60
-      },
-      "unclogger_trend_lookback_candles_window_percentage_needed": {
-        "min": 10,
-        "max": 45
-      },
+      "unclogger_minimal_losing_trade_duration_minutes": { "min": 15, "max": 560 },
+      "unclogger_minimal_losing_trades_open": { "min": 1, "max": 5, "threshold": 1 },
+      "unclogger_open_trades_losing_percentage_needed": { "min": 1, "max": 60 },
+      "unclogger_trend_lookback_candles_window": { "min": 10, "max": 60 },
+      "unclogger_trend_lookback_candles_window_percentage_needed": { "min": 10, "max": 45 },
       "unclogger_trend_lookback_candles_window_recent_past_weight_separator": 2,
       "unclogger_trend_lookback_window_uses_downwards_candles": true,
       "unclogger_trend_lookback_window_uses_sideways_candles": true,
