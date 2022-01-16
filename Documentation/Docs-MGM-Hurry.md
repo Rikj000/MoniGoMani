@@ -311,7 +311,7 @@ Installing a git pre-commit hook as configured in `.pre-commit-config.yaml`
 ```powershell
 brew install pre-commit
 ```
-*Note; this example uses [Homebrew](https://brew.sh/) to install `pre-commit` but you are free to use your preferred package manager.*
+***<span style="color:blue">NOTE:</span>** This example uses [Homebrew](https://brew.sh/) to install `pre-commit` but you are free to use your preferred package manager.*
 
 > Install the pre-commit script.
 ```powershell
