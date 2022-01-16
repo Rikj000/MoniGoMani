@@ -1279,12 +1279,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                                precision=cls.precision, overrideable=True)
 
     @classmethod
-    def _init_vars(cls, base_cls, space: str, parameter_name: str, parameter_min_value: int,
-                   parameter_max_value: int, parameter_threshold: int, precision: float, overrideable: bool = True):
+    def _init_vars(cls, base_cls, space: str, parameter_name: str, parameter_min_value: float,
+                   parameter_max_value: float, parameter_threshold: float, precision: float, overrideable: bool = True,
+                   parameter_type: str = 'integer'):
         """
         Function to automatically initialize MoniGoMani's HyperOptable parameter values for both HyperOpt Runs.
         :param base_cls: The inheritor class of the MGM where the attributes will be added
-        :param space: Buy or Sell params dictionary
+        :param space: Buy, Sell or Protection params dictionary
         :param parameter_name: Name of the signal in the dictionary
         :param parameter_min_value: Minimal search space value to use during
             the 1st HyperOpt Run and override value for weak signals
@@ -1294,6 +1295,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             and setting up refined search spaces after the 1st HyperOpt Run
         :param precision: Precision used while HyperOpting
         :param overrideable: Allow value to be overrideable or not (defaults to 'True')
+        :param parameter_type: 'integer' for only whole numbers or 'decimal' for fractions (defaults to 'integer')
         :return: None
         """
 
@@ -1342,7 +1344,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # 1st HyperOpt Run: Use middle of min/max values as default value
         if parameter_value is None:
-            default_value = int((parameter_min_value + parameter_max_value) / 2)
+            default_value = (parameter_min_value + parameter_max_value) / 2
         # 2nd HyperOpt Run: Use Overrides where needed for default value
         elif (max_value == parameter_max_value) and (overrideable is True) and (parameter_value >= parameter_max_value):
             default_value = override_parameter_max_value
@@ -1363,17 +1365,32 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             optimize = True
 
         parameter_config = {
-            'min_value': int(min_value * precision),
-            'max_value': int(max_value * precision),
-            'default_value': int(default_value * precision),
+            'min_value': min_value * precision,
+            'max_value': max_value * precision,
+            'default_value': default_value * precision,
             # 1st HyperOpt Run: No overrides, 2nd HyperOpt Run: Apply Overrides where needed
             'optimize': optimize
         }
 
-        parameter_dictionary[parameter_key] = parameter_config['default_value']
-        param = IntParameter(low=parameter_config['min_value'], high=parameter_config['max_value'],
-                             default=parameter_config['default_value'], space=space,
-                             optimize=parameter_config['optimize'], load=True)
+        if parameter_type == 'decimal':
+            parameter_dictionary[parameter_key] = parameter_config['default_value']
+            param = DecimalParameter(low=parameter_config['min_value'], high=parameter_config['max_value'],
+                                     default=parameter_config['default_value'], space=space,
+                                     optimize=parameter_config['optimize'], load=True)
+        elif parameter_type == 'integer':
+            # Parse the dictionary values to their integer equivalents
+            parameter_dictionary[parameter_key] = int(round(parameter_config['default_value']))
+            parameter_config['min_value'] = int(round(parameter_config['min_value']))
+            parameter_config['max_value'] = int(round(parameter_config['max_value']))
+            parameter_config['default_value'] = int(round(parameter_config['default_value']))
+
+            param = IntParameter(low=parameter_config['min_value'], high=parameter_config['max_value'],
+                                 default=parameter_config['default_value'], space=space,
+                                 optimize=parameter_config['optimize'], load=True)
+        else:
+            sys.exit(f'MoniGoManiHyperStrategy - ERROR - MoniGoMani could not parse the {parameter_type} for '
+                     f'the {parameter_name} parameter, aborting...')
+
         setattr(base_cls, parameter_key, param)
 
     @classmethod
