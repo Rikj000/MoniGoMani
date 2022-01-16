@@ -235,6 +235,26 @@ class MoniGoManiConfig(object):
             json_data = json.load(file_object)
             return json_data
 
+    def load_mgm_config_hyperopt(self) -> dict:
+        """
+        Loads 'mgm-config-hyperopt' as a dictionary object if it exists
+
+        :return: (dict) 'mgm-config-hyperopt' as a dictionary object
+        """
+
+        # Check if 'mgm-config-hyperopt' exists
+        mgm_config_hyperopt_name = self.config['mgm_config_names']['mgm-config-hyperopt']
+        mgm_config_hyperopt_path = f'{self.basedir}/user_data/{mgm_config_hyperopt_name}'
+
+        if os.path.isfile(mgm_config_hyperopt_path) is False:
+            self.logger.warning(Color.yellow(f'🤷 No "{mgm_config_hyperopt_name}" file found in the "user_data" '
+                                             f'directory. Please run: mgm-hurry hyperopt'))
+            return {}
+
+        # Load the needed MoniGoMani Config files and 'mgm-config-hyperopt'
+        mgm_config_files = self.load_config_files()
+        return mgm_config_files['mgm-config-hyperopt']
+
     def write_hurry_dotfile(self, config: dict = None):
         """
         Write config-array to ".hurry" config file and load its contents into config-property.
