@@ -357,6 +357,94 @@ class MoniGoManiCli(object):
 
         return return_code
 
+    def parse_command(self, command: str) -> dict:
+        """
+        Parses a full string command to an easy to work with dictionary object
+
+        :param command: (str) Full command passed through as a string
+        :return: (dict) Dictionary object with { raw_command: str, type: str, command: str, properties: dict }
+        """
+
+        # Save the full raw command
+        command_object = {'raw_command': command, 'properties': {}}
+
+        # Parse & save the command type
+        if 'freqtrade' in command:
+            command_object['type'] = 'freqtrade'
+            command = command[command.index('freqtrade') + 10:]
+        else:
+            command_object['type'] = command[:command.index(' ')]
+            command = command[command.index(' ') + 1:]
+
+        # Parse & save the actual command
+        command_object['command'] = command[:command.index(' ')]
+        command = command[command.index(' ') + 1:]
+
+        # Parse all properties as individual strings
+        command = command.replace('--', '-')
+        if command.startswith('-'):
+            command = command[1:]
+        properties = command.split(' -')
+
+        for command_property in properties:
+            # Fetch the key & value out of the property strings
+            if ' ' in command_property:
+                property_key = command_property[:command_property.index(' ')]
+                property_value = command_property[command_property.index(' ') + 1:]
+            else:
+                property_key = command_property
+                property_value = True
+            if property_value == '':
+                property_value = True
+
+            # Simply add the property of not existing yet
+            if (property_key not in command_object['properties']) and \
+                (f'{property_key}_1' not in command_object['properties']):
+                command_object['properties'][property_key] = property_value
+            # Rename the original property & add indexes if multiple entries exist
+            elif property_key in command_object['properties']:
+                command_object['properties'][f'{property_key}_1'] = command_object['properties'][property_key]
+                command_object['properties'][f'{property_key}_2'] = property_value
+                command_object['properties'].pop(property_key)
+            # Increase the index for every new entry of an existing property
+            else:
+                index = 3
+                property_stored = False
+                while property_stored is False:
+                    if f'{property_key}_{index}' not in command_object['properties']:
+                        command_object['properties'][f'{property_key}_{index}'] = property_value
+                        property_stored = True
+                    index += 1
+
+        return command_object
+
+    def parse_backtest_results(self, backtest_results_file: str, strategy: str) -> dict:
+        """
+        Parses a backtest results file into an easy to work with dictionary object
+
+        :param backtest_results_file: (str) Filename of the 'backtest-result-<timestamp>.json' file.
+        :param strategy: (str) Strategy name used during said backtest
+        :return: (dict) Backtest results parsed as a dictionary object
+        """
+        backtest_results_path = f'{self.basedir}/user_data/backtest_results/{backtest_results_file}'
+
+        if os.path.isfile(backtest_results_path) is True:
+            # Load the 'backtest-result-<timestamp>.json' file as an object and parse it as a dictionary
+            file_object = open(backtest_results_path, )
+            backtest_results = json.load(file_object)
+
+            if len(backtest_results['strategy'][strategy]['trades']) == 0:
+                self.logger.error(Color.red(f'🤷 No trades where done in the given {backtest_results_file} file.\n'
+                                            f'Please provide a BackTest results file in which '
+                                            f'actual trading has been done!'))
+                return {}
+
+            return backtest_results
+        else:
+            self.logger.error(Color.red(f'🤷 {backtest_results_file} file could not be found.\nPlease make sure that '
+                                        f'the provided BackTest results file actually exists!'))
+            return {}
+
     def calculate_timerange_start_minus_startup_candle_count(self, timerange: int = None) -> dict:
         """
         Subtracts the startup_candle_count from the provided timerange, defaults to timerange defined in '.hurry'
