@@ -698,28 +698,18 @@ class MGMHurry:
         if spaces is None:
             spaces = self.monigomani_config.config['hyperopt']['spaces']
 
-        command = (f'$ft_binary hyperopt -s $ho_strategy {self.monigomani_config.command_configs()}'
-                   f'--hyperopt-loss $ho_loss --spaces $ho_spaces -e $ho_epochs --timerange $timerange ')
+        command = (f'{self.monigomani_config.config["ft_binary"]} hyperopt {self.monigomani_config.command_configs()} '
+                   f'--strategy {strategy} --hyperopt-loss {loss} --spaces {spaces} '
+                   f'--epochs {epochs} --timerange {timerange} ')
 
         if enable_protections is True:
-            command = f'{command.strip()} --enable-protections '
+            command += '--enable-protections '
         if random_state is not None:
-            command = f'{command.strip()} --random-state $random_state '
+            command += f'--random-state {random_state} '
         if jobs is not None:
-            command = f'{command.strip()} -j $jobs '
+            command += f'--job-workers {jobs} '
         if min_trades is not None:
-            command = f'{command.strip()} --min-trades $min_trades '
-
-        command = Template(command).substitute(
-            ft_binary=self.monigomani_config.config['ft_binary'],
-            ho_strategy=strategy,
-            ho_loss=loss,
-            ho_spaces=spaces,
-            ho_epochs=epochs,
-            timerange=timerange,
-            random_state=random_state,
-            jobs=jobs,
-            min_trades=min_trades)
+            command += f'--min-trades {min_trades} '
 
         self.logger.debug(command)
         if output_file_name is None:
@@ -823,7 +813,7 @@ class MGMHurry:
 
         self.logger.info(f'👉 Showing {"" if apply is False else "and applying "}HyperOpt results for epoch #{epoch}')
 
-        command = (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} '
+        command = (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show --index {epoch} '
                    f'{self.monigomani_config.command_configs()}')
 
         if fthypt_name is not None:
@@ -857,26 +847,24 @@ class MGMHurry:
         self.logger.info(Color.title('👉 Start BackTesting. Lets see how it all turns out!'))
 
         timerange = self.monigomani_config.get_preset_timerange(timerange)
-        command = (f'$ft_binary backtesting -s $ho_strategy {self.monigomani_config.command_configs()}'
-                   f'--timerange $timerange')
 
         if timerange is None:
             timerange = self.monigomani_config.config['timerange']
         if strategy is None:
             strategy = self.monigomani_config.config['hyperopt']['strategy']
+
+        command = (
+            f'{self.monigomani_config.config["ft_binary"]} backtesting {self.monigomani_config.command_configs()}'
+            f'--strategy {strategy} --timerange {timerange}')
+
         if enable_protections is True:
-            command = f'{command} --enable-protections'
+            command += ' --enable-protections'
 
         if (strategy == 'MoniGoManiHyperStrategy') and (
                 os.path.isfile(self.monigomani_config.get_config_filepath('mgm-config-hyperopt')) is False):
             self.logger.error(Color.red(f'🤷 MoniGoManiHyperStrategy needs to be HyperOpted before it will '
                                         f'start to produce valid BackTest Results!\n(Hint: Run "mgm-hurry hyperopt")'))
             return None
-
-        command = Template(command).substitute(
-            ft_binary=self.monigomani_config.config['ft_binary'],
-            ho_strategy=strategy,
-            timerange=timerange)
 
         if output_file_name is None:
             output_file_name = f'{strategy}-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
@@ -1047,7 +1035,8 @@ class MGMHurry:
 
         self.monigomani_cli.run_command(
             f'python3 {self.basedir}/user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py '
-            f'-pu {mgm_config_files["mgm-config"]["monigomani_settings"]["precision"]} -cf {output_file_path}')
+            f'--precision-used {mgm_config_files["mgm-config"]["monigomani_settings"]["precision"]} '
+            f'--create-file {output_file_path}')
 
         MoniGoManiLogger(self.basedir).post_message(
             username=self.monigomani_config.config['username'],
@@ -1088,10 +1077,10 @@ class MGMHurry:
 
         mgm_config = self.monigomani_config.get_config_filepath('mgm-config')
         command = (f'python3 {self.basedir}/user_data/mgm_tools/ExportCsvResults.py '
-                   f'-c {mgm_config} -o {output_file_path}')
+                   f'--config_file {mgm_config} --output_file {output_file_path}')
 
         if fthypt_name is not None:
-            command += f' -i {fthypt_file_path}'
+            command += f' --input_file {fthypt_file_path}'
 
         self.monigomani_cli.run_command(command=command)
         MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],

@@ -13,6 +13,7 @@
 # \_|  |_/ \___/ |_| |_||_| \____/ \___/ \_|  |_/ \__,_||_| |_||_| \____/|_||_|
 
 import glob
+import json
 import os
 import subprocess
 import sys
@@ -146,7 +147,7 @@ class MoniGoManiCli(object):
                     sys.exit(1)
 
             self.logger.info('👉  Installing/Updating MoniGoMani Python dependency packages')
-            self.run_command('pip3 install -r ./monigomani/requirements-mgm.txt')
+            self.run_command('pip3 install --requirement ./monigomani/requirements-mgm.txt')
             self.logger.info(Color.green('✔ Downloading & Installing MoniGoMani completed!'))
 
     def copy_and_link_installation_files(self, temp_dirname: str, target_dir: str) -> bool:

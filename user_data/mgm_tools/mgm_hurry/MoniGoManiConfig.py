@@ -519,7 +519,7 @@ class MoniGoManiConfig(object):
         """
         mgm_json_name = self.config['mgm_config_names']['mgm-config']
         mgm_private_json_name = self.config['mgm_config_names']['mgm-config-private']
-        return f'-c ./user_data/{mgm_json_name} -c ./user_data/{mgm_private_json_name} '
+        return f'--config ./user_data/{mgm_json_name} --config ./user_data/{mgm_private_json_name} '
 
     def get_preset_timerange(self, timerange: str) -> str:
         """

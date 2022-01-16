@@ -303,7 +303,7 @@ class FreqtradeCli:
                 retrieve_json_file.close()
 
         with tempfile.NamedTemporaryFile() as temp_file:
-            self.monigomani_cli.run_command(f'{self.freqtrade_binary} test-pairlist -c {retrieve_json_path} '
+            self.monigomani_cli.run_command(f'{self.freqtrade_binary} test-pairlist --config {retrieve_json_path} '
                                             f'--quote {stake_currency} --print-json > {temp_file.name}')
 
             # Read last line from temp_file, which is the json list containing pairlists
