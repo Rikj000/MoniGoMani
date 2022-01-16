@@ -319,6 +319,23 @@ class MoniGoManiConfig(object):
         # return true if one of these is true
         return xor(bool(cleaned_up_cfg), bool(cleaned_up_intermediate))
 
+    def get_hyperopted_spaces(self) -> list[str]:
+        """
+        Fetches a list of the previously hyperopted spaces for MoniGoMani from 'mgm-config-hyperopt' if it exists.
+
+        :return: (list[str]) Returns a list of the previously hyperopted spaces
+        """
+
+        mgm_config_hyperopt = self.load_mgm_config_hyperopt()
+        if mgm_config_hyperopt == {}:
+            return []
+
+        hyperopted_spaces = []
+        for hyperopted_space in mgm_config_hyperopt['params']:
+            hyperopted_spaces.append(hyperopted_space)
+
+        return hyperopted_spaces
+
     def _remove_file(self, fil: str) -> bool:
         if os.path.exists(fil) is False:
             return False
