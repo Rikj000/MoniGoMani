@@ -37,7 +37,7 @@
                 If you'd like to see this project progress faster then please help out where you can
                 <a href="https://github.com/Rikj000/MoniGoMani/issues">here</a>!
                 <br><img width=1000><br>
-                <b>Recommended Freqtrade commit: <a href="https://github.com/freqtrade/freqtrade/pull/5219/commits/3503fdb4ec31be99f433fdce039543e0911964d6">3503fdb4</a></b>
+                <b>Recommended Freqtrade version: <a href="https://github.com/freqtrade/freqtrade/releases/tag/2021.11">2021.11</a></b>
                 <br><br>
             </td>
         </tbody>
