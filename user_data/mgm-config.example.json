@@ -58,6 +58,50 @@
       "unclogger_trend_lookback_window_uses_sideways_candles": true,
       "unclogger_trend_lookback_window_uses_upwards_candles": false
     },
+    "protection_spaces": [
+      {
+        "method": "CooldownPeriod",
+        "stop_duration_candles": { "min" : 2, "max": 5, "threshold": 1, "type": "integer" }
+      },
+      {
+        "method": "MaxDrawdown",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "max_allowed_drawdown": { "min" : 0, "max": 1, "threshold": 0.1, "type": "decimal" }
+      },
+      {
+        "method": "StoplossGuard",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "only_per_pair": false
+      },
+      {
+        "method": "StoplossGuard",
+        "id": "PerPair",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "only_per_pair": true
+      },
+      {
+        "method": "LowProfitPairs",
+        "id": "1",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "required_profit": { "min" : 0, "max": 1, "threshold": 0.1, "type": "decimal" }
+      },
+      {
+        "method": "LowProfitPairs",
+        "id": "2",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "required_profit": { "min" : 0, "max": 1, "threshold": 0.1, "type": "decimal" }
+      }
+    ],
     "default_stub_values": {
       "minimal_roi": {
         "0": 100
