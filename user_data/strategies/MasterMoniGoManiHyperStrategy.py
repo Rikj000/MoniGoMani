@@ -25,8 +25,7 @@ from freqtrade.exchange import timeframe_to_prev_date
 from freqtrade.misc import deep_merge_dicts, round_dict
 from freqtrade.optimize.space import Categorical, Dimension, Integer, SKDecimal
 from freqtrade.persistence import Trade
-from freqtrade.strategy import (BooleanParameter, DecimalParameter, IntParameter, IStrategy,
-                                merge_informative_pair, timeframe_to_minutes)
+from freqtrade.strategy import DecimalParameter, IntParameter, IStrategy, merge_informative_pair, timeframe_to_minutes
 
 logger = logging.getLogger(__name__)
 
@@ -1388,16 +1387,15 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         """
 
         # Generates the utility attributes for the unclogger_spaces
-        for param_key in cls.mgm_unclogger_add_params:
-            parameter_name = '__' + param_key
-            param_config = cls.mgm_unclogger_add_params[param_key]
-            if isinstance(param_config, dict) is True:
-                param_config['threshold'] = (param_config['threshold'] if 'threshold' in param_config
-                                             else cls.search_threshold_weighted_signal_values)
+        for unclogger_key in cls.mgm_unclogger_params:
+            unclogger_config = cls.mgm_unclogger_params[unclogger_key]
+            if isinstance(unclogger_config, dict) is True:
+                unclogger_config['threshold'] = (unclogger_config['threshold'] if 'threshold' in unclogger_config
+                                                 else cls.search_threshold_weighted_signal_values)
 
-                cls._init_vars(base_cls=base_cls, space='sell', parameter_name=parameter_name,
-                               parameter_min_value=param_config['min'], parameter_max_value=param_config['max'],
-                               parameter_threshold=param_config['threshold'],
+                cls._init_vars(base_cls=base_cls, space='sell', parameter_name=f'__{unclogger_key}',
+                               parameter_min_value=unclogger_config['min'], parameter_max_value=unclogger_config['max'],
+                               parameter_threshold=unclogger_config['threshold'],
                                precision=cls.precision, overrideable=False)
 
         # Generate the utility attributes for the logic of the weighted_signal_spaces

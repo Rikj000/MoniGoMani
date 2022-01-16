@@ -22,7 +22,6 @@ import logging
 import os
 import sys
 from datetime import datetime
-from string import Template
 
 import fire
 import numpy as np  # noqa
@@ -88,7 +87,7 @@ class MGMHurry:
 
     def up(self):  # pylint: disable=invalid-name
         """
-        The all in one command. Hurry up, turn it up!
+        The all-in-one command. Hurry up, turn it up!
         """
         self.logger.info(Color.title('👉 The all in one command. Hurry up, turn it up!'))
 
@@ -226,7 +225,7 @@ class MGMHurry:
 
         :param target_dir: (string, optional) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         :param branch: (string, optional) Checkout a specific branch. Defaults to 'develop'.
-        :param commit: (str) Checkout a specific commit. Defaults to latest supported by MoniGoMani,
+        :param commit: (str) Checkout a specific commit. Defaults to the latest supported by MoniGoMani,
             but 'latest' can also be used.
         :param install_ui: (bool) Install FreqUI. Defaults to True.
         """
@@ -324,13 +323,13 @@ class MGMHurry:
                          glob.glob(f'{self.basedir}/user_data/strategies/*.py'))
 
         strategies_choices = []
-        for strat in strategies:
-            if strat != 'MasterMoniGoManiHyperStrategy':
-                strategies_choices.append({'name': strat, 'value': strat})
+        for strategy in strategies:
+            if strategy != 'MasterMoniGoManiHyperStrategy':
+                strategies_choices.append({'name': strategy, 'value': strategy})
 
         if len(strategies_choices) == 0:
-            strat_dir = f'{self.basedir}/user_data/strategies/'
-            self.logger.error(Color.red(f'🤷 I could not find any strategy in {strat_dir}. '
+            strategy_directory = f'{self.basedir}/user_data/strategies/'
+            self.logger.error(Color.red(f'🤷 I could not find any strategy in {strategy_directory}. '
                                         f'Did you install Freqtrade & MoniGoMani?'))
             sys.exit(1)
 
@@ -493,11 +492,11 @@ class MGMHurry:
         """
         Deletes stored HyperOpt config(s) from previous run(s)
 
-        :param strategy: (Optional, string) Name of the Strategy to cleanup, defaults to 'MoniGoManiHyperStrategy'
+        :param strategy: (Optional, string) Name of the Strategy to clean up, defaults to 'MoniGoManiHyperStrategy'
         """
         self.logger.info(Color.title('👉 Cleanup'))
 
-        # Remove hyperopt files to cleanup
+        # Remove hyperopt files to clean up
         cleaned_up = self.monigomani_config.cleanup_hyperopt_files(strategy)
 
         message = f'🍺 Cleanup successful, {strategy} ready for a fresh HyperOpt Run...' if cleaned_up is True \
@@ -659,7 +658,7 @@ class MGMHurry:
         :param strategy: (str, Optional): Hyper Opt strategy to use. Defaults to value in '.hurry'
         :param loss: (str, Optional): Specify the HyperOptLoss which you want to use. Defaults to value in '.hurry'
         :param spaces: (str, Optional): Spaces (space delimited) to optimize
-            for [default, all, buy, sell, roi, stoploss, etc]. Defaults to value in '.hurry'
+            for [default, all, buy, sell, roi, stoploss, etc.]. Defaults to value in '.hurry'
         :param enable_protections: (bool, Optional): Add '--enable-protections' flag to HO-command. Defaults to True.
         :param random_state: (int, Optional): Add '--random-state random_state' flag to HO-command. Defaults to None.
         :param apply_best_results: (bool, Optional): Apply 'best' HO results direct after HO? Defaults to True.
@@ -717,7 +716,7 @@ class MGMHurry:
         hyperopt_file_name = f'HyperOptResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/hyperopt_results/{hyperopt_file_name}.log'
 
-        self.monigomani_cli.run_command(command=command, output_file_name=output_file_path,hyperopt=True)
+        self.monigomani_cli.run_command(command=command, output_file_name=output_file_path, hyperopt=True)
 
         last_ho_results_path = f'{self.basedir}/user_data/hyperopt_results/.last_ho_results_table.log'
         if os.stat(last_ho_results_path).st_size == 0:
@@ -838,7 +837,7 @@ class MGMHurry:
 
         :param timerange: (string, Optional): The target timerange for backtesting. Defaults to timerange in '.hurry'.
         :param strategy: (str, Optional): Strategy to use during BackTesting. Defaults to value in '.hurry'
-        :param enable_protections: (bool, Optional): Whether or not to enable protections. Defaults to True.
+        :param enable_protections: (bool, Optional): Whether to enable protections or not. Defaults to True.
         :param plot_profits: (bool, Optional): Automatically plot visual profit graphs in '.html'. Defaults to True.
         :param plot_stats: (bool, Optional): Automatically plot visual stats report in '.html'. Defaults to True.
         :param output_file_name: (str, Optional) Custom filename for the BackTestResults '.log' file that will be stored
@@ -992,8 +991,10 @@ class MGMHurry:
         starting_balance = backtest_results['strategy'][strategy]['starting_balance']
         backtest_trades = pd.DataFrame(backtest_results['strategy'][strategy]['trades'])
 
-        backtest_trades['open_date'] = pd.to_datetime(backtest_trades['open_date'], utc=True, infer_datetime_format=True)
-        daily_returns = backtest_trades[['open_date', 'profit_abs']].groupby(pd.Grouper(key="open_date", freq='D')).sum('profit_abs')
+        backtest_trades['open_date'] = pd.to_datetime(
+            backtest_trades['open_date'], utc=True, infer_datetime_format=True)
+        daily_returns = backtest_trades[['open_date', 'profit_abs']].groupby(
+            pd.Grouper(key="open_date", freq='D')).sum('profit_abs')
         daily_returns['balance'] = np.cumsum(daily_returns['profit_abs']) + starting_balance
 
         dates = pd.date_range(daily_returns.index[0], daily_returns.index[-1], freq='D').tz_localize(None)
@@ -1001,7 +1002,8 @@ class MGMHurry:
         daily_returns = pd.Series(daily_returns.balance).pct_change(1).values
         returns_time_series = pd.Series(daily_returns, index=pd.to_datetime(list(dates)))
 
-        qs.reports.html(returns=returns_time_series, title=f'{strategy} {backtest_results_file}', output=output_file_path)
+        qs.reports.html(returns=returns_time_series, title=f'{strategy} {backtest_results_file}',
+                        output=output_file_path)
 
         MoniGoManiLogger(self.basedir).post_message(
             username=self.monigomani_config.config['username'],
@@ -1052,7 +1054,7 @@ class MGMHurry:
         :param output_file_name: (str, Optional) Custom filename for the CsvResults '.csv' file
             that will be stored in the format: 'CsvResults-<output_file_name>.csv'.
             Defaults to 'StrategyName + Current DateTime'.
-        :param fthypt: (str, Optional) '.fthypt' file to export results from.. If 'true' is passed,
+        :param fthypt: (str, Optional) '.fthypt' file to export results from. If 'true' is passed,
             an interactive prompt will launch to pick an '.fthypt' file of choice. Defaults to latest
         """
 
@@ -1106,7 +1108,7 @@ class MGMHurry:
 
     def __setup_telegram(self) -> bool:
         """
-        Questionnaire to setup Telegram Bot
+        Questionnaire to set up Telegram Bot
 
         :return bool: False if no answers are given, True if all went ok.
         """

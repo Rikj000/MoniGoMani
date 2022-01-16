@@ -62,7 +62,7 @@ class MoniGoManiCli(object):
         Check if the MGM Hyper Strategy installation exists.
 
         :param silent: (bool, Optional) Silently run method (without command line output)
-        :return success (bool): Whether or not the config and strategy files are found.
+        :return success (bool): Whether the config and strategy files are found or not.
         """
         with yaspin(text='', color='cyan') as sp:
 
@@ -221,8 +221,7 @@ class MoniGoManiCli(object):
 
     def fix_git_object_permissions(self, temp_dir_filepath: str) -> None:
         """
-        Fixes permissions of '.idx' and '.pack' files existing in
-        a temporary directory directory during the installation.
+        Fixes permissions of '.idx' and '.pack' files existing in a temporary directory during the installation.
 
         :param temp_dir_filepath: (str) The path to the temporary directory for MoniGoMani or Freqtrade
         """
@@ -376,7 +375,7 @@ class MoniGoManiCli(object):
 
         # Load the timerange from '.hurry' if none was provided
         if timerange is not None:
-            split_timerange = timerange.split('-')
+            split_timerange = str(timerange).split('-')
         else:
             split_timerange = self.monigomani_config.config['timerange'].split('-')
 
