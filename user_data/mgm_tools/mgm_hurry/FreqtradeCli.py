@@ -237,7 +237,7 @@ class FreqtradeCli:
 
         if os.path.isfile(f'{target_dir}/setup.exp'):
             command = f'expect {target_dir}/setup.exp'
-            if distro.id() in ['ubuntu', 'debian']:
+            if distro.id() in ['ubuntu', 'debian', 'sparky']:
                 command = f'echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/$USER-temp-root; ' \
                           f'{command}; sudo rm /etc/sudoers.d/$USER-temp-root'
 
