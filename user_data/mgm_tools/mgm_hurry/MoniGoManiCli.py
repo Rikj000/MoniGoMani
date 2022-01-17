@@ -384,11 +384,16 @@ class MoniGoManiCli(object):
             command = command[command.index(' ') + 1:]
 
         # Parse & save the actual command
+        if ' ' not in command:
+            # Return command object if no properties are found
+            command_object['command'] = command
+            return command_object
         command_object['command'] = command[:command.index(' ')]
-        command = command[command.index(' ') + 1:]
 
-        # Parse all properties as individual strings
+        # Continue with parsing all properties as individual strings if they are found
+        command = command[command.index(' ') + 1:]
         command = command.replace('--', '-')
+
         if command.startswith('-'):
             command = command[1:]
         properties = command.split(' -')
