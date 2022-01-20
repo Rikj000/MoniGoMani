@@ -68,7 +68,7 @@ def initialize_weighted_buy_signal_names():
         'sma_short_golden_cross',
         'stoch',
         'tema',
-        'vwap_cross'
+        'rolling_vwap_cross'
     ]
 
 
@@ -81,7 +81,7 @@ def initialize_weighted_sell_signal_names():
         'sma_short_death_cross',
         'stoch',
         'tema',
-        'vwap_cross'
+        'rolling_vwap_cross'
     ]
 
 
@@ -94,7 +94,7 @@ def initialize_combined_weighted_signal_names():
         'sma_short_golden_death_cross': ['sma_short_golden_cross', 'sma_short_death_cross'],
         'stoch': ['stoch'],
         'tema': ['tema'],
-        'vwap_cross': ['vwap_cross']
+        'rolling_vwap_cross': ['rolling_vwap_cross']
     }
 
 

@@ -2,7 +2,7 @@
 # -* vim: syntax=python -*-
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 from datetime import datetime
-from typing import Dict
+from typing import Any, Dict
 
 from pandas import DataFrame
 
@@ -17,7 +17,8 @@ class MGM_WeightedMultiParameterHyperOptLoss(IHyperOptLoss):
 
     @staticmethod
     def hyperopt_loss_function(results: DataFrame, trade_count: int, min_date: datetime, max_date: datetime,
-                               config: Dict, processed: Dict[str, DataFrame], *args, **kwargs) -> float:
+                               config: Dict, processed: Dict[str, DataFrame], backtest_stats: Dict[str, Any],
+                               *args, **kwargs) -> float:
         """
         MGM_WeightedMultiParameterHyperOptLoss Customizable HyperOpt Objective function.
         Returns smaller number for better results.
@@ -37,12 +38,11 @@ class MGM_WeightedMultiParameterHyperOptLoss(IHyperOptLoss):
         :param config: Config object used
             (Note: Not all strategy-related parameters will be updated here if they are part of a hyperopt space).
         :param processed: Dict of Dataframes with the pair as keys containing the data used for backtesting.
+        :param backtest_stats: Backtesting statistics using the same format as the backtesting file 'strategy'
+            substructure. Available fields can be seen in generate_strategy_stats() in optimize_reports.py
         :param args: Ensure to keep this here so updates to this won't break MoniGoMani.
         :param kwargs: Ensure to keep this here so updates to this won't break MoniGoMani.
         :return float: HyperOpt Objective Value for the current epoch. The lower / more negative the better!
-        ToDo: After Freqtrade Update, Add: backtest_stats: Dict[str, Any],
-            :param backtest_stats: Backtesting statistics using the same format as the backtesting file 'strategy'
-                substructure. Available fields can be seen in generate_strategy_stats() in optimize_reports.py
         """
 
         # Load the MoniGoMani config files and MGM_WeightedMultiParameterHyperOptLoss Settings

@@ -5,6 +5,13 @@ user_data/mgm-config-private.json
 user_data/mgm-config-hyperopt.json
 user_data/strategies/MoniGoManiHyperStrategy.json
 
+# Ignore .last helper files
+user_data/.last_command.json
+user_data/backtest_results/.last_result.json
+user_data/backtest_results/.last_backtest_sell_reasons.log
+user_data/hyperopt_results/.last_result.json
+user_data/hyperopt_results/.last_ho_results_table.log
+
 # Ignore Release Template
 Documentation/ReleaseTemplate.md
 
@@ -28,9 +35,6 @@ user_data/plot/
 
 # Ignore Logo Folder
 Logo/
-
-# Ignore GitHub Secrets
-GitHub-Secrets.txt
 
 # Ignore fthypt and legacy pickle Files
 *.fthypt

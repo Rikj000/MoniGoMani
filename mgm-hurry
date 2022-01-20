@@ -21,8 +21,8 @@ import json
 import logging
 import os
 import sys
+import shutil
 from datetime import datetime
-from string import Template
 
 import fire
 import numpy as np  # noqa
@@ -88,7 +88,7 @@ class MGMHurry:
 
     def up(self):  # pylint: disable=invalid-name
         """
-        The all in one command. Hurry up, turn it up!
+        The all-in-one command. Hurry up, turn it up!
         """
         self.logger.info(Color.title('👉 The all in one command. Hurry up, turn it up!'))
 
@@ -219,14 +219,14 @@ class MGMHurry:
         else:
             self.logger.info(Color.green('💨 Executing mgm-hurry up finished.'))
 
-    def install_freqtrade(self, target_dir: str = None, branch: str = 'develop',
-                          commit: str = '3503fdb4ec31be99f433fdce039543e0911964d6', install_ui: bool = True):
+    def install_freqtrade(self, target_dir: str = None, branch: str = 'stable',
+                          commit: str = '4179a1a7971f9547fad16dd8ec6e252489a3e62d', install_ui: bool = True):
         """
         Install or update Freqtrade the easy way.
 
         :param target_dir: (string, optional) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         :param branch: (string, optional) Checkout a specific branch. Defaults to 'develop'.
-        :param commit: (str) Checkout a specific commit. Defaults to latest supported by MoniGoMani,
+        :param commit: (str) Checkout a specific commit. Defaults to the latest supported by MoniGoMani,
             but 'latest' can also be used.
         :param install_ui: (bool) Install FreqUI. Defaults to True.
         """
@@ -324,13 +324,13 @@ class MGMHurry:
                          glob.glob(f'{self.basedir}/user_data/strategies/*.py'))
 
         strategies_choices = []
-        for strat in strategies:
-            if strat != 'MasterMoniGoManiHyperStrategy':
-                strategies_choices.append({'name': strat, 'value': strat})
+        for strategy in strategies:
+            if strategy != 'MasterMoniGoManiHyperStrategy':
+                strategies_choices.append({'name': strategy, 'value': strategy})
 
         if len(strategies_choices) == 0:
-            strat_dir = f'{self.basedir}/user_data/strategies/'
-            self.logger.error(Color.red(f'🤷 I could not find any strategy in {strat_dir}. '
+            strategy_directory = f'{self.basedir}/user_data/strategies/'
+            self.logger.error(Color.red(f'🤷 I could not find any strategy in {strategy_directory}. '
                                         f'Did you install Freqtrade & MoniGoMani?'))
             sys.exit(1)
 
@@ -415,7 +415,7 @@ class MGMHurry:
             'type': 'list',
             'name': 'exchange',
             'message': 'Which exchange do you want to use?',
-            'choices': ['binance', 'bittrex', 'bitvavo', 'ftx', 'gateio', 'kraken', 'kucoin'],
+            'choices': ['binance', 'bittrex', 'bitvavo', 'ftx', 'gateio', 'kraken', 'kucoin', 'other'],
             'when': lambda result: result['proceed_exchange']
         }, {
             'type': 'password',
@@ -437,9 +437,20 @@ class MGMHurry:
         if answers == {}:
             sys.exit(1)
 
+        exchange = answers.get('exchange')
+        if exchange == 'other':
+            answer = prompt(questions=[{
+                'type': 'input',
+                'name': 'exchange',
+                'message': 'Please enter CCXT ID of the other exchange that you\'d like to try:\n'
+                           '(WARNING: Support may vary on these!)',
+                'default': self.monigomani_config.get('exchange') or ''
+            }])
+            exchange = answer.get('exchange')
+
         """
         if answers.get('install_type') == 'source':
-            ft_binary = f'source {self.basedir}/.env/bin/activate; freqtrade'
+            ft_binary = f'. {self.basedir}/.env/bin/activate; freqtrade'
         else:
             ft_binary = 'docker-compose run --rm freqtrade'
         """
@@ -447,9 +458,9 @@ class MGMHurry:
             'config': {
                 'username': answers.get('username'),
                 'install_type': 'source',  # answers.get('install_type'),
-                'ft_binary': f'source {self.basedir}/.env/bin/activate; freqtrade',  # ft_binary,
+                'ft_binary': f'. {self.basedir}/.env/bin/activate; freqtrade',  # ft_binary,
                 'timerange': answers.get('timerange'),
-                'exchange': answers.get('exchange') or 'none',
+                'exchange': exchange or 'none',
                 'hyperopt': {
                     'strategy': answers.get('ho_strategy'),
                     'loss': answers.get('ho_loss'),
@@ -471,7 +482,7 @@ class MGMHurry:
 
         if answers.get('proceed_exchange') is True:
             self.monigomani_config.save_exchange_credentials({
-                'exchange': answers.get('exchange'),
+                'exchange': exchange,
                 'api_key': answers.get('api_key'),
                 'api_secret': answers.get('api_secret')
             })
@@ -482,11 +493,11 @@ class MGMHurry:
         """
         Deletes stored HyperOpt config(s) from previous run(s)
 
-        :param strategy: (Optional, string) Name of the Strategy to cleanup, defaults to 'MoniGoManiHyperStrategy'
+        :param strategy: (Optional, string) Name of the Strategy to clean up, defaults to 'MoniGoManiHyperStrategy'
         """
         self.logger.info(Color.title('👉 Cleanup'))
 
-        # Remove hyperopt files to cleanup
+        # Remove hyperopt files to clean up
         cleaned_up = self.monigomani_config.cleanup_hyperopt_files(strategy)
 
         message = f'🍺 Cleanup successful, {strategy} ready for a fresh HyperOpt Run...' if cleaned_up is True \
@@ -569,6 +580,9 @@ class MGMHurry:
         command = (f'{self.monigomani_config.config["ft_binary"]} download-data --timerange {timerange} '
                    f'-t {tickers} {self.monigomani_config.command_configs()}')
 
+        if self.monigomani_config.config['exchange'] == 'kraken':
+            command += ' --dl-trades'
+
         self.logger.debug(command)
         self.monigomani_cli.run_command(command)
         self.logger.info(Color.green('🍺 Downloading candle data finished.'))
@@ -645,7 +659,7 @@ class MGMHurry:
         :param strategy: (str, Optional): Hyper Opt strategy to use. Defaults to value in '.hurry'
         :param loss: (str, Optional): Specify the HyperOptLoss which you want to use. Defaults to value in '.hurry'
         :param spaces: (str, Optional): Spaces (space delimited) to optimize
-            for [default, all, buy, sell, roi, stoploss, etc]. Defaults to value in '.hurry'
+            for [default, all, buy, sell, roi, stoploss, etc.]. Defaults to value in '.hurry'
         :param enable_protections: (bool, Optional): Add '--enable-protections' flag to HO-command. Defaults to True.
         :param random_state: (int, Optional): Add '--random-state random_state' flag to HO-command. Defaults to None.
         :param apply_best_results: (bool, Optional): Apply 'best' HO results direct after HO? Defaults to True.
@@ -668,12 +682,17 @@ class MGMHurry:
             epochs = self.monigomani_config.config['hyperopt']['epochs']
 
         initial_run = True
+        previously_hyperopted_spaces = []
         if clean_start is True:
             self.cleanup(strategy)
         elif os.path.isfile(f'{self.basedir}/user_data/strategies/{strategy}.json') or (
                 (strategy == 'MoniGoManiHyperStrategy') and (
                 os.path.isfile(self.monigomani_config.get_config_filepath('mgm-config-hyperopt')) is True)):
             initial_run = False
+
+            if strategy == 'MoniGoManiHyperStrategy':
+                previously_hyperopted_spaces = self.monigomani_config.get_hyperopted_spaces()
+                self.logger.info('🍺 Previous HyperOpt run found! This HyperOpt run will be refining on the already existing HyperOpt output.')
 
         self.logger.info(Color.title('👉 Starting HyperOpt run. Keep calm while your computer burns 🔥'))
 
@@ -684,28 +703,18 @@ class MGMHurry:
         if spaces is None:
             spaces = self.monigomani_config.config['hyperopt']['spaces']
 
-        command = (f'$ft_binary hyperopt -s $ho_strategy {self.monigomani_config.command_configs()}'
-                   f'--hyperopt-loss $ho_loss --spaces $ho_spaces -e $ho_epochs --timerange $timerange ')
+        command = (f'{self.monigomani_config.config["ft_binary"]} hyperopt {self.monigomani_config.command_configs()} '
+                   f'--strategy {strategy} --hyperopt-loss {loss} --spaces {spaces} '
+                   f'--epochs {epochs} --timerange {timerange} ')
 
         if enable_protections is True:
-            command = f'{command.strip()} --enable-protections '
+            command += '--enable-protections '
         if random_state is not None:
-            command = f'{command.strip()} --random-state $random_state '
+            command += f'--random-state {random_state} '
         if jobs is not None:
-            command = f'{command.strip()} -j $jobs '
+            command += f'--job-workers {jobs} '
         if min_trades is not None:
-            command = f'{command.strip()} --min-trades $min_trades '
-
-        command = Template(command).substitute(
-            ft_binary=self.monigomani_config.config['ft_binary'],
-            ho_strategy=strategy,
-            ho_loss=loss,
-            ho_spaces=spaces,
-            ho_epochs=epochs,
-            timerange=timerange,
-            random_state=random_state,
-            jobs=jobs,
-            min_trades=min_trades)
+            command += f'--min-trades {min_trades} '
 
         self.logger.debug(command)
         if output_file_name is None:
@@ -713,7 +722,7 @@ class MGMHurry:
         hyperopt_file_name = f'HyperOptResults-{output_file_name}'
         output_file_path = f'{self.basedir}/user_data/hyperopt_results/{hyperopt_file_name}.log'
 
-        self.monigomani_cli.run_command(command=command, output_file_name=output_file_path,hyperopt=True)
+        self.monigomani_cli.run_command(command=command, output_file_name=output_file_path, hyperopt=True)
 
         last_ho_results_path = f'{self.basedir}/user_data/hyperopt_results/.last_ho_results_table.log'
         if os.stat(last_ho_results_path).st_size == 0:
@@ -722,8 +731,9 @@ class MGMHurry:
             sys.exit(1)
 
         if (apply_best_results is True) and (strategy == 'MoniGoManiHyperStrategy'):
-            self.monigomani_cli.apply_mgm_results(strategy)
-            self.monigomani_config.save_weak_strong_signal_overrides()
+            self.monigomani_cli.apply_mgm_results(strategy=strategy)
+            self.monigomani_config.save_weak_strong_signal_overrides(
+                previously_hyperopted_spaces=previously_hyperopted_spaces)
 
         # Read 'mgm-config-hyperopt' or <StrategyName>.json and pretty print it
         if strategy == 'MoniGoManiHyperStrategy':
@@ -809,7 +819,7 @@ class MGMHurry:
 
         self.logger.info(f'👉 Showing {"" if apply is False else "and applying "}HyperOpt results for epoch #{epoch}')
 
-        command = (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show -n {epoch} '
+        command = (f'{self.monigomani_config.config["ft_binary"]} hyperopt-show --index {epoch} '
                    f'{self.monigomani_config.command_configs()}')
 
         if fthypt_name is not None:
@@ -834,7 +844,7 @@ class MGMHurry:
 
         :param timerange: (string, Optional): The target timerange for backtesting. Defaults to timerange in '.hurry'.
         :param strategy: (str, Optional): Strategy to use during BackTesting. Defaults to value in '.hurry'
-        :param enable_protections: (bool, Optional): Whether or not to enable protections. Defaults to True.
+        :param enable_protections: (bool, Optional): Whether to enable protections or not. Defaults to True.
         :param plot_profits: (bool, Optional): Automatically plot visual profit graphs in '.html'. Defaults to True.
         :param plot_stats: (bool, Optional): Automatically plot visual stats report in '.html'. Defaults to True.
         :param output_file_name: (str, Optional) Custom filename for the BackTestResults '.log' file that will be stored
@@ -843,26 +853,24 @@ class MGMHurry:
         self.logger.info(Color.title('👉 Start BackTesting. Lets see how it all turns out!'))
 
         timerange = self.monigomani_config.get_preset_timerange(timerange)
-        command = (f'$ft_binary backtesting -s $ho_strategy {self.monigomani_config.command_configs()}'
-                   f'--timerange $timerange')
 
         if timerange is None:
             timerange = self.monigomani_config.config['timerange']
         if strategy is None:
             strategy = self.monigomani_config.config['hyperopt']['strategy']
+
+        command = (
+            f'{self.monigomani_config.config["ft_binary"]} backtesting {self.monigomani_config.command_configs()}'
+            f'--strategy {strategy} --timerange {timerange}')
+
         if enable_protections is True:
-            command = f'{command} --enable-protections'
+            command += ' --enable-protections'
 
         if (strategy == 'MoniGoManiHyperStrategy') and (
                 os.path.isfile(self.monigomani_config.get_config_filepath('mgm-config-hyperopt')) is False):
             self.logger.error(Color.red(f'🤷 MoniGoManiHyperStrategy needs to be HyperOpted before it will '
                                         f'start to produce valid BackTest Results!\n(Hint: Run "mgm-hurry hyperopt")'))
             return None
-
-        command = Template(command).substitute(
-            ft_binary=self.monigomani_config.config['ft_binary'],
-            ho_strategy=strategy,
-            timerange=timerange)
 
         if output_file_name is None:
             output_file_name = f'{strategy}-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
@@ -914,20 +922,9 @@ class MGMHurry:
 
         backtest_results_file = self.freqtrade_cli.choose_backtest_results_file(choose_results=choose_results)
         backtest_results_path = f'{self.basedir}/user_data/backtest_results/{backtest_results_file}'
-
-        if os.path.isfile(backtest_results_path) is True:
-            # Load the 'backtest-result-<timestamp>.json' file as an object and parse it as a dictionary
-            file_object = open(backtest_results_path, )
-            backtest_results = json.load(file_object)
-
-            if len(backtest_results['strategy'][strategy]['trades']) == 0:
-                self.logger.error(Color.red(f'🤷 No trades where done in the given {backtest_results_file} file.\n'
-                                            f'Please provide a BackTest results file in which '
-                                            f'actual trading has been done!'))
-                return None
-        else:
-            self.logger.error(Color.red(f'🤷 {backtest_results_file} file could not be found.\nPlease make sure that '
-                                        f'the provided BackTest results file actually exists!'))
+        backtest_results = self.monigomani_cli.parse_backtest_results(
+            backtest_results_file=backtest_results_file, strategy=strategy)
+        if backtest_results == {}:
             return None
 
         if output_file_name is None:
@@ -965,21 +962,9 @@ class MGMHurry:
             strategy = self.monigomani_config.config['hyperopt']['strategy']
 
         backtest_results_file = self.freqtrade_cli.choose_backtest_results_file(choose_results=choose_results)
-        backtest_results_path = f'{self.basedir}/user_data/backtest_results/{backtest_results_file}'
-
-        if os.path.isfile(backtest_results_path) is True:
-            # Load the 'backtest-result-<timestamp>.json' file as an object and parse it as a dictionary
-            file_object = open(backtest_results_path, )
-            backtest_results = json.load(file_object)
-
-            if len(backtest_results['strategy'][strategy]['trades']) == 0:
-                self.logger.error(Color.red(f'🤷 No trades where done in the given {backtest_results_file} file.\n'
-                                            f'Please provide a BackTest results file in which '
-                                            f'actual trading has been done!'))
-                return None
-        else:
-            self.logger.error(Color.red(f'🤷 {backtest_results_file} file could not be found.\nPlease make sure that '
-                                        f'the provided BackTest results file actually exists!'))
+        backtest_results = self.monigomani_cli.parse_backtest_results(
+            backtest_results_file=backtest_results_file, strategy=strategy)
+        if backtest_results == {}:
             return None
 
         if output_file_name is None:
@@ -990,8 +975,10 @@ class MGMHurry:
         starting_balance = backtest_results['strategy'][strategy]['starting_balance']
         backtest_trades = pd.DataFrame(backtest_results['strategy'][strategy]['trades'])
 
-        backtest_trades['open_date'] = pd.to_datetime(backtest_trades['open_date'], utc=True, infer_datetime_format=True)
-        daily_returns = backtest_trades[['open_date', 'profit_abs']].groupby(pd.Grouper(key="open_date", freq='D')).sum('profit_abs')
+        backtest_trades['open_date'] = pd.to_datetime(
+            backtest_trades['open_date'], utc=True, infer_datetime_format=True)
+        daily_returns = backtest_trades[['open_date', 'profit_abs']].groupby(
+            pd.Grouper(key="open_date", freq='D')).sum('profit_abs')
         daily_returns['balance'] = np.cumsum(daily_returns['profit_abs']) + starting_balance
 
         dates = pd.date_range(daily_returns.index[0], daily_returns.index[-1], freq='D').tz_localize(None)
@@ -999,7 +986,8 @@ class MGMHurry:
         daily_returns = pd.Series(daily_returns.balance).pct_change(1).values
         returns_time_series = pd.Series(daily_returns, index=pd.to_datetime(list(dates)))
 
-        qs.reports.html(returns=returns_time_series, title=f'{strategy} {backtest_results_file}', output=output_file_path)
+        qs.reports.html(returns=returns_time_series, title=f'{strategy} {backtest_results_file}',
+                        output=output_file_path)
 
         MoniGoManiLogger(self.basedir).post_message(
             username=self.monigomani_config.config['username'],
@@ -1033,7 +1021,8 @@ class MGMHurry:
 
         self.monigomani_cli.run_command(
             f'python3 {self.basedir}/user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py '
-            f'-pu {mgm_config_files["mgm-config"]["monigomani_settings"]["precision"]} -cf {output_file_path}')
+            f'--precision-used {mgm_config_files["mgm-config"]["monigomani_settings"]["precision"]} '
+            f'--create-file {output_file_path}')
 
         MoniGoManiLogger(self.basedir).post_message(
             username=self.monigomani_config.config['username'],
@@ -1049,7 +1038,7 @@ class MGMHurry:
         :param output_file_name: (str, Optional) Custom filename for the CsvResults '.csv' file
             that will be stored in the format: 'CsvResults-<output_file_name>.csv'.
             Defaults to 'StrategyName + Current DateTime'.
-        :param fthypt: (str, Optional) '.fthypt' file to export results from.. If 'true' is passed,
+        :param fthypt: (str, Optional) '.fthypt' file to export results from. If 'true' is passed,
             an interactive prompt will launch to pick an '.fthypt' file of choice. Defaults to latest
         """
 
@@ -1074,15 +1063,85 @@ class MGMHurry:
 
         mgm_config = self.monigomani_config.get_config_filepath('mgm-config')
         command = (f'python3 {self.basedir}/user_data/mgm_tools/ExportCsvResults.py '
-                   f'-c {mgm_config} -o {output_file_path}')
+                   f'--config_file {mgm_config} --output_file {output_file_path}')
 
         if fthypt_name is not None:
-            command += f' -i {fthypt_file_path}'
+            command += f' --input_file {fthypt_file_path}'
 
         self.monigomani_cli.run_command(command=command)
         MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
                                                     message=f'🚀 Fresh **{strategy}** SpreadSheet (.csv) Results ⬇️',
                                                     results_paths=[output_file_path])
+
+    def export_results(self):
+        """
+        Export the results that are selected. Creates a '.zip' archive of the various files created by HyperOpt runs after the user selects which HyperOpt run they would like to export. 
+        Archive is placed in `user_data/mgm_result_export`.
+        """
+        self.logger.info(Color.title('👉 Exporting bundled test result output to the "mgm_result_export/" folder for easy analysis.'))
+        
+        export_base_dir = f'{self.basedir}/user_data/mgm_result_export'
+        hyperopt_results = f'{self.basedir}/user_data/hyperopt_results'
+
+        def newest(path):
+            files = os.listdir(path)
+            paths = [os.path.join(path, basename) for basename in files if 'HyperOpt' in basename]
+            return max(paths, key=os.path.getctime)
+
+        newest_file_in_directory = str(newest(hyperopt_results)).split('/')[-1]
+        answer = prompt(questions=[{
+            'type': 'list',
+            'name': 'ho_log_file',
+            'message': f'Please select the HyperOpt result that you wish to export. \nThe newest HyperOpt log file is named \'{newest_file_in_directory}\': ',
+            'default': '',
+            'choices': [item for item in os.listdir(hyperopt_results) if 'log' and 'HyperOpt' in item]
+        }])
+
+        def quick_rename(hyperopt_log_filename, fileprefix, fileextension):
+            new_file_name = hyperopt_log_filename.replace('.log', fileextension)
+            new_file_name = new_file_name.replace(new_file_name.split('-')[0], fileprefix)
+            return new_file_name
+
+        hyperopt_log_filename = answer.get('ho_log_file')
+        hyperopt_log_filepath = f'{self.basedir}/user_data/hyperopt_results/{answer.get("ho_log_file")}'
+        backtest_log_filepath = f'{self.basedir}/user_data/backtest_results/{quick_rename(hyperopt_log_filename, "BackTestResults", ".log")}'
+        mgm_config_filepath = f'{self.basedir}/user_data/{self.monigomani_config.config["mgm_config_names"]["mgm-config"]}'
+        ho_config_filepath = f'{self.basedir}/user_data/{self.monigomani_config.config["mgm_config_names"]["mgm-config-hyperopt"]}'
+        strategy_filepath = f'{self.basedir}/user_data/strategies/{self.monigomani_config.config["hyperopt"]["strategy"]}.py'
+        loss_strategy_filepath = f'{self.basedir}/user_data/hyperopts/{self.monigomani_config.config["hyperopt"]["loss"]}.py'
+        hurry_config_filepath = f'{self.basedir}/.hurry'
+        plotprofitresults_filepath = f'{self.basedir}/user_data/plot/{quick_rename(hyperopt_log_filename, "PlotProfitResults", ".html")}'
+        plotstatsreports_filepath = f'{self.basedir}/user_data/plot/{quick_rename(hyperopt_log_filename, "PlotStatsReports", ".html")}'
+        csv_results_filepath = f'{self.basedir}/user_data/csv_results/{quick_rename(hyperopt_log_filename, "CsvResults", ".csv")}'
+        importance_results_filepath = f'{self.basedir}/user_data/importance_results/{quick_rename(hyperopt_log_filename, "SignalImportanceResults", ".log")}'
+
+        files = [hyperopt_log_filepath, backtest_log_filepath, mgm_config_filepath, ho_config_filepath, hurry_config_filepath,
+                 plotprofitresults_filepath, plotstatsreports_filepath, csv_results_filepath, importance_results_filepath,
+                 strategy_filepath, loss_strategy_filepath]
+
+        # Just going to borrow that naming structure...
+        unique_dir_name = hyperopt_log_filename.replace(f'{hyperopt_log_filename.split("-")[0]}-', '')
+        unique_dir_name = unique_dir_name.replace('.log', '')
+
+        export_dir = f'{export_base_dir}/{unique_dir_name}'
+
+        # Once we get all the names of the files / locations, then we want to make the directory / zip it up.
+        # Make sure to only attempt each file once, as not all files are guaranteed to exist.
+        os.makedirs(export_dir, exist_ok=True)
+        for file in files:
+            try:
+                shutil.copy(file, export_dir)
+            except Exception:
+                pass
+
+        archive_name = f'{export_dir.split("/")[-1]}.zip'
+        archive_location = f'{export_base_dir}/{archive_name}'
+        shutil.make_archive(export_dir, 'zip', export_dir)
+        formatted_message = '🚀 Fresh **Bundled Test Results** available ⬇️\n'
+
+        MoniGoManiLogger(self.basedir).post_message(
+            username=self.monigomani_config.config['username'],
+            message=formatted_message, results_paths=[archive_location])
 
     def start_trader(self, dry_run: bool = True):
         """
@@ -1103,7 +1162,7 @@ class MGMHurry:
 
     def __setup_telegram(self) -> bool:
         """
-        Questionnaire to setup Telegram Bot
+        Questionnaire to set up Telegram Bot
 
         :return bool: False if no answers are given, True if all went ok.
         """

@@ -37,7 +37,7 @@
                 If you'd like to see this project progress faster then please help out where you can
                 <a href="https://github.com/Rikj000/MoniGoMani/issues">here</a>!
                 <br><img width=1000><br>
-                <b>Recommended Freqtrade commit: <a href="https://github.com/freqtrade/freqtrade/pull/5219/commits/3503fdb4ec31be99f433fdce039543e0911964d6">3503fdb4</a></b>
+                <b>Recommended Freqtrade version: <a href="https://github.com/freqtrade/freqtrade/releases/tag/2021.11">2021.11</a></b>
                 <br><br>
             </td>
         </tbody>
@@ -45,11 +45,14 @@
 </p>
 
 ## Motivation
-Isn't that what we all want? Our money to go many? Well that's what this Freqtrade  Framework & Strategy hopes to do for you "easily", in any market!
+Isn't that what we all want? Our money to go many?   
+Well that's what this Freqtrade Framework & Strategy hopes to do for you "easily", in any market!
 
-Big thank you to xmatthias and everyone who helped on MoniGoMani, Freqtrade Discord support was also really helpful, so thank you as-well!
+Big thank you to xmatthias and everyone who helped on MoniGoMani,   
+Freqtrade Discord support was also really helpful, so thank you as-well!
 
-If you like my work, feel free to donate or use [one of my referral links](#supported-exchanges), that would also greatly be appreciated:
+If you like my work, feel free to donate or use [one of my referral links](#supported-exchanges),   
+that would also greatly be appreciated:
 
 <p align=center>
     <a href="https://www.iconomi.com/register?ref=JdFzz">
@@ -196,10 +199,11 @@ Please read Freqtrade's [exchange specific notes](https://www.freqtrade.io/en/la
 | [![binance](https://user-images.githubusercontent.com/1294454/29604020-d5483cdc-87ee-11e7-94c7-d1a8d9169293.jpg)](https://www.binance.com/en/register?ref=97611461) | [Binance](https://www.binance.com/en/register?ref=97611461) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) | [![Sign up with Binance using my referral link for a 5% discount!](https://img.shields.io/static/v1?label=Fee&message=%2d5%25&color=orange)](https://www.binance.com/en/register?ref=97611461) |
 | [![ftx](https://user-images.githubusercontent.com/1294454/67149189-df896480-f2b0-11e9-8816-41593e17f9ec.jpg)](https://ftx.com/#a=33116566) | [FTX](https://ftx.com/#a=33116566) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) | [![Sign up with FTX using my referral link for a 5% discount!](https://img.shields.io/static/v1?label=Fee&message=%2d5%25&color=orange)](https://ftx.com/#a=33116566) |
 | [![gateio](https://user-images.githubusercontent.com/1294454/31784029-0313c702-b509-11e7-9ccc-bc0da6a0e435.jpg)](https://www.gate.io/signup/6658233) | [Gate.io](https://www.gate.io/signup/6658233) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) | [![Sign up with Gate.io using my referral link for a 10% discount!](https://img.shields.io/static/v1?label=Fee&message=%2d10%25&color=orange)](https://www.gate.io/signup/6658233) |
+| [![okx](https://user-images.githubusercontent.com/1294454/32552768-0d6dd3c6-c4a6-11e7-90f8-c043b64756a7.jpg)](https://www.okx.com/join/13100188) | [OKX](https://www.okx.com/join/13100188) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) |
 | [![kraken](https://user-images.githubusercontent.com/51840849/76173629-fc67fb00-61b1-11ea-84fe-f2de582f58a3.jpg)](https://www.kraken.com) | [Kraken](https://www.kraken.com) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-marketplaces) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) |
 | [![bittrex](https://user-images.githubusercontent.com/51840849/87153921-edf53180-c2c0-11ea-96b9-f2a9a95a455b.jpg)](https://bittrex.com/Account/Register?referralCode=JCC-AWM-VU1) | [Bittrex](https://bittrex.com/Account/Register?referralCode=JCC-AWM-VU1) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Supported-blue.svg)](https://www.freqtrade.io/en/latest/#supported-exchange-market$places) |
 | [![bitvavo](https://user-images.githubusercontent.com/1294454/83165440-2f1cf200-a116-11ea-9046-a255d09fb2ed.jpg)](https://bitvavo.com/?a=2D64A068E5) | [Bitvavo](https://bitvavo.com/?a=2D64A068E5) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Community_Tested-blue.svg)](https://www.freqtrade.io/en/latest/#community-tested) | [![CCXT Certified](https://img.shields.io/badge/CCXT-Certified-green.svg)](https://github.com/ccxt/ccxt/wiki/Certification) | |
-| [![kucoin](https://user-images.githubusercontent.com/51840849/87295558-132aaf80-c50e-11ea-9801-a2fb0c57c799.jpg)](https://www.kucoin.com/ucenter/signup?rcode=rJ2VUZ3) | [KuCoin](https://www.kucoin.com/ucenter/signup?rcode=rJ2VUZ3) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Community_Tested-blue.svg)](https://www.freqtrade.io/en/latest/#community-tested) | |
+| [![kucoin](https://user-images.githubusercontent.com/51840849/87295558-132aaf80-c50e-11ea-9801-a2fb0c57c799.jpg)](https://www.kucoin.com/r/QBSSSEWS) | [KuCoin](https://www.kucoin.com/r/QBSSSEWS) | [![Freqtrade Support](https://img.shields.io/badge/Freqtrade-Community_Tested-blue.svg)](https://www.freqtrade.io/en/latest/#community-tested) | | [![Sign up with KuCoin using my referral link for a 10% fee discount!](https://img.shields.io/static/v1?label=Fee&message=%2d10%&color=orange)](https://www.kucoin.com/r/QBSSSEWS) |
 
 
 ## ICONOMI
