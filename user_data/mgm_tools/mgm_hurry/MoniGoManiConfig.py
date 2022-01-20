@@ -235,6 +235,26 @@ class MoniGoManiConfig(object):
             json_data = json.load(file_object)
             return json_data
 
+    def load_mgm_config_hyperopt(self) -> dict:
+        """
+        Loads 'mgm-config-hyperopt' as a dictionary object if it exists
+
+        :return: (dict) 'mgm-config-hyperopt' as a dictionary object
+        """
+
+        # Check if 'mgm-config-hyperopt' exists
+        mgm_config_hyperopt_name = self.config['mgm_config_names']['mgm-config-hyperopt']
+        mgm_config_hyperopt_path = f'{self.basedir}/user_data/{mgm_config_hyperopt_name}'
+
+        if os.path.isfile(mgm_config_hyperopt_path) is False:
+            self.logger.warning(Color.yellow(f'🤷 No "{mgm_config_hyperopt_name}" file found in the "user_data" '
+                                             f'directory. Please run: mgm-hurry hyperopt'))
+            return {}
+
+        # Load the needed MoniGoMani Config files and 'mgm-config-hyperopt'
+        mgm_config_files = self.load_config_files()
+        return mgm_config_files['mgm-config-hyperopt']
+
     def write_hurry_dotfile(self, config: dict = None):
         """
         Write config-array to ".hurry" config file and load its contents into config-property.
@@ -298,6 +318,23 @@ class MoniGoManiConfig(object):
 
         # return true if one of these is true
         return xor(bool(cleaned_up_cfg), bool(cleaned_up_intermediate))
+
+    def get_hyperopted_spaces(self) -> list[str]:
+        """
+        Fetches a list of the previously hyperopted spaces for MoniGoMani from 'mgm-config-hyperopt' if it exists.
+
+        :return: (list[str]) Returns a list of the previously hyperopted spaces
+        """
+
+        mgm_config_hyperopt = self.load_mgm_config_hyperopt()
+        if mgm_config_hyperopt == {}:
+            return []
+
+        hyperopted_spaces = []
+        for hyperopted_space in mgm_config_hyperopt['params']:
+            hyperopted_spaces.append(hyperopted_space)
+
+        return hyperopted_spaces
 
     def _remove_file(self, fil: str) -> bool:
         if os.path.exists(fil) is False:
@@ -396,10 +433,11 @@ class MoniGoManiConfig(object):
 
         return True
 
-    def save_weak_strong_signal_overrides(self) -> bool:
+    def save_weak_strong_signal_overrides(self, previously_hyperopted_spaces: list[str]) -> bool:
         """
         Overrides weak and strong signals to their actual values used by MoniGoMani in 'mgm-config-hyperopt'
 
+        :param previously_hyperopted_spaces: (list[str]) List containing previously HyperOpted spaces
         :return bool: True if json data is overwritten correctly, False otherwise.
         """
         # Check if 'mgm-config-hyperopt' exists
@@ -460,9 +498,18 @@ class MoniGoManiConfig(object):
                             elif signal_weight_value >= (number_of_weighted_signals - signal_triggers_needed_threshold):
                                 mgm_config_hyperopt['params'][space][signal] = number_of_weighted_signals
 
-        # Sort the spaces to Freqtrades default order
+        # Fetch all used spaces, for the previous + current hyperopt
+        all_used_spaces = previously_hyperopted_spaces
+        command_object = self.load_config_file(filename=f'{self.basedir}/user_data/.last_command.json')
+        currently_used_spaces = list(command_object['properties']['spaces'].split(' '))
+
+        for currently_used_space in currently_used_spaces:
+            if currently_used_space not in previously_hyperopted_spaces:
+                all_used_spaces.append(currently_used_space)
+
+        # Sort the spaces to the order used during hyperopting
         sorted_spaces = {}
-        for space_name in ['buy', 'sell', 'roi', 'stoploss', 'trailing']:
+        for space_name in all_used_spaces:
             if space_name in mgm_config_hyperopt['params']:
                 sorted_spaces[space_name] = mgm_config_hyperopt['params'][space_name]
         mgm_config_hyperopt['params'] = sorted_spaces
@@ -482,7 +529,7 @@ class MoniGoManiConfig(object):
         """
         mgm_json_name = self.config['mgm_config_names']['mgm-config']
         mgm_private_json_name = self.config['mgm_config_names']['mgm-config-private']
-        return f'-c ./user_data/{mgm_json_name} -c ./user_data/{mgm_private_json_name} '
+        return f'--config ./user_data/{mgm_json_name} --config ./user_data/{mgm_private_json_name} '
 
     def get_preset_timerange(self, timerange: str) -> str:
         """

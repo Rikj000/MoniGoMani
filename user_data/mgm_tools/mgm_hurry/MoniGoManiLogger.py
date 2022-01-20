@@ -3,7 +3,7 @@
 
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 
-"""MoniGoManiLogger is the module responsible for all logging related tasks.."""
+"""MoniGoManiLogger is the module responsible for all logging related tasks..."""
 
 # ___  ___               _  _____        ___  ___               _  _
 # |  \/  |              (_)|  __ \       |  \/  |              (_)| |

@@ -7,9 +7,15 @@
 # === Requirements =====================================================================================================
 #
 #  - UNIX Distro, macOS, or a POSIX compliant WSL Distro (sh, bash, command, mktemp, pwd, rm, /dev/null)
-#  - Python 3.8+
-#  - Git
-#  - Pip3 python package manager
+#  - Python 3 (ttps://realpython.com/installing-python/)
+#  - Pip3 (https://pypi.org/project/pip/)
+#  - Pyenv (https://github.com/pyenv/pyenv-installer#pyenv-installer/)
+#  - Git (https://gist.github.com/derhuerst/1b15ff4652a867391f03)
+#  - cURL (https://www.tecmint.com/install-curl-in-linux/)
+#  - Expect (https://core.tcl-lang.org/expect/index)
+#
+# Ubuntu Specific Notes:
+#  - Python-venv (The installer will prompt you how to install)
 #
 # Windows Specific Notes:
 #   This script has been made with the intention to run on UNIX systems and it makes use of UNIX command line tools..
@@ -249,15 +255,6 @@ if [ $? -ne 0 ]; then
 fi
 
 echo -e "${GREEN}  ✅  Expect is installed.${END}"
-
-# ToDo: Remove after updating Freqtrade (There TA-Lib installation process is improved)
-# Ensure that TA-Lib (C dependency package) is installed
-command -v ta-lib-config >/dev/null 2>&1
-if [ $? -ne 0 ]; then
-    echo -e "${RED}  🙉  TA-Lib (C dependency package) is not installed. Can't proceed. See: https://github.com/mrjbq7/ta-lib#dependencies${END}"
-    exit 1
-fi
-echo -e "${GREEN}  ✅  TA-Lib (C dependency package) is installed.${END}"
 
 
 echo ""

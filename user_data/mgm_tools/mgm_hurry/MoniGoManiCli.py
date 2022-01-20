@@ -13,6 +13,7 @@
 # \_|  |_/ \___/ |_| |_||_| \____/ \___/ \_|  |_/ \__,_||_| |_||_| \____/|_||_|
 
 import glob
+import json
 import os
 import subprocess
 import sys
@@ -61,7 +62,7 @@ class MoniGoManiCli(object):
         Check if the MGM Hyper Strategy installation exists.
 
         :param silent: (bool, Optional) Silently run method (without command line output)
-        :return success (bool): Whether or not the config and strategy files are found.
+        :return success (bool): Whether the config and strategy files are found or not.
         """
         with yaspin(text='', color='cyan') as sp:
 
@@ -146,7 +147,7 @@ class MoniGoManiCli(object):
                     sys.exit(1)
 
             self.logger.info('👉  Installing/Updating MoniGoMani Python dependency packages')
-            self.run_command('pip3 install -r ./monigomani/requirements-mgm.txt')
+            self.run_command('pip3 install --requirement ./monigomani/requirements-mgm.txt')
             self.logger.info(Color.green('✔ Downloading & Installing MoniGoMani completed!'))
 
     def copy_and_link_installation_files(self, temp_dirname: str, target_dir: str) -> bool:
@@ -220,8 +221,7 @@ class MoniGoManiCli(object):
 
     def fix_git_object_permissions(self, temp_dir_filepath: str) -> None:
         """
-        Fixes permissions of '.idx' and '.pack' files existing in
-        a temporary directory directory during the installation.
+        Fixes permissions of '.idx' and '.pack' files existing in a temporary directory during the installation.
 
         :param temp_dir_filepath: (str) The path to the temporary directory for MoniGoMani or Freqtrade
         """
@@ -274,6 +274,13 @@ class MoniGoManiCli(object):
             self.logger.error(Color.red('🤷 Please pass a command through. Without command no objective, sir!'))
             sys.exit(1)
         return_code = 1
+
+        self.logger.info(f'👉 MGM-Hurry will now run the following command for you:\n {command}')
+        last_command_path = f'{self.basedir}/user_data/.last_command.json'
+        command_object = self.parse_command(command)
+        with open(last_command_path, 'w') as retrieve_json_file:
+            json.dump(command_object, retrieve_json_file, indent=4)
+            retrieve_json_file.close()
 
         if output_file_name is not None:
             output_file = open(output_file_name, 'w')
@@ -357,6 +364,99 @@ class MoniGoManiCli(object):
 
         return return_code
 
+    def parse_command(self, command: str) -> dict:
+        """
+        Parses a full string command to an easy to work with dictionary object
+
+        :param command: (str) Full command passed through as a string
+        :return: (dict) Dictionary object with { raw_command: str, type: str, command: str, properties: dict }
+        """
+
+        # Save the full raw command
+        command_object = {'raw_command': command, 'properties': {}}
+
+        # Parse & save the command type
+        if 'freqtrade' in command:
+            command_object['type'] = 'freqtrade'
+            command = command[command.index('freqtrade') + 10:]
+        else:
+            command_object['type'] = command[:command.index(' ')]
+            command = command[command.index(' ') + 1:]
+
+        # Parse & save the actual command
+        if ' ' not in command:
+            # Return command object if no properties are found
+            command_object['command'] = command
+            return command_object
+        command_object['command'] = command[:command.index(' ')]
+
+        # Continue with parsing all properties as individual strings if they are found
+        command = command[command.index(' ') + 1:]
+        command = command.replace('--', '-')
+
+        if command.startswith('-'):
+            command = command[1:]
+        properties = command.split(' -')
+
+        for command_property in properties:
+            # Fetch the key & value out of the property strings
+            if ' ' in command_property:
+                property_key = command_property[:command_property.index(' ')]
+                property_value = command_property[command_property.index(' ') + 1:]
+            else:
+                property_key = command_property
+                property_value = True
+            if property_value == '':
+                property_value = True
+
+            # Simply add the property of not existing yet
+            if (property_key not in command_object['properties']) and \
+                (f'{property_key}_1' not in command_object['properties']):
+                command_object['properties'][property_key] = property_value
+            # Rename the original property & add indexes if multiple entries exist
+            elif property_key in command_object['properties']:
+                command_object['properties'][f'{property_key}_1'] = command_object['properties'][property_key]
+                command_object['properties'][f'{property_key}_2'] = property_value
+                command_object['properties'].pop(property_key)
+            # Increase the index for every new entry of an existing property
+            else:
+                index = 3
+                property_stored = False
+                while property_stored is False:
+                    if f'{property_key}_{index}' not in command_object['properties']:
+                        command_object['properties'][f'{property_key}_{index}'] = property_value
+                        property_stored = True
+                    index += 1
+
+        return command_object
+
+    def parse_backtest_results(self, backtest_results_file: str, strategy: str) -> dict:
+        """
+        Parses a backtest results file into an easy to work with dictionary object
+
+        :param backtest_results_file: (str) Filename of the 'backtest-result-<timestamp>.json' file.
+        :param strategy: (str) Strategy name used during said backtest
+        :return: (dict) Backtest results parsed as a dictionary object
+        """
+        backtest_results_path = f'{self.basedir}/user_data/backtest_results/{backtest_results_file}'
+
+        if os.path.isfile(backtest_results_path) is True:
+            # Load the 'backtest-result-<timestamp>.json' file as an object and parse it as a dictionary
+            file_object = open(backtest_results_path, )
+            backtest_results = json.load(file_object)
+
+            if len(backtest_results['strategy'][strategy]['trades']) == 0:
+                self.logger.error(Color.red(f'🤷 No trades where done in the given {backtest_results_file} file.\n'
+                                            f'Please provide a BackTest results file in which '
+                                            f'actual trading has been done!'))
+                return {}
+
+            return backtest_results
+        else:
+            self.logger.error(Color.red(f'🤷 {backtest_results_file} file could not be found.\nPlease make sure that '
+                                        f'the provided BackTest results file actually exists!'))
+            return {}
+
     def calculate_timerange_start_minus_startup_candle_count(self, timerange: int = None) -> dict:
         """
         Subtracts the startup_candle_count from the provided timerange, defaults to timerange defined in '.hurry'
@@ -375,7 +475,7 @@ class MoniGoManiCli(object):
 
         # Load the timerange from '.hurry' if none was provided
         if timerange is not None:
-            split_timerange = timerange.split('-')
+            split_timerange = str(timerange).split('-')
         else:
             split_timerange = self.monigomani_config.config['timerange'].split('-')
 

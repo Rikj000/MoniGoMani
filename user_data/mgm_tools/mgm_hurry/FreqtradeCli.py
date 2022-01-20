@@ -51,7 +51,7 @@ class FreqtradeCli:
         cli_logger          The logger function of the MoniGoManiCli module.
         monigomani_cli      The MoniGoManiCli object.
         monigomani_config   The MoniGoManiConfig object.
-        _install_type       The current install type of Freqtrade. Either 'source' or default 'docker'
+        _install_type       The current installation type of Freqtrade. Either 'source' or default 'docker'
     """
     basedir: str
     freqtrade_binary: str
@@ -100,7 +100,7 @@ class FreqtradeCli:
         """
         Return property install_type.
 
-        :return str: The install type. either source, docker or None.
+        :return str: The installation type. either source, docker or None.
         """
         return self._install_type
 
@@ -119,7 +119,7 @@ class FreqtradeCli:
 
     def installation_exists(self, silent: bool = False) -> bool:
         """
-        Return true if all is setup correctly.
+        Return true if all is set up correctly.
 
         :param silent: (bool, Optional) Silently run method (without command line output)
         :return bool: True if install_type is docker or Freqtrade is found. False otherwise.
@@ -161,7 +161,7 @@ class FreqtradeCli:
 
         :param target_dir: (str) Specify a target_dir to install Freqtrade. Defaults to os.getcwd().
         :param branch: (str) Checkout a specific branch. Defaults to 'develop'.
-        :param commit: (str) Checkout a specific commit. Defaults to latest supported by MoniGoMani,
+        :param commit: (str) Checkout a specific commit. Defaults to the latest supported by MoniGoMani,
             but 'latest' can also be used.
         :param install_ui: (bool) Install FreqUI. Defaults to True.
         :return bool: True if setup completed without errors, else False.
@@ -207,7 +207,7 @@ class FreqtradeCli:
 
     def copy_installation_files(self, temp_dirname: str, target_dir: str):
         """
-        Copy the installation files to the target directory. Also symlink the 'setup.exp' file.
+        Copy the installation files to the target directory. Also, symlink the 'setup.exp' file.
 
         :param temp_dirname: (str) The source directory where installation files exist.
         :param target_dir: (str) The target directory where the installation files should be copied to.
@@ -228,7 +228,7 @@ class FreqtradeCli:
 
     def run_setup_installer(self, target_dir: str, install_ui: bool = True) -> bool:
         """
-        Run Freqtrade setup.sh --install through setup.exp + Install Freq-UI
+        Run Freqtrade setup.sh --install through 'setup.exp' + Install Freq-UI
 
         :param target_dir: (str) The target directory where Freqtrade is installed.
         :param install_ui: (bool) Install FreqUI. Defaults to True.
@@ -237,7 +237,7 @@ class FreqtradeCli:
 
         if os.path.isfile(f'{target_dir}/setup.exp'):
             command = f'expect {target_dir}/setup.exp'
-            if distro.id() in ['ubuntu', 'debian']:
+            if distro.id() in ['ubuntu', 'debian', 'sparky']:
                 command = f'echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/$USER-temp-root; ' \
                           f'{command}; sudo rm /etc/sudoers.d/$USER-temp-root'
 
@@ -303,7 +303,7 @@ class FreqtradeCli:
                 retrieve_json_file.close()
 
         with tempfile.NamedTemporaryFile() as temp_file:
-            self.monigomani_cli.run_command(f'{self.freqtrade_binary} test-pairlist -c {retrieve_json_path} '
+            self.monigomani_cli.run_command(f'{self.freqtrade_binary} test-pairlist --config {retrieve_json_path} '
                                             f'--quote {stake_currency} --print-json > {temp_file.name}')
 
             # Read last line from temp_file, which is the json list containing pairlists
