@@ -344,7 +344,7 @@ then
         if [ "$SHELL_CONFIG" != ~/.config/fish/config.fish ]; then
             echo "" >> "$SHELL_CONFIG"
             echo "# MGM-Hurry shell alias" >> "$SHELL_CONFIG"
-            echo "mgm-hurry() { pushd "$INSTALL_DIR" &> /dev/null; python3 -m pipenv run python3 ./mgm-hurry "\$@"; popd &> /dev/null; }" >> "$SHELL_CONFIG"
+            echo "mgm-hurry() { pushd "$INSTALL_DIR" &> /dev/null; python3 -m pipenv run python3 ./mgm-hurry '\$@'; popd &> /dev/null; }" >> "$SHELL_CONFIG"
         else
             FISH_FUNCTION=~/.config/fish/functions/mgm-hurry.fish
             mkdir -p ~/.config/fish/functions/; touch "$FISH_FUNCTION";
