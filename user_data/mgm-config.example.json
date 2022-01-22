@@ -2,7 +2,8 @@
   "monigomani_settings": {
     "timeframes": {
       "backtest_timeframe": "5m",
-      "core_trend_timeframe_multiplier": 8,
+      "core_trend_timeframe": "4h",
+      "roi_timeframe": "2h",
       "timeframe": "30m"
     },
     "startup_candle_count": 400,
@@ -36,43 +37,71 @@
       "trailing_stop_positive_offset_max_value": 0.1
     },
     "roi_spaces": {
+      "roi_delay": 120,
       "roi_table_step_size": 5,
       "roi_time_interval_scaling": 1.6,
-      "roi_value_step_scaling": 0.9
+      "roi_value_step_scaling": 0.9,
+      "roi_when_downwards": true,
+      "roi_when_sideways": true,
+      "roi_when_upwards": false
     },
     "unclogger_spaces": {
-      "unclogger_buy_cooldown_minutes_window": {
-        "min": 180,
-        "max": 360,
-        "threshold": 20
-      },
+      "unclogger_buy_cooldown_minutes_window": { "min": 180, "max": 360, "threshold": 20 },
       "unclogger_enabled": true,
-      "unclogger_minimal_losing_trade_duration_minutes": {
-        "min": 15,
-        "max": 560
-      },
-      "unclogger_minimal_losing_trades_open": {
-        "min": 1,
-        "max": 5,
-        "threshold": 1
-      },
-      "unclogger_open_trades_losing_percentage_needed": {
-        "min": 1,
-        "max": 60
-      },
-      "unclogger_trend_lookback_candles_window": {
-        "min": 10,
-        "max": 60
-      },
-      "unclogger_trend_lookback_candles_window_percentage_needed": {
-        "min": 10,
-        "max": 45
-      },
+      "unclogger_minimal_losing_trade_duration_minutes": { "min": 15, "max": 560 },
+      "unclogger_minimal_losing_trades_open": { "min": 1, "max": 5, "threshold": 1 },
+      "unclogger_open_trades_losing_percentage_needed": { "min": 1, "max": 60 },
+      "unclogger_trend_lookback_candles_window": { "min": 10, "max": 60 },
+      "unclogger_trend_lookback_candles_window_percentage_needed": { "min": 10, "max": 45 },
       "unclogger_trend_lookback_candles_window_recent_past_weight_separator": 2,
       "unclogger_trend_lookback_window_uses_downwards_candles": true,
       "unclogger_trend_lookback_window_uses_sideways_candles": true,
       "unclogger_trend_lookback_window_uses_upwards_candles": false
     },
+    "protection_spaces": [
+      {
+        "method": "CooldownPeriod",
+        "stop_duration_candles": { "min" : 2, "max": 5, "threshold": 1, "type": "integer" }
+      },
+      {
+        "method": "MaxDrawdown",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "max_allowed_drawdown": { "min" : 0, "max": 1, "threshold": 0.1, "type": "decimal" }
+      },
+      {
+        "method": "StoplossGuard",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "only_per_pair": false
+      },
+      {
+        "method": "StoplossGuard",
+        "id": "PerPair",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "only_per_pair": true
+      },
+      {
+        "method": "LowProfitPairs",
+        "id": "1",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "required_profit": { "min" : 0, "max": 1, "threshold": 0.1, "type": "decimal" }
+      },
+      {
+        "method": "LowProfitPairs",
+        "id": "2",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "required_profit": { "min" : 0, "max": 1, "threshold": 0.1, "type": "decimal" }
+      }
+    ],
     "default_stub_values": {
       "minimal_roi": {
         "0": 100
@@ -265,22 +294,6 @@
       "method": "VolumePairList",
       "number_assets": 10,
       "sort_key": "quoteVolume"
-    }
-  ],
-  "protections": [
-    {
-      "method": "StoplossGuard",
-      "lookback_period": 1440,
-      "trade_limit": 10,
-      "stop_duration": 1440,
-      "only_per_pair": false
-    },
-    {
-      "method": "StoplossGuard",
-      "lookback_period": 1440,
-      "trade_limit": 2,
-      "stop_duration": 1440,
-      "only_per_pair": true
     }
   ],
   "initial_state": "running",

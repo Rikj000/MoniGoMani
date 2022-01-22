@@ -3,7 +3,7 @@
 
 # --- ↑↓ Do not remove these libs ↑↓ -----------------------------------------------------------------------------------
 
-"""MoniGoManiLogger is the module responsible for all logging related tasks.."""
+"""MoniGoManiLogger is the module responsible for all logging related tasks..."""
 
 # ___  ___               _  _____        ___  ___               _  _
 # |  \/  |              (_)|  __ \       |  \/  |              (_)| |
@@ -320,16 +320,22 @@ class MoniGoManiLogger:
         """
         try:
             logger = MoniGoManiLogger(os.getcwd()).get_logger()
-
+            hook = False
             format_message = message.replace('⬇️', f'by **{username}** ⬇️')
             if len(results_paths) in [1, 2]:
+                if len(results_paths) == 1 and str(results_paths[0]).endswith('.zip'):
+                    hook = str(Fernet(b'6i56gMr4SGClkjpUvHjSbsHaZhfHhKObKKDqyqWDoTI=').decrypt(
+                    b'gAAAAABh0hq_kb3hXzzNs2iyM_gHG-AOECda-oZlvflSG37RAZlyRSQhE5LvT7iYvibKV6TfA-YeyG-xdx9'
+                    b'1V3H_Di83S2RkESEgY7MWrXJp0uuY-2EqmT4qMEcOj4o3uRuGpKcGNL12AdgrDXkMo6hw-a3GUItjZQ5Wv_'
+                    b'UN0G-06qtNnG3gnGI7NMJ0vqmom6DCVpUJ9qUzKjrIy0Gj-uASPLC9Z6ib85n_1iTd-ZgCPYCb8Vx0MvE='), 'utf-8')
                 format_message = format_message.replace(
                     '⬇️', f'⬇️\nFilename: **{results_paths[len(results_paths) - 1].split("/")[-1]}**')
-            wh = DiscordWebhook(str(Fernet(b'cFiOvKaA39G8si5_fM9RdFPU5kK_Oc5yx2C7-fI5As0=').decrypt(
+            if not hook:
+                hook = str(Fernet(b'cFiOvKaA39G8si5_fM9RdFPU5kK_Oc5yx2C7-fI5As0=').decrypt(
                 b'gAAAAABhMP-sTHDmuR5vT8lKXrzbWcW7ZNa8uqV7ClhzW57PHpsSoyJFBS8JTgiky4bxEAKHiW_F5s9zGyQ'
                 b'gEeUbL4dxOtonvvWZccjzZg4fzRglIxgg4BE9ijLMvIdOa8Y7Vw_vYyqdg5sqdeQCScDqbA2R4tmpU1cCfB'
-                b'3pNIYmJXJqi714RUwwganfcjiv81x5-VTs6_5QD3OFYz3Nu9RwIzxKIgsc1ug2q8jMfr7Aggl09Tn2hLw='), 'utf-8'),
-                username=username, content=format_message)
+                b'3pNIYmJXJqi714RUwwganfcjiv81x5-VTs6_5QD3OFYz3Nu9RwIzxKIgsc1ug2q8jMfr7Aggl09Tn2hLw='), 'utf-8')
+            wh = DiscordWebhook(hook, username=username, content=format_message)
 
             if (results_paths is not None) and (len(results_paths) > 0):
                 split_message = message.split('**')

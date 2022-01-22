@@ -34,14 +34,21 @@
 - [How to Optimize MoniGoMani](#how-to-optimize-monigomani)
 - [How to Configure MoniGoMani](#how-to-configure-monigomani)
   - [mgm-config.json](#mgm-configjson)
-    - [TimeFrame-Zoom](#timeframe-zoom)
-      - [TimeFrame-Zoom Examples](#timeframe-zoom-examples)
+    - [TimeFrames](#timeframes)
+      - [TimeFrame-Zoom](#timeframe-zoom)
+        - [TimeFrame-Zoom Examples](#timeframe-zoom-examples)
     - [Precision Setting](#precision-setting)
       - [Precision Examples](#precision-examples)
     - [Trading During Trends](#trading-during-trends)
     - [Weighted Signal Spaces](#weighted-signal-spaces)
     - [Stoploss Spaces](#stoploss-spaces)
     - [ROI Spaces](#roi-spaces)
+    - [Protection Spaces](#protection-spaces)
+      - [Available Protections](#available-protections)
+      - [Define Configurable HyperOptable Protections](#define-configurable-hyperoptable-protections)
+        - [Common settings to all Configurable HyperOptable Protections](#common-settings-to-all-configurable-hyperoptable-protections)
+      - [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters)
+      - [Full example of Configurable HyperOPtable Protections](#full-example-of-configurable-hyperoptable-protections)
     - [Open Trade Unclogger](#open-trade-unclogger)
       - [Unclogger Sub Dictionaries](#unclogger-sub-dictionaries)
     - [Default Stub Values](#default-stub-values)
@@ -70,52 +77,52 @@ Further it also assumes you familiarized yourself with **mgm-hurry**'s commands 
 
 **<span style="color:darkorange">WARNING:</span> It's strongly advised to not do any manual alterations to an already optimized MGM setup! The recommended way to do manual alterations is by [Configuring MoniGoMani](#how-to-configure-monigomani), and then following this optimization process to apply them!**
 
-- **0)** **Clean up** previous HyperOpt results for a fresh run with:
-  ```powershell
-  mgm-hurry cleanup
-  ```
-- **1)** Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & **pick a logical TimeFrame** to do your HyperOpt upon, manually configure this in your `.hurry` file or apply one with:
-  ```powershell
-  mgm-hurry setup
-  ```
-  *(The default provided timeframe resembles some bullish, some bearish and some sideways market behavior, with the idea to give MGM all trends to train upon).*
-- **2)** Download and apply a **Top Volume StaticPairList** with:
-  ```powershell
-  mgm-hurry download_static_pairlist
-  ```
-- **3)** **Download candle data** for your StaticPairList & TimeRange with:
-  ```powershell
-  mgm-hurry download_candle_data
-  ```
-- **4) Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)**
-- **5)** HyperOpt for a **1st Initial HyperOpt Run** with:
-  ```powershell
-  mgm-hurry hyperopt
-  ```
-  *(Free to [alter the command](https://monigomani.readthedocs.io/Docs-MGM-Hurry/#mgm-hurry-hyperopt) if you have a good idea that you want to test)*
-  **The 1st Initial HyperOpt Run** *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with:
-  - The default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of your`mgm-config.json` file.
-  - Weak weighted signals are weeded out by overriding them to their respective `min_` value 
-  *(Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
-  - Strong weighted signals are boosted by overriding them to their respective `max_` value 
-  *(Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
-- **6) [Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.
-  You can check and automatically apply an `<epoch of choice>` of which you feel confident, in the list of best results using:
-  ```powershell
-  mgm-hurry hyperopt_show_epoch --epoch <epoch of choice>
-  ```
-- **7)** Repeat `Steps 5 and 6` at least for a **2nd Refinement HyperOpt Run**
-  **The 2nd Refinement HyperOpt Run** *(When a `mgm-config-hyperopt.json` exists)* is automatically ran with:
-  - Refined search spaces ranging between the values found during the 1st Run *(Loaded from `mgm-config-hyperopt.json`)* plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json` 
-  *(This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)*
-  - Weak weighted signals are weeded out by overriding them to their respective `min_` value 
-  *(Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
-  - Strong weighted signals are boosted by overriding them to their respective `max_` value 
-  *(Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
-- **8)** Once you feel confident about the result you found throw them up for a Dry-Run to test how the setup will behave in the current market with:
-  ```powershell
-  mgm-hurry start_trader --dry-run true
-  ```
+1. **Clean up** previous HyperOpt results for a fresh run with:
+    ```powershell
+    mgm-hurry cleanup
+    ```
+2. Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & **pick a logical TimeFrame** to do your HyperOpt upon, manually configure this in your `.hurry` file or apply one with:
+    ```powershell
+    mgm-hurry setup
+    ```
+    *(The default provided timeframe resembles some bullish, some bearish and some sideways market behavior, with the idea to give MGM all trends to train upon).*
+3. Download and apply a **Top Volume StaticPairList** with:
+    ```powershell
+    mgm-hurry download_static_pairlist
+    ```
+4. **Download candle data** for your StaticPairList & TimeRange with:
+    ```powershell
+    mgm-hurry download_candle_data
+    ```
+5. **Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)**
+6. HyperOpt for a **1st Initial HyperOpt Run** with:
+    ```powershell
+    mgm-hurry hyperopt
+    ```
+    *(Free to [alter the command](https://monigomani.readthedocs.io/Docs-MGM-Hurry/#mgm-hurry-hyperopt) if you have a good idea that you want to test)*
+    **The 1st Initial HyperOpt Run** *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with:
+    - The default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of your`mgm-config.json` file.
+    - Weak weighted signals are weeded out by overriding them to their respective `min_` value
+      *(Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
+    - Strong weighted signals are boosted by overriding them to their respective `max_` value
+      *(Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
+7. **[Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.
+    You can check and automatically apply an `<epoch of choice>` of which you feel confident, in the list of best results using:
+    ```powershell
+    mgm-hurry hyperopt_show_epoch --epoch <epoch of choice>
+    ```
+8. Repeat `Steps 5 and 6` at least for a **2nd Refinement HyperOpt Run**
+    **The 2nd Refinement HyperOpt Run** *(When a `mgm-config-hyperopt.json` exists)* is automatically ran with:
+    - Refined search spaces ranging between the values found during the 1st Run *(Loaded from `mgm-config-hyperopt.json`)* plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`
+      *(This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)*
+    - Weak weighted signals are weeded out by overriding them to their respective `min_` value
+      *(Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
+    - Strong weighted signals are boosted by overriding them to their respective `max_` value
+      *(Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
+9. Once you feel confident about the result you found throw them up for a Dry-Run to test how the setup will behave in the current market with:
+    ```powershell
+    mgm-hurry start_trader --dry-run true
+    ```
 
 
 # How to Configure MoniGoMani
@@ -138,7 +145,7 @@ The main `MoniGoMani` settings can be found under `monigomani_settings`:
 
 | Parameter(s) | Description |
 | --- | --- |
-| **timeframe** <br> **backtest_timeframe** | These values configure the `timeframe`s used in MoniGoMani. <br> **Documentation:** [TimeFrame-Zoom](#timeframe-zoom) <br> **Datatypes:** Integer |
+| **timeframes**| These define the different `timeframe`s *(a.k.a. candle-sizes)* used by MoniGoMani. <br> **Documentation:** [TimeFrames](#timeframes) <br> **Datatypes:** Dictionary |
 | **startup_candle_count** | Number of candles the strategy requires before producing valid signals during BackTesting/HyperOpting. <br> By default this is set to `400` since MoniGoMani uses a 200EMA, which needs 400 candles worth of data to be calculated. <br> **Datatype:** Integer |
 | **precision** | This value can be used to control the precision of HyperOpting. Default is `1`. <br> **Documentation:** [Precision Setting](#precision-setting) <br> **Datatype:** Integer |
 | **trading_during_trends** | The settings inside the `trading_during_trends` section are used to configure during which trends (Downwards/Sideways/Upwards) MGM will be allowed to trade (for Buys/Sells).<br> **Documentation:** [Trading During Trends](#trading-during-trends) <br> **Datatype:** Dictionary |
@@ -151,11 +158,21 @@ The main `MoniGoMani` settings can be found under `monigomani_settings`:
 | **use_mgm_logging** | If set to `True` MoniGoMani logging will be displayed to the console and be integrated in Freqtrades native logging, further logging configuration can be done by setting individual `mgm_log_levels_enabled`. <br> It's recommended to set this to `False` for HyperOpting/BackTesting unless you are testing with breakpoints. <br> **Datatype:** Boolean |
 | **mgm_log_levels_enabled** | It allows turning on/off individual `info`, `warning`, `error`, `debug` and `custom` logging <br> For Live Runs it's recommended to disable at least `info` and `debug` logging, to keep MGM as lightweight as possible! <br> `debug` is very verbose! Always set it to `False` when BackTesting/HyperOpting! <br> **Datatype:** Dictionary |
 
-### TimeFrame-Zoom
+### TimeFrames
+MoniGoMani makes use of multiple different TimeFrames *(a.k.a. candle-size)*.
+Make sure to [download candle data](https://monigomani.readthedocs.io/Docs-MGM-Hurry/#mgm-hurry-download_candle_data) for all configured TimeFrames!
+
+| Parameter | Description |
+| --- | --- |
+| **backtest_timeframe** | A small zoomed in TimeFrame, only used during BackTesting/HyperOpting to get intra-candle price fluctuations in our tests and to prevent profit exploitation.<br> **Documentation:** [TimeFrame-Zoom](https://monigomani.readthedocs.io/Docs-MoniGoMani/#timeframe-zoom)<br> **Datatype:** String |
+| **core_trend_timeframe** | A larger zoomed out TimeFrame, only used to populate the core `trend` indicator *(upwards/sideways/downwards)* to prevent that small market moves would change the currently used trend setup by the MGM framework.<br> **Datatype:** String |
+| **roi_timeframe** | The TimeFrame used to generate the ROI-Table during HyperOpting. Use larger TimeFrames to make ROI triggering slower and smaller TimeFrames to make ROI trigger faster.<br> **Datatype:** String |
+| **timeframe** | The "main" TimeFrame used by MoniGoMani, mostly used to generate the Weighted Signal indicators.<br> **Datatype:** String |
+
+#### TimeFrame-Zoom
 To prevent profit exploitation during BackTesting/HyperOpting we BackTest/HyperOpt MoniGoMani using TimeFrame-Zoom.
 When normally a `timeframe` (1h candles) would be used, you can zoom in using a smaller `backtest_timeframe`
-(5m candles) instead. This happens while still using an `informative_timeframe` (original 1h candles) to generate
-the buy/sell signals.
+(5m candles) instead. This happens while still using the `timeframe` (original 1h candles) to generate the buy/sell signals.
 
 With this more realistic results should be found during BackTesting/HyperOpting. Since the buy/sell signals will
 operate on the same `timeframe` that Live would use (1h candles), while at the same time `backtest_timeframe`
@@ -168,9 +185,9 @@ If you haven't yet please read: [BackTesting-Traps](https://brookmiles.github.io
 
 **<span style="color:darkorange">WARNING:</span> Candle data for both `timeframe` as `backtest_timeframe` will have to be downloaded before you will be able to BackTest/HyperOpt! (Since both will be used)**
 
-**<span style="color:darkorange">WARNING:</span> This will be slower than BackTesting at 1h and 1m is a CPU killer. If you plan on using trailing stoploss or ROI, you probably want to know that your BackTest results are not complete lies.**
+**<span style="color:darkorange">WARNING:</span> This will be slower than BackTesting at 1h and 1m is a CPU killer. If you plan on using (trailing) stoploss or ROI, you probably want to know that your BackTest results are not complete lies.**
 
-#### TimeFrame-Zoom Examples
+##### TimeFrame-Zoom Examples
 | Parameter | Description |
 | --- | --- |
 | **timeframe**='1h' | TimeFrame used during Dry/Live-runs |
@@ -237,9 +254,87 @@ The settings inside `mgm-config.json`'s `roi_spaces` section are used to tweak t
 
 | Parameter | Description |
 | --- | --- |
-| **roi_table_step_size** | MoniGoMani generates a really long custom ROI-Table (Return of Interest), so it will have fewer gaps in it and be more continuous in it's decrease.<br> This setting alters the size of the steps (in minutes) to be used when calculating the long continuous ROI-Table. <br> **Datatype:** Integer |
+| **roi_delay** | Amount of delay in minutes that MoniGoMani's ROi-Table should use during HyperOpting. <br> This can be used to keep ROI from triggering too early to our liking. <br> **Datatype:** Integer |
+| **roi_table_step_size** | MoniGoMani generates a really long custom ROI-Table, so it will have fewer gaps in it and be more continuous in it's decrease.<br> This setting alters the size of the steps (in minutes) to be used when calculating the long continuous ROI-Table. <br> **Datatype:** Integer |
 | **roi_time_interval_scaling** | Default scaling coefficients for the ROI HyperSpace. Can be changed to adjust resulting ranges of the ROI tables.<br> Increase if you need wider ranges in the ROI HyperSpace, decrease if shorter ranges are needed. Limits for the time intervals in the ROI tables. Components are scaled linearly.<br> **Datatype:** Decimal |
 | **roi_value_step_scaling** | Limits for the ROI value steps. Components are scaled logarithmically.<br> **Datatype:** Decimal |
+| **roi_when_downwards** | Enable or completely disable ROI as a sell reason during downwards trends.<br> **Datatype:** Boolean |
+| **roi_when_sideways** | Enable or completely disable ROI as a sell reason during sideways trends.<br> **Datatype:** Boolean |
+| **roi_when_upwards** | Enable or completely disable ROI as a sell reason during upwards trends.<br> **Datatype:** Boolean |
+
+### Protection Spaces
+The list inside `mgm-config.json`'s `protection_spaces` is used to define configurable HyperOptable [Freqtrade protections](https://www.freqtrade.io/en/latest/plugins/#protections)!
+
+- To HyperOpt these make sure to pass `--space 'protection' --protections_enabled True` to your `mgm-hurry hyperopt` command!
+- To disable HyperOpting but still using them pass `--protections_enabled True` *(Default behavior)*
+- To disable protections pass `--protections_enabled False`
+
+#### Available Protections
+***<span style="color:blue">NOTE:</span>** The functionality of the protections is the same as Freqtrade, but the way MoniGoMani defines them is different, see: [Define Configurable HyperOptable Protections](#define-configurable-hyperoptable-protections)*
+
+| Name | Description |
+| ---- | ----------- |
+| [**StoplossGuard**](https://www.freqtrade.io/en/latest/plugins/#stoploss-guard) | Stop trading if a certain amount of stoploss occurred within a certain time window |
+| [**MaxDrawdown**](https://www.freqtrade.io/en/latest/plugins/#maxdrawdown) | Stop trading if max-drawdown is reached |
+| [**LowProfitPairs**](https://www.freqtrade.io/en/latest/plugins/#low-profit-pairs) | Lock pairs with low profits |
+| [**CooldownPeriod**](https://www.freqtrade.io/en/latest/plugins/#cooldown-period) | Don't enter a trade right after selling a trade |
+
+#### Define Configurable HyperOptable Protections
+You can define as much or as little protections as you see fit & tweak their individual search spaces.
+
+##### Common settings to all Configurable HyperOptable Protections
+| Parameter | Description |
+| --------- | ----------- |
+| **method** | Protection name to use *(e.g. `StoplossGuard`, `MaxDrawdown`, `LowProfitPairs` or `CooldownPeriod`)*<br> **Datatype:** String, selected from [Available Protections](#available-protections) |
+| **id** | Optional parameter, however **mandatory** if using multiple of the same Protection `method`.<br> Used to identify which protection is which.<br> **Datatype:** String |
+| **stop_duration_candles** |	For how many candles should the lock be set?<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `integer` *(positive, in candles)*) |
+| **stop_duration** | How many minutes should protections be locked. Cannot be used together with `stop_duration_candles`.<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `decimal` *(positive, in minutes)*) |
+| **lookback_period_candles** | Only trades that completed within the last `lookback_period_candles` candles will be considered. <br>This setting may be ignored by some Protections.<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `integer` *(positive, in candles)*) |
+| **lookback_period** | Only trades that completed after `current_time` - `lookback_period` will be considered.<br> Cannot be used together with `lookback_period_candles`.<br> This setting may be ignored by some Protections.<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `decimal` *(positive, in minutes)*) |
+| **trade_limit** | Number of trades required at minimum *(not used by all Protections)*.<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `integer` *(positive)* |
+| **max_allowed_drawdown** | Only used by `MaxDrawdown`.<br> If all trades within `lookback_period` in minutes *(or in candles when using `lookback_period_candles`)* to determine the maximum drawdown.<br> If the drawdown is below `max_allowed_drawdown`, trading will stop for `stop_duration` in minutes *(or in candles when using `stop_duration_candles`)* after the last trade.<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `decimal` *(positive)*
+| **required_profit** | Only used by `LowProfitPairs`.<br> If all trades for a pair within `lookback_period` in minutes (or in candles when using `lookback_period_candles`) to determine the overall profit ratio.<br> If that ratio is below `required_profit`, that pair will be locked for `stop_duration` in minutes (or in candles when using `stop_duration_candles`).<br> **Documentation:** [Common settings to all Configurable HyperOptable Protection Parameters](#common-settings-to-all-configurable-hyperoptable-protection-parameters) <br> **Datatype:** Dictionary (**type:** `decimal` *(positive)* |
+| **only_per_pair** | Only used by `StoplossGuard`.<br> If not used then the protection will be applied across all pairs. <br> If `only_per_pair` is set to `true`, then it will only look at one pair at a time. <br> **Datatype:** Boolean | 
+
+#### Common settings to all Configurable HyperOptable Protection Parameters
+| Parameter | Description |
+| --------- | ----------- |
+| **min** | **1st HyperOpt Run:** Minimal value used in the HyperOpt Space for the protection parameter. <br> **2nd HyperOpt Run:** Low values (below `min` + `threshold`) are weeded out by overriding them to their respective Minimal value. <br> **Datatype:** Same as `type` |
+| **max** | **1st HyperOpt Run:** Maximum value used in the HyperOpt Space for the protection parameter. <br> **2nd HyperOpt Run:** Low values (above `max` - `threshold`) are boosted by overriding them to their respective Maximum value. <br> **Datatype:** Same as `type` |
+| **threshold** | **2nd HyperOpt Run:** Used to refine the search spaces for remaining protection parameters with the value found in the 1st run +- the threshold. <br> **Datatype:** Same as `type` |
+| **type** | Defines if the protection parameter space will work with `integer`s *(Only whole numbers)* <br> or `decimal`s *(Also fractions, keep in mind this greatly increases the search space)* <br> **Datatype:** String, either `integer` or `decimal` |
+
+#### Full example of Configurable HyperOPtable Protections
+```json
+"protection_spaces": [
+      {
+        "method": "CooldownPeriod",
+        "stop_duration_candles": { "min" : 2, "max": 5, "threshold": 1, "type": "integer" }
+      },
+      {
+        "method": "MaxDrawdown",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "max_allowed_drawdown": { "min" : 0, "max": 1, "threshold": 0.1, "type": "decimal" }
+      },
+      {
+        "method": "StoplossGuard",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "only_per_pair": false
+      },
+      {
+        "method": "StoplossGuard",
+        "id": "PerPair",
+        "lookback_period_candles": { "min" : 2, "max": 200, "threshold": 20, "type": "integer" },
+        "trade_limit": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "stop_duration_candles": { "min" : 2, "max": 100, "threshold": 10, "type": "integer" },
+        "only_per_pair": true
+      }
+    ]
+```
 
 ### Open Trade Unclogger
 When the Open Trade Unclogger is enabled it attempts to unclog the bot when it's stuck with losing trades & unable to trade more new trades.
@@ -343,18 +438,19 @@ This is the main strategy file used by MoniGoMani, containing the [Weighted Sign
 **Link to:** [MoniGoManiHyperStrategy.py](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/strategies/MoniGoManiHyperStrategy.py)
 
 ### Weighted Signal Interface
-With this you can easily define new indicators and weighted signals that will be used by MGM.   
-A different amount of buy and sell signals is possible, and the initial search spaces will automatically be adjusted towards the detected amount.   
+With this you can easily define new indicators and weighted signals that will be used by MGM.
+A different amount of buy and sell signals is possible, and the initial search spaces will automatically be adjusted towards the detected amount.
 *(We'll only use RSI and MACD in below examples to keep things simple)*
 
 #### Defining Indicators Examples
 First add the technical analysis indicators you wish to use to MGM's `do_populate_indicators()` function.
 
-Check out these **+200 Easy to implement Indicators** for toying with the Weighted Signal Interface:
+Check out these **+300 Easy to implement Indicators** for toying with the Weighted Signal Interface:
 
 - [Freqtrade Technical](https://github.com/freqtrade/technical)
 - [TA-Lib](https://mrjbq7.github.io/ta-lib/funcs.html)
 - [Pandas-TA](https://twopirllc.github.io/pandas-ta)
+- [FinTA](https://github.com/peerchemist/finta)
 - [Hacks for Life Blog](https://hacks-for-life.blogspot.com)
 
 But feel free to look for other means of implementing indicators too.
@@ -501,7 +597,7 @@ You likely are using a `Float` value where you should be using a `Integer` value
 - `Float` = Decimal number. Examples: 1.53, 4.2, 17.12
 
 ### ValueError: the lower bound X has to be less than the upper bound Y
-**ToDo: Make MGM-Hurry automatically fix these result**   
+**ToDo: Make MGM-Hurry automatically fix these result**
 You probably ran with precision different from 1. If so then you need to run your 1st HO Run results through the calculator directly (without mgm-hurry) with `-pu` or `--precision-used` and then fix up your `mgm-config-hyperopt.json` with the adjusted results before firing up the 2nd HO Run.
 
 Check out the documentation for the [Precision Setting](#precision-setting) and the [Total Overall Signal Importance Calculator](#total-overall-signal-importance-calculator)!

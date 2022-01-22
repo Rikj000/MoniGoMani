@@ -7,9 +7,15 @@
 # === Requirements =====================================================================================================
 #
 #  - UNIX Distro, macOS, or a POSIX compliant WSL Distro (sh, bash, command, mktemp, pwd, rm, /dev/null)
-#  - Python 3.8+
-#  - Git
-#  - Pip3 python package manager
+#  - Python 3 (ttps://realpython.com/installing-python/)
+#  - Pip3 (https://pypi.org/project/pip/)
+#  - Pyenv (https://github.com/pyenv/pyenv-installer#pyenv-installer/)
+#  - Git (https://gist.github.com/derhuerst/1b15ff4652a867391f03)
+#  - cURL (https://www.tecmint.com/install-curl-in-linux/)
+#  - Expect (https://core.tcl-lang.org/expect/index)
+#
+# Ubuntu Specific Notes:
+#  - Python-venv (The installer will prompt you how to install)
 #
 # Windows Specific Notes:
 #   This script has been made with the intention to run on UNIX systems and it makes use of UNIX command line tools..
@@ -22,10 +28,15 @@
 #   /usr/bin/env sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
 #
 # === Settings =========================================================================================================
-INSTALL_FOLDER_NAME="freqtrade-mgm" # By default the folder will be created under the current working directory
+INSTALL_FOLDER_NAME="Freqtrade-MGM" # By default the folder will be created under the current working directory
 MGM_REPO_URL="https://github.com/Rikj000/MoniGoMani.git"
 MGM_BRANCH="development"
 MGM_COMMIT=""
+SHELL_CONFIGS=(
+    ~/.bashrc
+    ~/.config/fish/config.fish
+    ~/.zshrc
+)
 # ======================================================================================================================
 
 usage() {
@@ -71,6 +82,7 @@ YELLOW='\033[1;33m'
 
 NOCOLOR='\033[0m'
 UNDERLINE='\033[4m'
+ITALIC="\e[3m"
 BOLD='\033[1m'
 END='\033[m'
 
@@ -198,13 +210,21 @@ if [ $? -ne 0 ]; then
 fi
 echo -e "${GREEN}  ✅  Pip3 is installed.${END}"
 
+# Ensure that pyenv is installed
+command -v pyenv >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo -e "${RED}  🙉  Pyenv is not installed. Can't proceed. See: https://github.com/pyenv/pyenv-installer#pyenv-installer/${END}"
+    exit 1
+fi
+echo -e "${GREEN}  ✅  Pyenv is installed.${END}"
+
 # Ensure that python3-venv is installed
 OS=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
 if [ "$OS" == "\"Ubuntu\"" -o "$OS" == "\"Debian\"" ]; then
     VENV_PACKAGE_NAME="`readlink -f $(which python3)  | awk -F'/' '{print $NF}'`-venv"
     dpkg -s  $VENV_PACKAGE_NAME | grep "ok installed" >/dev/null 2>&1
     if [ $? -ne 0 ]; then
-        echo -e "${RED}  🙉  Python3-venv is not installed. Can't proceed. install it with: sudo apt-get install ${VENV_PACKAGE_NAME}${END}"
+        echo -e "${RED}  🙉  Python3-venv is not installed. Can't proceed. install it with: sudo apt install ${VENV_PACKAGE_NAME}${END}"
         exit 1
     fi
     echo -e "${GREEN}  ✅  Python3-venv is installed.${END}"
@@ -236,15 +256,6 @@ fi
 
 echo -e "${GREEN}  ✅  Expect is installed.${END}"
 
-# ToDo: Remove after updating Freqtrade (There TA-Lib installation process is improved)
-# Ensure that TA-Lib (C dependency package) is installed
-command -v ta-lib-config >/dev/null 2>&1
-if [ $? -ne 0 ]; then
-    echo -e "${RED}  🙉  TA-Lib (C dependency package) is not installed. Can't proceed. See: https://github.com/mrjbq7/ta-lib#dependencies${END}"
-    exit 1
-fi
-echo -e "${GREEN}  ✅  TA-Lib (C dependency package) is installed.${END}"
-
 
 echo ""
 confirm "👉  Are you ready to proceed?" "(y/n)"
@@ -272,23 +283,78 @@ else
 fi
 
 if [ "$DEV_BREAK" == "true" ]; then
-  echo ""
-  confirm "👉  Are you ready to proceed?" "(y/n)"
+    echo ""
+    confirm "👉  Are you ready to proceed?" "(y/n)"
 
-  if [ "$REPLY" == "1" ] # 1 = False, why shell why..
-  then
-      do_exit
-      exit 1
-  fi
+    if [ "$REPLY" == "1" ] # 1 = False, why shell why..
+    then
+        do_exit
+        exit 1
+    fi
 fi
 
 echo ""
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
-echo -e "${WHITE}  ⚙️  Installing dependency packages...${END}"
+echo -e "${WHITE}  ⚙️  Installing pipenv...${END}"
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
+echo ""
+echo -e "${ITALIC}(Some errors which are usually safe to ignore might occur during the installation of pip & pipenv)${END}"
+echo ""
+
+python3 -m pip install --upgrade pip
+
+if [ "$OS" == "\"Ubuntu\"" ]; then
+    sudo apt install -y libffi-dev
+fi
+
+cd "$INSTALL_DIR" && python3 -m pip install pipenv
+
+echo ""
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
+echo -e "${WHITE}  ⚙️  Setting up virtual environment with python dependency packages...${END}"
 echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
 echo ""
 
-cd "$INSTALL_DIR" && pip3 install -r ./monigomani/requirements-mgm.txt && python3 ./monigomani/mgm-hurry up
+cp "$INSTALL_DIR/monigomani/Pipfile" "$INSTALL_DIR/" # && cp "$INSTALL_DIR/monigomani/Pipfile.lock" "$INSTALL_DIR/"
+cd "$INSTALL_DIR" && python3 -m pipenv install
+
+echo ""
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
+echo -e "${WHITE}  ⚙️  Proceeding to Freqtrade & MoniGoMani installation...${END}"
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
+echo ""
+
+cd "$INSTALL_DIR" && python3 -m pipenv run python3 "$INSTALL_DIR"/monigomani/mgm-hurry up
+
+echo ""
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
+echo -e "${WHITE}  ⚙️  Setting up shell alias...${END}"
+echo -e "${WHITE}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${END}"
+echo ""
+
+echo "You can now run MGM-hurry commands with: 'python3 -m pipenv run python3 ./mgm-hurry ...' only from inside: $INSTALL_DIR"
+echo ""
+confirm "👉  Do you want to add a shell alias so you can run MGM-hurry commands more easily from all over your system as 'mgm-hurry ...'?" "(y/n)"
+
+if [ "$REPLY" == "0" ] # 1 = False, why shell why..
+then
+    for SHELL_CONFIG in "${SHELL_CONFIGS[@]}"; do
+        # Make sure all Shell config files exist
+        touch "$SHELL_CONFIG"
+        if [ "$SHELL_CONFIG" != ~/.config/fish/config.fish ]; then
+            echo "" >> "$SHELL_CONFIG"
+            echo "# MGM-Hurry shell alias" >> "$SHELL_CONFIG"
+            echo "mgm-hurry() { pushd "$INSTALL_DIR" &> /dev/null; python3 -m pipenv run python3 ./mgm-hurry '\$@'; popd &> /dev/null; }" >> "$SHELL_CONFIG"
+        else
+            FISH_FUNCTION=~/.config/fish/functions/mgm-hurry.fish
+            mkdir -p ~/.config/fish/functions/; touch "$FISH_FUNCTION";
+            echo "function mgm-hurry" >> "$FISH_FUNCTION"
+            echo "pushd "$INSTALL_DIR" &> /dev/null; python3 -m pipenv run python3 ./mgm-hurry \$argv; popd &> /dev/null;" >> "$FISH_FUNCTION"
+            echo "end" >> "$FISH_FUNCTION"
+        fi
+    done
+    echo -e "${CYAN}🎉 Shell aliases have been set! Please close & re-open your terminal for the aliases to become active!"${END}
+fi
 
 echo ""
 echo ""

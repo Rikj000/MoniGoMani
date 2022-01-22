@@ -78,7 +78,7 @@ fi
 
 # switch to freqtrade venv
 cd ${FQT_DIR};
-source .env/bin/activate ; 
+. .env/bin/activate ; 
 
 # loop through exchanges
 for EXCHANGE in ${EXCHANGES[@]}

@@ -1,7 +1,7 @@
 config:
   username: MoniGoMani Community
   exchange: binance
-  ft_binary: source ./.env/bin/activate; freqtrade
+  ft_binary: . ./.env/bin/activate; freqtrade
   hyperopt:
     epochs: 1000
     loss: MGM_WinRatioAndProfitRatioHyperOptLoss
