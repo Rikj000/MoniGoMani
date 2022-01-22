@@ -352,9 +352,9 @@ class FreqtradeCli:
         answers = prompt(questions=questions)
         return answers.get('fthypt_file')
 
-    def parse_fthypt_name(self, fthypt_name: str) -> str:
+    def parse_hyperopt_filename(self, fthypt_name: str) -> str:
         """
-        Helper method to parse the '.fthypt' filename provided/asked by the user
+        Helper method to parse the hyperopt '.fthypt' filename provided/asked by the user
 
         :param fthypt_name: '.fthypt' filename provided by the user
         :return: fthypt_name usable for the code
@@ -366,8 +366,25 @@ class FreqtradeCli:
         elif os.path.isfile(f'{self.basedir}/user_data/hyperopt_results/{fthypt_name}'):
             return fthypt_name
         else:
-            self.cli_logger.warning(Color.yellow('🤷 Provided fthypt file not exist, please select fthypt file:'))
+            self.cli_logger.warning(Color.yellow('🤷 Provided fthypt file not exist, please select a new file:'))
             return self.choose_fthypt_file()
+
+    def parse_backtest_filename(self, bt_filename: str) -> str:
+        """
+        Helper method to parse the backtest '.json' filename provided/asked by the user
+
+        :param bt_filename: '.json' filename provided by the user
+        :return: bt_filename usable for the code
+        """
+        if bt_filename is True or bt_filename.lower() == 'true':
+            return self.choose_backtest_results_file()
+        elif os.path.isfile(f'{self.basedir}/user_data/backtest_results/{bt_filename}.json'):
+            return f'{bt_filename}.json'
+        elif os.path.isfile(f'{self.basedir}/user_data/backtest_results/{bt_filename}'):
+            return bt_filename
+        else:
+            self.cli_logger.warning(Color.yellow('🤷 Provided backtest file not exist, please select a new file:'))
+            return self.choose_backtest_results_file()
 
     def choose_backtest_results_file(self, choose_results: bool = True) -> str:
         """
