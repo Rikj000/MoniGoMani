@@ -15,7 +15,6 @@ import freqtrade.vendor.qtpylib.indicators as qtpylib
 from freqtrade.constants import ListPairsWithTimeframes
 from freqtrade.strategy import IntParameter,DecimalParameter
 
-from finta import TA as fta
 import pandas_ta as pta
 
 # Master Framework file must reside in same folder as Strategy file
