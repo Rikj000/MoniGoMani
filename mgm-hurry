@@ -224,10 +224,7 @@ class MGMHurry:
                 'type': 'list',
                 'name': 'last_result',
                 'message': 'Do you want to export trades from the latest backtest results ?',
-                'choices': [
-                    {'name': 'Yes', 'value': 1},
-                    {'name': 'No', 'value': 0}
-                ]}
+                'choices': [{'name': 'Yes', 'value': 1}, {'name': 'No', 'value': 0}]}
             ])
 
             input_file = None
@@ -246,10 +243,7 @@ class MGMHurry:
                 'type': 'list',
                 'name': 'last_result',
                 'message': 'Do you want to export trades from the latest hyperopt results ?',
-                'choices': [
-                    {'name': 'Yes', 'value': 1},
-                    {'name': 'No', 'value': 0}
-                ]}
+                'choices': [{'name': 'Yes', 'value': 1}, {'name': 'No', 'value': 0}]}
             ])
 
             input_file = None
