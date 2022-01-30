@@ -50,7 +50,7 @@ class MGMHurry:
     Attributes:
         monigomani_config   The monigomani_config object
         freqtrade_cli       The FreqtradeCli object
-        logger             The logging function out of MoniGoManiLogger
+        logger              The logging function out of MoniGoManiLogger
     """
     monigomani_config: MoniGoManiConfig
     freqtrade_cli: FreqtradeCli
@@ -131,6 +131,14 @@ class MGMHurry:
                 {'name': 'Yes, Dry-Run please', 'value': 1},
                 {'name': 'Yes, for real!', 'value': 2}
             ]
+        }, {
+            'type': 'confirm',
+            'name': 'export_trades_backtest',
+            'message': '💨 Do you want to export trades from backtest now?'
+        }, {
+            'type': 'confirm',
+            'name': 'export_trades_hyperopt',
+            'message': '💨 Do you want to export trades from hyperopt now?'
         }])
 
         if answers == {}:
@@ -210,6 +218,51 @@ class MGMHurry:
 
         if answers.get('do_backtest') is True:
             self.backtest()
+
+        if answers.get('export_trades_backtest') is True:
+            last_result = prompt(questions=[{
+                'type': 'list',
+                'name': 'last_result',
+                'message': 'Do you want to export trades from the latest backtest results ?',
+                'choices': [{'name': 'Yes', 'value': 1}, {'name': 'No', 'value': 0}]}
+            ])
+
+            input_file = None
+            if last_result.get('last_result') == 0:
+                input_file = prompt(questions=[{
+                        'type': 'input',
+                        'name': 'input_file',
+                        'message': 'Please specify the filename (.json) you want to use ?'
+                }])
+                input_file = input_file.get('input_file')
+
+            self.export_trades_backtest(input_file_name=input_file)
+
+        if answers.get('export_trades_hyperopt') is True:
+            last_result = prompt(questions=[{
+                'type': 'list',
+                'name': 'last_result',
+                'message': 'Do you want to export trades from the latest hyperopt results ?',
+                'choices': [{'name': 'Yes', 'value': 1}, {'name': 'No', 'value': 0}]}
+            ])
+
+            input_file = None
+            if last_result.get('last_result') == 0:
+                input_file = prompt(questions=[{
+                        'type': 'input',
+                        'name': 'input_file',
+                        'message': 'Please specify the filename (.fthypt) you want to use ?'
+                }])
+                input_file = input_file.get('input_file')
+
+            epoch_choice = prompt(questions=[{
+                'type': 'input',
+                'name': 'ho_epoch',
+                'message': 'Choose the epoch which you want to export trades from (0 = export all epochs)',
+                'filter': lambda val: int(val)
+                }])
+            
+            self.export_trades_hyperopt(input_file_name=input_file, epoch=epoch_choice.get('ho_epoch'))
 
         if answers.get('start_trading') > 0:
             if answers.get('start_trading') == 2:
@@ -810,7 +863,7 @@ class MGMHurry:
 
         fthypt_name = None
         if fthypt is not None:
-            fthypt_name = self.freqtrade_cli.parse_fthypt_name(fthypt_name=fthypt)
+            fthypt_name = self.freqtrade_cli.parse_hyperopt_filename(fthypt_name=fthypt)
 
         if epoch == 0:
             self.logger.error(Color.red('🤷 Please pass the epoch number through. '
@@ -1053,7 +1106,7 @@ class MGMHurry:
         fthypt_name = None
         fthypt_file_path = None
         if fthypt is not None:
-            fthypt_name = self.freqtrade_cli.parse_fthypt_name(fthypt_name=fthypt)
+            fthypt_name = self.freqtrade_cli.parse_hyperopt_filename(fthypt_name=fthypt)
             fthypt_file_path = f'{self.basedir}/user_data/hyperopt_results/{fthypt_name}'
 
         if output_file_name is None:
@@ -1071,6 +1124,83 @@ class MGMHurry:
         self.monigomani_cli.run_command(command=command)
         MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
                                                     message=f'🚀 Fresh **{strategy}** SpreadSheet (.csv) Results ⬇️',
+                                                    results_paths=[output_file_path])
+
+    def export_trades_backtest(self, strategy: str = 'MoniGoManiHyperStrategy',
+                   output_file_name: str = None, input_file_name: str = None) -> None:
+        """
+        Export the detailed trades from backtest result to an easy to interpret/sort/filter '.csv' SpreadSheet.
+
+        :param strategy: Name of the used Strategy, defaults to 'MoniGoManiHyperStrategy'
+        :param output_file_name: (str, Optional) Custom filename for the CsvTrades '.csv' file
+            that will be stored in the format: 'CsvTrades-<output_file_name>.csv'.
+            Defaults to 'StrategyName + Current DateTime'.
+        :param input_file_name: (str, Optional) '.fthypt' file to export results from.. If 'true' is passed,
+            an interactive prompt will launch to pick an '.fthypt' file of choice. Defaults to latest
+        """
+
+        self.logger.info(Color.title(f'👉 Exporting Backtest Trades to SpreadSheet (.csv) format.'))
+
+        fthypt_name = None
+        fthypt_file_path = None
+        if input_file_name is not None:
+            fthypt_name = self.freqtrade_cli.parse_backtest_filename(bt_filename=input_file_name)
+            fthypt_file_path = f'{self.basedir}/user_data/backtest_results/{fthypt_name}'
+
+        if output_file_name is None:
+            output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
+        csv_results_file_name = f'CsvTrades-{output_file_name}'
+        output_file_path = f'{self.basedir}/user_data/csv_results/{csv_results_file_name}.csv'
+
+        command = (f'python3 {self.basedir}/user_data/mgm_tools/ExportCsvBacktestTrades.py -o {output_file_path}')
+
+        if fthypt_name is not None:
+            command += f' -i {fthypt_file_path}'
+
+        self.monigomani_cli.run_command(command=command)
+
+        MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
+                                                    message=f'🚀 Fresh **{strategy}** SpreadSheet (.csv) Trades ⬇️',
+                                                    results_paths=[output_file_path])
+
+    def export_trades_hyperopt(self, strategy: str = 'MoniGoManiHyperStrategy',
+                   output_file_name: str = None, input_file_name: str = None, epoch: int = None) -> None:
+        """
+        Export the detailed trades from hyperopt results to an easy to interpret/sort/filter '.csv' SpreadSheet.
+
+        :param strategy: Name of the used Strategy, defaults to 'MoniGoManiHyperStrategy'
+        :param output_file_name: (str, Optional) Custom filename for the CsvTrades '.csv' file
+            that will be stored in the format: 'CsvTrades-<output_file_name>.csv'.
+            Defaults to 'StrategyName + Current DateTime'.
+        :param input_file_name: (str, Optional) '.fthypt' file to export results from.. If 'true' is passed,
+            an interactive prompt will launch to pick an '.fthypt' file of choice. Defaults to latest
+        """
+
+        self.logger.info(Color.title(f'👉 Exporting HyperOpt Trades to SpreadSheet (.csv) format.'))
+
+        fthypt_name = None
+        fthypt_file_path = None
+        if input_file_name is not None:
+            fthypt_name = self.freqtrade_cli.parse_hyperopt_filename(fthypt_name=input_file_name)
+            fthypt_file_path = f'{self.basedir}/user_data/hyperopt_results/{fthypt_name}'
+
+        if output_file_name is None:
+            output_file_name = f'MoniGoManiHyperStrategy-{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
+        csv_results_file_name = f'CsvTrades-{output_file_name}'
+        output_file_path = f'{self.basedir}/user_data/csv_results/{csv_results_file_name}.csv'
+
+        command = (f'python3 {self.basedir}/user_data/mgm_tools/ExportCsvHyperoptTrades.py -o {output_file_path}')
+
+        if fthypt_name is not None:
+            command += f' -i {fthypt_file_path}'
+
+        if epoch is not None and epoch > 0:
+            command += f' -n {epoch}'
+
+        self.monigomani_cli.run_command(command=command)
+
+        MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
+                                                    message=f'🚀 Fresh **{strategy}** SpreadSheet (.csv) Trades ⬇️',
                                                     results_paths=[output_file_path])
 
     def export_results(self):
