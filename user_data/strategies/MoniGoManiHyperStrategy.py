@@ -149,7 +149,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
     """
 
     # Strategy interface version - allow new iterations of the strategy interface.
-    # Check the Freqtrade documentation or it's Sample strategy to get the latest version.
+    # Check the Freqtrade documentation, or it's Sample strategy to get the latest version.
     INTERFACE_VERSION = 2
 
     # Plot configuration to show all Weighted Signals/Indicators used by MoniGoMani in FreqUI.
