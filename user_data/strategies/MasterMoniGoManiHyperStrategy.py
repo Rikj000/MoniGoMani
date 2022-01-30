@@ -1182,7 +1182,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                 parameter_name = f'{space}_{signal_type}_{trend}_trend_{signal_name}_weight'
                 signal_weight = getattr(self, parameter_name)
-                
+
                 # Apply signal overrides to weak and strong signals where needed
                 signal_weight_value = self.apply_weak_strong_overrides(
                     signal_weight.value, signal_min_value, signal_max_value, signal_threshold)
@@ -1422,16 +1422,16 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                         parameter_dictionary = getattr(cls, f'{space}_params')
                         parameter_value = parameter_dictionary.get(f'{space}_{param_total_signal_needed}')
                         if parameter_value is None:
-                            #1st Hyperopt
+                            # 1st Hyperopt
                             if cls.min_trend_total_signal_needed_value < (cls.search_threshold_weighted_signal_values*number_of_weighted_signals):
                                 min_total_signal_needed = 0
                             else:
                                 min_total_signal_needed = (cls.min_trend_total_signal_needed_value - 
-                                                          (cls.search_threshold_weighted_signal_values* number_of_weighted_signals))
+                                                           (cls.search_threshold_weighted_signal_values* number_of_weighted_signals))
                             min_triggers_needed = (cls.min_trend_signal_triggers_needed_value - 
-                                                  cls.search_threshold_trend_signal_triggers_needed)
+                                                   cls.search_threshold_trend_signal_triggers_needed)
                         else:
-                            #2nd Hyperopt
+                            # 2nd Hyperopt
                             min_total_signal_needed = cls.min_trend_total_signal_needed_value
                             min_triggers_needed = cls.min_trend_signal_triggers_needed_value
 
@@ -1534,8 +1534,8 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 condition_func = signal_params['condition']
                 # Populate signal
                 self._add_signal(signal_name=signal_name, signal_type=signal_type, signal_min_value=signal_params['min'],
-                                signal_max_value=signal_params["max"], signal_threshold=signal_params['threshold'],
-                                space=space, dataframe=dataframe, condition=condition_func(dataframe))
+                                 signal_max_value=signal_params['max'], signal_threshold=signal_params['threshold'],
+                                 space=space, dataframe=dataframe, condition=condition_func(dataframe))
 
         # Check if total signals needed & triggers needed are possible, if not force the bot to do nothing
         is_valid_epoch = True
