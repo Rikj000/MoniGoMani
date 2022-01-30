@@ -1,5 +1,4 @@
 import getopt
-import json
 import os
 import sys
 from pathlib import Path
@@ -30,18 +29,18 @@ def ExportCsvHyperoptTrades(config_file, input_file, output_file, epoch_n):
         data = [rapidjson.loads(line) for line in f]
     hyperopt_results = json_normalize(data, max_level=2)
 
-    #Filter results
-    if epoch_n != 0 :
-        #Filter choozen epoch only
+    # Filter results
+    if epoch_n != 0:
+        # Filter chosen epoch only
         hyperopt_results = hyperopt_results.loc[hyperopt_results['current_epoch'] == epoch_n]
-    else :
+    else:
         # Filter out epochs without profit
         hyperopt_results = hyperopt_results.loc[hyperopt_results['total_profit'] > 0]
 
     # Define result dataframe columns
-    list_of_colums = ['epoch', 'pair', 'stake_amount', 'amount', 'open_date', 'close_date', 'trade_duration',
-                      'open_rate', 'close_rate', 'profit_ratio', 'profit_abs', 'sell_reason', 'is_open']
-    results_df = DataFrame(columns=list_of_colums)
+    list_of_columns = ['epoch', 'pair', 'stake_amount', 'amount', 'open_date', 'close_date', 'trade_duration',
+                       'open_rate', 'close_rate', 'profit_ratio', 'profit_abs', 'sell_reason', 'is_open']
+    results_df = DataFrame(columns=list_of_columns)
 
     # Populate results df with selected values + rearrange format
     for idx, row in hyperopt_results.iterrows():
@@ -49,8 +48,8 @@ def ExportCsvHyperoptTrades(config_file, input_file, output_file, epoch_n):
         trades["epoch"] = row["current_epoch"]
         results_df = results_df.append(trades)
 
-    if len(results_df) > 0 :
-        results_df = results_df.loc[:, list_of_colums]
+    if len(results_df) > 0:
+        results_df = results_df.loc[:, list_of_columns]
         results_df['stake_amount'] = results_df['stake_amount'].apply(lambda x: round(x, 3))
         results_df['amount'] = results_df['amount'].apply(lambda x: round(x, 3))
         results_df['trade_duration'] = results_df['trade_duration'].apply(lambda x: round(x / 3600, 2))
@@ -65,6 +64,7 @@ def ExportCsvHyperoptTrades(config_file, input_file, output_file, epoch_n):
             output_file = f'{basedir}/user_data/csv_results/{run_id}_trades.csv'
 
         results_df.to_csv(output_file, index=False, header=True, mode='w', encoding='UTF-8')
+
 
 def main(argv):
     input_file = ''
