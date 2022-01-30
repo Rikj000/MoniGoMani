@@ -1,12 +1,11 @@
 import getopt
-import json
 import os
 import sys
 from pathlib import Path
 
-import rapidjson
 import pandas as pd
-from pandas import DataFrame, json_normalize, read_json
+import rapidjson
+from pandas import json_normalize
 
 
 def ExportCsvBacktestTrades(input_file, output_file):
@@ -31,14 +30,14 @@ def ExportCsvBacktestTrades(input_file, output_file):
     backtest = json_normalize(data, max_level=0)
 
     # Define result dataframe columns
-    list_of_colums = ['pair', 'stake_amount', 'amount', 'open_date', 'close_date', 'trade_duration', 
-                      'open_rate', 'close_rate', 'profit_ratio', 'profit_abs', 'sell_reason', 'is_open']
+    list_of_columns = ['pair', 'stake_amount', 'amount', 'open_date', 'close_date', 'trade_duration', 
+                       'open_rate', 'close_rate', 'profit_ratio', 'profit_abs', 'sell_reason', 'is_open']
 
     backtest_result = json_normalize(backtest["strategy"], max_level=1)
-    trades = pd.DataFrame.from_dict(backtest_result.iloc[0,0])
+    trades = pd.DataFrame.from_dict(backtest_result.iloc[0, 0])
 
-    if len(trades) > 0 :
-        trades = trades.loc[:, list_of_colums]
+    if len(trades) > 0:
+        trades = trades.loc[:, list_of_columns]
         trades['stake_amount'] = trades['stake_amount'].apply(lambda x: round(x, 3))
         trades['amount'] = trades['amount'].apply(lambda x: round(x, 3))
         trades['trade_duration'] = trades['trade_duration'].apply(lambda x: round(x / 3600, 2))
@@ -53,6 +52,7 @@ def ExportCsvBacktestTrades(input_file, output_file):
             output_file = f'{basedir}/user_data/csv_results/{run_id}_trades.csv'
 
         trades.to_csv(output_file, index=False, header=True, mode='w', encoding='UTF-8')
+
 
 def main(argv):
     input_file = ''
