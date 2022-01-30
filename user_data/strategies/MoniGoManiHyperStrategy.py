@@ -215,7 +215,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
 
     def do_populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Adds several different TA indicators to MoniGoMani's DataFrame per pair.
+        Adds multiple TA indicators to MoniGoMani's DataFrame per pair.
         Should be called with 'informative_pair' (1h candles) during backtesting/hyperopting with TimeFrame-Zoom!
 
         Performance Note: For the best performance be frugal on the number of indicators you are using.
@@ -231,57 +231,69 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         # -------------------
 
         # Parabolic SAR
-        if (buy_signals['triggers']['sar_cross']['max'] is None 
-            or buy_signals['triggers']['sar_cross']['max'] > 0
-            or sell_signals['triggers']['sar_cross']['max'] is None 
-            or sell_signals['triggers']['sar_cross']['max'] > 0):
+        if (
+            buy_signals['triggers']['sar_cross']['max'] is None or
+            buy_signals['triggers']['sar_cross']['max'] > 0 or
+            sell_signals['triggers']['sar_cross']['max'] is None or
+            sell_signals['triggers']['sar_cross']['max'] > 0
+        ):
             dataframe['sar'] = ta.SAR(dataframe)
 
         # Stochastic Slow
-        if (buy_signals['guards']['stoch']['max'] is None 
-            or buy_signals['guards']['stoch']['max'] > 0
-            or sell_signals['guards']['stoch']['max'] is None 
-            or sell_signals['guards']['stoch']['max'] > 0):
+        if (
+            buy_signals['guards']['stoch']['max'] is None or
+            buy_signals['guards']['stoch']['max'] > 0 or
+            sell_signals['guards']['stoch']['max'] is None or
+            sell_signals['guards']['stoch']['max'] > 0
+        ):
             stoch = ta.STOCH(dataframe)
             dataframe['slowk'] = stoch['slowk']
 
         # MACD - Moving Average Convergence Divergence
-        if (buy_signals['guards']['macd']['max'] is None 
-            or buy_signals['guards']['macd']['max'] > 0
-            or sell_signals['guards']['macd']['max'] is None 
-            or sell_signals['guards']['macd']['max'] > 0):
+        if (
+            buy_signals['guards']['macd']['max'] is None or
+            buy_signals['guards']['macd']['max'] > 0 or
+            sell_signals['guards']['macd']['max'] is None or
+            sell_signals['guards']['macd']['max'] > 0
+        ):
             macd = ta.MACD(dataframe)
             dataframe['macd'] = macd['macd']  # MACD - Blue TradingView Line (Bullish if on top)
             dataframe['macdsignal'] = macd['macdsignal']  # Signal - Orange TradingView Line (Bearish if on top)
 
         # MFI - Money Flow Index (Under bought / Over sold & Over bought / Under sold / volume Indicator)
-        if (buy_signals['guards']['mfi']['max'] is None 
-            or buy_signals['guards']['mfi']['max'] > 0
-            or sell_signals['guards']['mfi']['max'] is None 
-            or sell_signals['guards']['mfi']['max'] > 0):
+        if (
+            buy_signals['guards']['mfi']['max'] is None or
+            buy_signals['guards']['mfi']['max'] > 0 or
+            sell_signals['guards']['mfi']['max'] is None or
+            sell_signals['guards']['mfi']['max'] > 0
+        ):
             dataframe['mfi'] = ta.MFI(dataframe)
 
         # Overlap Studies
         # ---------------
 
-        if (buy_signals['guards']['tema_bb']['max'] is None 
-            or buy_signals['guards']['tema_bb']['max'] > 0
-            or sell_signals['guards']['tema_bb']['max'] is None 
-            or sell_signals['guards']['tema_bb']['max'] > 0):
+        if (
+            buy_signals['guards']['tema_bb']['max'] is None or
+            buy_signals['guards']['tema_bb']['max'] > 0 or
+            sell_signals['guards']['tema_bb']['max'] is None or
+            sell_signals['guards']['tema_bb']['max'] > 0
+        ):
             # Bollinger Bands
             bollinger = qtpylib.bollinger_bands(qtpylib.typical_price(dataframe), window=20, stds=2)
             dataframe['bb_middleband'] = bollinger['mid']
             # TEMA - Triple Exponential Moving Average
             dataframe['tema'] = ta.TEMA(dataframe, timeperiod=9)
 
-        if (buy_signals['triggers']['sma_short_cross']['max'] is None 
-            or buy_signals['triggers']['sma_short_cross']['max'] > 0
-            or buy_signals['triggers']['sma_long_cross']['max'] is None 
-            or buy_signals['triggers']['sma_long_cross']['max'] > 0
-            or sell_signals['triggers']['sma_short_cross']['max'] is None 
-            or sell_signals['triggers']['sma_short_cross']['max'] > 0
-            or sell_signals['triggers']['sma_long_cross']['max'] is None 
-            or sell_signals['triggers']['sma_long_cross']['max'] > 0):
+        if (
+            buy_signals['triggers']['sma_short_cross']['max'] is None or
+            buy_signals['triggers']['sma_short_cross']['max'] > 0 or
+            buy_signals['triggers']['sma_long_cross']['max'] is None or
+            buy_signals['triggers']['sma_long_cross']['max'] > 0 or
+            sell_signals['triggers']['sma_short_cross']['max'] is None or
+            sell_signals['triggers']['sma_short_cross']['max'] > 0 or
+            sell_signals['triggers']['sma_long_cross']['max'] is None or
+            sell_signals['triggers']['sma_long_cross']['max'] > 0
+        ):
             # SMA's & EMA's are trend following tools (Should not be used when line goes sideways)
             # SMA - Simple Moving Average (Moves slower compared to EMA, price trend over X periods)
             dataframe['sma9'] = ta.SMA(dataframe, timeperiod=9)
@@ -292,10 +304,12 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         # Volume Indicators
         # -----------------
 
-        if (buy_signals['triggers']['rolling_vwap_cross']['max'] is None 
-            or buy_signals['triggers']['rolling_vwap_cross']['max'] > 0
-            or sell_signals['triggers']['rolling_vwap_cross']['max'] is None 
-            or sell_signals['triggers']['rolling_vwap_cross']['max'] > 0):
+        if (
+            buy_signals['triggers']['rolling_vwap_cross']['max'] is None or
+            buy_signals['triggers']['rolling_vwap_cross']['max'] > 0 or
+            sell_signals['triggers']['rolling_vwap_cross']['max'] is None or
+            sell_signals['triggers']['rolling_vwap_cross']['max'] > 0
+        ):
             # Rolling VWAP - Volume Weighted Average Price
             dataframe['rolling_vwap'] = qtpylib.rolling_vwap(dataframe)
 
