@@ -13,9 +13,6 @@ from pandas import DataFrame
 
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 from freqtrade.constants import ListPairsWithTimeframes
-from freqtrade.strategy import IntParameter,DecimalParameter
-
-import pandas_ta as pta
 
 # Master Framework file must reside in same folder as Strategy file
 sys.path.append(str(Path(__file__).parent))
@@ -27,45 +24,45 @@ buy_signals = {
     'triggers': {
         # Weighted Buy Signal: Rolling VWAP crosses above current price
         'rolling_vwap_cross': {
-                'condition': lambda df: (qtpylib.crossed_above(df['rolling_vwap'], df['close'])),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (qtpylib.crossed_above(df['rolling_vwap'], df['close'])),
+            'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: Price crosses above Parabolic SAR
         'sar_cross': {
-                'condition': lambda df: (qtpylib.crossed_above(df['sar'], df['close'])),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (qtpylib.crossed_above(df['sar'], df['close'])),
+            'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: SMA long term Golden Cross (Medium term SMA crosses above Long term SMA)
         'sma_long_cross': {
-                'condition': lambda df: (qtpylib.crossed_above(df['sma50'], df['sma200'])),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (qtpylib.crossed_above(df['sma50'], df['sma200'])),
+            'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
         'sma_short_cross': {
-                'condition': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
+            'min': 0, 'max': 20, 'threshold': 2
         },
     },
     'guards': {
         # Weighted Buy Signal: MACD above Signal
         'macd': {
-                'condition': lambda df: (df['macd'] > df['macdsignal']),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (df['macd'] > df['macdsignal']),
+            'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: MFI under 20 (Under-bought / low-price and rising indication)
         'mfi': {
-                'condition': lambda df: (df['mfi'] <= 20),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (df['mfi'] <= 20),
+            'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: Stochastic Slow below 20 (Under-bought, indication of starting to move up)
         'stoch': {
-                'condition': lambda df: (df['slowk'] < 20),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (df['slowk'] < 20),
+            'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: TEMA increasing under BB middleband
         'tema_bb': {
-                'condition': lambda df: (df['tema'] <= df['bb_middleband']) & (df['tema'] > df['tema'].shift(1)),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (df['tema'] <= df['bb_middleband']) & (df['tema'] > df['tema'].shift(1)),
+            'min': 0, 'max': 20, 'threshold': 2
         },
     }
 }
@@ -75,45 +72,45 @@ sell_signals = {
     'triggers': {
         # Weighted Sell Signal: Rolling VWAP crosses below current price
         'rolling_vwap_cross': {
-                'condition': lambda df: (qtpylib.crossed_below(df['rolling_vwap'], df['close'])),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (qtpylib.crossed_below(df['rolling_vwap'], df['close'])),
+            'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Sell Signal: Price crosses below Parabolic SAR
         'sar_cross': {
-                'condition': lambda df: (qtpylib.crossed_below(df['sar'], df['close'])),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (qtpylib.crossed_below(df['sar'], df['close'])),
+            'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Sell Signal: SMA long term Death Cross (Medium term SMA crosses below Long term SMA)
         'sma_long_cross': {
-                'condition': lambda df: (qtpylib.crossed_below(df['sma50'], df['sma200'])),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (qtpylib.crossed_below(df['sma50'], df['sma200'])),
+            'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Sell Signal: SMA short term Death Cross (Short term SMA crosses below Medium term SMA)
         'sma_short_cross': {
-                'condition': lambda df: (qtpylib.crossed_below(df['sma9'], df['sma50'])),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (qtpylib.crossed_below(df['sma9'], df['sma50'])),
+            'min': 0, 'max': 20, 'threshold': 2
         },
     },
     'guards': {
         # Weighted Sell Signal: MACD below Signal
         'macd': {
-                'condition': lambda df: (df['macd'] < df['macdsignal']),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (df['macd'] < df['macdsignal']),
+            'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Sell Signal: MFI above 80 (Over-bought / high-price and dropping indication)
         'mfi': {
-                'condition': lambda df: (df['mfi'] >= 80),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (df['mfi'] >= 80),
+            'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Sell Signal: Stochastic Slow above 80 (Over-bought, indication of starting to move down)
         'stoch': {
-                'condition': lambda df: (df['slowk'] > 80),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (df['slowk'] > 80),
+            'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: TEMA decreasing over BB middleband 
         'tema_bb': {
-                'condition': lambda df: (df['tema'] > df['bb_middleband']) & (df['tema'] < df['tema'].shift(1)),
-                'min': 0, 'max': 20, 'threshold': 2
+            'condition': lambda df: (df['tema'] > df['bb_middleband']) & (df['tema'] < df['tema'].shift(1)),
+            'min': 0, 'max': 20, 'threshold': 2
         },
     }
 }
