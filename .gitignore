@@ -1,14 +1,5 @@
-# Freqtrade rules
-config*.json
-*.sqlite
-logfile.txt
-user_data/*
-!user_data/strategy/sample_strategy.py
-!user_data/notebooks
-user_data/notebooks/*
-freqtrade-plot.html
-freqtrade-profit-plot.html
-freqtrade/rpc/api_server/ui/*
+# Ignore the Private Config to prevent accidental pushing
+user_data/mgm-config-private.json
 
 # Ignore the HyperOpt Result Files that are used by Default
 user_data/mgm-config-hyperopt.json
@@ -26,30 +17,24 @@ Documentation/ReleaseTemplate.md
 
 # Ignore Python Caches
 __pycache__/
-*.py[cod]
-*$py.class
+ *.pyc
 
-# C extensions
-*.so
+# Ignore Other General User Data
+user_data/*_results/
+user_data/*.lock
+user_data/data/
+user_data/logs/
+user_data/plot/
 
-# Distribution / packaging
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+# Ignore JetBrains Folder
+.idea/
+
+# Ignore VSCodium / Visual Studio Code Folder + WorkSpace Files
+.vscode/
+*.code-workspace
+
+# Ignore Logo Folder
+Logo/
 
 # Ignore fthypt and legacy pickle Files
 *.fthypt
@@ -62,53 +47,41 @@ pip-delete-this-directory.txt
 # Unit test / coverage reports
 htmlcov/
 .tox/
+.nox/
 .coverage
 .coverage.*
 .cache
 nosetests.xml
 coverage.xml
 *.cover
+*.py,cover
 .hypothesis/
-
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
-*.log
-local_settings.py
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# Jupyter Notebook
-*.ipynb_checkpoints
-
-# pyenv
-.python-version
-
-.env
-.venv
-.idea
-.vscode
-
 .pytest_cache/
-.mypy_cache/
+cover/
+junit/
+test-results*.xml
 
-#exceptions
-!*.gitkeep
-!config_examples/config_binance.example.json
-!config_examples/config_bittrex.example.json
-!config_examples/config_ftx.example.json
-!config_examples/config_full.example.json
-!config_examples/config_kraken.example.json
+# Ignore pytest cache files
+.pytest_cache/
+
+# Ignore freqtrade installation
+.env/
+build_helpers/
+config_examples/
+docker/
+!docker/Dockerfile.MoniGoMani
+docs/
+freqtrade/
+junit/
+scripts/
+tests/junit/
+
+freqtrade.service
+freqtrade.service.watchdog
+freqtrade.egg-info
+MANIFEST.in
+pyproject.toml
+pyproject.yml
+setup.cfg
+setup.py
+setup.sh
