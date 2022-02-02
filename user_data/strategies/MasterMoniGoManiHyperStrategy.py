@@ -29,7 +29,6 @@ from freqtrade.strategy import DecimalParameter, IntParameter, IStrategy, merge_
 
 logger = logging.getLogger(__name__)
 
-
 # --- ↑ Do not remove these libs ↑ -------------------------------------------------------------------------------------
 
 
@@ -212,14 +211,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
     separator_candle_weight_reducer = 0.03  # Gets set automatically
 
     # Initialize comparison values to check if total signals utilized by HyperOpt are possible
+    min_total_weight_possible = {}
     max_total_weight_possible = {}
     max_total_threshold_possible = {}
     total_signals_possible = {}
     total_triggers_possible = {}
     for space in list_of_signal_space:
         for signal_type in list_of_signal_type:
-            max_total_weight_possible[f'{space}_{signal_type}'] = 0
-            max_total_threshold_possible[f'{space}_{signal_type}'] = 0
             for trend in mgm_trends:
                 total_signals_possible[f'{space}_{signal_type}_{trend}'] = 0
                 total_triggers_possible[f'{space}_{signal_type}_{trend}'] = 0
@@ -1120,7 +1118,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         corrected_total_signal_needed = self.apply_weak_strong_overrides(
             parameter_value=total_signal_needed.value,
-            parameter_min_value=self.min_trend_total_signal_needed_value,
+            parameter_min_value=self.min_total_weight_possible[f'{space}_{signal_type}'],
             parameter_max_value=self.max_total_weight_possible[f'{space}_{signal_type}'],
             parameter_threshold=self.max_total_threshold_possible[f'{space}_{signal_type}']
         ) / self.precision
@@ -1182,7 +1180,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
                 parameter_name = f'{space}_{signal_type}_{trend}_trend_{signal_name}_weight'
                 signal_weight = getattr(self, parameter_name)
-                
+
                 # Apply signal overrides to weak and strong signals where needed
                 signal_weight_value = self.apply_weak_strong_overrides(
                     signal_weight.value, signal_min_value, signal_max_value, signal_threshold)
@@ -1191,28 +1189,30 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                 rolling_needed_value = (rolling_needed.value * self.timeframe_multiplier if has_multiplier
                                         else rolling_needed.value)
 
-                # If debuggable weighted signal dataframe => Add individual per signal rows in the dataframe
-                if self.debuggable_weighted_signal_dataframe:
-                    if parameter_name not in dataframe.columns:
-                        dataframe[parameter_name] = 0
-
-                    dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
-                                  parameter_name] = signal_weight_value / self.precision
+                # Add individual signal column in the dataframe 
+                if parameter_name not in dataframe.columns:
+                    dataframe[parameter_name] = 0
+                # Check that signal condition is met (without checking the trend) and apply the signal weight for the given trend
+                dataframe.loc[condition == True,parameter_name] = signal_weight_value / self.precision
 
                 # If the weighted signal triggered => Add the weight to the totals needed in the dataframe
-                dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
+                dataframe.loc[((dataframe['trend'] == trend) & dataframe[parameter_name].rolling(rolling_needed_value).sum() > 0),
                               f'total_{space}_{signal_type}_strength'] += signal_weight_value / self.precision
 
                 # If the weighted signal is bigger than 0 and triggered => Add up the amount of signals that triggered
                 if signal_weight_value > 0:
-                    dataframe.loc[((dataframe['trend'] == trend) & (condition.rolling(rolling_needed_value).sum() > 0)),
+                    dataframe.loc[((dataframe['trend'] == trend) & dataframe[parameter_name].rolling(rolling_needed_value).sum() > 0),
                                   f'{space}_{signal_type}_triggered'] += 1
 
-                # Add found weights to comparison values to check if total signals utilized by HyperOpt are possible
-                self.total_signals_possible[f'{space}_{signal_type}_{trend}'] += signal_weight_value
-                # Add a signal trigger if it is possible to compare if total triggers needed by HyperOpt are possible
                 if signal_weight_value > 0:
+                    # Add found weights to comparison values to check if total signals utilized by HyperOpt are possible
+                    self.total_signals_possible[f'{space}_{signal_type}_{trend}'] += signal_weight_value
+                    # Add a signal trigger if it is possible to compare if total triggers needed by HyperOpt are possible
                     self.total_triggers_possible[f'{space}_{signal_type}_{trend}'] += 1
+
+                # If not debuggable weighted signal dataframe : remove individual signal columns
+                if not self.debuggable_weighted_signal_dataframe:
+                    dataframe.drop(parameter_name, axis = 1)
 
             # Override Signals: When configured sell/buy signals can be completely turned off for each kind of trend
             else:
@@ -1476,9 +1476,16 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
             signals = {}
             signals.update({'buy':buy_signals})
             signals.update({'sell':sell_signals})
+
+            min_total_weight = {}
+            max_total_weight = {}
+            max_total_threshold = {}
             for space in base_cls.list_of_signal_space:
                 for signal_type in base_cls.list_of_signal_type:
                     valid_signals = {}
+                    min_total_weight[f'{space}_{signal_type}'] = 0
+                    max_total_weight[f'{space}_{signal_type}'] = 0
+                    max_total_threshold[f'{space}_{signal_type}'] = 0
                     for signal_name, signal_params in signals[space][signal_type].items():
                         if signal_params['max'] is None or signal_params['max'] > 0 : 
                             if signal_params['min'] is None:
@@ -1488,12 +1495,18 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                             if signal_params['threshold'] is None:
                                 signal_params['threshold'] = base_cls.search_threshold_weighted_signal_values
 
-                            base_cls.max_total_weight_possible[f'{space}_{signal_type}'] += signal_params['max']
-                            base_cls.max_total_threshold_possible[f'{space}_{signal_type}'] += signal_params['threshold']
+                            min_total_weight[f'{space}_{signal_type}'] += signal_params['min']
+                            max_total_weight[f'{space}_{signal_type}'] += signal_params['max']
+                            max_total_threshold[f'{space}_{signal_type}'] += signal_params['threshold']
                             valid_signals.update({signal_name:signal_params})
 
                     # Set number of weighted buy/sell triggers and guards for later use.
                     setattr(base_cls, f'number_of_weighted_{space}_{signal_type}', len(valid_signals))
+
+                    # Set min/max/threshold totals for later use
+                    setattr(base_cls, f'min_total_weight_possible', min_total_weight)
+                    setattr(base_cls, f'max_total_weight_possible', max_total_weight)
+                    setattr(base_cls, f'max_total_threshold_possible', max_total_threshold)
 
                     # Registering signals attributes on class
                     setattr(base_cls, f'{space}_{signal_type}', valid_signals)
@@ -1520,46 +1533,51 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
         if (self.is_dry_live_run_detected is False) and (space == 'buy'):
             self.init_hyperopt_epoch()
 
-        # Initialize total signal and signals triggered columns (should be 0 = false by default)
-        if f'total_{space}_triggers_strength' not in dataframe.columns:
-            dataframe[f'total_{space}_triggers_strength'] = dataframe[f'total_{space}_guards_strength'] = 0
-        if f'{space}_triggers_triggered' not in dataframe.columns:
-            dataframe[f'{space}_triggers_triggered'] = dataframe[f'{space}_guards_triggered'] = 0
-
         # Calculates the weight and/or generates the debug column for each signal
-        for signal_type in self.list_of_signal_type:
-            # Fetch the weighted signals used
-            signals = getattr(self, f'{space}_{signal_type}')
-            for signal_name, signal_params in signals.items():
-                condition_func = signal_params['condition']
-                # Populate signal
-                self._add_signal(signal_name=signal_name, signal_type=signal_type, signal_min_value=signal_params['min'],
-                                signal_max_value=signal_params["max"], signal_threshold=signal_params['threshold'],
-                                space=space, dataframe=dataframe, condition=condition_func(dataframe))
-
-        # Check if total signals needed & triggers needed are possible, if not force the bot to do nothing
-        is_valid_epoch = True
-        for signal_type in self.list_of_signal_type:
-            number_of_weighted_signals = int(getattr(self, f'number_of_weighted_{space}_{signal_type}'))
-            if self.is_dry_live_run_detected is False:
+        is_valid_epoch = False
+        if space == "buy" or (space == "sell" and sum(dataframe['buy'] > 0) > 0):
+            for signal_type in self.list_of_signal_type:
                 for trend in self.mgm_trends:
-                    if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
-                        corrected_totals = self.get_corrected_totals_needed(
-                            space=space, trend=trend, signal_type=signal_type, number_of_weighted_signals=number_of_weighted_signals)
-                        
-                        is_valid_trend = True
-                        if ((self.total_signals_possible[f'{space}_{signal_type}_{trend}'] < corrected_totals['signal_needed']) or
-                            (self.total_triggers_possible[f'{space}_{signal_type}_{trend}'] < corrected_totals['triggers_needed'])):
-                            is_valid_trend = False
-
-                        is_valid_epoch = (is_valid_epoch and is_valid_trend)
-
+                    if f'total_{space}_{signal_type}_strength' not in dataframe.columns:
+                        dataframe[f'total_{space}_{signal_type}_strength'] = 0
+                    if f'{space}_{signal_type}_triggered' not in dataframe.columns:
+                        dataframe[f'{space}_{signal_type}_triggered'] = 0
+                
+                # Fetch the weighted signals used
+                signals = getattr(self, f'{space}_{signal_type}')
+                for signal_name, signal_params in signals.items():
+                    condition_func = signal_params['condition']
+                    # Populate signal
+                    self._add_signal(signal_name=signal_name, signal_type=signal_type, signal_min_value=signal_params['min'],
+                                    signal_max_value=signal_params["max"], signal_threshold=signal_params['threshold'],
+                                    space=space, dataframe=dataframe, condition=condition_func(dataframe))
+                
+            # Check if total signals needed & triggers needed are possible, if not force the bot to do nothing
+            if self.is_dry_live_run_detected is False:
+                is_valid_epoch = True
+                for trend in self.mgm_trends:
+                    for signal_type in self.list_of_signal_type:
+                        number_of_weighted_signals = int(getattr(self, f'number_of_weighted_{space}_{signal_type}'))
+                        if self.mgm_config['trading_during_trends'][f'{space}_trades_when_{trend}'] is True:
+                            corrected_totals = self.get_corrected_totals_needed(
+                                space=space, trend=trend, signal_type=signal_type, number_of_weighted_signals=number_of_weighted_signals)
+                            
+                            if ((self.total_signals_possible[f'{space}_{signal_type}_{trend}'] < corrected_totals['signal_needed']) or
+                                (self.total_triggers_possible[f'{space}_{signal_type}_{trend}'] < corrected_totals['triggers_needed'])):
+                                is_valid_trend = False
+                    is_valid_epoch = (is_valid_epoch or is_valid_trend)
+            else:
+                is_valid_epoch = True
+        
+        # At least 1 buy trend (trigger+guard) and 1 sell trend (trigger+guard) should be correct for the buy&sell conditions to be calculated
         if is_valid_epoch:
             # Generates the conditions responsible for searching and comparing the weights needed to activate a buy or sell
             dataframe.loc[self._generate_weight_condition(dataframe=dataframe, space=space), space] = 1
-        else:
-            dataframe['buy'] = dataframe['sell'] = 0
-        
+
+        # Check that the current epoch actually finds at leat 1 buy and 1 sell, if not punish the epoch
+        if space == "sell" and (sum(dataframe['buy'] > 0) == 0 or sum(dataframe['sell'] > 0) == 0):
+            dataframe["buy"] = dataframe["sell"] = 0
+
         return dataframe
 
     def init_hyperopt_epoch(self) -> None:
