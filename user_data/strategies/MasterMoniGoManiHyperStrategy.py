@@ -1422,16 +1422,16 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                         parameter_dictionary = getattr(cls, f'{space}_params')
                         parameter_value = parameter_dictionary.get(f'{space}_{param_total_signal_needed}')
                         if parameter_value is None:
-                            #1st Hyperopt
+                            # 1st Hyperopt
                             if cls.min_trend_total_signal_needed_value < (cls.search_threshold_weighted_signal_values*number_of_weighted_signals):
                                 min_total_signal_needed = 0
                             else:
                                 min_total_signal_needed = (cls.min_trend_total_signal_needed_value - 
-                                                          (cls.search_threshold_weighted_signal_values* number_of_weighted_signals))
+                                                           (cls.search_threshold_weighted_signal_values* number_of_weighted_signals))
                             min_triggers_needed = (cls.min_trend_signal_triggers_needed_value - 
-                                                  cls.search_threshold_trend_signal_triggers_needed)
+                                                   cls.search_threshold_trend_signal_triggers_needed)
                         else:
-                            #2nd Hyperopt
+                            # 2nd Hyperopt
                             min_total_signal_needed = cls.min_trend_total_signal_needed_value
                             min_triggers_needed = cls.min_trend_signal_triggers_needed_value
 
