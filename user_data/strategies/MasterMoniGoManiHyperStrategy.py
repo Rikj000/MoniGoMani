@@ -1204,6 +1204,13 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
                     dataframe.loc[((dataframe['trend'] == trend) & dataframe[parameter_name].rolling(rolling_needed_value).sum() > 0),
                                   f'{space}_{signal_type}_triggered'] += 1
 
+                # If the weighted signal is a 'trigger' and it actually triggered => Add the signal name to the 'reason' (used for info in 'buy_tag' and 'exit_tag')
+                if signal_type == "triggers":
+                    if f'{space}_reason' not in dataframe.columns:
+                        dataframe[f'{space}_reason'] = ""
+                    dataframe.loc[((dataframe['trend'] == trend) & dataframe[parameter_name].rolling(rolling_needed_value).sum() > 0), 
+                              f'{space}_reason'] += f'__{signal_name}'
+
                 if signal_weight_value > 0:
                     # Add found weights to comparison values to check if total signals utilized by HyperOpt are possible
                     self.total_signals_possible[f'{space}_{signal_type}_{trend}'] += signal_weight_value
@@ -1576,7 +1583,18 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Check that the current epoch actually finds at leat 1 buy and 1 sell, if not punish the epoch
         if space == "sell" and (sum(dataframe['buy'] > 0) == 0 or sum(dataframe['sell'] > 0) == 0):
-            dataframe["buy"] = dataframe["sell"] = 0
+            dataframe['buy'] = 0
+            dataframe['sell'] = 0
+        else:
+            # Epoch is valid : Register buy and exit tag
+            if space == "sell":
+                tag = "exit_tag"
+            else :
+                tag = "buy_tag"
+            
+            # Fill the buy/exit tag and remove the temporary reason column
+            dataframe.loc[dataframe[space] == 1,tag] = f'{space}__' + dataframe['trend'] + dataframe[f'{space}_reason']
+            dataframe.drop(f'{space}_reason', axis = 1)
 
         return dataframe
 
