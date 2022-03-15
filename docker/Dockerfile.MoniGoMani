@@ -22,7 +22,6 @@ RUN pip3 install --user --no-cache-dir finta scipy pyaml scikit-optimize fire ma
 RUN git clone https://github.com/Rikj000/MoniGoMani.git
 RUN cp -r MoniGoMani/* . && rm -rf MoniGoMani/
 COPY --chown=ftuser:ftuser .hurry /freqtrade
-#RUN ./mgm-hurry setup
 
 ENTRYPOINT ["freqtrade"]
 # Default to trade mode
