@@ -1024,7 +1024,7 @@ class MasterMoniGoManiHyperStrategy(IStrategy, ABC):
 
         # Check if weighted signal is profitable if sell_profit_only is enabled in the weighted_signal_spaces
         if ((self.mgm_config['weighted_signal_spaces']['sell_profit_only'] is
-             True) and (sell_reason == 'sell_signal') and (trade.calc_profit_ratio(rate) < 0)):
+             True) and sell_reason.startswith('sell_') and (trade.calc_profit_ratio(rate) < 0)):
             return False
         # Check if ROI is enabled for the currently detected trend
         elif sell_reason == 'roi':

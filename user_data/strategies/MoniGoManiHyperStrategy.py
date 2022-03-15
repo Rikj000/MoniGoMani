@@ -25,44 +25,44 @@ buy_signals = {
         # Weighted Buy Signal: Rolling VWAP crosses above current price
         'rolling_vwap_cross': {
             'condition': lambda df: (qtpylib.crossed_above(df['rolling_vwap'], df['close'])),
-            'min': 0, 'max': 20, 'threshold': 2
+                'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: Price crosses above Parabolic SAR
         'sar_cross': {
             'condition': lambda df: (qtpylib.crossed_above(df['sar'], df['close'])),
-            'min': 0, 'max': 20, 'threshold': 2
+                'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: SMA long term Golden Cross (Medium term SMA crosses above Long term SMA)
         'sma_long_cross': {
             'condition': lambda df: (qtpylib.crossed_above(df['sma50'], df['sma200'])),
-            'min': 0, 'max': 20, 'threshold': 2
+                'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: SMA short term Golden Cross (Short term SMA crosses above Medium term SMA)
         'sma_short_cross': {
             'condition': lambda df: (qtpylib.crossed_above(df['sma9'], df['sma50'])),
-            'min': 0, 'max': 20, 'threshold': 2
+                'min': 0, 'max': 20, 'threshold': 2
         },
     },
     'guards': {
         # Weighted Buy Signal: MACD above Signal
         'macd': {
-            'condition': lambda df: (df['macd'] > df['macdsignal']),
-            'min': 0, 'max': 20, 'threshold': 2
+                'condition': lambda df: (df['macd'] > df['macdsignal']),
+                'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: MFI under 20 (Under-bought / low-price and rising indication)
         'mfi': {
-            'condition': lambda df: (df['mfi'] <= 20),
-            'min': 0, 'max': 20, 'threshold': 2
+                'condition': lambda df: (df['mfi'] <= 20),
+                'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: Stochastic Slow below 20 (Under-bought, indication of starting to move up)
         'stoch': {
-            'condition': lambda df: (df['slowk'] < 20),
-            'min': 0, 'max': 20, 'threshold': 2
+                'condition': lambda df: (df['slowk'] < 20),
+                'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: TEMA increasing under BB middleband
         'tema_bb': {
-            'condition': lambda df: (df['tema'] <= df['bb_middleband']) & (df['tema'] > df['tema'].shift(1)),
-            'min': 0, 'max': 20, 'threshold': 2
+                'condition': lambda df: (df['tema'] <= df['bb_middleband']) & (df['tema'] > df['tema'].shift(1)),
+                'min': 0, 'max': 20, 'threshold': 2
         },
     }
 }
@@ -72,45 +72,45 @@ sell_signals = {
     'triggers': {
         # Weighted Sell Signal: Rolling VWAP crosses below current price
         'rolling_vwap_cross': {
-            'condition': lambda df: (qtpylib.crossed_below(df['rolling_vwap'], df['close'])),
-            'min': 0, 'max': 20, 'threshold': 2
+                'condition': lambda df: (qtpylib.crossed_below(df['rolling_vwap'], df['close'])),
+                'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Sell Signal: Price crosses below Parabolic SAR
         'sar_cross': {
-            'condition': lambda df: (qtpylib.crossed_below(df['sar'], df['close'])),
-            'min': 0, 'max': 20, 'threshold': 2
+                'condition': lambda df: (qtpylib.crossed_below(df['sar'], df['close'])),
+                'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Sell Signal: SMA long term Death Cross (Medium term SMA crosses below Long term SMA)
         'sma_long_cross': {
-            'condition': lambda df: (qtpylib.crossed_below(df['sma50'], df['sma200'])),
-            'min': 0, 'max': 20, 'threshold': 2
+                'condition': lambda df: (qtpylib.crossed_below(df['sma50'], df['sma200'])),
+                'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Sell Signal: SMA short term Death Cross (Short term SMA crosses below Medium term SMA)
         'sma_short_cross': {
-            'condition': lambda df: (qtpylib.crossed_below(df['sma9'], df['sma50'])),
-            'min': 0, 'max': 20, 'threshold': 2
+                'condition': lambda df: (qtpylib.crossed_below(df['sma9'], df['sma50'])),
+                'min': 0, 'max': 20, 'threshold': 2
         },
     },
     'guards': {
         # Weighted Sell Signal: MACD below Signal
         'macd': {
-            'condition': lambda df: (df['macd'] < df['macdsignal']),
-            'min': 0, 'max': 20, 'threshold': 2
+                'condition': lambda df: (df['macd'] < df['macdsignal']),
+                'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Sell Signal: MFI above 80 (Over-bought / high-price and dropping indication)
         'mfi': {
-            'condition': lambda df: (df['mfi'] >= 80),
-            'min': 0, 'max': 20, 'threshold': 2
+                'condition': lambda df: (df['mfi'] >= 80),
+                'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Sell Signal: Stochastic Slow above 80 (Over-bought, indication of starting to move down)
         'stoch': {
-            'condition': lambda df: (df['slowk'] > 80),
-            'min': 0, 'max': 20, 'threshold': 2
+                'condition': lambda df: (df['slowk'] > 80),
+                'min': 0, 'max': 20, 'threshold': 2
         },
         # Weighted Buy Signal: TEMA decreasing over BB middleband 
         'tema_bb': {
-            'condition': lambda df: (df['tema'] > df['bb_middleband']) & (df['tema'] < df['tema'].shift(1)),
-            'min': 0, 'max': 20, 'threshold': 2
+                'condition': lambda df: (df['tema'] > df['bb_middleband']) & (df['tema'] < df['tema'].shift(1)),
+                'min': 0, 'max': 20, 'threshold': 2
         },
     }
 }
@@ -149,7 +149,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
     """
 
     # Strategy interface version - allow new iterations of the strategy interface.
-    # Check the Freqtrade documentation, or it's Sample strategy to get the latest version.
+    # Check the Freqtrade documentation or it's Sample strategy to get the latest version.
     INTERFACE_VERSION = 2
 
     # Plot configuration to show all Weighted Signals/Indicators used by MoniGoMani in FreqUI.
@@ -231,69 +231,57 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         # -------------------
 
         # Parabolic SAR
-        if (
-            buy_signals['triggers']['sar_cross']['max'] is None or
-            buy_signals['triggers']['sar_cross']['max'] > 0 or
-            sell_signals['triggers']['sar_cross']['max'] is None or
-            sell_signals['triggers']['sar_cross']['max'] > 0
-        ):
+        if (buy_signals['triggers']['sar_cross']['max'] is None 
+            or buy_signals['triggers']['sar_cross']['max'] > 0
+            or sell_signals['triggers']['sar_cross']['max'] is None 
+            or sell_signals['triggers']['sar_cross']['max'] > 0):
             dataframe['sar'] = ta.SAR(dataframe)
 
         # Stochastic Slow
-        if (
-            buy_signals['guards']['stoch']['max'] is None or
-            buy_signals['guards']['stoch']['max'] > 0 or
-            sell_signals['guards']['stoch']['max'] is None or
-            sell_signals['guards']['stoch']['max'] > 0
-        ):
+        if (buy_signals['guards']['stoch']['max'] is None 
+            or buy_signals['guards']['stoch']['max'] > 0
+            or sell_signals['guards']['stoch']['max'] is None 
+            or sell_signals['guards']['stoch']['max'] > 0):
             stoch = ta.STOCH(dataframe)
             dataframe['slowk'] = stoch['slowk']
 
         # MACD - Moving Average Convergence Divergence
-        if (
-            buy_signals['guards']['macd']['max'] is None or
-            buy_signals['guards']['macd']['max'] > 0 or
-            sell_signals['guards']['macd']['max'] is None or
-            sell_signals['guards']['macd']['max'] > 0
-        ):
+        if (buy_signals['guards']['macd']['max'] is None 
+            or buy_signals['guards']['macd']['max'] > 0
+            or sell_signals['guards']['macd']['max'] is None 
+            or sell_signals['guards']['macd']['max'] > 0):
             macd = ta.MACD(dataframe)
             dataframe['macd'] = macd['macd']  # MACD - Blue TradingView Line (Bullish if on top)
             dataframe['macdsignal'] = macd['macdsignal']  # Signal - Orange TradingView Line (Bearish if on top)
 
         # MFI - Money Flow Index (Under bought / Over sold & Over bought / Under sold / volume Indicator)
-        if (
-            buy_signals['guards']['mfi']['max'] is None or
-            buy_signals['guards']['mfi']['max'] > 0 or
-            sell_signals['guards']['mfi']['max'] is None or
-            sell_signals['guards']['mfi']['max'] > 0
-        ):
+        if (buy_signals['guards']['mfi']['max'] is None 
+            or buy_signals['guards']['mfi']['max'] > 0
+            or sell_signals['guards']['mfi']['max'] is None 
+            or sell_signals['guards']['mfi']['max'] > 0):
             dataframe['mfi'] = ta.MFI(dataframe)
 
         # Overlap Studies
         # ---------------
 
-        if (
-            buy_signals['guards']['tema_bb']['max'] is None or
-            buy_signals['guards']['tema_bb']['max'] > 0 or
-            sell_signals['guards']['tema_bb']['max'] is None or
-            sell_signals['guards']['tema_bb']['max'] > 0
-        ):
+        if (buy_signals['guards']['tema_bb']['max'] is None 
+            or buy_signals['guards']['tema_bb']['max'] > 0
+            or sell_signals['guards']['tema_bb']['max'] is None 
+            or sell_signals['guards']['tema_bb']['max'] > 0):
             # Bollinger Bands
             bollinger = qtpylib.bollinger_bands(qtpylib.typical_price(dataframe), window=20, stds=2)
             dataframe['bb_middleband'] = bollinger['mid']
             # TEMA - Triple Exponential Moving Average
             dataframe['tema'] = ta.TEMA(dataframe, timeperiod=9)
 
-        if (
-            buy_signals['triggers']['sma_short_cross']['max'] is None or
-            buy_signals['triggers']['sma_short_cross']['max'] > 0 or
-            buy_signals['triggers']['sma_long_cross']['max'] is None or
-            buy_signals['triggers']['sma_long_cross']['max'] > 0 or
-            sell_signals['triggers']['sma_short_cross']['max'] is None or
-            sell_signals['triggers']['sma_short_cross']['max'] > 0 or
-            sell_signals['triggers']['sma_long_cross']['max'] is None or
-            sell_signals['triggers']['sma_long_cross']['max'] > 0
-        ):
+        if (buy_signals['triggers']['sma_short_cross']['max'] is None 
+            or buy_signals['triggers']['sma_short_cross']['max'] > 0
+            or buy_signals['triggers']['sma_long_cross']['max'] is None 
+            or buy_signals['triggers']['sma_long_cross']['max'] > 0
+            or sell_signals['triggers']['sma_short_cross']['max'] is None 
+            or sell_signals['triggers']['sma_short_cross']['max'] > 0
+            or sell_signals['triggers']['sma_long_cross']['max'] is None 
+            or sell_signals['triggers']['sma_long_cross']['max'] > 0):
             # SMA's & EMA's are trend following tools (Should not be used when line goes sideways)
             # SMA - Simple Moving Average (Moves slower compared to EMA, price trend over X periods)
             dataframe['sma9'] = ta.SMA(dataframe, timeperiod=9)
@@ -304,12 +292,10 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
         # Volume Indicators
         # -----------------
 
-        if (
-            buy_signals['triggers']['rolling_vwap_cross']['max'] is None or
-            buy_signals['triggers']['rolling_vwap_cross']['max'] > 0 or
-            sell_signals['triggers']['rolling_vwap_cross']['max'] is None or
-            sell_signals['triggers']['rolling_vwap_cross']['max'] > 0
-        ):
+        if (buy_signals['triggers']['rolling_vwap_cross']['max'] is None 
+            or buy_signals['triggers']['rolling_vwap_cross']['max'] > 0
+            or sell_signals['triggers']['rolling_vwap_cross']['max'] is None 
+            or sell_signals['triggers']['rolling_vwap_cross']['max'] > 0):
             # Rolling VWAP - Volume Weighted Average Price
             dataframe['rolling_vwap'] = qtpylib.rolling_vwap(dataframe)
 
