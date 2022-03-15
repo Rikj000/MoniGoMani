@@ -1,0 +1,28 @@
+---
+version: '3'
+services:
+  freqtrade-mgm:
+    # image: freqtradeorg/freqtrade:stable
+    # image: freqtradeorg/freqtrade:develop
+    # Use plotting image
+    # image: freqtradeorg/freqtrade:develop_plot
+    # Build step - only needed when additional dependencies are needed
+    build:
+       context: "."
+       dockerfile: "./docker/Dockerfile.MoniGoMani"
+    restart: unless-stopped
+    container_name: freqtrade-mgm
+    volumes:
+      - "./user_data:/freqtrade/user_data"
+
+    # Expose api on port 8080 (localhost only)
+    # Please read the https://www.freqtrade.io/en/latest/rest-api/ documentation
+    # before enabling this.
+    ports:
+       - 8080:8080
+    # Default command used when running `docker compose up`
+    command: >
+      trade
+      --logfile /freqtrade/user_data/logs/freqtrade.log
+      --config /freqtrade/user_data/mgm-config.json
+      --config /freqtrade/user_data/mgm-config-private.json
