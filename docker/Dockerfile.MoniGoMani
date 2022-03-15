@@ -21,7 +21,6 @@ RUN pip3 install --user --no-cache-dir finta scipy pyaml scikit-optimize fire ma
 # Install MGM
 RUN git clone https://github.com/Rikj000/MoniGoMani.git
 RUN cp -r MoniGoMani/* . && rm -rf MoniGoMani/
-RUN pip3 install --user --no-cache-dir pyaml
 COPY --chown=ftuser:ftuser .hurry /freqtrade
 #RUN ./mgm-hurry setup
 
