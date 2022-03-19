@@ -14,7 +14,6 @@ from pandas import DataFrame
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 from freqtrade.constants import ListPairsWithTimeframes
 
-
 # Master Framework file must reside in same folder as Strategy file
 sys.path.append(str(Path(__file__).parent))
 from MasterMoniGoManiHyperStrategy import MasterMoniGoManiHyperStrategy
@@ -59,7 +58,6 @@ sell_signals = {
     # Weighted Buy Signal: TEMA
     'tema': lambda df: (df['tema'] > df['bb_middleband']) & (df['tema'] < df['tema'].shift(1))
 }
-
 
 # Returns the method responsible for decorating the current class with all the parameters of the MGM
 generate_mgm_attributes = MasterMoniGoManiHyperStrategy.generate_mgm_attributes(buy_signals, sell_signals)
@@ -160,7 +158,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
 
     def do_populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
-        Adds several TA indicators to MoniGoMani's DataFrame, per pair.
+        Adds multiple TA indicators to MoniGoMani's DataFrame per pair.
         Should be called with 'informative_pair' (1h candles) during backtesting/hyperopting with TimeFrame-Zoom!
 
         Performance Note: For the best performance be frugal on the number of indicators you are using.

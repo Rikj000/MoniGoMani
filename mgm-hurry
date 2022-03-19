@@ -659,7 +659,7 @@ class MGMHurry:
         :param strategy: (str, Optional): Hyper Opt strategy to use. Defaults to value in '.hurry'
         :param loss: (str, Optional): Specify the HyperOptLoss which you want to use. Defaults to value in '.hurry'
         :param spaces: (str, Optional): Spaces (space delimited) to optimize
-            for [default, all, buy, sell, roi, stoploss, etc.]. Defaults to value in '.hurry'
+            for 'default all buy sell roi stoploss protection'. Defaults to value in '.hurry'
         :param enable_protections: (bool, Optional): Add '--enable-protections' flag to HO-command. Defaults to True.
         :param random_state: (int, Optional): Add '--random-state random_state' flag to HO-command. Defaults to None.
         :param apply_best_results: (bool, Optional): Apply 'best' HO results direct after HO? Defaults to True.
@@ -1075,11 +1075,11 @@ class MGMHurry:
 
     def export_results(self):
         """
-        Export the results that are selected. Creates a '.zip' archive of the various files created by HyperOpt runs after the user selects which HyperOpt run they would like to export. 
+        Export the results that are selected. Creates a '.zip' archive of the various files created by HyperOpt runs after the user selects which HyperOpt run they would like to export.
         Archive is placed in `user_data/mgm_result_export`.
         """
         self.logger.info(Color.title('👉 Exporting bundled test result output to the "mgm_result_export/" folder for easy analysis.'))
-        
+
         export_base_dir = f'{self.basedir}/user_data/mgm_result_export'
         hyperopt_results = f'{self.basedir}/user_data/hyperopt_results'
 
