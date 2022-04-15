@@ -227,9 +227,6 @@ Since here you have strategy owners "doing the day-trading for you" by re-balanc
 - [**MoniGoMani**](https://www.iconomi.com/asset/MONIGOMANI?viewPublic=true?ref=JdFzz): My personal ICONOMI strategy which I try to maintain to the best of my capabilities
 - [**Diversitas**](https://www.iconomi.com/asset/ECA?ref=JdFzz): Offers some of the best & in depth daily technical analysis on ICONOMI
 - [**MetaStrategy**](https://www.iconomi.com/asset/DECENTCOOP?ref=JdFzz): Automated strategy with daily rebalancing to an intelligent mix of the currently top performing strategies
-- [**CKP Conservative**](https://www.iconomi.com/asset/BTCETHTEST?ref=JdFzz): Community based strategy
-- [**CKP Small Caps**](https://www.iconomi.com/asset/KNEPALA?ref=JdFzz): High Risk-Reward strategy, uses small cap coins
-- [**CKP Telegram Chat**](https://telegram.me/CKP_Robot?start=1684098549): To read on the news / vote where CKP should go / Posts from Knepala
 - Look on [ICONOMI](https://www.iconomi.com/register?ref=JdFzz) or the [**`#📊︱iconomi`** Discord channel](https://discord.gg/xFZ9bB6vEz) for more strategies you deem interesting 🙂
 
 **Please copy at your own responsibility & don't ape in all you seek to invest at once!**   
