@@ -27,6 +27,7 @@ tenacity = "==8.0.1"
 termcolor = "==1.1.0"
 wcwidth = "==0.2.5"
 yaspin = "==2.1.0"
+setuptools = "==58.3.0"
 
 [dev-packages]
 flake8 = "==4.0.1"
