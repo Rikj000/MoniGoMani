@@ -33,6 +33,8 @@ extra:
     - icon: fontawesome/brands/discord
       link: https://discord.gg/xFZ9bB6vEz
 markdown_extensions:
+  - codehilite:
+        guess_lang: false
   - markdown.extensions.toc: # Adds anchors to URL's
       slugify: !!python/name:pymdownx.slugs.uslugify # causes linting issues, but it has to be written this way...
       permalink: ""
