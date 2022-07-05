@@ -79,32 +79,32 @@ Further it also assumes you familiarized yourself with **mgm-hurry**'s commands 
 
 1. **Clean up** previous HyperOpt results for a fresh run with:
     
-    ```powershell
+    ``` powershell
     mgm-hurry cleanup
     ```
     
 2. Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & **pick a logical TimeFrame** to do your HyperOpt upon, manually configure this in your `.hurry` file or apply one with:
     
-    ```powershell
+    ``` powershell
     mgm-hurry setup
     ```
     
     *(The default provided timeframe resembles some bullish, some bearish and some sideways market behavior, with the idea to give MGM all trends to train upon).*
 3. Download and apply a **Top Volume StaticPairList** with:   
-    ```powershell
+    ``` powershell
     mgm-hurry download_static_pairlist
     ```
     
 4. **Download candle data** for your StaticPairList & TimeRange with:   
     
-    ```powershell
+    ``` powershell
     mgm-hurry download_candle_data
     ```
 
 5. **Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)**
 6. HyperOpt for a **1st Initial HyperOpt Run** with:   
     
-    ```powershell
+    ``` powershell
     mgm-hurry hyperopt
     ```
 
@@ -120,7 +120,7 @@ Further it also assumes you familiarized yourself with **mgm-hurry**'s commands 
 
     You can check and automatically apply an `<epoch of choice>` of which you feel confident, in the list of best results using:   
 
-    ```powershell
+    ``` powershell
     mgm-hurry hyperopt_show_epoch --epoch <epoch of choice>
     ```
 
@@ -135,7 +135,7 @@ Further it also assumes you familiarized yourself with **mgm-hurry**'s commands 
       *(Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
 9. Once you feel confident about the result you found throw them up for a Dry-Run to test how the setup will behave in the current market with:   
     
-    ```powershell
+    ``` powershell
     mgm-hurry start_trader --dry-run true
     ```
 
@@ -151,7 +151,7 @@ In total 5 files are used in the configuration of MoniGoMani, all can be found i
 - [`MoniGoManiHyperStrategy.py`](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/strategies/MoniGoManiHyperStrategy.py): The **main strategy file**, containing the [Weighted Signal Interface](#weighted-signal-interface) where you can implement new weighted signals & indicators in a nearly plug and play like fashion.
 - [`.hurry`](https://github.com/Rikj000/MoniGoMani/blob/development/.hurry): The mgm-hurry configuration file contains settings to make running freqtrade commands easier and shorter! These settings can be configured manually or with:   
   
-  ```powershell
+  ``` powershell
   mgm-hurry setup
   ```
 
@@ -322,7 +322,7 @@ You can define as much or as little protections as you see fit & tweak their ind
 
 #### Full example of Configurable HyperOPtable Protections
 
-```json
+``` json
 "protection_spaces": [
       {
         "method": "CooldownPeriod",
@@ -428,7 +428,7 @@ Following equation should always be true:
 **Way too low total needed:**   
 Imagine following configuration for `buy` on `upwards` trends:
 
-```json
+``` json
 {
     "buy__upwards_trend_total_signal_needed": "33",
     "buy__upwards_trend_total_signal_needed_candles_lookback_window": "2",
@@ -474,7 +474,7 @@ Check out these **+300 Easy to implement Indicators** for toying with the Weight
 
 But feel free to look for other means of implementing indicators too.
 
-```python
+``` python
 def do_populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
     """
     Generate all indicators used by MoniGoMani
@@ -493,7 +493,7 @@ def do_populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFr
 #### Defining Weighted Buy & Sell Signals Examples
 Secondly define the Weighted signal conditions you wish to use in MGM's `buy_signals` and `sell_signals` dictionaries by using the names of the indicators you just defined in the examples above.
 
-```python
+``` python
 # Define the Weighted Buy Signals to be used by MGM
 buy_signals = {
     # Weighted Buy Signal: MACD above Signal
@@ -514,7 +514,7 @@ sell_signals = {
 #### Visualize Weighted Signals in FreqUI
 Finally you can easily define your freshly implemented indicators inside the `plot_config` dictionary for visualization in FreqUI. Then you can easily read when which weighted signals triggered.
 
-```python
+``` python
 plot_config = {
         'main_plot': {
             # Add indicators here which you'd like to see in the main graph
@@ -565,7 +565,7 @@ Switching between the PairList in use can easily be done by moving the `_` in fr
 
 ### Enabled StaticPairList / Disabled VolumePairList Example
 
-```json
+``` json
 "pairlists": [{
         "method": "StaticPairList"
     }],
