@@ -37,5 +37,6 @@ markdown_extensions:
       slugify: !!python/name:pymdownx.slugs.uslugify # causes linting issues, but it has to be written this way...
       permalink: ""
   - markdown.extensions.admonition # Nice note/warning/info blocks
+  - pymdownx.inlinehilite
   - pymdownx.superfences:
       preserve_tabs: true
