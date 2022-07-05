@@ -33,8 +33,6 @@ extra:
     - icon: fontawesome/brands/discord
       link: https://discord.gg/xFZ9bB6vEz
 markdown_extensions:
-  - codehilite:
-        guess_lang: false
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
