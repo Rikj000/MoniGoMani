@@ -69,7 +69,7 @@
     - [ValueError: the lower bound X has to be less than the upper bound Y](#valueerror-the-lower-bound-x-has-to-be-less-than-the-upper-bound-y)
 
 # Installation
-This guide assumes you have **MoniGoMani** & **Freqtrade** already installed, if you haven't yet, then please see the [Docs-VeryQuickStart](https://monigomani.readthedocs.io/Docs-VeryQuickStart).
+This guide assumes you have **MoniGoMani** & **Freqtrade** already installed, if you haven't yet, then please see the [Docs-VeryQuickStart](https://monigomani.readthedocs.io/Docs-VeryQuickStart).   
 Further it also assumes you familiarized yourself with **mgm-hurry**'s commands which are described in [Docs-MGM-Hurry](https://monigomani.readthedocs.io/Docs-MGM-Hurry).
 
 # How to Optimize MoniGoMani
@@ -78,48 +78,63 @@ Further it also assumes you familiarized yourself with **mgm-hurry**'s commands 
 **<span style="color:darkorange">WARNING:</span> It's strongly advised to not do any manual alterations to an already optimized MGM setup! The recommended way to do manual alterations is by [Configuring MoniGoMani](#how-to-configure-monigomani), and then following this optimization process to apply them!**
 
 1. **Clean up** previous HyperOpt results for a fresh run with:
+    
     ```powershell
     mgm-hurry cleanup
     ```
+    
 2. Do some Technical Analysis on how the global crypto market has been behaving in the last months/weeks & **pick a logical TimeFrame** to do your HyperOpt upon, manually configure this in your `.hurry` file or apply one with:
+    
     ```powershell
     mgm-hurry setup
     ```
+    
     *(The default provided timeframe resembles some bullish, some bearish and some sideways market behavior, with the idea to give MGM all trends to train upon).*
-3. Download and apply a **Top Volume StaticPairList** with:
+3. Download and apply a **Top Volume StaticPairList** with:   
     ```powershell
     mgm-hurry download_static_pairlist
     ```
-4. **Download candle data** for your StaticPairList & TimeRange with:
+    
+4. **Download candle data** for your StaticPairList & TimeRange with:   
+    
     ```powershell
     mgm-hurry download_candle_data
     ```
+
 5. **Setup your `MoniGoMani` by following [How to Configure MoniGoMani](#how-to-configure-monigomani)**
-6. HyperOpt for a **1st Initial HyperOpt Run** with:
+6. HyperOpt for a **1st Initial HyperOpt Run** with:   
+    
     ```powershell
     mgm-hurry hyperopt
     ```
-    *(Free to [alter the command](https://monigomani.readthedocs.io/Docs-MGM-Hurry/#mgm-hurry-hyperopt) if you have a good idea that you want to test)*
+
+    *(Free to [alter the command](https://monigomani.readthedocs.io/Docs-MGM-Hurry/#mgm-hurry-hyperopt) if you have a good idea that you want to test)*   
+
     **The 1st Initial HyperOpt Run** *(When no `mgm-config-hyperopt.json` exists)* is automatically ran with:
     - The default open search spaces ranging between the default `min_` & `max_` values provided under the `monigomani_settings` section of your`mgm-config.json` file.
     - Weak weighted signals are weeded out by overriding them to their respective `min_` value
       *(Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
     - Strong weighted signals are boosted by overriding them to their respective `max_` value
       *(Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
-7. **[Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.
-    You can check and automatically apply an `<epoch of choice>` of which you feel confident, in the list of best results using:
+7. **[Reflect over your HyperOpt results!]((#reflect-over-hyperopt-results))** The computer just tries to get certain values high (profits) and others low (losses), without a true understanding of their meaning. Because of this HyperOpt is prone to profit exploitation which would be no good when used Live. That's why you need to make yourself familiar with possible [BackTesting-Traps](https://brookmiles.github.io/freqtrade-stuff/2021/04/12/backtesting-traps/). Only then you can tell which results would make sense and would be any good when used Live.   
+
+    You can check and automatically apply an `<epoch of choice>` of which you feel confident, in the list of best results using:   
+
     ```powershell
     mgm-hurry hyperopt_show_epoch --epoch <epoch of choice>
     ```
-8. Repeat `Steps 5 and 6` at least for a **2nd Refinement HyperOpt Run**
+
+8. Repeat `Steps 5 and 6` at least for a **2nd Refinement HyperOpt Run**   
     **The 2nd Refinement HyperOpt Run** *(When a `mgm-config-hyperopt.json` exists)* is automatically ran with:
-    - Refined search spaces ranging between the values found during the 1st Run *(Loaded from `mgm-config-hyperopt.json`)* plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`
+    - Refined search spaces ranging between the values found during the 1st Run *(Loaded from `mgm-config-hyperopt.json`)* plus their `search_threshold_` and minus their `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`   
+      
       *(This is done to push the next HyperOpt run back in the direction that we already had going during the 1st HyperOpt run)*
     - Weak weighted signals are weeded out by overriding them to their respective `min_` value
       *(Signals of which the found value is below their default `min_` + `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
     - Strong weighted signals are boosted by overriding them to their respective `max_` value
       *(Signals of which the found value is above their default `max_` - `search_threshold_` values provided under the `monigomani_settings` section of `mgm-config.json`)*
-9. Once you feel confident about the result you found throw them up for a Dry-Run to test how the setup will behave in the current market with:
+9. Once you feel confident about the result you found throw them up for a Dry-Run to test how the setup will behave in the current market with:   
+    
     ```powershell
     mgm-hurry start_trader --dry-run true
     ```
@@ -134,7 +149,8 @@ In total 5 files are used in the configuration of MoniGoMani, all can be found i
 - [`mgm-config-private.json`](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/mgm-config-private.json): This split configuration file contains some `Freqtrade` settings containing critical private information, **never** share this file!
 - [`mgm-config-hyperopt.json`](#mgm-config-hyperopt.json): This file contains the optimized HyperOptable `MoniGoMani` and `Freqtrade` settings. It will be created when following the [How to Optimize MoniGoMani](#how-to-optimize-monigomani) process
 - [`MoniGoManiHyperStrategy.py`](https://github.com/Rikj000/MoniGoMani/blob/development/user_data/strategies/MoniGoManiHyperStrategy.py): The **main strategy file**, containing the [Weighted Signal Interface](#weighted-signal-interface) where you can implement new weighted signals & indicators in a nearly plug and play like fashion.
-- [`.hurry`](https://github.com/Rikj000/MoniGoMani/blob/development/.hurry): The mgm-hurry configuration file contains settings to make running freqtrade commands easier and shorter! These settings can be configured manually or with:
+- [`.hurry`](https://github.com/Rikj000/MoniGoMani/blob/development/.hurry): The mgm-hurry configuration file contains settings to make running freqtrade commands easier and shorter! These settings can be configured manually or with:   
+  
   ```powershell
   mgm-hurry setup
   ```
@@ -159,7 +175,7 @@ The main `MoniGoMani` settings can be found under `monigomani_settings`:
 | **mgm_log_levels_enabled** | It allows turning on/off individual `info`, `warning`, `error`, `debug` and `custom` logging <br> For Live Runs it's recommended to disable at least `info` and `debug` logging, to keep MGM as lightweight as possible! <br> `debug` is very verbose! Always set it to `False` when BackTesting/HyperOpting! <br> **Datatype:** Dictionary |
 
 ### TimeFrames
-MoniGoMani makes use of multiple different TimeFrames *(a.k.a. candle-size)*.
+MoniGoMani makes use of multiple different TimeFrames *(a.k.a. candle-size)*.   
 Make sure to [download candle data](https://monigomani.readthedocs.io/Docs-MGM-Hurry/#mgm-hurry-download_candle_data) for all configured TimeFrames!
 
 | Parameter | Description |
@@ -170,7 +186,7 @@ Make sure to [download candle data](https://monigomani.readthedocs.io/Docs-MGM-H
 | **timeframe** | The "main" TimeFrame used by MoniGoMani, mostly used to generate the Weighted Signal indicators.<br> **Datatype:** String |
 
 #### TimeFrame-Zoom
-To prevent profit exploitation during BackTesting/HyperOpting we BackTest/HyperOpt MoniGoMani using TimeFrame-Zoom.
+To prevent profit exploitation during BackTesting/HyperOpting we BackTest/HyperOpt MoniGoMani using TimeFrame-Zoom.   
 When normally a `timeframe` (1h candles) would be used, you can zoom in using a smaller `backtest_timeframe`
 (5m candles) instead. This happens while still using the `timeframe` (original 1h candles) to generate the buy/sell signals.
 
@@ -194,9 +210,9 @@ If you haven't yet please read: [BackTesting-Traps](https://brookmiles.github.io
 | **backtest_timeframe**='5m' | Zoomed in TimeFrame used during BackTesting/HyperOpting |
 
 ### Precision Setting
-The `precision` setting can be used to control the precision / step size used during HyperOpting.
-A value **smaller than 1** will limit the search space, but may skip over good values.
-While a value **larger than 1** increases the search space, but will increase the duration of HyperOpting.
+The `precision` setting can be used to control the precision / step size used during HyperOpting.   
+A value **smaller than 1** will limit the search space, but may skip over good values.   
+While a value **larger than 1** increases the search space, but will increase the duration of HyperOpting.   
 To disable `precision` / for normal work mode **just** use **1**.
 
 **<span style="color:darkorange">WARNING:</span> Only use a precision different from 1 during HyperOpting & restore to 1 afterwards!**
@@ -305,6 +321,7 @@ You can define as much or as little protections as you see fit & tweak their ind
 | **type** | Defines if the protection parameter space will work with `integer`s *(Only whole numbers)* <br> or `decimal`s *(Also fractions, keep in mind this greatly increases the search space)* <br> **Datatype:** String, either `integer` or `decimal` |
 
 #### Full example of Configurable HyperOPtable Protections
+
 ```json
 "protection_spaces": [
       {
@@ -381,7 +398,7 @@ The settings inside `mgm-config.json`'s `unclogger_spaces` section are used to c
 | **threshold** | ***(Optional parameter)* 2nd HyperOpt Run:** If this setting is found, then it's used to refine the search spaces based on the value found in the 1st run ± the threshold. If no custom `threshold` is provided then the `search_threshold_weighted_signal_values` is used instead.<br> **Datatype:** Integer |
 
 ### Default Stub Values
-The settings inside `mgm-config.json`'s `default_stub_values` section are **only used** to control some default startup values that MGM will use when no other values are found and/or used for them.
+The settings inside `mgm-config.json`'s `default_stub_values` section are **only used** to control some default startup values that MGM will use when no other values are found and/or used for them.   
 *(These would be used when not HyperOpting `--spaces all` in one go and/or during the initialization of MGM's variables in the 1st HyperOpt Run)*
 
 | Parameter | Description |
@@ -408,8 +425,9 @@ The sum of all weighted buy/sell signals found in a trend should always be bigge
 Following equation should always be true:
 
 #### Bad Weighted signal setup example
-**Way too low total needed:**
+**Way too low total needed:**   
 Imagine following configuration for `buy` on `upwards` trends:
+
 ```json
 {
     "buy__upwards_trend_total_signal_needed": "33",
@@ -425,6 +443,7 @@ Imagine following configuration for `buy` on `upwards` trends:
     "buy_upwards_trend_vwap_cross_weight": "58"
 }
 ```
+
 Here we are working with a lookback window of 2 candles, this means that all signals counting up for the total needed may occur in the current candle and the candle before that, but each signal is only allowed to fire off once.
 
 If we calculate the sum of all weighted signals, we will see that its way above te total signal needed! Meaning that this MGM configuration will probably try to buy too much candles than need during this trend.
@@ -439,7 +458,7 @@ This is the main strategy file used by MoniGoMani, containing the [Weighted Sign
 
 ### Weighted Signal Interface
 With this you can easily define new indicators and weighted signals that will be used by MGM.
-A different amount of buy and sell signals is possible, and the initial search spaces will automatically be adjusted towards the detected amount.
+A different amount of buy and sell signals is possible, and the initial search spaces will automatically be adjusted towards the detected amount.   
 *(We'll only use RSI and MACD in below examples to keep things simple)*
 
 #### Defining Indicators Examples
@@ -473,6 +492,7 @@ def do_populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFr
 
 #### Defining Weighted Buy & Sell Signals Examples
 Secondly define the Weighted signal conditions you wish to use in MGM's `buy_signals` and `sell_signals` dictionaries by using the names of the indicators you just defined in the examples above.
+
 ```python
 # Define the Weighted Buy Signals to be used by MGM
 buy_signals = {
@@ -493,6 +513,7 @@ sell_signals = {
 
 #### Visualize Weighted Signals in FreqUI
 Finally you can easily define your freshly implemented indicators inside the `plot_config` dictionary for visualization in FreqUI. Then you can easily read when which weighted signals triggered.
+
 ```python
 plot_config = {
         'main_plot': {
@@ -510,6 +531,7 @@ plot_config = {
         }
 }
 ```
+
 For more documentation about defining these see the **Official Freqtrade Documentation:** [Advanced Plot Configuration](https://www.freqtrade.io/en/latest/plotting/#advanced-plot-configuration)
 
 
@@ -542,6 +564,7 @@ Switching between the PairList in use can easily be done by moving the `_` in fr
 **<span style="color:darkorange">WARNING:</span> The bigger the (Volume/Static)PairList in use the higher the system requirements (CPU usage, RAM usage & Time needed to HyperOpt will go up)! Switch to a smaller list if your system can't handle it!**
 
 ### Enabled StaticPairList / Disabled VolumePairList Example
+
 ```json
 "pairlists": [{
         "method": "StaticPairList"
