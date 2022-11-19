@@ -114,18 +114,31 @@ def ExportCsvResults(config_file, input_file, output_file):
     results_df.to_csv(output_file, index=False, header=True, mode='w', encoding='UTF-8')
 
 
+def print_help():
+    head = '\nExportCsvResults.py '
+    print(
+        f'{head}Usage examples:\n'
+        f'{head}-c            <mgm_config_file> -i           <input_file> -o            <output_file>'
+        f'{head}--cfile       <mgm_config_file> --ifile      <input_file> --ofile       <output_file>'
+        f'{head}--config_file <mgm_config_file> --input_file <input_file> --output_file <output_file>')
+
+
 def main(argv):
     input_file = ''
     output_file = ''
     config_file = f'{os.getcwd()}/user_data/mgm-config.json'
     try:
-        opts, args = getopt.getopt(argv, 'hc:i:o:', ['cfile=', 'ifile=', 'ofile='])
+        opts, args = getopt.getopt(argv, 'hc:i:o:', [
+            'cfile=', 'config_file=',
+            'ifile=', 'input_file=',
+            'ofile=', 'output_file='])
     except getopt.GetoptError:
-        print('ExportCsvResults.py -c <mgm_config_file> -i <input_file> -o <output_file>')
+        print('An error occurred while parsing the command arguments...')
+        print_help()
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('ExportCsvResults.py -c <mgm_config_file> -i <input_file> -o <output_file>')
+            print_help()
             sys.exit()
         elif opt in ('-c', '--cfile', '--config_file'):
             config_file = arg
