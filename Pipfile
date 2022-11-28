@@ -2,7 +2,7 @@
 python_version = "3.9"
 
 [packages]
-art = "==5.4"
+art = "==5.8"
 cached-property = "==1.5.2"
 coloredlogs = "==15.0.1"
 cryptography = "==36.0.1"
