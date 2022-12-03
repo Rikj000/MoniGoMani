@@ -236,7 +236,7 @@ class FreqtradeCli:
         """
 
         if os.path.isfile(f'{target_dir}/setup.exp'):
-            command = f'expect {target_dir}/setup.exp'
+            command = f'expect "{target_dir}/setup.exp"'
             if distro.id() in ['ubuntu', 'debian', 'sparky']:
                 command = f'echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/$USER-temp-root; ' \
                           f'{command}; sudo rm /etc/sudoers.d/$USER-temp-root'
@@ -303,7 +303,7 @@ class FreqtradeCli:
                 retrieve_json_file.close()
 
         with tempfile.NamedTemporaryFile() as temp_file:
-            self.monigomani_cli.run_command(f'{self.freqtrade_binary} test-pairlist --config {retrieve_json_path} '
+            self.monigomani_cli.run_command(f'{self.freqtrade_binary} test-pairlist --config "{retrieve_json_path}" '
                                             f'--quote {stake_currency} --print-json > {temp_file.name}')
 
             # Read last line from temp_file, which is the json list containing pairlists
@@ -329,7 +329,7 @@ class FreqtradeCli:
         freqtrade_binary = 'docker-compose run --rm freqtrade'
 
         if install_type == 'source':
-            freqtrade_binary = f'. {basedir}/.env/bin/activate; freqtrade'
+            freqtrade_binary = f'. "{basedir}/.env/bin/activate"; freqtrade'
 
         return freqtrade_binary
 

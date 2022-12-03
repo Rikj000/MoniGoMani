@@ -23,6 +23,7 @@ import os
 import sys
 import shutil
 from datetime import datetime
+from shutil import move
 
 import fire
 import numpy as np  # noqa
@@ -50,7 +51,7 @@ class MGMHurry:
     Attributes:
         monigomani_config   The monigomani_config object
         freqtrade_cli       The FreqtradeCli object
-        logger             The logging function out of MoniGoManiLogger
+        logger              The logging function out of MoniGoManiLogger
     """
     monigomani_config: MoniGoManiConfig
     freqtrade_cli: FreqtradeCli
@@ -73,7 +74,7 @@ class MGMHurry:
         if self.freqtrade_cli.install_type == 'source':
             if self.freqtrade_cli.installation_exists(silent=True):
                 self.logger.info(Color.green(Color.bold(Color.underline('MoniGoMani Version:'))))
-                self.monigomani_cli.run_command(f'cd {self.basedir}/monigomani; git log -1; cd ..; echo "";')
+                self.monigomani_cli.run_command(f'cd "{self.basedir}/monigomani"; git log -1; cd ..; echo "";')
             else:
                 self.logger.warning(Color.yellow('"No MoniGoMani installation detected!'))
 
@@ -450,7 +451,7 @@ class MGMHurry:
 
         """
         if answers.get('install_type') == 'source':
-            ft_binary = f'. {self.basedir}/.env/bin/activate; freqtrade'
+            ft_binary = f'. "{self.basedir}/.env/bin/activate"; freqtrade'
         else:
             ft_binary = 'docker-compose run --rm freqtrade'
         """
@@ -458,7 +459,7 @@ class MGMHurry:
             'config': {
                 'username': answers.get('username'),
                 'install_type': 'source',  # answers.get('install_type'),
-                'ft_binary': f'. {self.basedir}/.env/bin/activate; freqtrade',  # ft_binary,
+                'ft_binary': f'. "{self.basedir}/.env/bin/activate"; freqtrade',  # ft_binary,
                 'timerange': answers.get('timerange'),
                 'exchange': exchange or 'none',
                 'hyperopt': {
@@ -934,8 +935,8 @@ class MGMHurry:
 
         self.monigomani_cli.run_command(
             f'{self.monigomani_config.config["ft_binary"]} plot-profit {self.monigomani_config.command_configs()}'
-            f'--export-filename {backtest_results_path} --timerange {timerange} --timeframe {timeframe} && '
-            f'mv {self.basedir}/user_data/plot/freqtrade-profit-plot.html {output_file_path}')
+            f'--export-filename "{backtest_results_path}" --timerange {timerange} --timeframe {timeframe} && '
+            f'mv "{self.basedir}/user_data/plot/freqtrade-profit-plot.html" "{output_file_path}"')
 
         MoniGoManiLogger(self.basedir).post_message(
             username=self.monigomani_config.config['username'],
@@ -953,7 +954,7 @@ class MGMHurry:
             in the format: 'PlotProfitResults-<output_file_name>.html'. Defaults to 'Strategy + Current DateTime'.
         """
 
-        self.logger.info(Color.title(f'👉 Plotting profit graph for BackTest results'))
+        self.logger.info(Color.title(f'👉 Plotting stats graph for BackTest results'))
 
         # extend pandas functionality with metrics, etc.
         qs.extend_pandas()
@@ -987,7 +988,8 @@ class MGMHurry:
         returns_time_series = pd.Series(daily_returns, index=pd.to_datetime(list(dates)))
 
         qs.reports.html(returns=returns_time_series, title=f'{strategy} {backtest_results_file}',
-                        output=output_file_path)
+                        output='./quantstats-tearsheet.html')
+        move('./quantstats-tearsheet.html', output_file_path)
 
         MoniGoManiLogger(self.basedir).post_message(
             username=self.monigomani_config.config['username'],
@@ -1020,9 +1022,9 @@ class MGMHurry:
         output_file_path = f'{self.basedir}/user_data/importance_results/{importance_report_file_name}.log'
 
         self.monigomani_cli.run_command(
-            f'python3 {self.basedir}/user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py '
+            f'python3 "{self.basedir}/user_data/mgm_tools/TotalOverallSignalImportanceCalculator.py" '
             f'--precision-used {mgm_config_files["mgm-config"]["monigomani_settings"]["precision"]} '
-            f'--create-file {output_file_path}')
+            f'--create-file "{output_file_path}"')
 
         MoniGoManiLogger(self.basedir).post_message(
             username=self.monigomani_config.config['username'],
@@ -1062,11 +1064,11 @@ class MGMHurry:
         output_file_path = f'{self.basedir}/user_data/csv_results/{csv_results_file_name}.csv'
 
         mgm_config = self.monigomani_config.get_config_filepath('mgm-config')
-        command = (f'python3 {self.basedir}/user_data/mgm_tools/ExportCsvResults.py '
-                   f'--config_file {mgm_config} --output_file {output_file_path}')
+        command = (f'python3 "{self.basedir}/user_data/mgm_tools/ExportCsvResults.py" '
+                   f'--config_file "{mgm_config}" --output_file "{output_file_path}"')
 
         if fthypt_name is not None:
-            command += f' --input_file {fthypt_file_path}'
+            command += f' --input_file "{fthypt_file_path}"'
 
         self.monigomani_cli.run_command(command=command)
         MoniGoManiLogger(self.basedir).post_message(username=self.monigomani_config.config['username'],
