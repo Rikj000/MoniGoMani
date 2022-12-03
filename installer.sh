@@ -284,6 +284,7 @@ fi
 
 if [ "$DEV_BREAK" == "true" ]; then
     echo ""
+    echo "⚙️  Dev break - Waiting to allow replacement of modified MGM files before launching MGM-Hurry..."
     confirm "👉  Are you ready to proceed?" "(y/n)"
 
     if [ "$REPLY" == "1" ] # 1 = False, why shell why..
