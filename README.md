@@ -23,7 +23,7 @@
         <img src="https://img.shields.io/badge/Docs-MoniGoMani-blue?logo=libreoffice&logoColor=white" alt="The current place where you can find all MoniGoMani Documentation!">
     </a> <a href="https://www.freqtrade.io/en/latest/">
         <img src="https://img.shields.io/badge/Trading%20Bot-Freqtrade-blue?logo=probot&logoColor=white" alt="Freqtrade - The open source crypto day-trading bot">
-    </a> <a href="https://www.iconomi.com/register?ref=JdFzz">
+    </a> <a href="https://www.iconomi.com/register?ref=zQQPK">
         <img src="https://img.shields.io/badge/Join-ICONOMI-blue?logo=bitcoin&logoColor=white" alt="ICONOMI - The world’s largest crypto strategy provider">
     </a>
 </p>
@@ -55,7 +55,7 @@ If you like my work, feel free to donate or use [one of my referral links](#supp
 that would also greatly be appreciated:
 
 <p align=center>
-    <a href="https://www.iconomi.com/register?ref=JdFzz">
+    <a href="https://www.iconomi.com/register?ref=zQQPK">
         <img src="https://img.shields.io/badge/Join-ICONOMI-blue?logo=bitcoin&logoColor=white" alt="ICONOMI - The world’s largest crypto strategy provider">
     </a> <a href="https://www.binance.com/en/register?ref=97611461">
         <img src="https://img.shields.io/badge/Join-BINANCE-yellow?logo=bitcoin&logoColor=white" alt="Binance - The world’s largest crypto exchange">
@@ -207,7 +207,7 @@ Please read Freqtrade's [exchange specific notes](https://www.freqtrade.io/en/la
 
 
 ## ICONOMI
-Can't wait until MoniGoMani is fully on point? Or is this all too technical for you? Check out **[ICONOMI](https://www.iconomi.com/register?ref=JdFzz)!**
+Can't wait until MoniGoMani is fully on point? Or is this all too technical for you? Check out **[ICONOMI](https://www.iconomi.com/register?ref=zQQPK)!**
 
 Instead of buying loose individual crypto manually like you usually do on exchanges, this platform has mostly been created to buy & hodl `Investment Strategies`.
 ICONOMI strategies are owned by `Strategy Managers`, these are often day-trades / technical analysts by profession so in general they have quite a good idea what they are doing.
@@ -219,13 +219,13 @@ More [info on fees in general can be found here](https://www.iconomi.com/fees-di
 In general this is a good platform to invest into when you still need to start learning Technical Analysis, when you don't have time to monitor the status of the market or when you don't feel confident trading your own funds.
 Since here you have strategy owners "doing the day-trading for you" by re-balancing the strategies & the percentages of coins in them.
 
-**If you join please use my referral link! => (https://www.iconomi.com/register?ref=JdFzz)** 🙏
+**If you join please use my referral link! => (https://www.iconomi.com/register?ref=zQQPK)** 🙏
 *(Then a percentage of your fees that you have to pay anyways to the strategy owners and ICONOMI will go to me instead, which is a neat win-win way for us both to support me for my work on MGM!)*
 
 #### Recommended ICONOMI Strategies
-- [**Diversitas**](https://www.iconomi.com/asset/ECA?ref=JdFzz): Offers some of the best & in depth daily technical analysis on ICONOMI
-- [**MetaStrategy**](https://www.iconomi.com/asset/DECENTCOOP?ref=JdFzz): Automated strategy with daily rebalancing to an intelligent mix of the currently top performing strategies
-- Look on [ICONOMI](https://www.iconomi.com/register?ref=JdFzz) or the [**`#📊︱iconomi`** Discord channel](https://discord.gg/xFZ9bB6vEz) for more strategies you deem interesting 🙂
+- [**Diversitas**](https://www.iconomi.com/asset/ECA?ref=zQQPK): Offers some of the best & in depth daily technical analysis on ICONOMI
+- [**MetaStrategy**](https://www.iconomi.com/asset/DECENTCOOP?ref=zQQPK): Automated strategy with daily rebalancing to an intelligent mix of the currently top performing strategies
+- Look on [ICONOMI](https://www.iconomi.com/register?ref=zQQPK) or the [**`#📊︱iconomi`** Discord channel](https://discord.gg/xFZ9bB6vEz) for more strategies you deem interesting 🙂
 
 **Please copy at your own responsibility & don't ape in all you seek to invest at once!**
 But instead, use the volatility to your advantage, by DCAing into the market!

@@ -84,7 +84,7 @@ class MoniGoManiHyperStrategy(MasterMoniGoManiHyperStrategy):
     ##               -------------------------------------         ▄█▀  ▄ ▄    ▀█▄    ##
     ###   If you like my work, feel free to donate or use one of   █   ▀█▀▀▀▀▄   █   ###
     ##   my referral links, that would also greatly be appreciated █    █▄▄▄▄▀   █    ##
-    #     ICONOMI: https://www.iconomi.com/register?ref=JdFzz      █    █    █   █     #
+    #     ICONOMI: https://www.iconomi.com/register?ref=zQQPK      █    █    █   █     #
     ##  Binance: https://www.binance.com/en/register?ref=97611461  ▀█▄ ▀▀█▀█▀  ▄█▀    ##
     ###          BTC: 19LL2LCMZo4bHJgy15q1Z1bfe7mV4bfoWK             ▀▀█▄▄▄▄▄█▀▀     ###
     ####                                                                            ####
