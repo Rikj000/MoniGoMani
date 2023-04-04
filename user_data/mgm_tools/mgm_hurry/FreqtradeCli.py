@@ -311,7 +311,7 @@ class FreqtradeCli:
                 last_line = subprocess.check_output(['tail', '-1', temp_file.name])
                 pair_whitelist = json.loads(last_line)
             except json.JSONDecodeError as e:
-                self.cli_logger.critical(Color.red('Unfortunately we could generate the static pairlist.'))
+                self.cli_logger.critical(Color.red('Unfortunately we could not generate the static pairlist.'))
                 self.cli_logger.debug(e)
                 return False
 
