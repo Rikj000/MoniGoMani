@@ -68,7 +68,7 @@ test-results*.xml
 .env/
 build_helpers/
 config_examples/
-docker/
+docker/*
 !docker/Dockerfile.MoniGoMani
 docs/
 freqtrade/

@@ -1,0 +1,28 @@
+FROM freqtradeorg/freqtrade:latest as base
+
+# System prerequisites
+USER root
+RUN  apt-get update \
+  && apt-get -y install build-essential libblas3 liblapack3 liblapack-dev libblas-dev libatlas-base-dev libxml2-dev libxslt-dev \
+                        libssl-dev python3-dev gcc gfortran g++ git python3-venv libfreetype6-dev expect libffi-dev cmake \
+  && apt-get clean
+# build latest libgit2 v1.4.x for pygit2
+RUN git clone --depth=1 -b v1.4.2 https://github.com/libgit2/libgit2.git ~/libgit2_src
+RUN cd ~/libgit2_src && cmake . -DBUILD_CLAR=OFF -DCMAKE_BUILD_TYPE=Release -DEMBED_SSH_PATH=~/libssh2_src -DCMAKE_INSTALL_PREFIX=~/libgit2
+RUN cd ~/libgit2_src && cmake --build . --target install
+RUN cp -r ~/libgit2/* /usr/bin
+RUN cp -r ~/libgit2/* /usr/local
+
+# MGM prerequisites
+USER ftuser
+RUN pip3 install --upgrade pip
+RUN pip3 install --user --no-cache-dir finta scipy pyaml scikit-optimize fire matplotlib quantstats art inquirerpy distro pygit2 yaspin logger discord_webhook
+
+# Install MGM
+RUN git clone https://github.com/Rikj000/MoniGoMani.git
+RUN cp -r MoniGoMani/* . && rm -rf MoniGoMani/
+COPY --chown=ftuser:ftuser .hurry /freqtrade
+
+ENTRYPOINT ["freqtrade"]
+# Default to trade mode
+CMD [ "trade" ]
