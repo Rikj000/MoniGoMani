@@ -28,9 +28,9 @@
 #   /usr/bin/env sh <(curl -s "https://raw.githubusercontent.com/Rikj000/MoniGoMani/development/installer.sh")
 #
 # === Settings =========================================================================================================
-INSTALL_FOLDER_NAME="Freqtrade-MGM" # By default the folder will be created under the current working directory
-MGM_REPO_URL="https://github.com/Rikj000/MoniGoMani.git"
-MGM_BRANCH="development"
+INSTALL_FOLDER_NAME="Freqtrade-MGM-Raftersvk" # By default the folder will be created under the current working directory
+MGM_REPO_URL="https://github.com/raftersvk/MoniGoMani_raftersvk.git"
+MGM_BRANCH="separation-of-signals-into-triggers-and-guards"
 MGM_COMMIT=""
 SHELL_CONFIGS=(
     ~/.bashrc
